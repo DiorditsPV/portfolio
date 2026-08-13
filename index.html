@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pavel Diordits — Lead Data Engineer</title>
+<meta name="description" content="Pavel Diordits — Lead Data Engineer. Go, Python, SQL; Airflow, Spark, Kafka, dbt; DWH and Data Lake design. 6+ years across retail, banking and public sector.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◆</text></svg>">
+<style>
+/* ─────────────────────────── tokens ─────────────────────────── */
+:root{
+  --bg:#f7f6f2; --fg:#1c1b17; --muted:#6b6761; --border:#e5e2dc;
+  --card:#ffffff; --card-hover:#fbfaf7; --accent:#0d8f63; --accent-soft:rgba(13,143,99,.10);
+  --font-sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --maxw:72rem;
+}
+html.dark{
+  --bg:#0b0a0a; --fg:#e4e0dd; --muted:#938c85; --border:#2b2826;
+  --card:#141312; --card-hover:#1a1817; --accent:#10b981; --accent-soft:rgba(16,185,129,.12);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;color-scheme:light}
+html.dark{color-scheme:dark}
+body{
+  margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-sans);
+  font-size:16px;letter-spacing:-.01em;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  transition:background-color .35s ease,color .35s ease;
+}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+::selection{background:var(--accent);color:#fff}
+
+.wrap{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 1rem}
+@media(min-width:640px){.wrap{padding:0 1.5rem}}
+@media(min-width:1024px){.wrap{padding:0 2rem}}
+
+.mono{font-family:var(--font-mono)}
+.muted{color:var(--muted)}
+.eyebrow{
+  font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);
+}
+
+/* ─────────────────────────── header ─────────────────────────── */
+header{
+  position:sticky;top:0;z-index:100;padding:1.25rem 0;
+  background:color-mix(in srgb,var(--bg) 82%,transparent);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid transparent;transition:border-color .3s ease;
+}
+header.scrolled{border-bottom-color:var(--border)}
+.nav-row{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+nav{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+@media(min-width:640px){nav{gap:1.5rem}}
+nav a{
+  font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);
+  position:relative;padding:.25rem 0;transition:color .2s ease;
+}
+nav a::after{
+  content:"";position:absolute;left:0;bottom:0;height:1px;width:0;background:var(--fg);
+  transition:width .25s ease;
+}
+nav a:hover{color:var(--fg)}
+nav a:hover::after{width:100%}
+.nav-tools{display:flex;align-items:center;gap:.5rem;flex-shrink:0}
+.tool-btn{
+  font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+  border:1px solid var(--border);border-radius:999px;padding:.35rem .7rem;
+  transition:color .2s ease,border-color .2s ease,background-color .2s ease;
+  font-family:var(--font-mono);white-space:nowrap;
+}
+.tool-btn:hover{color:var(--fg);border-color:var(--fg)}
+.lang-btn b{color:var(--fg);font-weight:600}
+
+/* ─────────────────────────── hero ─────────────────────────── */
+#hero{
+  min-height:85vh;display:flex;flex-direction:column;justify-content:center;
+  padding-top:3rem;padding-bottom:3rem;position:relative;
+}
+@media(min-width:640px){#hero{min-height:92vh}}
+#hero h1{
+  font-size:clamp(2.5rem,11vw,8rem);font-weight:700;letter-spacing:-.03em;line-height:.9;
+  margin:.75rem 0 1.25rem;cursor:default;
+}
+#hero h1 span{display:inline-block;transition:transform .3s cubic-bezier(.2,.8,.3,1),color .3s ease}
+#hero h1 span:hover{transform:translateY(-.08em);color:var(--accent)}
+.typeline{
+  font-size:clamp(1rem,3.2vw,1.75rem);color:var(--muted);font-weight:500;
+  min-height:1.8em;letter-spacing:-.02em;
+}
+.caret{display:inline-block;width:.06em;height:1em;background:var(--accent);
+  vertical-align:-.12em;margin-left:.08em;animation:blink 1.05s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.badges{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.75rem 0 2.25rem}
+.badge{
+  display:inline-flex;align-items:center;gap:.45rem;
+  border:1px solid var(--border);border-radius:999px;padding:.4rem .85rem;
+  font-size:.75rem;letter-spacing:.02em;color:var(--muted);background:var(--card);
+  transition:border-color .25s ease,color .25s ease,transform .25s ease;
+}
+.badge:hover{border-color:var(--accent);color:var(--fg);transform:translateY(-2px)}
+.badge i{width:5px;height:5px;border-radius:999px;background:var(--accent);flex:none}
+.cta-row{display:flex;flex-wrap:wrap;gap:.75rem}
+.btn{
+  display:inline-flex;align-items:center;gap:.5rem;border-radius:999px;
+  padding:.7rem 1.4rem;font-size:.875rem;font-weight:500;
+  border:1px solid var(--fg);background:var(--fg);color:var(--bg);
+  transition:transform .2s ease,opacity .2s ease;
+}
+.btn:hover{transform:translateY(-2px);opacity:.9}
+.btn.ghost{background:transparent;color:var(--fg);border-color:var(--border)}
+.btn.ghost:hover{border-color:var(--fg)}
+.scroll-hint{
+  position:absolute;bottom:1.5rem;left:1rem;font-family:var(--font-mono);
+  font-size:.625rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+  animation:float 2.4s ease-in-out infinite;
+}
+@media(min-width:640px){.scroll-hint{left:1.5rem}}
+@media(min-width:1024px){.scroll-hint{left:2rem}}
+@keyframes float{0%,100%{transform:translateY(0);opacity:.55}50%{transform:translateY(5px);opacity:1}}
+
+/* ─────────────────────────── sections ─────────────────────────── */
+section{scroll-margin-top:5rem}
+.sec-head{display:flex;align-items:baseline;gap:1rem;margin-bottom:2.5rem}
+.sec-head h2{font-size:clamp(1.75rem,4vw,2.25rem);font-weight:700;letter-spacing:-.02em;margin:0}
+.sec-head .rule{flex:1;height:1px;background:var(--border)}
+.sec-head .idx{font-family:var(--font-mono);font-size:.75rem;color:var(--muted)}
+
+#focus{padding:2.5rem 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.focus-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem 1rem}
+@media(min-width:900px){.focus-grid{grid-template-columns:repeat(5,1fr)}}
+.focus-item h3{font-size:.9375rem;font-weight:600;margin:0 0 .35rem;line-height:1.3}
+.focus-item p{margin:0;font-size:.8125rem;color:var(--muted);line-height:1.5}
+.focus-item{position:relative;padding-left:.85rem}
+.focus-item::before{
+  content:"";position:absolute;left:0;top:.35em;width:3px;height:1.1em;border-radius:2px;
+  background:var(--accent);opacity:.65;
+}
+
+#experience,#projects{padding:3.5rem 0 5rem}
+.exp-row{
+  display:block;padding:1.5rem 0;border-top:1px solid var(--border);
+  transition:padding-left .3s cubic-bezier(.2,.8,.3,1);
+}
+.exp-row:hover{padding-left:.75rem}
+.exp-top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.5rem}
+.exp-top h3{font-size:1.0625rem;font-weight:700;margin:0;letter-spacing:-.015em}
+.exp-date{font-family:var(--font-mono);font-size:.75rem;color:var(--muted);white-space:nowrap}
+.exp-org{font-size:.9375rem;color:var(--accent);margin:.3rem 0 .6rem;font-weight:500}
+.exp-desc{margin:0 0 .9rem;color:var(--muted);font-size:.9375rem;max-width:60ch}
+.tags{display:flex;flex-wrap:wrap;gap:.4rem}
+.tag{
+  font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.01em;
+  border:1px solid var(--border);border-radius:.375rem;padding:.2rem .5rem;color:var(--muted);
+  transition:border-color .2s ease,color .2s ease;
+}
+.exp-row:hover .tag,.proj-card:hover .tag{border-color:color-mix(in srgb,var(--accent) 45%,var(--border));color:var(--fg)}
+.tag.more{color:var(--accent);border-style:dashed;cursor:pointer}
+
+.proj-grid{display:grid;grid-template-columns:1fr;gap:1rem}
+@media(min-width:768px){.proj-grid{grid-template-columns:repeat(2,1fr)}
+  .proj-card.feature{grid-column:span 2}}
+.proj-card{
+  display:flex;flex-direction:column;background:var(--card);border:1px solid var(--border);
+  border-radius:.75rem;padding:1.4rem;transition:border-color .3s ease,background-color .3s ease,transform .3s ease;
+}
+.proj-card:hover{border-color:color-mix(in srgb,var(--accent) 40%,var(--border));background:var(--card-hover);transform:translateY(-3px)}
+.proj-card h3{font-size:1.0625rem;font-weight:600;margin:0 0 .1rem;letter-spacing:-.015em}
+.proj-card.feature h3{font-size:1.25rem}
+.proj-card .sub{font-size:.8125rem;color:var(--accent);margin:0 0 .7rem}
+.proj-card p.body{margin:0 0 1rem;color:var(--muted);font-size:.875rem;flex:1}
+.proj-links{display:flex;gap:1rem;margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--border)}
+.proj-links a,.proj-links span{
+  font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);display:inline-flex;align-items:center;gap:.35rem;transition:color .2s ease;
+}
+.proj-links a:hover{color:var(--accent)}
+.proj-links span{opacity:.55}
+
+#opensource{padding:3.5rem 0 5rem}
+.repo-grid{display:grid;grid-template-columns:1fr;gap:.75rem}
+@media(min-width:700px){.repo-grid{grid-template-columns:repeat(2,1fr)}}
+.repo{
+  display:flex;align-items:center;gap:.9rem;border:1px solid var(--border);border-radius:.625rem;
+  padding:.95rem 1.1rem;background:var(--card);transition:border-color .25s ease,transform .25s ease,background-color .25s ease;
+}
+.repo:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--border));background:var(--card-hover);transform:translateX(3px)}
+.repo svg{flex:none;opacity:.7}
+.repo .rname{font-family:var(--font-mono);font-size:.8125rem;font-weight:500}
+.repo .rdesc{font-size:.75rem;color:var(--muted);margin-top:.15rem}
+.repo .arrow{margin-left:auto;color:var(--muted);transition:transform .25s ease,color .25s ease}
+.repo:hover .arrow{transform:translateX(3px);color:var(--accent)}
+
+#contact{padding:4rem 0;text-align:center;display:flex;flex-direction:column;align-items:center}
+#contact h2{font-size:clamp(1.75rem,4vw,2.25rem);font-weight:700;letter-spacing:-.02em;margin:0 0 .9rem}
+#contact p.lead{color:var(--muted);max-width:46ch;margin:0 auto 2rem}
+.mail{
+  font-size:clamp(1.1rem,4vw,2rem);font-weight:600;letter-spacing:-.02em;
+  border-bottom:1px solid var(--border);padding-bottom:.15rem;transition:border-color .25s ease,color .25s ease;
+  word-break:break-all;
+}
+.mail:hover{color:var(--accent);border-color:var(--accent)}
+.socials{display:flex;gap:1.5rem;margin-top:2rem;flex-wrap:wrap;justify-content:center}
+.socials a{
+  font-family:var(--font-mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);transition:color .2s ease;
+}
+.socials a:hover{color:var(--fg)}
+
+footer{border-top:1px solid var(--border);padding:2rem 0;margin-top:1rem}
+.foot-row{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:space-between;
+  font-family:var(--font-mono);font-size:.6875rem;color:var(--muted);letter-spacing:.03em}
+
+/* ─────────────────────────── reveal ─────────────────────────── */
+.reveal{opacity:0;transform:translateY(18px)}
+.reveal.in{opacity:1;transform:none;transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.3,1)}
+@media(prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none}
+  .caret{animation:none}
+  .scroll-hint{animation:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<header id="site-header">
+  <div class="wrap nav-row">
+    <nav id="nav"></nav>
+    <div class="nav-tools">
+      <button class="tool-btn lang-btn" id="lang-toggle" type="button"></button>
+      <button class="tool-btn" id="theme-toggle" type="button"></button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="hero" class="wrap">
+    <p class="eyebrow" data-k="hero.eyebrow"></p>
+    <h1 id="hero-name"></h1>
+    <p class="typeline"><span id="type"></span><span class="caret"></span></p>
+    <div class="badges" id="badges"></div>
+    <div class="cta-row">
+      <a class="btn" href="#contact" data-k="hero.cta1"></a>
+      <a class="btn ghost" href="resume.pdf" download data-k="hero.cta2"></a>
+    </div>
+    <span class="scroll-hint" data-k="hero.scroll"></span>
+  </section>
+
+  <section id="focus">
+    <div class="wrap focus-grid reveal" id="focus-grid"></div>
+  </section>
+
+  <section id="experience" class="wrap">
+    <div class="sec-head reveal">
+      <h2 data-k="sec.experience"></h2><span class="rule"></span><span class="idx">01</span>
+    </div>
+    <div id="exp-list"></div>
+  </section>
+
+  <section id="projects" class="wrap">
+    <div class="sec-head reveal">
+      <h2 data-k="sec.projects"></h2><span class="rule"></span><span class="idx">02</span>
+    </div>
+    <div class="proj-grid" id="proj-grid"></div>
+  </section>
+
+  <section id="opensource" class="wrap">
+    <div class="sec-head reveal">
+      <h2 data-k="sec.opensource"></h2><span class="rule"></span><span class="idx">03</span>
+    </div>
+    <div class="repo-grid" id="repo-grid"></div>
+  </section>
+
+  <section id="contact" class="wrap reveal">
+    <h2 data-k="contact.title"></h2>
+    <p class="lead" data-k="contact.lead"></p>
+    <a class="mail" id="mail-link"></a>
+    <div class="socials" id="socials"></div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot-row">
+    <span id="foot-left"></span>
+    <span data-k="foot.right"></span>
+  </div>
+</footer>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════════
+   КОНТЕНТ — правится только здесь. Каждое поле: {en: "...", ru: "..."}
+   ══════════════════════════════════════════════════════════════════════ */
+const ME = {
+  name:   { en: "Pavel Diordits", ru: "Павел Диордиц" },
+  email:  "pavel.diordits@yandex.ru",
+  github: "https://github.com/DiorditsPV",
+  github2:"https://github.com/shlgd",
+};
+
+const T = {
+  nav: [
+    { id:"focus",      en:"Focus",       ru:"Фокус" },
+    { id:"experience", en:"Experience",  ru:"Опыт" },
+    { id:"projects",   en:"Projects",    ru:"Проекты" },
+    { id:"opensource", en:"Open Source", ru:"Open Source" },
+    { id:"contact",    en:"Contact",     ru:"Контакты" },
+  ],
+  "hero.eyebrow": { en:"Lead Data Engineer · 6+ years in data · Moscow",
+                    ru:"Lead Data Engineer · 6+ лет в данных · Москва" },
+  "hero.cta1":    { en:"Get in Touch",    ru:"Написать" },
+  "hero.cta2":    { en:"Download Resume", ru:"Скачать резюме" },
+  "hero.scroll":  { en:"Scroll",          ru:"Листай" },
+  "sec.experience": { en:"Experience",  ru:"Опыт" },
+  "sec.projects":   { en:"Projects",    ru:"Проекты" },
+  "sec.opensource": { en:"Open Source", ru:"Open Source" },
+  "contact.title":  { en:"Get in Touch", ru:"Связаться" },
+  "contact.lead": {
+    en:"Open to conversations about data platforms, pipeline architecture and high-load data services.",
+    ru:"Открыт к разговору про дата-платформы, архитектуру пайплайнов и высоконагруженные сервисы данных.",
+  },
+  "foot.right": { en:"Built from scratch · no trackers", ru:"Собран руками · без трекеров" },
+
+  typewriter: {
+    en: ["Lead Data Engineer","Go & Python data services","Airflow · Spark · Kafka · dbt","DWH and Data Lake design"],
+    ru: ["Lead Data Engineer","Сервисы данных на Go и Python","Airflow · Spark · Kafka · dbt","Проектирование DWH и Data Lake"],
+  },
+
+  badges: [
+    { en:"Go · Python · SQL",       ru:"Go · Python · SQL" },
+    { en:"Batch & streaming",       ru:"Batch и streaming" },
+    { en:"DWH / Data Lake",         ru:"DWH / Data Lake" },
+  ],
+
+  /* верхняя лента — сильные стороны цифрами, языком нанимающего менеджера */
+  focus: [
+    { t:{en:"6+ years in data",    ru:"6+ лет в данных"},
+      d:{en:"Lead engineer since 2022, across retail, banking and public sector",
+         ru:"Ведущий инженер с 2022 года: ритейл, банк, госсектор"} },
+    { t:{en:"High-load services", ru:"Высокая нагрузка"},
+      d:{en:"Go services up to 3000 rps, 100% test coverage",
+         ru:"Сервисы на Go до 3000 rps, 100% покрытие тестами"} },
+    { t:{en:"Pipelines",          ru:"Пайплайны"},
+      d:{en:"Airflow · Spark · Kafka · dbt, batch and near-realtime",
+         ru:"Airflow · Spark · Kafka · dbt, batch и near-realtime"} },
+    { t:{en:"DWH & Data Lake",    ru:"DWH и Data Lake"},
+      d:{en:"Data Vault modelling, marts, data catalog publication",
+         ru:"Моделирование Data Vault, витрины, публикация в каталоге данных"} },
+    { t:{en:"Production ownership", ru:"Ответственность за прод"},
+      d:{en:"24/7 on-call, under one P1 incident per month",
+         ru:"Дежурства 24/7, меньше одного инцидента P1 в месяц"} },
+  ],
+
+  experience: [
+    {
+      role:{en:"Data Engineer", ru:"Data Engineer"},
+      org: {en:"Grocery retail — supply chain platform", ru:"Продуктовый ритейл — платформа цепочки поставок"},
+      date:{en:"2025 — present", ru:"2025 — настоящее время"},
+      desc:{
+        en:"Data platform behind demand forecasting and replenishment planning: pipelines from source ingestion through distributed computation to business-facing marts, and integration with the forecasting engine. Separated the team's development, testing and production environments so releases stop competing for one stand.",
+        ru:"Дата-платформа под прогноз спроса и планирование пополнения: пайплайны от загрузки источников через распределённые расчёты до витрин для бизнеса и интеграция с движком прогнозирования. Развёл контуры разработки, тестирования и прода, чтобы релизы перестали конкурировать за один стенд.",
+      },
+      tags:["Python","Airflow","Spark","Trino","Iceberg","PostgreSQL","Kubernetes","S3"],
+    },
+    {
+      role:{en:"Lead Data Engineer / Golang Developer", ru:"Lead Data Engineer / Golang-разработчик"},
+      org: {en:"Ozon Tech", ru:"Ozon Tech"},
+      date:{en:"Dec 2022 — 2025", ru:"Декабрь 2022 — 2025"},
+      desc:{
+        en:"Replaced the streaming stack with Go services that rebuild the sales model straight from core-system data, removing the team's dependency on other teams' feeds: Kafka consumers with gRPC enrichment, up to 3000 rps at 100% test coverage, rated high-critical and held under one P1 incident a month. Set up the team's dbt and Airflow development process with CI/CD across staging and production, and shipped shared ETL and Go client libraries. On-call 24/7 for first-priority incidents.",
+        ru:"Заменил streaming-стек сервисами на Go, которые собирают модель продаж напрямую из данных core-системы и снимают зависимость команды от чужих поставок: потребители Kafka с обогащением через gRPC, до 3000 rps при 100% покрытии тестами, уровень high-critical и меньше одного инцидента P1 в месяц. Выстроил командный процесс разработки на dbt и Airflow с CI/CD для stage и прода, написал общие ETL- и Go-библиотеки. Дежурства 24/7 по инцидентам первого приоритета.",
+      },
+      tags:["Go","Python","Kafka","gRPC","Airflow","dbt","HDFS","PostgreSQL","Redis"],
+    },
+    {
+      role:{en:"Data Engineer", ru:"Data Engineer"},
+      org: {en:"Sber", ru:"Сбер"},
+      date:{en:"Sep 2021 — Dec 2022", ru:"Сентябрь 2021 — декабрь 2022"},
+      desc:{
+        en:"Built the warehouse behind marketing analytics and customer communications across the ecosystem's products, and migrated legacy Teradata and SAP processes onto a Hadoop stack. Delivered customer scoring and segmentation marts published to the corporate data catalog, with documentation, tests and ongoing support.",
+        ru:"Построил хранилище под аналитику маркетинга и коммуникации с клиентами по продуктам экосистемы, перевёл legacy-процессы с Teradata и SAP на Hadoop-стек. Сделал витрины скоринга и сегментации клиентов с публикацией в корпоративном каталоге данных — с документацией, тестами и сопровождением.",
+      },
+      tags:["Scala","Spark","Hadoop","Oozie","Teradata","SAP","SQL"],
+    },
+    {
+      role:{en:"Data Engineer", ru:"Data Engineer"},
+      org: {en:"Moscow Department of Information Technology", ru:"ДИТ города Москвы"},
+      date:{en:"Mar 2020 — Sep 2021", ru:"Март 2020 — сентябрь 2021"},
+      desc:{
+        en:"Designed a Data Vault warehouse and wrote the library that integrates sources and routes data across its components. Built the publication process for the datamart layer in the data catalog and delivered interagency data transport and enrichment projects.",
+        ru:"Спроектировал хранилище по модели Data Vault и написал библиотеку интеграции источников и распределения данных по компонентам. Сделал процесс публикации витрин в каталоге данных и реализовал проекты межведомственного транспорта и обогащения данных.",
+      },
+      tags:["Python","Kafka","Airflow","Data Vault","SQL"],
+    },
+  ],
+
+  education: [
+    {
+      role:{en:"BSc, Supply Chain Management", ru:"Специалитет — управление цепями поставок"},
+      org: {en:"MADI — Moscow Automobile and Road State Technical University", ru:"МАДИ (ГТУ)"},
+      date:{en:"2018", ru:"2018"},
+    },
+  ],
+
+  projects: [
+    { feature:true,
+      name:"SuperDictate",
+      sub:{en:"Local speech-to-text for macOS", ru:"Локальная диктовка для macOS"},
+      desc:{
+        en:"Press right ⌘, speak, press again — the text lands wherever the cursor is. Recognition runs fully on-device on Apple Silicon: neither the audio nor the transcript ever leaves the machine. Ships as a one-line installer with self-update.",
+        ru:"Нажал правый ⌘, сказал, нажал ещё раз — текст встал туда, где курсор. Распознавание целиком на устройстве, на Apple Silicon: ни аудио, ни расшифровка не уходят в облако. Ставится одной командой, обновляется сам.",
+      },
+      tags:["Swift","Apple Silicon","on-device ASR","macOS"],
+      source:"https://github.com/shlgd/SuperDictate" },
+
+    { name:"loop-feature",
+      sub:{en:"Agent delivers a feature per branch", ru:"Агент везёт фичу на ветку"},
+      desc:{
+        en:"A framework where the agent designs, builds, verifies and ships features one branch at a time. Skills plus thin plumbing, droppable into any repo; state lives in a markdown doc-store, code on feature/<slug> branches.",
+        ru:"Фреймворк, где агент проектирует, собирает, проверяет и выкатывает фичи — по одной на ветку. Скиллы плюс лёгкая обвязка, ставится в любой репозиторий: состояние в markdown-doc-store, код на ветках feature/<slug>.",
+      },
+      tags:["Claude Code","YAML flows","markdown store"] },
+
+    { name:"hub-hub",
+      sub:{en:"Visual flow editor", ru:"Визуальный редактор флоу"},
+      desc:{
+        en:"A node graph where every node is a flow stage with its own parameters — assembling and editing flows by eye instead of hand-writing YAML. Shipped as a multi-stage Docker build with nginx serving the static bundle.",
+        ru:"Нода-граф, где каждая нода — стейдж флоу со своими параметрами: флоу собираются и правятся глазами, а не руками в YAML. Едет multi-stage Docker-сборкой, статику раздаёт nginx.",
+      },
+      tags:["React","TypeScript","React Flow","Vite","Docker"] },
+
+    { name:"proxy-check",
+      sub:{en:"Do my proxies actually work right now?", ru:"Работают ли прокси прямо сейчас"},
+      desc:{
+        en:"One command answers whether traffic really passes through personal proxies and VPNs — not whether a port is listening. Measures egress IP and throughput, and grades each target OK / DEGRADED / FAIL.",
+        ru:"Одна команда отвечает, проходит ли через личные прокси и VPN реальный трафик, а не «слушает ли порт». Меряет egress-IP и скорость, размечает каждую цель как OK / DEGRADED / FAIL.",
+      },
+      tags:["CLI","socks5","wireguard","vless","mtproto"] },
+
+    { name:"ClawdIcons",
+      sub:{en:"VS Code icons for Claude Code", ru:"Иконки VS Code для Claude Code"},
+      desc:{
+        en:"File and folder icons for Claude Code artifacts, merged on top of whatever icon theme you already use, with path-aware badges — only the paths Claude Code actually loads from get painted.",
+        ru:"Иконки файлов и папок Claude Code поверх твоей текущей icon-темы, с бейджами по путям: подсвечиваются только те каталоги, откуда Claude Code реально читает.",
+      },
+      tags:["VS Code","TypeScript","icon theme"],
+      source:"https://github.com/DiorditsPV/vscode-claude-icons" },
+
+    { name:"dotfiles",
+      sub:{en:"Two machines, one source of truth", ru:"Две машины, один источник правды"},
+      desc:{
+        en:"Personal Claude Code configuration and the whole repo tree as code: profiles for personal and work setups, skills, settings, secrets layout and bootstrap scripts — pulled automatically on session start.",
+        ru:"Личная конфигурация Claude Code и всё дерево репозиториев как код: профили personal/work, скиллы, настройки, раскладка секретов и bootstrap-скрипты — подтягиваются сами на старте сессии.",
+      },
+      tags:["zsh","tmux","bootstrap","YAML"],
+      source:"https://github.com/DiorditsPV/dotfiles" },
+  ],
+
+  repos: [
+    { name:"shlgd/SuperDictate",
+      d:{en:"On-device dictation for macOS", ru:"Локальная диктовка для macOS"},
+      url:"https://github.com/shlgd/SuperDictate" },
+    { name:"DiorditsPV/dotfiles",
+      d:{en:"Claude Code config & repo tree as code", ru:"Конфиг Claude Code и дерево репозиториев"},
+      url:"https://github.com/DiorditsPV/dotfiles" },
+    { name:"DiorditsPV/vscode-claude-icons",
+      d:{en:"Icon theme for Claude Code artifacts", ru:"Icon-тема для артефактов Claude Code"},
+      url:"https://github.com/DiorditsPV/vscode-claude-icons" },
+    { name:"DiorditsPV/claude-skills",
+      d:{en:"Public skill library", ru:"Публичная библиотека скиллов"},
+      url:"https://github.com/DiorditsPV/claude-skills" },
+  ],
+
+  socials: [
+    { label:"GitHub",   url:"https://github.com/DiorditsPV" },
+    { label:"shlgd",    url:"https://github.com/shlgd" },
+    { label:"Telegram", url:"https://t.me/" },   /* ← подставь свой ник */
+  ],
+};
+
+/* ══════════════════════════════════════════════════════════════════════
+   РЕНДЕР
+   ══════════════════════════════════════════════════════════════════════ */
+const $  = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const L = o => (o && typeof o === 'object' && ('en' in o)) ? (o[lang] ?? o.en) : o;
+
+let lang = localStorage.getItem('lang') || ((navigator.language || '').startsWith('ru') ? 'ru' : 'en');
+if (!['ru','en'].includes(lang)) lang = 'en';
+
+const ICON_GH = '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>';
+const ICON_ARROW = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12L12 4M12 4H6M12 4v6"/></svg>';
+
+function tagsHtml(tags, max = 4) {
+  const shown = tags.slice(0, max).map(t => `<span class="tag">${esc(t)}</span>`).join('');
+  const rest  = tags.length - max;
+  return `<div class="tags">${shown}${rest > 0 ? `<span class="tag more">+${rest}</span>` : ''}</div>`;
+}
+
+function render() {
+  document.documentElement.lang = lang;
+
+  // простые текстовые ключи
+  $$('[data-k]').forEach(el => { el.textContent = L(T[el.dataset.k]); });
+
+  // навигация
+  $('#nav').innerHTML = T.nav
+    .map(n => `<a href="#${n.id}">${esc(n[lang])}</a>`).join('');
+
+  // имя героя — по буквам, чтобы каждая реагировала на курсор
+  $('#hero-name').innerHTML = L(ME.name).split('').map(ch =>
+    ch === ' ' ? ' ' : `<span>${esc(ch)}</span>`).join('');
+
+  // бейджи
+  $('#badges').innerHTML = T.badges
+    .map(b => `<span class="badge"><i></i>${esc(L(b))}</span>`).join('');
+
+  // фокус
+  $('#focus-grid').innerHTML = T.focus.map(f =>
+    `<div class="focus-item"><h3>${esc(L(f.t))}</h3><p>${esc(L(f.d))}</p></div>`).join('');
+
+  // опыт + образование
+  const expRow = e => `
+    <article class="exp-row reveal">
+      <div class="exp-top">
+        <h3>${esc(L(e.role))}</h3>
+        <span class="exp-date">${esc(L(e.date))}</span>
+      </div>
+      <p class="exp-org">${esc(L(e.org))}</p>
+      ${e.desc ? `<p class="exp-desc">${esc(L(e.desc))}</p>` : ''}
+      ${e.tags && e.tags.length ? tagsHtml(e.tags, 5) : ''}
+    </article>`;
+  const eduLabel = { en:"Education", ru:"Образование" };
+  $('#exp-list').innerHTML =
+    T.experience.map(expRow).join('') +
+    `<p class="eyebrow reveal" style="margin:2.5rem 0 .25rem">${esc(L(eduLabel))}</p>` +
+    T.education.map(expRow).join('');
+
+  // проекты
+  const lbl = { source:{en:"Source",ru:"Исходники"}, priv:{en:"Private",ru:"Приватный"} };
+  $('#proj-grid').innerHTML = T.projects.map(p => `
+    <article class="proj-card reveal${p.feature ? ' feature' : ''}">
+      <h3>${esc(p.name)}</h3>
+      <p class="sub">${esc(L(p.sub))}</p>
+      <p class="body">${esc(L(p.desc))}</p>
+      ${tagsHtml(p.tags, p.feature ? 6 : 3)}
+      <div class="proj-links">
+        ${p.source
+          ? `<a href="${esc(p.source)}" target="_blank" rel="noopener">${ICON_GH}${esc(L(lbl.source))}</a>`
+          : `<span>${esc(L(lbl.priv))}</span>`}
+      </div>
+    </article>`).join('');
+
+  // репозитории
+  $('#repo-grid').innerHTML = T.repos.map(r => `
+    <a class="repo reveal" href="${esc(r.url)}" target="_blank" rel="noopener">
+      ${ICON_GH}
+      <span><span class="rname">${esc(r.name)}</span><span class="rdesc" style="display:block">${esc(L(r.d))}</span></span>
+      <span class="arrow">${ICON_ARROW}</span>
+    </a>`).join('');
+
+  // контакты
+  const mail = $('#mail-link');
+  mail.textContent = ME.email; mail.href = `mailto:${ME.email}`;
+  $('#socials').innerHTML = T.socials
+    .map(s => `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)}</a>`).join('');
+
+  $('#foot-left').textContent = `© ${new Date().getFullYear()} ${L(ME.name)}`;
+  $('#lang-toggle').innerHTML = lang === 'ru' ? '<b>RU</b> / EN' : 'RU / <b>EN</b>';
+  syncThemeLabel();
+  observeReveals();
+  restartTypewriter();
+}
+
+/* ── тема ── */
+function syncThemeLabel() {
+  const dark = document.documentElement.classList.contains('dark');
+  $('#theme-toggle').textContent = lang === 'ru'
+    ? (dark ? 'Светлая' : 'Тёмная')
+    : (dark ? 'Light' : 'Dark');
+}
+$('#theme-toggle').addEventListener('click', () => {
+  const dark = document.documentElement.classList.toggle('dark');
+  localStorage.setItem('theme', dark ? 'dark' : 'light');
+  syncThemeLabel();
+});
+(function initTheme() {
+  const saved = localStorage.getItem('theme');
+  const prefersDark = !window.matchMedia('(prefers-color-scheme: light)').matches;
+  document.documentElement.classList.toggle('dark', saved ? saved === 'dark' : prefersDark);
+})();
+
+/* ── язык ── */
+$('#lang-toggle').addEventListener('click', () => {
+  lang = lang === 'ru' ? 'en' : 'ru';
+  localStorage.setItem('lang', lang);
+  render();
+});
+
+/* ── печатающая строка ── */
+let typeTimer = null;
+function restartTypewriter() {
+  clearTimeout(typeTimer);
+  const el = $('#type');
+  const phrases = T.typewriter[lang];
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    el.textContent = phrases[0];
+    return;
+  }
+  let i = 0, pos = 0, erasing = false;
+  const step = () => {
+    const word = phrases[i];
+    pos += erasing ? -1 : 1;
+    el.textContent = word.slice(0, pos);
+    let delay = erasing ? 32 : 62;
+    if (!erasing && pos === word.length) { erasing = true; delay = 1600; }
+    else if (erasing && pos === 0) { erasing = false; i = (i + 1) % phrases.length; delay = 320; }
+    typeTimer = setTimeout(step, delay);
+  };
+  el.textContent = '';
+  typeTimer = setTimeout(step, 420);
+}
+
+/* ── появление секций при скролле ── */
+let io = null;
+function observeReveals() {
+  if (io) io.disconnect();
+  io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: .08 });
+  $$('.reveal').forEach((el, n) => {
+    el.style.transitionDelay = `${Math.min(n % 6, 5) * 55}ms`;
+    io.observe(el);
+  });
+}
+
+/* ── рамка у липкой шапки после скролла ── */
+const header = $('#site-header');
+const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 12);
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+render();
+</script>
+</body>
+</html>
