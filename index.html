@@ -52,7 +52,17 @@ header{
 }
 header.scrolled{border-bottom-color:var(--border)}
 .nav-row{display:flex;align-items:center;justify-content:space-between;gap:1rem}
-nav{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+nav{
+  display:flex;align-items:center;gap:.75rem;
+  /* Узкий экран: одна строка с горизонтальной прокруткой вместо переноса под кнопки. */
+  overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;
+}
+nav::-webkit-scrollbar{display:none}
+/* Затухание у правого края: обрезанный пункт читается как «есть ещё», а не как брак вёрстки. */
+@media(max-width:639px){
+  nav{-webkit-mask-image:linear-gradient(to right,#000 82%,transparent);mask-image:linear-gradient(to right,#000 82%,transparent)}
+}
+nav a{white-space:nowrap}
 @media(min-width:640px){nav{gap:1.5rem}}
 nav a{
   font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);
@@ -325,8 +335,8 @@ const T = {
   "foot.right": { en:"Built from scratch · no trackers", ru:"Собран руками · без трекеров" },
 
   typewriter: {
-    en: ["Lead Data Engineer","Go & Python data services","Airflow · Spark · Kafka · dbt","DWH and Data Lake design"],
-    ru: ["Lead Data Engineer","Сервисы данных на Go и Python","Airflow · Spark · Kafka · dbt","Проектирование DWH и Data Lake"],
+    en: ["Go & Python data services","Airflow · Spark · Kafka · dbt","DWH and Data Lake design","Platforms other teams build on"],
+    ru: ["Сервисы данных на Go и Python","Airflow · Spark · Kafka · dbt","Проектирование DWH и Data Lake","Платформы, на которых работают другие команды"],
   },
 
   badges: [
@@ -437,8 +447,8 @@ const T = {
     { name:"interview-graph",
       sub:{en:"The whole interview on one board", ru:"Всё интервью на одной доске"},
       desc:{
-        en:"Questions for the data engineering stack laid out on a canvas — a column per track, ranked by difficulty inside it — so an interviewer scores from the keyboard and sees coverage build up instead of ticking a flat checklist. The session ends as a self-contained HTML report on the candidate, and candidates can be compared track by track. The bank lives as Markdown seeded into SQLite, editable in git or in the app.",
-        ru:"Вопросы по дата-инженерному стеку разложены на канве — колонка на направление, внутри по сложности: интервьюер ставит оценки с клавиатуры и видит, как набирается покрытие, вместо плоского чеклиста. На выходе — самодостаточный HTML-отчёт по кандидату и сравнение кандидатов по направлениям. Банк вопросов лежит в Markdown, из которого собирается SQLite, и правится хоть в гите, хоть в интерфейсе.",
+        en:"Questions for the data engineering stack laid out on a canvas — a column per track, ranked by difficulty inside it. The interviewer scores from the keyboard and watches coverage build up; the session ends as a self-contained HTML report on the candidate.",
+        ru:"Вопросы по дата-инженерному стеку разложены на канве: колонка на направление, внутри — по сложности. Интервьюер ставит оценки с клавиатуры и видит, как набирается покрытие, а на выходе получает самодостаточный HTML-отчёт по кандидату.",
       },
       tags:["FastAPI","React Flow","Python","TypeScript"],
       source:"https://github.com/DiorditsPV/interview-graph" },
