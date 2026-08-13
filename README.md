@@ -13,8 +13,13 @@
 | **Проекты.** Карточки с подзаголовком-тезисом, стеком и ссылкой на исходники; приватные помечены.<br><br>[![Проекты](docs/screenshots/02-projects.png)](docs/screenshots/02-projects.png) | **Опыт.** Хронология с датами моноширинным, компанией акцентом и коротким описанием роли.<br><br>[![Опыт](docs/screenshots/03-experience.png)](docs/screenshots/03-experience.png) |
 | **Светлая тема.** Переключается в шапке, выбор запоминается.<br><br>[![Светлая тема](docs/screenshots/04-hero-light.png)](docs/screenshots/04-hero-light.png) | **Мобильный экран.** Навигация в одну строку с прокруткой, крупная типографика.<br><br>[![Мобильный экран](docs/screenshots/05-mobile.png)](docs/screenshots/05-mobile.png) |
 
-Пересобрать скриншоты: `node tools/screenshots.mjs` (нужен глобальный playwright —
-`npm i -g playwright && npx playwright install chromium`). Сам сайт зависимостей не имеет.
+Пересобрать скриншоты (сайт по-прежнему без зависимостей — playwright ставится рядом,
+`node_modules/` в `.gitignore`):
+
+```bash
+npm i --no-save playwright && npx playwright install chromium
+node tools/screenshots.mjs        # → docs/screenshots/
+```
 
 ## Что внутри
 
