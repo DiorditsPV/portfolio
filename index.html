@@ -244,7 +244,9 @@ footer{border-top:1px solid var(--border);padding:2rem 0;margin-top:1rem}
     <div class="badges" id="badges"></div>
     <div class="cta-row">
       <a class="btn" href="#contact" data-k="hero.cta1"></a>
+      <!-- Кнопка резюме: положи resume.pdf рядом с index.html и раскомментируй строку ниже.
       <a class="btn ghost" href="resume.pdf" download data-k="hero.cta2"></a>
+      -->
     </div>
     <span class="scroll-hint" data-k="hero.scroll"></span>
   </section>
@@ -297,7 +299,6 @@ const ME = {
   name:   { en: "Pavel Diordits", ru: "Павел Диордиц" },
   email:  "pavel.diordits@yandex.ru",
   github: "https://github.com/DiorditsPV",
-  github2:"https://github.com/shlgd",
 };
 
 const T = {
@@ -359,8 +360,8 @@ const T = {
       org: {en:"Grocery retail — supply chain platform", ru:"Продуктовый ритейл — платформа цепочки поставок"},
       date:{en:"2025 — present", ru:"2025 — настоящее время"},
       desc:{
-        en:"Data platform behind demand forecasting and replenishment planning: pipelines from source ingestion through distributed computation to business-facing marts, and integration with the forecasting engine. Separated the team's development, testing and production environments so releases stop competing for one stand.",
-        ru:"Дата-платформа под прогноз спроса и планирование пополнения: пайплайны от загрузки источников через распределённые расчёты до витрин для бизнеса и интеграция с движком прогнозирования. Развёл контуры разработки, тестирования и прода, чтобы релизы перестали конкурировать за один стенд.",
+        en:"Data platform behind demand forecasting and replenishment planning: pipelines from source ingestion through distributed computation to business-facing marts. Rebuilt the delivery setup so development, testing and production no longer share one environment, which took release conflicts out of the team's day.",
+        ru:"Дата-платформа под прогноз спроса и планирование пополнения: пайплайны от загрузки источников через распределённые расчёты до витрин для бизнеса. Перестроил поставку так, что разработка, тестирование и прод перестали делить одно окружение — конфликты релизов ушли из рабочего дня команды.",
       },
       tags:["Python","Airflow","Spark","Trino","Iceberg","PostgreSQL","Kubernetes","S3"],
     },
@@ -406,77 +407,97 @@ const T = {
 
   projects: [
     { feature:true,
-      name:"SuperDictate",
-      sub:{en:"Local speech-to-text for macOS", ru:"Локальная диктовка для macOS"},
+      name:"fetch-db",
+      sub:{en:"A realistic local copy of a remote database", ru:"Реалистичная локальная копия удалённой базы"},
       desc:{
-        en:"Press right ⌘, speak, press again — the text lands wherever the cursor is. Recognition runs fully on-device on Apple Silicon: neither the audio nor the transcript ever leaves the machine. Ships as a one-line installer with self-update.",
-        ru:"Нажал правый ⌘, сказал, нажал ещё раз — текст встал туда, где курсор. Распознавание целиком на устройстве, на Apple Silicon: ни аудио, ни расшифровка не уходят в облако. Ставится одной командой, обновляется сам.",
+        en:"Pulls the schema and a sampled slice of a remote PostgreSQL into a local Docker copy, so development runs offline against data shaped like production instead of competing for a shared stand. Sampling keeps referential integrity, so the copy is usable, not just present.",
+        ru:"Забирает схему и выборку данных удалённого PostgreSQL в локальную копию в Docker: разработка идёт офлайн на данных, похожих на прод, вместо борьбы за общий стенд. Выборка сохраняет связность, поэтому копией реально можно пользоваться.",
       },
-      tags:["Swift","Apple Silicon","on-device ASR","macOS"],
-      source:"https://github.com/shlgd/SuperDictate" },
+      tags:["Python","PostgreSQL","Docker","CLI"],
+      source:"https://github.com/DiorditsPV/fetch-db" },
 
-    { name:"loop-feature",
-      sub:{en:"Agent delivers a feature per branch", ru:"Агент везёт фичу на ветку"},
+    { feature:true,
+      name:"claude-skills",
+      sub:{en:"Skill marketplace where the data never leaks", ru:"Marketplace скиллов, из которого не утекают данные"},
       desc:{
-        en:"A framework where the agent designs, builds, verifies and ships features one branch at a time. Skills plus thin plumbing, droppable into any repo; state lives in a markdown doc-store, code on feature/<slug> branches.",
-        ru:"Фреймворк, где агент проектирует, собирает, проверяет и выкатывает фичи — по одной на ветку. Скиллы плюс лёгкая обвязка, ставится в любой репозиторий: состояние в markdown-doc-store, код на ветках feature/<slug>.",
+        en:"A plugin marketplace of personal agent skills, built on one rule: the code is public, the data a skill accumulates never is. Two branches carry the split — public code on the main branch, working data pushed only to a private remote — and git hooks enforce it mechanically, so the boundary holds without relying on discipline.",
+        ru:"Plugin-marketplace личных агентских скиллов, построенный на одном правиле: код публичный, а данные, которые скилл накапливает, — никогда. Разделение несут две ветки — публичный код в main, рабочие данные уходят только в приватный remote — и git-хуки держат его механически, поэтому граница не зависит от дисциплины.",
       },
-      tags:["Claude Code","YAML flows","markdown store"] },
+      tags:["Claude Code","git hooks","marketplace","Bash"],
+      source:"https://github.com/DiorditsPV/claude-skills" },
 
     { name:"hub-hub",
-      sub:{en:"Visual flow editor", ru:"Визуальный редактор флоу"},
+      sub:{en:"Visual editor for pipeline flows", ru:"Визуальный редактор пайплайн-флоу"},
       desc:{
-        en:"A node graph where every node is a flow stage with its own parameters — assembling and editing flows by eye instead of hand-writing YAML. Shipped as a multi-stage Docker build with nginx serving the static bundle.",
-        ru:"Нода-граф, где каждая нода — стейдж флоу со своими параметрами: флоу собираются и правятся глазами, а не руками в YAML. Едет multi-stage Docker-сборкой, статику раздаёт nginx.",
+        en:"A node graph where every node is a stage with its own parameters — flows are assembled and reviewed by eye instead of hand-written in YAML. Ships as a multi-stage Docker build behind nginx.",
+        ru:"Нода-граф, где каждая нода — стейдж со своими параметрами: флоу собираются и проверяются глазами, а не руками в YAML. Едет multi-stage Docker-сборкой за nginx.",
       },
       tags:["React","TypeScript","React Flow","Vite","Docker"] },
+
+    { name:"interview-graph",
+      sub:{en:"Interview questions as a map", ru:"Вопросы для интервью как карта"},
+      desc:{
+        en:"A question graph for technical interviews on the data engineering stack: topics and the links between them laid out as something you can walk, rather than a flat checklist.",
+        ru:"Граф вопросов для технических интервью по дата-инженерному стеку: темы и связи между ними как карта, по которой можно идти, а не плоский чеклист.",
+      },
+      tags:["FastAPI","React Flow","Python","TypeScript"],
+      source:"https://github.com/DiorditsPV/interview-graph" },
+
+    { name:"loop-feature",
+      sub:{en:"One feature per branch, start to finish", ru:"Одна фича на ветку, от начала до конца"},
+      desc:{
+        en:"A framework that walks an agent through designing, building, verifying and shipping a feature — one branch at a time. Drops into any repo: state lives in a markdown store, code on feature branches.",
+        ru:"Фреймворк, который проводит агента через проектирование, сборку, проверку и выкатку фичи — по одной на ветку. Ставится в любой репозиторий: состояние в markdown-хранилище, код на feature-ветках.",
+      },
+      tags:["Claude Code","YAML","CI"] },
 
     { name:"proxy-check",
       sub:{en:"Do my proxies actually work right now?", ru:"Работают ли прокси прямо сейчас"},
       desc:{
-        en:"One command answers whether traffic really passes through personal proxies and VPNs — not whether a port is listening. Measures egress IP and throughput, and grades each target OK / DEGRADED / FAIL.",
+        en:"One command answers whether traffic really passes through personal proxies and VPNs — not whether a port is listening. Measures egress IP and throughput, grades each target OK / DEGRADED / FAIL.",
         ru:"Одна команда отвечает, проходит ли через личные прокси и VPN реальный трафик, а не «слушает ли порт». Меряет egress-IP и скорость, размечает каждую цель как OK / DEGRADED / FAIL.",
       },
       tags:["CLI","socks5","wireguard","vless","mtproto"] },
 
     { name:"ClawdIcons",
-      sub:{en:"VS Code icons for Claude Code", ru:"Иконки VS Code для Claude Code"},
+      sub:{en:"VS Code icon theme", ru:"Icon-тема для VS Code"},
       desc:{
-        en:"File and folder icons for Claude Code artifacts, merged on top of whatever icon theme you already use, with path-aware badges — only the paths Claude Code actually loads from get painted.",
-        ru:"Иконки файлов и папок Claude Code поверх твоей текущей icon-темы, с бейджами по путям: подсвечиваются только те каталоги, откуда Claude Code реально читает.",
+        en:"File and folder icons for Claude Code artifacts, merged on top of whatever icon theme is already in use, with path-aware badges — only the paths the tool actually reads from get painted.",
+        ru:"Иконки файлов и папок Claude Code поверх текущей icon-темы, с бейджами по путям: подсвечиваются только те каталоги, откуда инструмент реально читает.",
       },
       tags:["VS Code","TypeScript","icon theme"],
-      source:"https://github.com/DiorditsPV/vscode-claude-icons" },
+      source:"https://github.com/DiorditsPV/vscode-clawdicons" },
 
-    { name:"dotfiles",
-      sub:{en:"Two machines, one source of truth", ru:"Две машины, один источник правды"},
+    { name:"book-to-anki",
+      sub:{en:"Books turned into vocabulary decks", ru:"Книги в колоды для заучивания"},
       desc:{
-        en:"Personal Claude Code configuration and the whole repo tree as code: profiles for personal and work setups, skills, settings, secrets layout and bootstrap scripts — pulled automatically on session start.",
-        ru:"Личная конфигурация Claude Code и всё дерево репозиториев как код: профили personal/work, скиллы, настройки, раскладка секретов и bootstrap-скрипты — подтягиваются сами на старте сессии.",
+        en:"Extracts rare words from FB2 and EPUB books and builds an Anki deck out of them: everything already in the Oxford 3000 is dropped, the rest is counted by frequency, translated and packed into a deck.",
+        ru:"Извлекает редкие слова из книг FB2 и EPUB и собирает из них колоду Anki: всё, что уже входит в Oxford 3000, отбрасывается, остальное считается по частоте, переводится и пакуется в колоду.",
       },
-      tags:["zsh","tmux","bootstrap","YAML"],
-      source:"https://github.com/DiorditsPV/dotfiles" },
+      tags:["Python","Anki","Make","deep-translator"],
+      source:"https://github.com/DiorditsPV/book-to-anki" },
   ],
 
   repos: [
-    { name:"shlgd/SuperDictate",
-      d:{en:"On-device dictation for macOS", ru:"Локальная диктовка для macOS"},
-      url:"https://github.com/shlgd/SuperDictate" },
-    { name:"DiorditsPV/dotfiles",
-      d:{en:"Claude Code config & repo tree as code", ru:"Конфиг Claude Code и дерево репозиториев"},
-      url:"https://github.com/DiorditsPV/dotfiles" },
-    { name:"DiorditsPV/vscode-claude-icons",
-      d:{en:"Icon theme for Claude Code artifacts", ru:"Icon-тема для артефактов Claude Code"},
-      url:"https://github.com/DiorditsPV/vscode-claude-icons" },
-    { name:"DiorditsPV/claude-skills",
-      d:{en:"Public skill library", ru:"Публичная библиотека скиллов"},
-      url:"https://github.com/DiorditsPV/claude-skills" },
+    { name:"DiorditsPV/telegram-chat-digest",
+      d:{en:"Delta export of chat history plus Q&A over it", ru:"Выгрузка дельты чатов и Q&A по истории"},
+      url:"https://github.com/DiorditsPV/telegram-chat-digest" },
+    { name:"DiorditsPV/playwright-stealth",
+      d:{en:"Stealth mode for a Playwright browser", ru:"Стелс-режим браузера Playwright"},
+      url:"https://github.com/DiorditsPV/playwright-stealth" },
+    { name:"DiorditsPV/light-telegram-notifier",
+      d:{en:"Micro-library for sending Telegram notifications", ru:"Микролиба для отправки уведомлений в Telegram"},
+      url:"https://github.com/DiorditsPV/light-telegram-notifier" },
+    { name:"DiorditsPV",
+      d:{en:"Everything else on the profile", ru:"Остальное — в профиле"},
+      url:"https://github.com/DiorditsPV" },
   ],
 
   socials: [
-    { label:"GitHub",   url:"https://github.com/DiorditsPV" },
-    { label:"shlgd",    url:"https://github.com/shlgd" },
-    { label:"Telegram", url:"https://t.me/" },   /* ← подставь свой ник */
+    { label:"GitHub", url:"https://github.com/DiorditsPV" },
+    /* Telegram — раскомментируй и подставь ник:
+    { label:"Telegram", url:"https://t.me/<ник>" },
+    */
   ],
 };
 
