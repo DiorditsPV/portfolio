@@ -25,18 +25,106 @@
 <meta name="twitter:description" content="Go, Python, SQL; Airflow, Spark, Kafka, dbt; DWH and Data Lake design.">
 <meta name="twitter:image" content="https://paveldiordits.site/og.png">
 <style>
-/* ─────────────────────────── tokens ─────────────────────────── */
+/* ─────────────────────────── tokens ───────────────────────────
+   Шесть наборов оформления. Каждый живёт в двух темах и задаёт
+   не только цвета, но и --glow — световой слой под содержимым (#bg).
+   Переключатель в шапке; выбор хранится в localStorage.
+   Набор ставится атрибутом data-design на <html>, тема — классом .dark
+   ──────────────────────────────────────────────────────────────── */
 :root{
-  --bg:#f7f6f2; --fg:#1c1b17; --muted:#6b6761; --border:#e5e2dc;
-  --card:#ffffff; --card-hover:#fbfaf7; --accent:#0d8f63; --accent-soft:rgba(13,143,99,.10);
   --font-sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   --maxw:72rem;
+  /* значения по умолчанию — перекрываются набором */
+  --bg:#efece6; --fg:#221f1b; --muted:#6d675f; --border:#d9d3c9;
+  --card:#fffdf9; --card-hover:#fffefb; --accent:#2b261f; --accent-fg:#f5f1ea;
+  --glow:none;
 }
-html.dark{
-  --bg:#0b0a0a; --fg:#e4e0dd; --muted:#938c85; --border:#2b2826;
-  --card:#141312; --card-hover:#1a1817; --accent:#10b981; --accent-soft:rgba(16,185,129,.12);
+
+/* ── 35 · Прожектор ── */
+html[data-design="spotlight"]{
+  --bg:#efece6; --fg:#221f1b; --muted:#6d675f; --border:#d9d3c9;
+  --card:#fffdf9; --card-hover:#fffefb; --accent:#2b261f; --accent-fg:#f5f1ea;
+  --glow:radial-gradient(58% 46% at 24% 22%,rgba(255,255,255,.95),transparent 70%),
+         radial-gradient(130% 110% at 24% 22%,transparent 46%,rgba(90,80,66,.16) 100%);
 }
+html[data-design="spotlight"].dark{
+  --bg:#0d0f12; --fg:#efe9e2; --muted:#9c948b; --border:#2e2c2a;
+  --card:#16181b; --card-hover:#1c1e21; --accent:#e8d9c0; --accent-fg:#1a1611;
+  --glow:radial-gradient(50% 40% at 24% 24%,rgba(255,240,220,.22),transparent 70%),
+         radial-gradient(130% 110% at 24% 24%,transparent 38%,rgba(0,0,0,.6) 100%);
+}
+
+/* ── 49 · Корона ── */
+html[data-design="corona"]{
+  --bg:#e8e5df; --fg:#1f1c18; --muted:#6b665e; --border:#d3cec5;
+  --card:#f7f5f1; --card-hover:#fdfcfa; --accent:#1f1c18; --accent-fg:#f2efe9;
+  --glow:radial-gradient(circle at 50% 30%,transparent 20%,rgba(255,255,255,.95) 27%,transparent 48%),
+         radial-gradient(120% 100% at 50% 30%,transparent 52%,rgba(110,104,94,.14) 100%);
+}
+html[data-design="corona"].dark{
+  --bg:#09090b; --fg:#efe7db; --muted:#9a9084; --border:#2a2723;
+  --card:#121214; --card-hover:#17171a; --accent:#e9e0d2; --accent-fg:#131110;
+  --glow:radial-gradient(circle at 50% 30%,transparent 19%,rgba(236,224,204,.2) 26%,transparent 46%),
+         radial-gradient(120% 100% at 50% 30%,transparent 44%,rgba(0,0,0,.55) 100%);
+}
+
+/* ── 31 · Холодная засветка ── */
+html[data-design="cold-leak"]{
+  --bg:#eef3f9; --fg:#0f1a26; --muted:#56697e; --border:#cdd9e6;
+  --card:#ffffff; --card-hover:#f7fafd; --accent:#1b6fd0; --accent-fg:#ffffff;
+  --glow:radial-gradient(62% 66% at 104% 2%,rgba(255,255,255,.98),transparent 64%),
+         radial-gradient(52% 52% at 92% 20%,rgba(150,195,255,.35),transparent 70%);
+}
+html[data-design="cold-leak"].dark{
+  --bg:#0a0d11; --fg:#e6edf5; --muted:#94a6bb; --border:#2c3644;
+  --card:#12171e; --card-hover:#171d25; --accent:#8fc7ff; --accent-fg:#08131f;
+  --glow:radial-gradient(62% 62% at 106% 2%,rgba(150,205,255,.5),transparent 62%),
+         radial-gradient(46% 46% at 94% 22%,rgba(90,150,255,.22),transparent 68%);
+}
+
+/* ── 32 · Два источника ── */
+html[data-design="two-sources"]{
+  --bg:#f6f3f1; --fg:#1e1b20; --muted:#6c6570; --border:#ded7dd;
+  --card:#ffffff; --card-hover:#fbf9fa; --accent:#2b2630; --accent-fg:#f7f4f1;
+  --glow:radial-gradient(54% 50% at 102% 0%,rgba(255,214,180,.6),transparent 64%),
+         radial-gradient(58% 54% at -4% 100%,rgba(180,212,255,.55),transparent 66%);
+}
+html[data-design="two-sources"].dark{
+  --bg:#101015; --fg:#eee9e6; --muted:#aaa2a8; --border:#39343c;
+  --card:#18171d; --card-hover:#1e1c23; --accent:#f2ece8; --accent-fg:#16151a;
+  --glow:radial-gradient(54% 50% at 104% 0%,rgba(255,154,90,.4),transparent 62%),
+         radial-gradient(58% 54% at -6% 100%,rgba(90,168,255,.32),transparent 64%);
+}
+
+/* ── 48 · Окно ── */
+html[data-design="window"]{
+  --bg:#f7f2e8; --fg:#262019; --muted:#7a6f5e; --border:#e3dac9;
+  --card:#fffdf8; --card-hover:#fffefc; --accent:#8a5a1f; --accent-fg:#ffffff;
+  --glow:linear-gradient(103deg,transparent 12%,rgba(255,246,224,.95) 22%,transparent 32%,
+         transparent 42%,rgba(255,246,224,.7) 50%,transparent 60%);
+}
+html[data-design="window"].dark{
+  --bg:#1a1713; --fg:#f0e7da; --muted:#b0a08a; --border:#3b342a;
+  --card:#211d17; --card-hover:#28231c; --accent:#f0dcb8; --accent-fg:#241c0e;
+  --glow:linear-gradient(103deg,transparent 12%,rgba(255,224,170,.3) 22%,transparent 32%,
+         transparent 42%,rgba(255,224,170,.2) 50%,transparent 60%);
+}
+
+/* ── 52 · Восход за дымкой ── */
+html[data-design="dawn-fog"]{
+  --bg:#ecefef; --fg:#2a2b28; --muted:#6e6a61; --border:#d5d1c6;
+  --card:#fbf9f5; --card-hover:#fffefb; --accent:#b4611f; --accent-fg:#ffffff;
+  --glow:radial-gradient(84% 46% at 50% 104%,rgba(255,206,150,.55),transparent 66%),
+         linear-gradient(180deg,transparent 42%,rgba(255,255,255,.75) 62%,transparent 80%);
+}
+html[data-design="dawn-fog"].dark{
+  --bg:#2f3740; --fg:#f6f1e8; --muted:#b9b2a6; --border:#4a4a46;
+  --card:#373f49; --card-hover:#3f4852; --accent:#ffc98f; --accent-fg:#241503;
+  --glow:radial-gradient(84% 48% at 50% 104%,rgba(255,198,138,.42),transparent 66%),
+         linear-gradient(180deg,transparent 40%,rgba(255,252,246,.22) 60%,transparent 78%);
+}
+
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-behavior:smooth;color-scheme:light}
 html.dark{color-scheme:dark}
@@ -44,11 +132,18 @@ body{
   margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-sans);
   font-size:16px;letter-spacing:-.01em;line-height:1.6;
   -webkit-font-smoothing:antialiased;
-  transition:background-color .35s ease,color .35s ease;
+  transition:background-color .4s ease,color .4s ease;
 }
+/* световой слой набора: лежит под содержимым и не мешает кликам */
+#bg{
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:var(--glow); background-attachment:fixed;
+  transition:background .45s ease;
+}
+header,main,footer{position:relative;z-index:1}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
-::selection{background:var(--accent);color:#fff}
+::selection{background:var(--accent);color:var(--accent-fg)}
 
 .wrap{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 1rem}
 @media(min-width:640px){.wrap{padding:0 1.5rem}}
@@ -101,6 +196,8 @@ nav a:hover::after{width:100%}
 }
 .tool-btn:hover{color:var(--fg);border-color:var(--fg)}
 .lang-btn b{color:var(--fg);font-weight:600}
+.design-btn{display:inline-flex;align-items:center;gap:.45rem}
+.design-btn i{width:6px;height:6px;border-radius:999px;background:var(--accent);flex:none}
 
 /* ─────────────────────────── hero ─────────────────────────── */
 #hero{
@@ -133,8 +230,8 @@ nav a:hover::after{width:100%}
 .cta-row{display:flex;flex-wrap:wrap;gap:.75rem}
 .btn{
   display:inline-flex;align-items:center;gap:.5rem;border-radius:999px;
-  padding:.7rem 1.4rem;font-size:.875rem;font-weight:500;
-  border:1px solid var(--fg);background:var(--fg);color:var(--bg);
+  padding:.7rem 1.4rem;font-size:.875rem;font-weight:600;
+  border:1px solid var(--accent);background:var(--accent);color:var(--accent-fg);
   transition:transform .2s ease,opacity .2s ease;
 }
 .btn:hover{transform:translateY(-2px);opacity:.9}
@@ -254,10 +351,13 @@ footer{border-top:1px solid var(--border);padding:2rem 0;margin-top:1rem}
 </head>
 <body>
 
+<div id="bg" aria-hidden="true"></div>
+
 <header id="site-header">
   <div class="wrap nav-row">
     <nav id="nav"></nav>
     <div class="nav-tools">
+      <button class="tool-btn design-btn" id="design-toggle" type="button"></button>
       <button class="tool-btn lang-btn" id="lang-toggle" type="button"></button>
       <button class="tool-btn" id="theme-toggle" type="button"></button>
     </div>
@@ -593,9 +693,47 @@ function render() {
   $('#foot-left').textContent = `© ${new Date().getFullYear()} ${L(ME.name)}`;
   $('#lang-toggle').innerHTML = lang === 'ru' ? '<b>RU</b> / EN' : 'RU / <b>EN</b>';
   syncThemeLabel();
+  syncDesignLabel();
   observeReveals();
   restartTypewriter();
 }
+
+/* ── оформление ──
+   Шесть наборов, кнопка перебирает их по кругу. Тема (светлая/тёмная)
+   переключается отдельно и работает для каждого набора. */
+const DESIGNS = [
+  { id:'spotlight',   ru:'Прожектор',  en:'Spotlight' },
+  { id:'corona',      ru:'Корона',     en:'Corona' },
+  { id:'cold-leak',   ru:'Засветка',   en:'Cold leak' },
+  { id:'two-sources', ru:'Два света',  en:'Two sources' },
+  { id:'window',      ru:'Окно',       en:'Window' },
+  { id:'dawn-fog',    ru:'Рассвет',    en:'Dawn fog' },
+];
+
+function currentDesignIndex() {
+  const saved = localStorage.getItem('design');
+  const i = DESIGNS.findIndex(d => d.id === saved);
+  return i === -1 ? 0 : i;
+}
+
+function applyDesign(i) {
+  const d = DESIGNS[(i + DESIGNS.length) % DESIGNS.length];
+  document.documentElement.dataset.design = d.id;
+  localStorage.setItem('design', d.id);
+  syncDesignLabel();
+}
+
+function syncDesignLabel() {
+  const d = DESIGNS[currentDesignIndex()];
+  const n = currentDesignIndex() + 1;
+  $('#design-toggle').innerHTML =
+    `<i></i>${n}/${DESIGNS.length} · ${esc(d[lang] ?? d.en)}`;
+}
+
+$('#design-toggle').addEventListener('click', () => applyDesign(currentDesignIndex() + 1));
+
+// набор из прошлого визита ставим до первой отрисовки, чтобы не мигало
+document.documentElement.dataset.design = DESIGNS[currentDesignIndex()].id;
 
 /* ── тема ── */
 function syncThemeLabel() {
