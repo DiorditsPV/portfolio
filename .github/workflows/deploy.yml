@@ -1,0 +1,51 @@
+name: deploy
+
+# Выкладывает сайт на боевой сервер при каждом изменении index.html в main.
+# Сервер сам забирает файл из этого репозитория: деплой-ключ на нём ограничен
+# одной командой (/usr/local/bin/deploy-site.sh), другого доступа не даёт.
+
+on:
+  push:
+    branches: [main]
+    paths: ['index.html']
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Разложить ключ и закреплённый host-key
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          # host-key закреплён явно: подмену сервера раннер не примет
+          printf '%s\n' "${{ vars.DEPLOY_HOST }} ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF1sEThhqUNxeSWgjUtOOuulxk6EMVNAizFdjoCAPlXY" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Выложить сайт
+        run: |
+          ssh -i ~/.ssh/deploy_key \
+              -o StrictHostKeyChecking=yes \
+              -o UserKnownHostsFile=~/.ssh/known_hosts \
+              -o ConnectTimeout=20 \
+              deploy@${{ vars.DEPLOY_HOST }}
+
+      - name: Проверить, что боевой адрес отдаёт свежий файл
+        run: |
+          sleep 2
+          code=$(curl -s -o /tmp/live.html -w '%{http_code}' https://paveldiordits.site/)
+          echo "HTTP $code, $(stat -c%s /tmp/live.html) байт"
+          [ "$code" = "200" ] || { echo "сайт не отвечает 200"; exit 1; }
+          if ! diff -q index.html /tmp/live.html >/dev/null; then
+            echo "выложенный файл не совпадает с index.html из репозитория"
+            exit 1
+          fi
+          echo "совпадает с репозиторием"
