@@ -419,16 +419,6 @@ const T = {
 
   projects: [
     { feature:true,
-      name:"fetch-db",
-      sub:{en:"A realistic local copy of a remote database", ru:"Реалистичная локальная копия удалённой базы"},
-      desc:{
-        en:"Pulls the schema and a sampled slice of a remote PostgreSQL into a local Docker copy, so development runs offline against data shaped like production instead of competing for a shared stand. Sampling keeps referential integrity, so the copy is usable, not just present.",
-        ru:"Забирает схему и выборку данных удалённого PostgreSQL в локальную копию в Docker: разработка идёт офлайн на данных, похожих на прод, вместо борьбы за общий стенд. Выборка сохраняет связность, поэтому копией реально можно пользоваться.",
-      },
-      tags:["Python","PostgreSQL","Docker","CLI"],
-      source:"https://github.com/DiorditsPV/fetch-db" },
-
-    { feature:true,
       name:"claude-skills",
       sub:{en:"Skill marketplace where the data never leaks", ru:"Marketplace скиллов, из которого не утекают данные"},
       desc:{
@@ -437,14 +427,6 @@ const T = {
       },
       tags:["Claude Code","git hooks","marketplace","Bash"],
       source:"https://github.com/DiorditsPV/claude-skills" },
-
-    { name:"hub-hub",
-      sub:{en:"Visual editor for pipeline flows", ru:"Визуальный редактор пайплайн-флоу"},
-      desc:{
-        en:"A node graph where every node is a stage with its own parameters — flows are assembled and reviewed by eye instead of hand-written in YAML. Ships as a multi-stage Docker build behind nginx.",
-        ru:"Нода-граф, где каждая нода — стейдж со своими параметрами: флоу собираются и проверяются глазами, а не руками в YAML. Едет multi-stage Docker-сборкой за nginx.",
-      },
-      tags:["React","TypeScript","React Flow","Vite","Docker"] },
 
     { name:"interview-graph",
       sub:{en:"The whole interview on one board", ru:"Всё интервью на одной доске"},
@@ -462,14 +444,6 @@ const T = {
         ru:"Фреймворк, который проводит агента через проектирование, сборку, проверку и выкатку фичи — по одной на ветку. Ставится в любой репозиторий: состояние в markdown-хранилище, код на feature-ветках.",
       },
       tags:["Claude Code","YAML","CI"] },
-
-    { name:"proxy-check",
-      sub:{en:"Do my proxies actually work right now?", ru:"Работают ли прокси прямо сейчас"},
-      desc:{
-        en:"One command answers whether traffic really passes through personal proxies and VPNs — not whether a port is listening. Measures egress IP and throughput, grades each target OK / DEGRADED / FAIL.",
-        ru:"Одна команда отвечает, проходит ли через личные прокси и VPN реальный трафик, а не «слушает ли порт». Меряет egress-IP и скорость, размечает каждую цель как OK / DEGRADED / FAIL.",
-      },
-      tags:["CLI","socks5","wireguard","vless","mtproto"] },
 
     { name:"ClawdIcons",
       sub:{en:"VS Code icon theme", ru:"Icon-тема для VS Code"},
