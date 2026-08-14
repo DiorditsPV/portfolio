@@ -8,6 +8,22 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◆</text></svg>">
 <meta name="theme-color" content="#f7f6f2" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0b0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://paveldiordits.site/">
+
+<!-- Превью ссылки в мессенджерах и соцсетях. og.png пересобирается tools/build-assets.mjs -->
+<meta property="og:type" content="profile">
+<meta property="og:url" content="https://paveldiordits.site/">
+<meta property="og:site_name" content="paveldiordits.site">
+<meta property="og:title" content="Pavel Diordits — Lead Data Engineer">
+<meta property="og:description" content="Go, Python, SQL; Airflow, Spark, Kafka, dbt; DWH and Data Lake design. 6+ years across retail, banking and public sector.">
+<meta property="og:image" content="https://paveldiordits.site/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Pavel Diordits — Lead Data Engineer">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pavel Diordits — Lead Data Engineer">
+<meta name="twitter:description" content="Go, Python, SQL; Airflow, Spark, Kafka, dbt; DWH and Data Lake design.">
+<meta name="twitter:image" content="https://paveldiordits.site/og.png">
 <style>
 /* ─────────────────────────── tokens ─────────────────────────── */
 :root{
@@ -256,9 +272,7 @@ footer{border-top:1px solid var(--border);padding:2rem 0;margin-top:1rem}
     <div class="badges" id="badges"></div>
     <div class="cta-row">
       <a class="btn" href="#contact" data-k="hero.cta1"></a>
-      <!-- Кнопка резюме: положи resume.pdf рядом с index.html и раскомментируй строку ниже.
-      <a class="btn ghost" href="resume.pdf" download data-k="hero.cta2"></a>
-      -->
+      <a class="btn ghost" id="resume-link" href="resume-en.pdf" download data-k="hero.cta2"></a>
     </div>
     <span class="scroll-hint" data-k="hero.scroll"></span>
   </section>
@@ -572,6 +586,9 @@ function render() {
   mail.textContent = ME.email; mail.href = `mailto:${ME.email}`;
   $('#socials').innerHTML = T.socials
     .map(s => `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)}</a>`).join('');
+
+  // резюме отдаём на языке, который сейчас выбран на странице
+  $('#resume-link').href = `resume-${lang}.pdf`;
 
   $('#foot-left').textContent = `© ${new Date().getFullYear()} ${L(ME.name)}`;
   $('#lang-toggle').innerHTML = lang === 'ru' ? '<b>RU</b> / EN' : 'RU / <b>EN</b>';
