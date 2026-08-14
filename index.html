@@ -134,12 +134,18 @@ body{
   -webkit-font-smoothing:antialiased;
   transition:background-color .4s ease,color .4s ease;
 }
-/* световой слой набора: лежит под содержимым и не мешает кликам */
+/* Световой слой набора живёт только на первом экране: он привязан к верху
+   страницы, снизу растворяется маской, а при прокрутке гаснет — дальше
+   работает ровная заливка --bg. Кликам не мешает. */
 #bg{
-  position:fixed; inset:0; z-index:0; pointer-events:none;
-  background:var(--glow); background-attachment:fixed;
+  position:absolute; top:0; left:0; right:0; height:100vh; z-index:0;
+  pointer-events:none; background:var(--glow);
+  -webkit-mask-image:linear-gradient(180deg,#000 58%,transparent 100%);
+          mask-image:linear-gradient(180deg,#000 58%,transparent 100%);
   transition:background .45s ease;
+  will-change:opacity;
 }
+@media(prefers-reduced-motion:reduce){ #bg{transition:none} }
 header,main,footer{position:relative;z-index:1}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
@@ -799,7 +805,14 @@ function observeReveals() {
 
 /* ── рамка у липкой шапки после скролла ── */
 const header = $('#site-header');
-const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 12);
+const bgLayer = $('#bg');
+const onScroll = () => {
+  header.classList.toggle('scrolled', window.scrollY > 12);
+  // свет гаснет по мере ухода первого экрана — дальше остаётся ровная заливка
+  const hero = $('#hero');
+  const span = (hero ? hero.offsetHeight : window.innerHeight) * 0.72;
+  bgLayer.style.opacity = String(Math.max(0, 1 - window.scrollY / span));
+};
 window.addEventListener('scroll', onScroll, { passive: true });
 onScroll();
 
