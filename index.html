@@ -35,38 +35,11 @@
   --font-sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   --maxw:72rem;
-  /* значения по умолчанию — перекрываются набором */
-  --bg:#efece6; --fg:#221f1b; --muted:#6d675f; --border:#d9d3c9;
-  --card:#fffdf9; --card-hover:#fffefb; --accent:#2b261f; --accent-fg:#f5f1ea;
+  /* запасные значения на случай, если набор не проставился —
+     повторяют первый набор в списке (Засветка, светлая тема) */
+  --bg:#eef3f9; --fg:#0f1a26; --muted:#56697e; --border:#cdd9e6;
+  --card:#ffffff; --card-hover:#f7fafd; --accent:#1b6fd0; --accent-fg:#ffffff;
   --glow:none;
-}
-
-/* ── 35 · Прожектор ── */
-html[data-design="spotlight"]{
-  --bg:#efece6; --fg:#221f1b; --muted:#6d675f; --border:#d9d3c9;
-  --card:#fffdf9; --card-hover:#fffefb; --accent:#2b261f; --accent-fg:#f5f1ea;
-  --glow:radial-gradient(58% 46% at 24% 22%,rgba(255,255,255,.95),transparent 70%),
-         radial-gradient(130% 110% at 24% 22%,transparent 46%,rgba(90,80,66,.16) 100%);
-}
-html[data-design="spotlight"].dark{
-  --bg:#0d0f12; --fg:#efe9e2; --muted:#9c948b; --border:#2e2c2a;
-  --card:#16181b; --card-hover:#1c1e21; --accent:#e8d9c0; --accent-fg:#1a1611;
-  --glow:radial-gradient(50% 40% at 24% 24%,rgba(255,240,220,.22),transparent 70%),
-         radial-gradient(130% 110% at 24% 24%,transparent 38%,rgba(0,0,0,.6) 100%);
-}
-
-/* ── 49 · Корона ── */
-html[data-design="corona"]{
-  --bg:#e8e5df; --fg:#1f1c18; --muted:#6b665e; --border:#d3cec5;
-  --card:#f7f5f1; --card-hover:#fdfcfa; --accent:#1f1c18; --accent-fg:#f2efe9;
-  --glow:radial-gradient(circle at 50% 30%,transparent 20%,rgba(255,255,255,.95) 27%,transparent 48%),
-         radial-gradient(120% 100% at 50% 30%,transparent 52%,rgba(110,104,94,.14) 100%);
-}
-html[data-design="corona"].dark{
-  --bg:#09090b; --fg:#efe7db; --muted:#9a9084; --border:#2a2723;
-  --card:#121214; --card-hover:#17171a; --accent:#e9e0d2; --accent-fg:#131110;
-  --glow:radial-gradient(circle at 50% 30%,transparent 19%,rgba(236,224,204,.2) 26%,transparent 46%),
-         radial-gradient(120% 100% at 50% 30%,transparent 44%,rgba(0,0,0,.55) 100%);
 }
 
 /* ── 31 · Холодная засветка ── */
@@ -720,8 +693,6 @@ function render() {
    Шесть наборов, кнопка перебирает их по кругу. Тема (светлая/тёмная)
    переключается отдельно и работает для каждого набора. */
 const DESIGNS = [
-  { id:'spotlight',   ru:'Прожектор',  en:'Spotlight' },
-  { id:'corona',      ru:'Корона',     en:'Corona' },
   { id:'cold-leak',   ru:'Засветка',   en:'Cold leak' },
   { id:'two-sources', ru:'Два света',  en:'Two sources' },
   { id:'window',      ru:'Окно',       en:'Window' },
