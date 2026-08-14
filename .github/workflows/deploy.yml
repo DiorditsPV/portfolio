@@ -1,13 +1,16 @@
 name: deploy
 
-# Выкладывает сайт на боевой сервер при каждом изменении index.html в main.
-# Сервер сам забирает файл из этого репозитория: деплой-ключ на нём ограничен
-# одной командой (/usr/local/bin/deploy-site.sh), другого доступа не даёт.
+# Полная выкладка сайта при любом попадании коммита в main — пушем или мержем MR.
+# Состав выкладки задаётся файлом deploy.manifest в этом же репозитории, поэтому
+# добавление нового файла на сайт не требует захода на сервер.
+#
+# Сервер сам забирает файлы из репозитория: деплой-ключ на нём ограничен одной
+# командой (/usr/local/bin/deploy-site.sh), другого доступа не даёт и ничего
+# из репозитория не исполняет.
 
 on:
   push:
     branches: [main]
-    paths: ['index.html']
   workflow_dispatch:
 
 concurrency:
@@ -38,14 +41,20 @@ jobs:
               -o ConnectTimeout=20 \
               deploy@${{ vars.DEPLOY_HOST }}
 
-      - name: Проверить, что боевой адрес отдаёт свежий файл
+      - name: Сверить каждый файл манифеста с боевым адресом
         run: |
           sleep 2
-          code=$(curl -s -o /tmp/live.html -w '%{http_code}' https://paveldiordits.site/)
-          echo "HTTP $code, $(stat -c%s /tmp/live.html) байт"
-          [ "$code" = "200" ] || { echo "сайт не отвечает 200"; exit 1; }
-          if ! diff -q index.html /tmp/live.html >/dev/null; then
-            echo "выложенный файл не совпадает с index.html из репозитория"
-            exit 1
-          fi
-          echo "совпадает с репозиторием"
+          fail=0
+          while IFS= read -r f; do
+            case "$f" in ''|\#*) continue;; esac
+            code=$(curl -s -m 30 -o /tmp/got -w '%{http_code}' "https://paveldiordits.site/$f")
+            if [ "$code" != "200" ]; then
+              echo "✗ $f — HTTP $code"; fail=1; continue
+            fi
+            if diff -q "$f" /tmp/got >/dev/null 2>&1; then
+              echo "✓ $f — $(stat -c%s /tmp/got) байт, совпадает с репозиторием"
+            else
+              echo "✗ $f — отдаётся, но отличается от репозитория"; fail=1
+            fi
+          done < deploy.manifest
+          exit $fail
