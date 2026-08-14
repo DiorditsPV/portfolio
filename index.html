@@ -104,175 +104,6 @@ html[data-design="dawn-fog"].dark{
          linear-gradient(180deg,transparent 40%,rgba(255,252,246,.22) 60%,transparent 78%);
 }
 
-
-/* ─────────── круг воронки: варианты вне кнопки ───────────
-   Наборы ниже не попадают в переключатель в шапке — посетитель видит те же три.
-   Открываются адресом ?design=<id>, чтобы смотреть их на настоящем содержимом.
-   Различаются не оттенком, а поведением света: откуда он идёт, сквозь что
-   проходит, от чего отражается и где живёт. ──────────────── */
-
-/* ── 53 · Контровой ── источник за нижним краем: свет поднимается, верх притемнён */
-html[data-design="backlight"]{
-  --bg:#eceff3; --fg:#15181d; --muted:#5d646e; --border:#d3d8de;
-  --card:#ffffff; --card-hover:#f8fafc; --accent:#1f2937; --accent-fg:#ffffff;
-  --glow:radial-gradient(150% 96% at 50% 118%,
-           rgba(255,206,136,.98) 0%, rgba(255,226,178,.62) 34%,
-           rgba(255,241,220,.28) 60%, transparent 84%),
-         linear-gradient(180deg,rgba(24,34,48,.34) 0%,rgba(24,34,48,.14) 26%,transparent 54%);
-}
-html[data-design="backlight"].dark{
-  --bg:#0b0d12; --fg:#e9edf3; --muted:#9aa3b0; --border:#282e38;
-  --card:#12151b; --card-hover:#171b22; --accent:#ffd9a3; --accent-fg:#1a1206;
-  --glow:radial-gradient(148% 94% at 50% 118%,
-           rgba(255,182,96,.56) 0%, rgba(206,128,58,.26) 36%,
-           rgba(110,66,28,.1) 62%, transparent 84%),
-         linear-gradient(180deg,rgba(0,0,0,.62) 0%,rgba(0,0,0,.2) 26%,transparent 52%);
-}
-
-/* ── 54 · Сквозь дымку ── свет проходит сквозь среду: к градиенту добавлено зерно */
-html[data-design="through-haze"]{
-  --bg:#eef0ee; --fg:#1c211f; --muted:#606a66; --border:#d4dad6;
-  --card:#fbfcfb; --card-hover:#ffffff; --accent:#2f6b58; --accent-fg:#ffffff;
-  --glow:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='4'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E"),
-         linear-gradient(168deg,transparent 18%,rgba(255,255,255,.9) 38%,rgba(232,240,236,.5) 56%,transparent 78%),
-         radial-gradient(96% 78% at 22% -4%,
-           rgba(255,255,255,.95) 0%, rgba(214,230,224,.66) 34%,
-           rgba(180,204,196,.34) 58%, transparent 82%);
-}
-html[data-design="through-haze"].dark{
-  --bg:#101413; --fg:#e6ece9; --muted:#93a09b; --border:#2a3230;
-  --card:#161b1a; --card-hover:#1c2321; --accent:#7fd3b4; --accent-fg:#08110e;
-  --glow:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='4'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E"),
-         linear-gradient(168deg,transparent 16%,rgba(190,224,212,.22) 40%,transparent 74%),
-         radial-gradient(96% 76% at 22% -4%,
-           rgba(150,196,180,.4) 0%, rgba(90,140,124,.2) 38%, transparent 76%);
-}
-
-/* ── 55 · Отражённый ── не источник, а отсвет: широкая мягкая полоса от левого края */
-html[data-design="bounce"]{
-  --bg:#f4f2ee; --fg:#1f1d1a; --muted:#6b6660; --border:#ddd8d0;
-  --card:#ffffff; --card-hover:#fbfaf7; --accent:#3d4a3a; --accent-fg:#ffffff;
-  --glow:linear-gradient(100deg,
-           rgba(255,250,235,.98) 0%, rgba(252,240,214,.72) 18%,
-           rgba(246,232,205,.34) 38%, transparent 62%);
-}
-html[data-design="bounce"].dark{
-  --bg:#121210; --fg:#eae7e0; --muted:#a09b92; --border:#2e2c28;
-  --card:#191817; --card-hover:#1f1e1c; --accent:#d9e0c9; --accent-fg:#14150f;
-  --glow:linear-gradient(100deg,
-           rgba(236,226,196,.3) 0%, rgba(180,168,138,.14) 22%, transparent 52%);
-}
-
-/* ── 56 · Плёнка ── засветка кадра по диагонали плюс виньетка по краям */
-html[data-design="film"]{
-  --bg:#f2efe9; --fg:#231f1c; --muted:#6f675f; --border:#ded7cd;
-  --card:#fdfbf7; --card-hover:#ffffff; --accent:#a8412a; --accent-fg:#ffffff;
-  --glow:linear-gradient(118deg,
-           rgba(255,178,120,.6) 0%, rgba(255,214,170,.26) 26%, transparent 52%),
-         radial-gradient(140% 100% at 50% 50%,transparent 52%,rgba(60,42,30,.16) 100%);
-}
-html[data-design="film"].dark{
-  --bg:#14100e; --fg:#efe6dd; --muted:#a99c90; --border:#332b26;
-  --card:#1b1613; --card-hover:#221c18; --accent:#ff9d6e; --accent-fg:#1a0d06;
-  --glow:linear-gradient(118deg,
-           rgba(255,146,84,.36) 0%, rgba(190,104,58,.16) 28%, transparent 54%),
-         radial-gradient(140% 100% at 50% 50%,transparent 48%,rgba(0,0,0,.55) 100%);
-}
-
-/* ── 57 · Полдень ── свечения почти нет: одна тёплая тень сверху, максимум покоя */
-html[data-design="noon"]{
-  --bg:#f7f6f3; --fg:#1c1c1a; --muted:#6a6a66; --border:#e0dfda;
-  --card:#ffffff; --card-hover:#fbfbf9; --accent:#26262a; --accent-fg:#ffffff;
-  --glow:linear-gradient(180deg,rgba(214,206,190,.5) 0%,rgba(232,228,218,.2) 12%,transparent 30%);
-}
-html[data-design="noon"].dark{
-  --bg:#141414; --fg:#e8e8e6; --muted:#9c9c98; --border:#2c2c2c;
-  --card:#1a1a1a; --card-hover:#202020; --accent:#f0f0ee; --accent-fg:#161616;
-  --glow:linear-gradient(180deg,rgba(255,255,255,.09) 0%,rgba(255,255,255,.03) 14%,transparent 32%);
-}
-
-/* ── 58 · Пасмурно ── свет без источника: ровный, холодный, чуть гаснет к краям */
-html[data-design="overcast"]{
-  --bg:#eff1f3; --fg:#191d21; --muted:#5f676f; --border:#d7dbe0;
-  --card:#fafbfc; --card-hover:#ffffff; --accent:#334a63; --accent-fg:#ffffff;
-  --glow:radial-gradient(150% 110% at 50% 30%,
-           rgba(255,255,255,.9) 0%, rgba(233,239,245,.5) 42%,
-           rgba(203,214,226,.28) 72%, rgba(186,199,214,.3) 100%);
-}
-html[data-design="overcast"].dark{
-  --bg:#141719; --fg:#e4e8ec; --muted:#949ba3; --border:#2b3034;
-  --card:#1a1e21; --card-hover:#202529; --accent:#cfe0f0; --accent-fg:#11161a;
-  --glow:radial-gradient(150% 110% at 50% 28%,
-           rgba(190,208,224,.16) 0%, rgba(120,140,160,.08) 46%, transparent 82%);
-}
-
-/* ── 59 · Аура ── свет исходит от содержимого: пятно за именем, а не из-за края */
-html[data-design="aura"]{
-  --bg:#f4f4f6; --fg:#1a1922; --muted:#666478; --border:#dcdae4;
-  --card:#ffffff; --card-hover:#fbfaff; --accent:#4b3bd0; --accent-fg:#ffffff;
-  --glow:radial-gradient(46% 34% at 26% 42%,
-           rgba(160,140,255,.5) 0%, rgba(196,184,255,.26) 38%,
-           rgba(224,218,255,.1) 62%, transparent 82%);
-}
-html[data-design="aura"].dark{
-  --bg:#0e0d14; --fg:#e9e7f2; --muted:#948fae; --border:#282438;
-  --card:#15131d; --card-hover:#1b1826; --accent:#b7a8ff; --accent-fg:#0b0916;
-  --glow:radial-gradient(46% 34% at 26% 42%,
-           rgba(146,120,255,.42) 0%, rgba(96,78,190,.2) 40%, transparent 74%);
-}
-
-/* ── 60 · Сумерки ── длинная вертикальная растяжка: тёплый низ, холодный верх */
-html[data-design="dusk"]{
-  --bg:#eceef4; --fg:#1b1c24; --muted:#5f6373; --border:#d5d8e2;
-  --card:#fbfbfe; --card-hover:#ffffff; --accent:#7a4b8f; --accent-fg:#ffffff;
-  --glow:linear-gradient(180deg,
-           rgba(96,110,160,.34) 0%, rgba(150,150,190,.16) 26%,
-           rgba(226,196,190,.22) 62%, rgba(255,196,150,.44) 100%);
-}
-html[data-design="dusk"].dark{
-  --bg:#101220; --fg:#e7e6f0; --muted:#918fa8; --border:#262a3d;
-  --card:#161829; --card-hover:#1c1f32; --accent:#e0a6ff; --accent-fg:#0d0a16;
-  --glow:linear-gradient(180deg,
-           rgba(40,50,100,.5) 0%, rgba(70,60,110,.26) 34%,
-           rgba(150,80,90,.2) 70%, rgba(230,130,80,.28) 100%);
-}
-
-/* ── 61 · Светятся карточки ── фон ровный, свет живёт в содержимом */
-html[data-design="lit-cards"]{
-  --bg:#f1f0ee; --fg:#1d1c1a; --muted:#6a6763; --border:#dedcd7;
-  --card:#ffffff; --card-hover:#ffffff; --accent:#8a5a20; --accent-fg:#ffffff;
-  --glow:none;
-}
-html[data-design="lit-cards"] .badge,
-html[data-design="lit-cards"] .proj-card,
-html[data-design="lit-cards"] .exp-row{
-  box-shadow:0 1px 0 rgba(255,255,255,.9) inset, 0 10px 30px -14px rgba(138,90,32,.4);
-}
-html[data-design="lit-cards"].dark{
-  --bg:#121110; --fg:#e9e6e1; --muted:#9d9891; --border:#2b2926;
-  --card:#191715; --card-hover:#201d1a; --accent:#f0b477; --accent-fg:#170f06;
-  --glow:none;
-}
-html[data-design="lit-cards"].dark .badge,
-html[data-design="lit-cards"].dark .proj-card,
-html[data-design="lit-cards"].dark .exp-row{
-  box-shadow:0 0 0 1px rgba(240,180,119,.12) inset, 0 12px 36px -16px rgba(240,180,119,.35);
-}
-
-/* ── 62 · Расщепление ── два пятна одной светлоты, но разной температуры, внахлёст */
-html[data-design="split"]{
-  --bg:#f1f1ef; --fg:#1b1d1c; --muted:#63676a; --border:#d9dad8;
-  --card:#ffffff; --card-hover:#fcfdfd; --accent:#1f5f5a; --accent-fg:#ffffff;
-  --glow:radial-gradient(70% 62% at 34% 6%,rgba(120,220,210,.6) 0%,rgba(180,236,230,.3) 40%,transparent 72%),
-         radial-gradient(70% 62% at 62% 10%,rgba(255,170,150,.58) 0%,rgba(255,206,192,.28) 42%,transparent 74%);
-}
-html[data-design="split"].dark{
-  --bg:#0f1212; --fg:#e6eae9; --muted:#8f9998; --border:#262c2c;
-  --card:#151a19; --card-hover:#1b2120; --accent:#7fe3d6; --accent-fg:#081211;
-  --glow:radial-gradient(70% 62% at 34% 6%,rgba(60,190,180,.34) 0%,transparent 66%),
-         radial-gradient(70% 62% at 62% 10%,rgba(225,120,100,.32) 0%,transparent 68%);
-}
-
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-behavior:smooth;color-scheme:light}
 html.dark{color-scheme:dark}
@@ -763,10 +594,7 @@ const L = o => (o && typeof o === 'object' && ('en' in o)) ? (o[lang] ?? o.en) :
 
 // По умолчанию английский вне зависимости от языка браузера: сайт рассчитан
 // на внешнюю аудиторию. Выбор посетителя запоминается и имеет приоритет.
-// Экран выбора оформления открывает сайт в iframe с ?lang= и ?theme= — превью
-// не сохраняется, поэтому обычный посетитель остаётся при своём выборе.
-const PREVIEW = new URLSearchParams(location.search);
-let lang = PREVIEW.get('lang') || localStorage.getItem('lang') || 'en';
+let lang = localStorage.getItem('lang') || 'en';
 if (!['ru','en'].includes(lang)) lang = 'en';
 
 const ICON_GH = '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>';
@@ -867,33 +695,10 @@ const DESIGNS = [
   { id:'dawn-fog',    ru:'Рассвет',    en:'Dawn fog' },
 ];
 
-// Круг воронки: наборы, которых нет в кнопке. Смотреть — адресом ?design=<id>
-// на настоящем содержимом; в localStorage превью не сохраняется, чтобы посетитель
-// не остался в нём случайно.
-const FUNNEL = [
-  { id:'backlight',    ru:'Контровой',        en:'Backlight' },
-  { id:'through-haze', ru:'Сквозь дымку',     en:'Through haze' },
-  { id:'bounce',       ru:'Отражённый',       en:'Bounce' },
-  { id:'film',         ru:'Плёнка',           en:'Film' },
-  { id:'noon',         ru:'Полдень',          en:'Noon' },
-  { id:'overcast',     ru:'Пасмурно',         en:'Overcast' },
-  { id:'aura',         ru:'Аура',             en:'Aura' },
-  { id:'dusk',         ru:'Сумерки',          en:'Dusk' },
-  { id:'lit-cards',    ru:'Светятся карточки',en:'Lit cards' },
-  { id:'split',        ru:'Расщепление',      en:'Split' },
-];
-
 function currentDesignIndex() {
   const saved = localStorage.getItem('design');
   const i = DESIGNS.findIndex(d => d.id === saved);
   return i === -1 ? 0 : i;
-}
-
-// Приоритет: ?design= из адреса → сохранённый выбор → основной набор.
-function previewDesign() {
-  const fromUrl = new URLSearchParams(location.search).get('design');
-  if (!fromUrl) return null;
-  return FUNNEL.find(d => d.id === fromUrl) || DESIGNS.find(d => d.id === fromUrl) || null;
 }
 
 function applyDesign(i) {
@@ -904,12 +709,6 @@ function applyDesign(i) {
 }
 
 function syncDesignLabel() {
-  const preview = previewDesign();
-  if (preview) {
-    // В режиме превью кнопка показывает, что именно открыто из круга воронки.
-    $('#design-toggle').innerHTML = `<i></i>${esc(preview[lang] ?? preview.en)}`;
-    return;
-  }
   const d = DESIGNS[currentDesignIndex()];
   const n = currentDesignIndex() + 1;
   $('#design-toggle').innerHTML =
@@ -918,9 +717,8 @@ function syncDesignLabel() {
 
 $('#design-toggle').addEventListener('click', () => applyDesign(currentDesignIndex() + 1));
 
-// набор из прошлого визита (или превью из адреса) ставим до первой отрисовки, чтобы не мигало
-document.documentElement.dataset.design =
-  (previewDesign() ?? DESIGNS[currentDesignIndex()]).id;
+// набор из прошлого визита ставим до первой отрисовки, чтобы не мигало
+document.documentElement.dataset.design = DESIGNS[currentDesignIndex()].id;
 
 /* ── тема ── */
 function syncThemeLabel() {
@@ -937,8 +735,7 @@ $('#theme-toggle').addEventListener('click', () => {
 (function initTheme() {
   // По умолчанию светлая тема — системную настройку не учитываем.
   // Выбор посетителя запоминается и имеет приоритет.
-  const wanted = PREVIEW.get('theme') || localStorage.getItem('theme');
-  document.documentElement.classList.toggle('dark', wanted === 'dark');
+  document.documentElement.classList.toggle('dark', localStorage.getItem('theme') === 'dark');
 })();
 
 /* ── язык ── */
