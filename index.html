@@ -36,9 +36,9 @@
   --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   --maxw:72rem;
   /* запасные значения на случай, если набор не проставился —
-     повторяют первый набор в списке (Засветка, светлая тема) */
-  --bg:#eef3f9; --fg:#0f1a26; --muted:#56697e; --border:#cdd9e6;
-  --card:#ffffff; --card-hover:#f7fafd; --accent:#1b6fd0; --accent-fg:#ffffff;
+     повторяют основной набор (Два света, светлая тема) */
+  --bg:#f6f3f1; --fg:#1e1b20; --muted:#6c6570; --border:#ded7dd;
+  --card:#ffffff; --card-hover:#fbf9fa; --accent:#2b2630; --accent-fg:#f7f4f1;
   --glow:none;
 }
 
@@ -46,14 +46,16 @@
 html[data-design="cold-leak"]{
   --bg:#eef3f9; --fg:#0f1a26; --muted:#56697e; --border:#cdd9e6;
   --card:#ffffff; --card-hover:#f7fafd; --accent:#1b6fd0; --accent-fg:#ffffff;
+  /* на светлом фоне белое ядро не читается — берём насыщенный тон,
+     он даёт разницу по цвету, а не по светлоте */
   --glow:radial-gradient(112% 104% at 106% -6%,
-           rgba(255,255,255,1) 0%, rgba(216,236,255,.88) 26%,
-           rgba(168,206,246,.46) 52%, rgba(150,190,235,.16) 68%, transparent 82%),
-         radial-gradient(76% 66% at 86% 14%,rgba(140,190,245,.32),transparent 74%);
+           rgba(96,164,255,.92) 0%, rgba(140,193,255,.62) 26%,
+           rgba(186,218,255,.34) 50%, rgba(214,234,255,.12) 70%, transparent 86%),
+         radial-gradient(76% 66% at 86% 14%,rgba(70,138,232,.3),transparent 74%);
 }
 html[data-design="cold-leak"].dark{
   --bg:#0a0d11; --fg:#e6edf5; --muted:#94a6bb; --border:#2c3644;
-  --card:#12171e; --card-hover:#171d25; --accent:#8fc7ff; --accent-fg:#08131f;
+  --card:#12171e; --card-hover:#171d25; --accent:#ffffff; --accent-fg:#0a1017;
   --glow:radial-gradient(110% 100% at 108% -6%,
            rgba(196,228,255,.78) 0%, rgba(130,186,255,.38) 30%,
            rgba(70,120,205,.16) 56%, rgba(40,70,140,.06) 70%, transparent 84%),
@@ -64,12 +66,13 @@ html[data-design="cold-leak"].dark{
 html[data-design="two-sources"]{
   --bg:#f6f3f1; --fg:#1e1b20; --muted:#6c6570; --border:#ded7dd;
   --card:#ffffff; --card-hover:#fbf9fa; --accent:#2b2630; --accent-fg:#f7f4f1;
-  --glow:radial-gradient(98% 90% at 104% -6%,
-           rgba(255,202,152,.95) 0%, rgba(255,222,190,.56) 34%,
-           rgba(255,236,214,.2) 56%, transparent 76%),
-         radial-gradient(102% 94% at -6% 106%,
-           rgba(158,201,255,.9) 0%, rgba(196,224,255,.5) 36%,
-           rgba(216,235,255,.18) 58%, transparent 78%);
+  /* тона взяты насыщеннее фона: на светлом читается цвет, а не яркость */
+  --glow:radial-gradient(100% 92% at 104% -6%,
+           rgba(255,170,98,.9) 0%, rgba(255,199,150,.6) 30%,
+           rgba(255,222,192,.26) 54%, transparent 76%),
+         radial-gradient(104% 96% at -6% 106%,
+           rgba(96,158,255,.85) 0%, rgba(150,196,255,.54) 32%,
+           rgba(198,224,255,.22) 56%, transparent 78%);
 }
 html[data-design="two-sources"].dark{
   --bg:#101015; --fg:#eee9e6; --muted:#aaa2a8; --border:#39343c;
@@ -82,26 +85,17 @@ html[data-design="two-sources"].dark{
            rgba(35,70,150,.08) 58%, transparent 78%);
 }
 
-/* ── 48 · Окно ── */
-html[data-design="window"]{
-  --bg:#f7f2e8; --fg:#262019; --muted:#7a6f5e; --border:#e3dac9;
-  --card:#fffdf8; --card-hover:#fffefc; --accent:#8a5a1f; --accent-fg:#ffffff;
-  --glow:linear-gradient(103deg,transparent 12%,rgba(255,246,224,.95) 22%,transparent 32%,
-         transparent 42%,rgba(255,246,224,.7) 50%,transparent 60%);
-}
-html[data-design="window"].dark{
-  --bg:#1a1713; --fg:#f0e7da; --muted:#b0a08a; --border:#3b342a;
-  --card:#211d17; --card-hover:#28231c; --accent:#f0dcb8; --accent-fg:#241c0e;
-  --glow:linear-gradient(103deg,transparent 12%,rgba(255,224,170,.3) 22%,transparent 32%,
-         transparent 42%,rgba(255,224,170,.2) 50%,transparent 60%);
-}
-
 /* ── 52 · Восход за дымкой ── */
 html[data-design="dawn-fog"]{
   --bg:#ecefef; --fg:#2a2b28; --muted:#6e6a61; --border:#d5d1c6;
   --card:#fbf9f5; --card-hover:#fffefb; --accent:#b4611f; --accent-fg:#ffffff;
-  --glow:radial-gradient(84% 46% at 50% 104%,rgba(255,206,150,.55),transparent 66%),
-         linear-gradient(180deg,transparent 42%,rgba(255,255,255,.75) 62%,transparent 80%);
+  /* сверху холодная тень, снизу насыщенный восход — вместе дают
+     тот же перепад, что в тёмной теме */
+  --glow:radial-gradient(92% 54% at 50% 106%,
+           rgba(255,164,88,.72) 0%, rgba(255,198,146,.44) 34%,
+           rgba(255,222,192,.18) 58%, transparent 78%),
+         linear-gradient(180deg,rgba(108,132,158,.2) 0%,rgba(150,170,190,.07) 26%,
+           transparent 44%,rgba(255,255,255,.5) 64%,transparent 84%);
 }
 html[data-design="dawn-fog"].dark{
   --bg:#2f3740; --fg:#f6f1e8; --muted:#b9b2a6; --border:#4a4a46;
@@ -598,7 +592,9 @@ const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const L = o => (o && typeof o === 'object' && ('en' in o)) ? (o[lang] ?? o.en) : o;
 
-let lang = localStorage.getItem('lang') || ((navigator.language || '').startsWith('ru') ? 'ru' : 'en');
+// По умолчанию английский вне зависимости от языка браузера: сайт рассчитан
+// на внешнюю аудиторию. Выбор посетителя запоминается и имеет приоритет.
+let lang = localStorage.getItem('lang') || 'en';
 if (!['ru','en'].includes(lang)) lang = 'en';
 
 const ICON_GH = '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>';
@@ -692,10 +688,10 @@ function render() {
 /* ── оформление ──
    Шесть наборов, кнопка перебирает их по кругу. Тема (светлая/тёмная)
    переключается отдельно и работает для каждого набора. */
+// Первый в списке — основной: он же ставится посетителю, который ничего не выбирал.
 const DESIGNS = [
-  { id:'cold-leak',   ru:'Засветка',   en:'Cold leak' },
   { id:'two-sources', ru:'Два света',  en:'Two sources' },
-  { id:'window',      ru:'Окно',       en:'Window' },
+  { id:'cold-leak',   ru:'Засветка',   en:'Cold leak' },
   { id:'dawn-fog',    ru:'Рассвет',    en:'Dawn fog' },
 ];
 
@@ -737,9 +733,9 @@ $('#theme-toggle').addEventListener('click', () => {
   syncThemeLabel();
 });
 (function initTheme() {
-  const saved = localStorage.getItem('theme');
-  const prefersDark = !window.matchMedia('(prefers-color-scheme: light)').matches;
-  document.documentElement.classList.toggle('dark', saved ? saved === 'dark' : prefersDark);
+  // По умолчанию светлая тема — системную настройку не учитываем.
+  // Выбор посетителя запоминается и имеет приоритет.
+  document.documentElement.classList.toggle('dark', localStorage.getItem('theme') === 'dark');
 })();
 
 /* ── язык ── */
