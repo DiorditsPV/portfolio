@@ -531,11 +531,11 @@ const T = {
   projects: [
     { feature:true, viz:"lexis",
       name:"lexis",
-      sub:{en:"How much of a book is the vocabulary you are learning?",
-           ru:"Какая часть словаря, который вы учите, есть в книге?"},
+      sub:{en:"How hard is a book — and what exactly makes it hard?",
+           ru:"Насколько сложна книга — и что именно делает её сложной?"},
       desc:{
-        en:"Takes a book — EPUB, FB2 or TXT — picks out the content words and lays them over the Oxford 3000 and the Oxford 5000 increment on an Euler diagram whose areas are exact to the word. Any region downloads as a CSV or an Anki deck. Each book also carries a Difficulty score out of ten, built from four measurable components, and the count of words still missing to read it at 95% comprehension.",
-        ru:"Берёт книгу — EPUB, FB2 или TXT, — отбирает в ней содержательные слова и раскладывает их по Oxford 3000 и инкременту Oxford 5000 на Эйлеровой диаграмме, где площади точны до слова. Любую область можно скачать как CSV или колоду Anki. У каждой книги считается Difficulty из четырёх измеримых компонент и то, скольких слов не хватает до порога понимания 95 %.",
+        en:"Scores an EPUB, FB2 or TXT out of ten from four measurable components — words past B2, words rare in general English, mean sentence length, and invented ones like xenonite or allomancy — calibrated on eight books of known difficulty, with the raw values behind every score. Under it sits the vocabulary itself: the Oxford 3000 and the Oxford 5000 increment on an Euler diagram whose areas are exact to the word, every region downloading as a CSV or an Anki deck.",
+        ru:"Оценивает EPUB, FB2 или TXT по десятибалльной шкале из четырёх измеримых компонент — доля слов за пределами B2, доля редких в общеанглийской частотности, средняя длина предложения и выдуманные слова вроде xenonite и allomancy, — откалиброванных на восьми книгах разной сложности; за каждой оценкой видны сырые значения. Под оценкой лежит сам словарь книги: Oxford 3000 и инкремент Oxford 5000 на Эйлеровой диаграмме, где площади точны до слова, любую область можно скачать как CSV или колоду Anki.",
       },
       tags:["Python","stdlib","wordfreq","Euler","Anki","nginx"],
       live:"https://lexis.paveldiordits.site/" },
@@ -621,8 +621,8 @@ const ICON_ARROW = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" 
    Пара файлов <img>-light.webp / <img>-dark.webp, подмена — в syncThemeLabel(). */
 const VIZ = {
   lexis: { img:"lexis",
-           alt:{en:"A lexis book page: Project Hail Mary against the Oxford 3000 and 5000 on an Euler diagram",
-                ru:"Страница книги в lexis: «Project Hail Mary» на Эйлеровой диаграмме против Oxford 3000 и 5000"} },
+           alt:{en:"The lexis gallery: book cards with a Difficulty score out of ten and how much of each text the Oxford lists cover",
+                ru:"Галерея lexis: карточки книг с оценкой Difficulty из десяти и долей текста, покрытой списками Oxford"} },
 };
 const vizHtml = k => {
   const v = VIZ[k];
