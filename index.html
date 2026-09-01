@@ -288,6 +288,18 @@ section{scroll-margin-top:5rem}
 }
 .proj-links a:hover{color:var(--accent)}
 .proj-links span{opacity:.55}
+/* Карточка со снимком: на широком экране снимок слева, текст справа. */
+.proj-body{display:flex;flex-direction:column;flex:1;min-width:0}
+.proj-card.has-viz{gap:1.3rem}
+/* Снимок продукта: два файла под тему, подменяются в syncThemeLabel(). */
+.proj-viz{
+  width:100%;height:auto;display:block;align-self:center;border:1px solid var(--border);
+  border-radius:.5rem;background:var(--card-hover);transition:border-color .3s ease;
+}
+.proj-card:hover .proj-viz{border-color:color-mix(in srgb,var(--accent) 30%,var(--border))}
+@media(min-width:768px){.proj-card.has-viz{flex-direction:row;align-items:center}
+  .proj-viz{width:48%;flex:0 0 48%}}
+
 
 #opensource{padding:3.5rem 0 5rem}
 .repo-grid{display:grid;grid-template-columns:1fr;gap:.75rem}
@@ -517,8 +529,18 @@ const T = {
   ],
 
   projects: [
-    { feature:true,
-      name:"claude-skills",
+    { feature:true, viz:"lexis",
+      name:"lexis",
+      sub:{en:"How much of a book is the vocabulary you are learning?",
+           ru:"Какая часть словаря, который вы учите, есть в книге?"},
+      desc:{
+        en:"Takes a book — EPUB, FB2 or TXT — picks out the content words and lays them over the Oxford 3000 and the Oxford 5000 increment on an Euler diagram whose areas are exact to the word. Any region downloads as a CSV or an Anki deck. Each book also carries a Difficulty score out of ten, built from four measurable components, and the count of words still missing to read it at 95% comprehension.",
+        ru:"Берёт книгу — EPUB, FB2 или TXT, — отбирает в ней содержательные слова и раскладывает их по Oxford 3000 и инкременту Oxford 5000 на Эйлеровой диаграмме, где площади точны до слова. Любую область можно скачать как CSV или колоду Anki. У каждой книги считается Difficulty из четырёх измеримых компонент и то, скольких слов не хватает до порога понимания 95 %.",
+      },
+      tags:["Python","stdlib","wordfreq","Euler","Anki","nginx"],
+      live:"https://lexis.paveldiordits.site/" },
+
+    { name:"claude-skills",
       sub:{en:"Skill marketplace where the data never leaks", ru:"Marketplace скиллов, из которого не утекают данные"},
       desc:{
         en:"A plugin marketplace of personal agent skills, built on one rule: the code is public, the data a skill accumulates never is. Two branches carry the split — public code on the main branch, working data pushed only to a private remote — and git hooks enforce it mechanically, so the boundary holds without relying on discipline.",
@@ -553,17 +575,12 @@ const T = {
       tags:["VS Code","TypeScript","icon theme"],
       source:"https://github.com/DiorditsPV/vscode-clawdicons" },
 
-    { name:"book-to-anki",
-      sub:{en:"Books turned into vocabulary decks", ru:"Книги в колоды для заучивания"},
-      desc:{
-        en:"Extracts rare words from FB2 and EPUB books and builds an Anki deck out of them: everything already in the Oxford 3000 is dropped, the rest is counted by frequency, translated and packed into a deck.",
-        ru:"Извлекает редкие слова из книг FB2 и EPUB и собирает из них колоду Anki: всё, что уже входит в Oxford 3000, отбрасывается, остальное считается по частоте, переводится и пакуется в колоду.",
-      },
-      tags:["Python","Anki","Make","deep-translator"],
-      source:"https://github.com/DiorditsPV/book-to-anki" },
   ],
 
   repos: [
+    { name:"DiorditsPV/book-to-anki",
+      d:{en:"Rare words from a book, packed into an Anki deck", ru:"Редкие слова из книги, упакованные в колоду Anki"},
+      url:"https://github.com/DiorditsPV/book-to-anki" },
     { name:"DiorditsPV/telegram-chat-digest",
       d:{en:"Delta export of chat history plus Q&A over it", ru:"Выгрузка дельты чатов и Q&A по истории"},
       url:"https://github.com/DiorditsPV/telegram-chat-digest" },
@@ -599,6 +616,20 @@ if (!['ru','en'].includes(lang)) lang = 'en';
 
 const ICON_GH = '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>';
 const ICON_ARROW = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12L12 4M12 4H6M12 4v6"/></svg>';
+
+/* Снимок страницы книги на боевом lexis, снят в обеих темах в одном кадре.
+   Пара файлов <img>-light.webp / <img>-dark.webp, подмена — в syncThemeLabel(). */
+const VIZ = {
+  lexis: { img:"lexis",
+           alt:{en:"A lexis book page: Project Hail Mary against the Oxford 3000 and 5000 on an Euler diagram",
+                ru:"Страница книги в lexis: «Project Hail Mary» на Эйлеровой диаграмме против Oxford 3000 и 5000"} },
+};
+const vizHtml = k => {
+  const v = VIZ[k];
+  return `<img class="proj-viz" width="1240" height="700" loading="lazy" decoding="async"
+           src="${v.img}-light.webp" data-light="${v.img}-light.webp" data-dark="${v.img}-dark.webp"
+           alt="${esc(L(v.alt))}">`;
+};
 
 function tagsHtml(tags, max = 4) {
   const shown = tags.slice(0, max).map(t => `<span class="tag">${esc(t)}</span>`).join('');
@@ -646,17 +677,24 @@ function render() {
     T.education.map(expRow).join('');
 
   // проекты
-  const lbl = { source:{en:"Source",ru:"Исходники"}, priv:{en:"Private",ru:"Приватный"} };
+  const lbl = { source:{en:"Source",ru:"Исходники"}, priv:{en:"Private",ru:"Приватный"},
+                live:{en:"Open",ru:"Открыть"} };
   $('#proj-grid').innerHTML = T.projects.map(p => `
-    <article class="proj-card reveal${p.feature ? ' feature' : ''}">
-      <h3>${esc(p.name)}</h3>
-      <p class="sub">${esc(L(p.sub))}</p>
-      <p class="body">${esc(L(p.desc))}</p>
-      ${tagsHtml(p.tags, p.feature ? 6 : 3)}
-      <div class="proj-links">
-        ${p.source
-          ? `<a href="${esc(p.source)}" target="_blank" rel="noopener">${ICON_GH}${esc(L(lbl.source))}</a>`
-          : `<span>${esc(L(lbl.priv))}</span>`}
+    <article class="proj-card reveal${p.feature ? ' feature' : ''}${p.viz ? ' has-viz' : ''}">
+      ${p.viz ? vizHtml(p.viz) : ''}
+      <div class="proj-body">
+        <h3>${esc(p.name)}</h3>
+        <p class="sub">${esc(L(p.sub))}</p>
+        <p class="body">${esc(L(p.desc))}</p>
+        ${tagsHtml(p.tags, p.feature ? 6 : 3)}
+        <div class="proj-links">
+          ${p.live
+            ? `<a href="${esc(p.live)}" target="_blank" rel="noopener">${ICON_ARROW}${esc(L(lbl.live))} ${esc(p.name)}</a>`
+            : ''}
+          ${p.source
+            ? `<a href="${esc(p.source)}" target="_blank" rel="noopener">${ICON_GH}${esc(L(lbl.source))}</a>`
+            : `<span>${esc(L(lbl.priv))}</span>`}
+        </div>
       </div>
     </article>`).join('');
 
@@ -723,6 +761,11 @@ document.documentElement.dataset.design = DESIGNS[currentDesignIndex()].id;
 /* ── тема ── */
 function syncThemeLabel() {
   const dark = document.documentElement.classList.contains('dark');
+  // Снимки продукта существуют в обеих темах: тёмный кадр на светлой странице читается как поломка.
+  $$('.proj-viz[data-light]').forEach(img => {
+    const src = dark ? img.dataset.dark : img.dataset.light;
+    if (img.getAttribute('src') !== src) img.setAttribute('src', src);
+  });
   $('#theme-toggle').textContent = lang === 'ru'
     ? (dark ? 'Светлая' : 'Тёмная')
     : (dark ? 'Light' : 'Dark');
