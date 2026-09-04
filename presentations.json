@@ -53,6 +53,44 @@
       "bytes": 191898
     },
     {
+      "slug": "claude-w23-peremer",
+      "title": "Неделя 23 экосистемы Claude — снимок и что с ним стало",
+      "topic": "ai",
+      "series": null,
+      "date": "2026-09-04",
+      "lang": "ru",
+      "desc": "Июньский срез популярных репозиториев и навыков Claude за неделю 28.05–04.06, перемеренный три месяца спустя: недельный рейтинг не пережил квартала, а у трёх позиций счётчик звёзд пошёл вниз.",
+      "descEn": "A June snapshot of popular Claude repos and skills, re-measured three months later: the weekly ranking did not survive the quarter, and three entries lost stars.",
+      "tags": [
+        "ресёрч",
+        "github"
+      ],
+      "minutes": 14,
+      "keywords": [
+        "Как читать этот разбор",
+        "Главный вывод: недельный рейтинг не пережил трёх месяцев",
+        "Просадка звёзд: у трёх позиций счётчик пошёл вниз",
+        "Тема 1. Мульти-модельность: отвязать оболочку от вендора",
+        "Тема 2. Память и самообучение",
+        "Тема 3. Skills вышли за пределы кода",
+        "Общение и soft skills",
+        "Наука и публикации",
+        "Образование",
+        "Безопасность",
+        "Девтул-навыки",
+        "Тема 4. Синхронизация правил агентов",
+        "Тема 5. Обвязка и UX вокруг агентов",
+        "Зрелые репозитории: база экосистемы",
+        "Глоссарий",
+        "Источники"
+      ],
+      "feature": false,
+      "pick": true,
+      "status": "public",
+      "source": "~/dev/docs/lichnoe/research/popular-repos-skills-2026-w23.html",
+      "bytes": 50828
+    },
+    {
       "slug": "generator-fich",
       "title": "Генератор фич: подход",
       "topic": "product",
