@@ -1,177 +1,675 @@
 <!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Agent-дайджест — 18–26.08.2026</title>
+<title>Неделя агентной экосистемы — 18–26.08.2026</title>
+<meta name="description" content="Скиллы, плагины и подходы агентной разработки за 18–26 августа 2026: каталог по звёздам, официальные изменения, разбор дефекта метода сбора.">
 <style>
-:root{
-  --bg:#f6f3ec; --panel:#fdfbf6; --ink:#2b2620; --muted:#6f675c;
-  --accent:#d95f02; --accent-ink:#8a3c00; --line:#e3dccd; --chip:#efe9dc;
-  --badge-bg:#2b2620; --badge-fg:#f6f3ec; --mark:#fff3e6;
+:root {
+  --page: #f4f6f8;
+  --surface: #ffffff;
+  --surface-soft: #eef2f6;
+  --ink: #111827;
+  --muted: #667085;
+  --subtle: #98a2b3;
+  --line: #dfe4ea;
+  --accent: #3157d5;
+  --accent-soft: #e9edff;
+  --accent-ink: #2849b8;
+  --success: #16794b;
+  --warning: #b54708;
+  --badge-bg: #eef2f6;
+  --badge-fg: #344054;
+  --mark: #fff2c6;
+  --shadow: 0 18px 45px rgba(16, 24, 40, .08);
 }
-html[data-theme="dark"]{
-  --bg:#171512; --panel:#1f1c18; --ink:#ece5d8; --muted:#9a917f;
-  --accent:#f08c3a; --accent-ink:#f4a869; --line:#332e27; --chip:#282420;
-  --badge-bg:#ece5d8; --badge-fg:#171512; --mark:#33220f;
+
+html[data-theme="dark"] {
+  --page: #0d1117;
+  --surface: #151b23;
+  --surface-soft: #1d2632;
+  --ink: #edf1f7;
+  --muted: #a6b0c0;
+  --subtle: #7d899a;
+  --line: #2a3544;
+  --accent: #8ba3ff;
+  --accent-soft: #1d2b57;
+  --accent-ink: #b7c5ff;
+  --success: #55c795;
+  --warning: #f5a15f;
+  --badge-bg: #25303e;
+  --badge-fg: #d7deea;
+  --mark: #493b16;
+  --shadow: 0 22px 60px rgba(0, 0, 0, .32);
 }
-@media (prefers-color-scheme: dark){
-  html:not([data-theme]){
-    --bg:#171512; --panel:#1f1c18; --ink:#ece5d8; --muted:#9a917f;
-    --accent:#f08c3a; --accent-ink:#f4a869; --line:#332e27; --chip:#282420;
-    --badge-bg:#ece5d8; --badge-fg:#171512; --mark:#33220f;
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]) {
+    --page: #0d1117;
+    --surface: #151b23;
+    --surface-soft: #1d2632;
+    --ink: #edf1f7;
+    --muted: #a6b0c0;
+    --subtle: #7d899a;
+    --line: #2a3544;
+    --accent: #8ba3ff;
+    --accent-soft: #1d2b57;
+    --accent-ink: #b7c5ff;
+    --success: #55c795;
+    --warning: #f5a15f;
+    --badge-bg: #25303e;
+    --badge-fg: #d7deea;
+    --mark: #493b16;
+    --shadow: 0 22px 60px rgba(0, 0, 0, .32);
   }
 }
-html[data-contrast="on"]{
-  --muted:var(--ink); --line:currentColor;
+
+html[data-contrast="on"] {
+  --muted: var(--ink);
+  --subtle: var(--ink);
+  --line: currentColor;
 }
-html[data-contrast="on"] .item,html[data-contrast="on"] .block,
-html[data-contrast="on"] nav.toc{ border-width:2px; }
-html[data-contrast="on"] a{ text-decoration-thickness:2px; }
-html[data-contrast="on"] .tag{ outline:1px solid var(--ink); }
 
-*{box-sizing:border-box; margin:0}
-html{scroll-behavior:smooth}
-body{
-  background:var(--bg); color:var(--ink);
-  font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  padding-bottom:4rem;
+* { box-sizing: border-box; margin: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--page);
+  color: var(--ink);
+  font: 14px/1.48 Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  padding-bottom: 5rem;
+  text-rendering: optimizeLegibility;
 }
-#progress{position:fixed; top:0; left:0; height:4px; width:0; background:var(--accent); z-index:50}
-main{max-width:1400px; width:min(96vw,1400px); margin:0 auto; padding:0 1.2rem}
-a{color:var(--accent-ink); text-decoration:underline; text-decoration-color:var(--accent); text-underline-offset:3px}
-a:hover{color:var(--accent)}
 
-header.masthead{padding:2.6rem 0 1.4rem; border-bottom:3px solid var(--ink)}
-.eyebrow{display:flex; flex-wrap:wrap; gap:.6rem; align-items:center;
-  font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
-.eyebrow .mock{background:var(--accent); color:#fff; padding:.15rem .55rem; border-radius:3px; letter-spacing:.1em; font-weight:700}
-html[data-contrast="on"] .eyebrow .mock{outline:2px solid var(--ink)}
-h1{font-size:clamp(2rem,4.6vw,3.4rem); line-height:1.06; letter-spacing:-.015em; margin:.5rem 0 .6rem}
-h1 .win{color:var(--accent)}
-.meta{color:var(--muted); font-size:.95rem; max-width:70ch}
-.controls{float:right; display:flex; gap:.5rem; margin-top:.2rem}
-.controls button{
-  font:inherit; font-size:.82rem; cursor:pointer; padding:.4rem .8rem;
-  border:1.5px solid var(--ink); background:var(--panel); color:var(--ink); border-radius:4px;
+#progress {
+  position: fixed;
+  inset: 0 auto auto 0;
+  z-index: 100;
+  width: 0;
+  height: 3px;
+  background: var(--accent);
 }
-.controls button[aria-pressed="true"]{background:var(--ink); color:var(--bg)}
 
-nav.toc{
-  position:sticky; top:0; z-index:40; background:var(--bg);
-  display:flex; flex-wrap:wrap; gap:.2rem .4rem; padding:.55rem 0;
-  border-bottom:1.5px solid var(--line); margin-bottom:1.8rem; font-size:.88rem;
+.sitebar {
+  height: 56px;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--page) 88%, transparent);
+  backdrop-filter: blur(16px);
 }
-nav.toc a{text-decoration:none; color:var(--ink); padding:.25rem .6rem; border-radius:4px}
-nav.toc a:hover{background:var(--chip)}
-nav.toc .n{color:var(--accent); font-weight:700; margin-left:.25rem}
 
-section{margin:2.6rem 0}
-h2{font-size:1.7rem; letter-spacing:-.01em; margin-bottom:.9rem; display:flex; align-items:baseline; gap:.6rem; flex-wrap:wrap}
-h2 .count{font-size:1rem; color:var(--accent); font-weight:700}
-.rank-note{color:var(--muted); font-size:.9rem; margin:-.4rem 0 1rem}
-
-.lead{font-size:1.08rem; line-height:1.62; background:var(--panel); border:1.5px solid var(--line);
-  border-left:5px solid var(--accent); padding:1.2rem 1.4rem; border-radius:6px}
-.lead b{color:var(--accent-ink)}
-.lead p+p{margin-top:.8rem}
-.lead ul{margin:.5rem 0 0 1.15rem; display:grid; gap:.5rem}
-.lead li::marker{color:var(--accent)}
-.lead .g{margin-top:1rem; font-weight:700; color:var(--accent-ink); font-size:.98rem;
-  letter-spacing:.02em}
-.signal{margin-top:1rem; font-size:.95rem; color:var(--muted); border-top:1.5px dashed var(--line); padding-top:.8rem}
-.signal b{color:var(--accent-ink)}
-
-.item{
-  display:grid; grid-template-columns:5.2rem 1fr; gap:1rem; align-items:start;
-  padding:.85rem 1rem; border:1.5px solid var(--line); border-radius:6px;
-  background:var(--panel); margin-bottom:.55rem;
+.sitebar-inner {
+  width: min(1180px, calc(100% - 40px));
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
 }
-.stars{
-  justify-self:stretch; text-align:center; font-weight:800; font-size:.92rem;
-  background:var(--badge-bg); color:var(--badge-fg); border-radius:4px; padding:.28rem .3rem;
-  font-variant-numeric:tabular-nums;
+
+.brand {
+  color: var(--ink);
+  font-weight: 760;
+  letter-spacing: -.025em;
+  text-decoration: none;
 }
-.stars.hot{background:var(--accent); color:#fff}
-html[data-contrast="on"] .stars{outline:1.5px solid var(--ink)}
-.item h4{font-size:1.02rem; margin-bottom:.15rem; font-weight:700}
-.item p{color:var(--ink); font-size:.97rem}
-.note{color:var(--muted); font-style:italic}
-.tag{display:inline-block; font-size:.72rem; letter-spacing:.06em; text-transform:uppercase;
-  background:var(--chip); color:var(--muted); border-radius:3px; padding:.12rem .5rem;
-  margin-left:.5rem; white-space:nowrap; vertical-align:.12em; font-style:normal}
-.tag.warm{color:var(--accent-ink)}
 
-h3.tail-h{font-size:.85rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted);
-  margin:1.5rem 0 .6rem}
-ul.tail{list-style:none; padding:0; border-top:1.5px solid var(--line)}
-ul.tail li{padding:.5rem .2rem; border-bottom:1px dashed var(--line); font-size:.95rem;
-  display:flex; flex-wrap:wrap; gap:.15rem .6rem; align-items:baseline}
-ul.tail .st{font-weight:800; font-variant-numeric:tabular-nums; min-width:3rem; color:var(--accent-ink)}
-ul.tail .desc{flex:1 1 24rem}
-.othersrc{margin-top:.9rem; font-size:.92rem; color:var(--muted); font-style:italic}
+.brand span { color: var(--subtle); font-weight: 500; }
+.site-actions, .controls { display: flex; align-items: center; gap: 8px; }
+.back-link { color: var(--muted); font-size: .9rem; text-decoration: none; }
+.back-link:hover { color: var(--ink); }
 
-.block{border:1.5px solid var(--line); background:var(--panel); border-radius:6px;
-  padding:1.15rem 1.35rem; margin-bottom:.9rem}
-.block h3{font-size:1.12rem; margin-bottom:.55rem}
-.block h3 .src{color:var(--muted); font-weight:400; font-size:.85rem}
-.block ul{padding-left:1.2rem; display:grid; gap:.45rem}
-.block li::marker{color:var(--accent)}
-mark{background:var(--mark); color:inherit; padding:0 .2rem; border-radius:2px}
-
-.arts .item{grid-template-columns:5.2rem 1fr}
-.pts{background:var(--chip); color:var(--ink); font-weight:800; border-radius:4px;
-  text-align:center; padding:.28rem .3rem; font-size:.85rem}
-.pts small{display:block; font-weight:400; font-size:.62rem; color:var(--muted); letter-spacing:.08em}
-
-.periph li b:first-child{color:var(--accent-ink)}
-.sources ul{padding-left:1.2rem; display:grid; gap:.35rem; word-break:break-all}
-
-footer{margin-top:3rem; padding-top:1rem; border-top:3px solid var(--ink);
-  color:var(--muted); font-size:.88rem}
-
-@media (max-width:720px){
-  .controls{float:none; margin-bottom:.8rem}
-  .item,.arts .item{grid-template-columns:1fr}
-  .stars,.pts{justify-self:start; padding:.28rem .7rem}
-  ul.tail .desc{flex-basis:100%}
+.controls button {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
 }
-</style><!--general:head-->
+
+main { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+a { color: var(--accent-ink); text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent); text-underline-offset: 3px; }
+a:hover { color: var(--accent); }
+
+.masthead {
+  min-height: 280px;
+  padding: 38px 0 32px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(270px, .72fr);
+  gap: clamp(48px, 8vw, 104px);
+  align-items: end;
+}
+
+.issue-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 16px;
+  color: var(--accent-ink);
+  font-size: .85rem;
+  font-weight: 650;
+}
+
+.issue-label::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 5px var(--accent-soft);
+}
+
+h1 {
+  max-width: 840px;
+  font-size: clamp(2.45rem, 4.8vw, 4.15rem);
+  line-height: .95;
+  letter-spacing: -.065em;
+  font-weight: 760;
+}
+
+h1 .win { color: var(--accent); display: block; }
+.deck {
+  max-width: 750px;
+  margin-top: 20px;
+  color: var(--muted);
+  font-size: clamp(.96rem, 1.25vw, 1.08rem);
+  line-height: 1.5;
+}
+
+.issue-facts { border-top: 1px solid var(--line); }
+.fact {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.fact span { color: var(--muted); font-size: .88rem; }
+.fact strong { text-align: right; font-size: .9rem; }
+
+.toc-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  margin-inline: calc(50% - 50vw);
+  padding-inline: max(20px, calc((100vw - 1180px) / 2));
+  border-block: 1px solid var(--line);
+  background: color-mix(in srgb, var(--page) 91%, transparent);
+  backdrop-filter: blur(18px);
+}
+
+nav.toc {
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+nav.toc::-webkit-scrollbar { display: none; }
+nav.toc a {
+  flex: none;
+  padding: 8px 12px;
+  border-radius: 9px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: .88rem;
+  font-weight: 550;
+}
+nav.toc a:hover { background: var(--surface-soft); color: var(--ink); }
+nav.toc .n {
+  margin-left: 5px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: .72rem;
+}
+
+section { scroll-margin-top: 70px; margin: 52px 0; }
+.section-kicker {
+  margin-bottom: 14px;
+  color: var(--accent-ink);
+  font-size: .78rem;
+  font-weight: 720;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+h2 {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: clamp(1.5rem, 2.6vw, 2.08rem);
+  line-height: 1.05;
+  letter-spacing: -.045em;
+}
+h2 .count {
+  color: var(--subtle);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.section-intro, .rank-note {
+  max-width: 710px;
+  margin-bottom: 24px;
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+.brief-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(280px, .7fr);
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.primary-brief {
+  position: relative;
+  overflow: hidden;
+  min-height: 250px;
+  padding: clamp(24px, 3vw, 34px);
+  border-radius: 18px;
+  background: #17213a;
+  color: #f6f8fc;
+  box-shadow: var(--shadow);
+}
+.primary-brief::after {
+  content: "";
+  position: absolute;
+  right: -90px;
+  bottom: -140px;
+  width: 380px;
+  height: 380px;
+  border: 1px solid rgba(139, 163, 255, .25);
+  border-radius: 50%;
+  box-shadow: 0 0 0 55px rgba(139, 163, 255, .06), 0 0 0 110px rgba(139, 163, 255, .035);
+}
+.primary-brief > * { position: relative; z-index: 1; }
+.primary-brief .label { color: #9fb1ff; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.primary-brief h3 { max-width: 660px; margin-top: 22px; font-size: clamp(1.85rem, 3.4vw, 3.15rem); line-height: 1.08; letter-spacing: -.035em; }
+.primary-brief h3 { margin-top: 14px; font-size: clamp(1.6rem, 2.65vw, 2.45rem); }
+.primary-brief p { max-width: 650px; margin-top: 14px; color: #bdc7d8; font-size: .97rem; }
+.primary-brief .takeaway { margin-top: 18px; color: #fff; font-weight: 650; }
+
+.metrics { display: grid; gap: 8px; }
+.metric {
+  min-height: 76px;
+  padding: 14px 18px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+}
+.metric strong { display: block; font-size: 1.5rem; line-height: 1.05; letter-spacing: -.035em; }
+.metric span { display: block; margin-top: 5px; color: var(--muted); font-size: .8rem; }
+
+.highlights {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  margin-top: 30px;
+  border-block: 1px solid var(--line);
+}
+.highlight { padding: 18px 20px 20px 0; }
+.highlight + .highlight { padding-left: 20px; border-left: 1px solid var(--line); }
+.highlight .number { color: var(--subtle); font-size: .82rem; font-weight: 700; }
+.highlight h3 { margin-top: 10px; font-size: 1.08rem; line-height: 1.25; letter-spacing: -.018em; }
+.highlight p { margin-top: 7px; color: var(--muted); font-size: .86rem; }
+.highlight a { display: inline-block; margin-top: 10px; font-size: .82rem; font-weight: 650; text-decoration: none; }
+
+.editor-picks {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border-block: 1px solid var(--line);
+}
+
+.popular-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 36px;
+  margin-top: 26px;
+}
+.popular-group { border-top: 2px solid var(--ink); }
+.popular-heading {
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.popular-heading h3 { font-size: .96rem; letter-spacing: -.015em; }
+.popular-heading a { font-size: .8rem; font-weight: 650; text-decoration: none; }
+.popular-row {
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr);
+  gap: 16px;
+  min-height: 118px;
+  padding: 17px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: start;
+}
+.popular-score {
+  display: inline-flex;
+  justify-content: center;
+  padding: 6px 7px;
+  border-radius: 8px;
+  background: var(--surface-soft);
+  color: var(--accent-ink);
+  font-size: .78rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+.popular-row h4 { font-size: .9rem; line-height: 1.3; }
+.popular-row h4 a { color: var(--ink); text-decoration: none; }
+.popular-row h4 a:hover { color: var(--accent); }
+.popular-row p { margin-top: 5px; color: var(--muted); font-size: .78rem; line-height: 1.42; }
+.editor-mark {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--accent-ink);
+  font-size: .7rem;
+  font-weight: 700;
+}
+.popular-row.featured .popular-score { background: var(--accent); color: #fff; }
+
+.official-overview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 36px;
+  margin-top: 26px;
+}
+.official-overview article {
+  padding: 20px 0 22px;
+  border-block: 2px solid var(--ink);
+}
+.official-overview article + article { border-top-color: var(--accent); }
+.official-stat {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--muted);
+  font-size: .78rem;
+}
+.official-stat strong { color: var(--ink); text-align: right; }
+.official-overview h3 { margin-top: 14px; font-size: .92rem; }
+.official-overview h3 a { color: var(--ink); text-decoration: none; }
+.official-overview h3 a:hover { color: var(--accent); }
+.official-overview p { margin-top: 4px; color: var(--muted); font-size: .78rem; }
+.pick {
+  padding: 18px 20px 20px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.pick + .pick { padding-left: 20px; border-left: 1px solid var(--line); }
+.pick .kind { color: var(--accent-ink); font-size: .76rem; font-weight: 700; }
+.pick h3 { margin-top: 10px; font-size: 1.02rem; line-height: 1.25; }
+.pick p { margin-top: 7px; color: var(--muted); font-size: .84rem; }
+.pick a { display: inline-block; margin-top: 10px; font-size: .82rem; font-weight: 650; text-decoration: none; }
+
+#official, #skills, #plugins, #arts, #periph, #sources { max-width: 920px; margin-inline: auto; }
+
+.block {
+  padding: 22px 0 25px;
+  border-top: 1px solid var(--line);
+}
+.block:last-child { border-bottom: 1px solid var(--line); }
+.block h3 { margin-bottom: 12px; font-size: clamp(1.02rem, 1.6vw, 1.28rem); line-height: 1.3; letter-spacing: -.02em; }
+.block h3 .src { color: var(--subtle); font-size: .82rem; font-weight: 500; letter-spacing: 0; }
+.block p + p, .block p + ul, .block ul + p { margin-top: 12px; }
+.block ul { padding-left: 1.25rem; display: grid; gap: 7px; }
+.block li::marker { color: var(--accent); }
+.block .g { margin-top: 20px; font-size: .84rem; font-weight: 720; color: var(--ink); }
+
+.item {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+  padding: 17px 0 19px;
+  border-top: 1px solid var(--line);
+}
+.item:last-of-type { border-bottom: 1px solid var(--line); }
+.stars, .pts {
+  justify-self: stretch;
+  padding: 7px 8px;
+  border-radius: 8px;
+  background: var(--badge-bg);
+  color: var(--badge-fg);
+  text-align: center;
+  font-size: .82rem;
+  font-weight: 720;
+  font-variant-numeric: tabular-nums;
+}
+.stars.hot { background: var(--accent-soft); color: var(--accent-ink); }
+.pts small { display: block; color: var(--muted); font-size: .58rem; font-weight: 500; letter-spacing: .06em; }
+.item h4 { margin-bottom: 6px; font-size: .94rem; line-height: 1.32; }
+.item h4 a { color: var(--ink); text-decoration: none; }
+.item h4 a:hover { color: var(--accent); }
+.item p { color: var(--muted); font-size: .85rem; }
+.item p b { color: var(--ink); }
+.note { color: var(--muted); font-style: italic; font-weight: 400; }
+.tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: .64rem;
+  font-style: normal;
+  font-weight: 650;
+  vertical-align: .14em;
+  white-space: nowrap;
+}
+.tag.warm { color: var(--warning); }
+
+h3.tail-h { margin: 42px 0 14px; color: var(--muted); font-size: .82rem; letter-spacing: .05em; text-transform: uppercase; }
+ul.tail { list-style: none; padding: 0; border-top: 1px solid var(--line); }
+ul.tail li {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 64px minmax(150px, auto) minmax(0, 1fr);
+  gap: 14px;
+  font-size: .9rem;
+}
+ul.tail .st { color: var(--accent-ink); font-weight: 700; font-variant-numeric: tabular-nums; }
+ul.tail .st { grid-column: 1; grid-row: 1 / span 2; }
+ul.tail li > a { grid-column: 2 / span 2; grid-row: 1; }
+ul.tail .tag { grid-column: 2; grid-row: 2; justify-self: start; margin-left: 0; }
+ul.tail .desc { grid-column: 3; grid-row: 2; min-width: 0; }
+.othersrc { margin-top: 20px; color: var(--muted); font-size: .9rem; font-style: italic; }
+mark { padding: 1px 3px; border-radius: 3px; background: var(--mark); color: inherit; }
+
+.catalog-collapsed > .item:nth-of-type(n+4),
+.catalog-collapsed > .tail-h,
+.catalog-collapsed > .tail,
+.catalog-collapsed > .othersrc { display: none; }
+.catalog-collapsed.compact-blocks > .block { display: none; }
+.catalog-collapsed > .item p {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+.catalog-toggle {
+  margin-top: 24px;
+  padding: 11px 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: .88rem;
+  font-weight: 650;
+}
+.catalog-toggle:hover { border-color: var(--accent); color: var(--accent-ink); }
+
+.method-fold {
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+.method-fold > summary {
+  padding: 20px 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: var(--ink);
+  font-weight: 650;
+  cursor: pointer;
+  list-style: none;
+}
+.method-fold > summary::-webkit-details-marker { display: none; }
+.method-fold > summary::after { content: "+"; color: var(--subtle); font-size: 1.2rem; }
+.method-fold[open] > summary::after { content: "−"; }
+.method-body { padding: 8px 0 36px; }
+.method-body .block { border-top: 0; border-bottom: 1px solid var(--line); }
+
+.sources ul { padding-left: 1.2rem; display: grid; gap: 8px; word-break: break-word; }
+footer {
+  max-width: 920px;
+  margin: 72px auto 0;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .78rem;
+}
+
+@media (max-width: 900px) {
+  .masthead { grid-template-columns: 1fr; min-height: auto; gap: 44px; padding-top: 52px; }
+  .issue-facts { max-width: 520px; }
+  .brief-grid { grid-template-columns: 1fr; }
+  .metrics { grid-template-columns: repeat(3, 1fr); }
+  .metric { min-height: auto; }
+  .highlights, .editor-picks { grid-template-columns: 1fr; }
+  .popular-columns { grid-template-columns: 1fr; gap: 28px; }
+  .official-overview { grid-template-columns: 1fr; gap: 22px; }
+  .highlight { padding: 26px 0; }
+  .highlight + .highlight { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
+}
+
+@media (max-width: 640px) {
+  body { font-size: 13.5px; }
+  main, .sitebar-inner { width: min(100% - 28px, 1180px); }
+  .sitebar { height: 56px; }
+  .back-link { display: none; }
+  .masthead { padding: 42px 0 36px; }
+  h1 { font-size: clamp(2.35rem, 13vw, 3.7rem); }
+  .deck { margin-top: 20px; }
+  .toc-wrap { padding-inline: 14px; }
+  section { margin: 68px 0; }
+  .brief-grid { margin-top: 24px; }
+  .primary-brief { min-height: auto; border-radius: 18px; }
+  .metrics { grid-template-columns: 1fr; }
+  .editor-picks { gap: 10px; }
+  .popular-row { min-height: 0; }
+  .item { grid-template-columns: 1fr; gap: 12px; }
+  .stars, .pts { justify-self: start; min-width: 72px; }
+  ul.tail li { grid-template-columns: 54px minmax(0, 1fr); }
+  ul.tail .st { grid-column: 1; grid-row: 1 / span 3; }
+  ul.tail li > a, ul.tail .tag, ul.tail .desc { grid-column: 2; }
+  ul.tail li > a { grid-row: 1; }
+  ul.tail .tag { grid-row: 2; }
+  ul.tail .desc { grid-row: 3; }
+}
+
+</style>
+<!--general:head-->
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://paveldiordits.site/presentations/agents-weekly-2026-08-26.html">
 <meta property="og:site_name" content="General · paveldiordits.site">
-<meta property="og:title" content="Agent-дайджест — 18–26.08.2026">
-<meta property="og:description" content="Неделя, сведённая из двух прогонов. Главное случилось не в каталоге, а в методе: gh search repos --sort=stars звёзды не сортирует, значит «топ-100» прошлых выпусков топом не был. 86 позиций каталога.">
+<meta property="og:title" content="Неделя агентной экосистемы — 18–26.08.2026">
+<meta property="og:description" content="Неделя, на которой выяснилось, что каталог прошлых выпусков не был топом по звёздам: gh search repos --sort=stars звёзды не сортирует. 86 позиций каталога.">
 <meta property="og:image" content="https://paveldiordits.site/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Agent-дайджест — 18–26.08.2026">
-<meta name="twitter:description" content="Неделя, сведённая из двух прогонов. Главное случилось не в каталоге, а в методе: gh search repos --sort=stars звёзды не сортирует, значит «топ-100» прошлых выпусков топом не был. 86 позиций каталога.">
+<meta name="twitter:title" content="Неделя агентной экосистемы — 18–26.08.2026">
+<meta name="twitter:description" content="Неделя, на которой выяснилось, что каталог прошлых выпусков не был топом по звёздам: gh search repos --sort=stars звёзды не сортирует. 86 позиций каталога.">
 <meta name="twitter:image" content="https://paveldiordits.site/og.png">
 <link rel="canonical" href="https://paveldiordits.site/presentations/agents-weekly-2026-08-26.html">
 <!--/general:head-->
 </head><body>
 <div id="progress" aria-hidden="true"></div>
+<div class="controls">
+  <button id="themeBtn" aria-pressed="false" aria-label="Переключить тему" title="Тема">◐</button>
+  <button id="contrastBtn" aria-pressed="false" aria-label="Повысить контраст" title="Контраст">◩</button>
+</div>
 <main>
 <header class="masthead">
-  <div class="controls">
-    <button id="themeBtn" aria-pressed="false">◐ Тема</button>
-    <button id="contrastBtn" aria-pressed="false">▣ Контраст</button>
+  <div>
+    <p class="issue-label">Agent Briefing · выпуск 02</p>
+    <h1>Скиллы и плагины <span class="win">недели</span></h1>
+    <p class="deck">Неделя, на которой выяснилось, что каталог прошлых выпусков не был топом по звёздам.</p>
   </div>
-  <p class="eyebrow"><span class="mock">Прогон по расписанию</span> Agent-дайджест · cron-джоба agent-digest</p>
-  <h1>Новое в агент-экосистеме<br><span class="win">18–26 августа 2026</span></h1>
-  <p class="meta">Окно: 2026-08-18 09:11 UTC → 2026-08-26 09:10 UTC. Сведены два прогона внутри одной недели. Репозитории и сюжеты, показанные в прошлых выпусках, не повторяются. Звёзды — на момент сбора.</p>
+  <div class="issue-facts" aria-label="Параметры выпуска">
+    <div class="fact"><span>Период</span><strong>18 – 26 августа</strong></div>
+    <div class="fact"><span>Прошли отбор</span><strong>86 репозиториев</strong></div>
+    <div class="fact"><span>Скиллы ★40+</span><strong>21</strong></div>
+    <div class="fact"><span>Плагины ★40+</span><strong>12</strong></div>
+  </div>
 </header>
-
-<nav class="toc" aria-label="Разделы">
-  <a href="#svodka">Сводка</a>
-  <a href="#official">Официальное</a>
-  <a href="#skills">Скиллы<span class="n">54</span></a>
-  <a href="#plugins">Плагины<span class="n">32</span></a>
-  <a href="#arts">Статьи и подходы<span class="n">13</span></a>
-  <a href="#periph">На периферии</a>
-  <a href="#sources">Источники</a>
-</nav>
+<div class="toc-wrap">
+  <nav class="toc" aria-label="Разделы">
+    <a href="#svodka">Популярное</a>
+    <a href="#itogi">Итоги</a>
+    <a href="#official">Официальное</a>
+    <a href="#skills">Скиллы<span class="n">21</span></a>
+    <a href="#plugins">Плагины<span class="n">12</span></a>
+    <a href="#periph">Методология</a>
+    <a href="#sources">Источники</a>
+    <a href="#arts">Тренды и исследования<span class="n">13</span></a>
+  </nav>
+</div>
 
 <section id="svodka">
-  <h2>Сводка</h2>
+  <p class="section-kicker">Популярное за неделю</p>
+  <h2>На что обратили внимание</h2>
+  <p class="section-intro">Репозитории с наибольшим приростом звёзд. Короткое описание сразу показывает, стоит ли переходить по ссылке.</p>
+  <div class="popular-columns">
+    <div class="popular-group">
+      <div class="popular-heading"><h3>Скиллы</h3><a href="#skills">Все 21</a></div>
+      <article class="popular-row">
+        <span class="popular-score">★3294</span>
+        <div><h4><a href="https://github.com/s1dashu/ip-as-logo-skill">ip-as-logo-skill</a></h4><p>Генерация упрощённых маскотов-логотипов с жёстко зашитой процедурой: 4–7 примитивов, ровно три цвета.</p></div>
+      </article>
+      <article class="popular-row">
+        <span class="popular-score">★940</span>
+        <div><h4><a href="https://github.com/nateherkai/scroll-craft">scroll-craft</a></h4><p>Скролл-ориентированные сайты с собственным контролем качества: скилл проверяет себя скриншотами.</p></div>
+      </article>
+      <article class="popular-row">
+        <span class="popular-score">★927</span>
+        <div><h4><a href="https://github.com/Leutenegger/watermarks-remover">watermarks-remover</a></h4><p>Снимает AI-провенанс-метки из текста и файлов: невидимый Unicode, экзотические пробелы, bidi-символы.</p></div>
+      </article>
+    </div>
+    <div class="popular-group">
+      <div class="popular-heading"><h3>Плагины и инструменты</h3><a href="#plugins">Все 12</a></div>
+      <article class="popular-row">
+        <span class="popular-score">★1429</span>
+        <div><h4><a href="https://github.com/duty1g/x64dbg-mcp-server">x64dbg-mcp-server</a></h4><p>MCP-плагин для отладчика x64dbg: брейкпоинты, шаги, чтение памяти по HTTP. Написан на Zig, без зависимостей.</p></div>
+      </article>
+      <article class="popular-row">
+        <span class="popular-score">★385</span>
+        <div><h4><a href="https://github.com/kgoedecke/doop">doop</a></h4><p>Открытая альтернатива Paper.design: общий холст, где люди правят в браузере, а агенты — через MCP.</p></div>
+      </article>
+      <article class="popular-row">
+        <span class="popular-score">★343</span>
+        <div><h4><a href="https://github.com/rome-os/rome">rome</a></h4><p>Масштабирует не модель, а среду: инструменты, процессы и память, внутри которых работает агент.</p></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="itogi">
+  <p class="section-kicker">Итоги недели</p>
+  <h2>Что произошло за неделю</h2>
   <div class="lead">
+
     <p>Недельное окно, сведённое из двух прогонов — 18–21 и 21–26 августа, — и
     главное в нём случилось не в каталоге, а в самом методе сбора. В середине недели
     выяснилось, что <mark>команда <code>gh search repos --sort=stars</code>, прописанная в
@@ -242,12 +740,15 @@ footer{margin-top:3rem; padding-top:1rem; border-top:3px solid var(--ink);
       <li><a href="https://github.com/kgoedecke/doop">kgoedecke/doop</a> ★385 —
       многопользовательский дизайн-холст, где агент правит фреймы через встроенный MCP-сервер наравне с человеком.</li>
     </ul>
+  
   </div>
 </section>
 
 <section id="official">
-  <h2>Официальное</h2>
-<div class="block">
+  <p class="section-kicker">От разработчиков платформы</p>
+  <h2>Официальные скиллы и плагины</h2>
+  <p class="section-intro">Сначала показаны изменения официальных каталогов. Релизы моделей, CLI и остальные обновления доступны в продолжении раздела.</p>
+  <div class="block">
     <h3>anthropics/skills — ни одного нового скилла <span class="src">1 коммит за окно</span></h3>
     <p>За окно в репозитории один коммит:
     <a href="https://github.com/anthropics/skills/pull/1605">#1605</a> от 18.08 —
@@ -444,10 +945,8 @@ footer{margin-top:3rem; padding-top:1rem; border-top:3px solid var(--ink);
 </section>
 
 <section id="skills">
-  <h2>Скиллы <span class="count">54</span></h2>
-  <p class="rank-note">Ранжировано строго по звёздам. Развёрнутый абзац — ★30+ либо сигнал вне звёзд.</p>
-
-  
+  <p class="section-kicker">Новые практики</p>
+  <h2>Скиллы <span class="count">21 материал · ★40+</span></h2>
 
   <div class="item">
     <div class="stars hot">★3294</div>
@@ -847,7 +1346,6 @@ footer{margin-top:3rem; padding-top:1rem; border-top:3px solid var(--ink);
     <li><span class="st">★10</span><span class="desc"><a href="https://github.com/anhe2021212-spec/Turritopsis">anhe2021212-spec/Turritopsis</a><span class="tag">память</span> — общее знание о проекте и передача контекста между кодинг-агентами на длинных проектах. MIT.</span></li>
     <li><span class="st">★10</span><span class="desc"><a href="https://github.com/automateyournetwork/pyATS_skills">automateyournetwork/pyATS_skills</a><span class="tag">интеграция</span> — скиллы pyATS для агентов: сетевая автоматизация Cisco. <i>Найден только исправленным запросом.</i></span></li>
   </ul>
-
   <p class="othersrc"><b>Из других источников.</b> За окно ничего: единственная находка вне
   GitHub-поиска — <a href="https://github.com/muratcankoylan/Agent-Skills-for-Context-Engineering">muratcankoylan/Agent-Skills-for-Context-Engineering</a>
   (★17786) — создана 21.12.2025 и в окно не попадает; вынесена в «На периферии».</p>
@@ -856,10 +1354,9 @@ footer{margin-top:3rem; padding-top:1rem; border-top:3px solid var(--ink);
 </section>
 
 <section id="plugins">
-  <h2>Плагины и инструменты <span class="count">32</span></h2>
-  <p class="rank-note">Ранжировано строго по звёздам.</p>
-
-  
+  <p class="section-kicker">Инструменты</p>
+  <h2>Плагины и проекты <span class="count">12 материалов · ★40+</span></h2>
+  <p class="section-intro">Инструменты вокруг агента: оркестраторы, интеграции, измерение работы и контроль расхода.</p>
 
   <div class="item">
     <div class="stars hot">★1429</div>
@@ -1095,16 +1592,15 @@ footer{margin-top:3rem; padding-top:1rem; border-top:3px solid var(--ink);
     <li><span class="st">★11</span><span class="desc"><a href="https://github.com/Jason-smithy/claude-certified-architect-foundations-ccao-f">Jason-smithy/claude-certified-architect-foundations-ccao-f</a><span class="tag">процесс</span> — материалы подготовки к сертификации Anthropic Claude Certified Architect Foundations: пять доменов, 25 сценарных вопросов, гайд по MCP. MIT.</span></li>
     <li><span class="st">★10</span><span class="desc"><a href="https://github.com/montezuma-p/harken">montezuma-p/harken</a><span class="tag">медиа</span> — один статический бинарник 13 МБ на whisper.cpp: полностью офлайн-транскрипция экспорта чата WhatsApp или любого аудио, без Python, ffmpeg и API-ключа.</span></li>
   </ul>
-
   <p class="othersrc"><b>Из других источников.</b> Пусто: находок вне GitHub-поиска, попадающих
   в этот блок и в окно, нет.</p>
 <p class="othersrc">Из других источников: пусто — все позиции этого блока пришли из GitHub-поиска.</p>
 </section>
 
-<section id="arts" class="arts">
-  <h2>Статьи и подходы <span class="count">13</span></h2>
-
-  
+<section id="arts">
+  <p class="section-kicker">В завершение</p>
+  <h2>Тренды и исследования <span class="count">13 материалов</span></h2>
+  <p class="section-intro">Короткие наблюдения, научные статьи и подходы — без попытки сделать их главной темой выпуска.</p>
 
   <div class="item">
     <div class="pts">36<small>HN</small></div>
@@ -1305,7 +1801,6 @@ footer{margin-top:3rem; padding-top:1rem; border-top:3px solid var(--ink);
       на HN, а не как пересказ выводов.</p>
     </div>
   </div>
-
   <div class="block" style="margin-top:1.2rem">
     <h3>Замечено, но не подтверждено</h3>
     <ul>
@@ -1323,9 +1818,11 @@ footer{margin-top:3rem; padding-top:1rem; border-top:3px solid var(--ink);
   </div>
 </section>
 
-<section id="periph" class="periph">
-  <h2>На периферии</h2>
-<div class="block">
+<section id="periph">
+  <p class="section-kicker">Прозрачность исследования</p>
+  <h2>Методология и отсев</h2>
+  <p class="section-intro">Что не вошло в главный рассказ, какие каналы не покрыты и где метод сбора мог исказить результат.</p>
+  <div class="block">
     <ul>
       <li><b>Отсев ★&lt;10.</b> В выборке 314 репозиториев за окно 290 имеют меньше ★10 и в каталог
       не включены. Это число по выборке (топ-100 по звёздам на каждый из четырёх запросов), а не по
@@ -1473,18 +1970,16 @@ footer{margin-top:3rem; padding-top:1rem; border-top:3px solid var(--ink);
   </div>
 </section>
 
-<section id="sources" class="sources">
+<section id="sources">
+  <p class="section-kicker">Проверка</p>
   <h2>Источники</h2>
+  <p class="section-intro">Ссылки на первичные материалы, поисковые запросы и данные, использованные в выпуске.</p>
   <p class="src"><a href="https://github.com/anthropics/skills/pull/1605">github.com/anthropics/skills/pull/1605</a> · <a href="https://github.com/anthropics/skills/tree/main/skills/academy-guide">github.com/anthropics/skills — skills/academy-guide</a> · <a href="https://github.com/anthropics/claude-plugins-official/pull/5424">github.com/anthropics/claude-plugins-official/pull/5424</a> · <a href="https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md">raw.githubusercontent.com — claude-code CHANGELOG.md</a> · <a href="https://platform.claude.com/docs/en/release-notes/api">platform.claude.com — Claude Platform release notes</a> · <a href="https://platform.claude.com/docs/en/managed-agents/budgets">platform.claude.com — Managed Agents: Session budgets</a> · <a href="https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration#give-the-session-an-advisor">platform.claude.com — Managed Agents: advisor</a> · <a href="https://platform.claude.com/docs/en/managed-agents/skills#load-skills-from-a-github-repository">platform.claude.com — Managed Agents: skills from GitHub</a> · <a href="https://platform.claude.com/docs/en/managed-agents/self-hosted-sandboxes#use-memory-stores">platform.claude.com — Managed Agents: memory stores</a> · <a href="https://platform.claude.com/docs/en/managed-agents/tools#restrict-web-search-and-web-fetch-domains">platform.claude.com — Managed Agents: restrict web domains</a> · <a href="https://fx.sh">fx.sh</a> · <a href="https://www.danielvaughn.dev/posts/huzzah/">danielvaughn.dev — Huzzah</a> · <a href="https://demo.frugaltokens.com/">demo.frugaltokens.com</a> · <a href="https://machine0.io">machine0.io</a> · <a href="https://simonwillison.net/2026/Aug/19/conceptual-integrity-and-counting-lines-of-code/">simonwillison.net — Conceptual integrity and counting lines of code</a> · <a href="https://simonwillison.net/2026/Aug/19/smolmachines-untrusted-sandbox/">simonwillison.net — smolmachines untrusted sandbox</a> · <a href="https://github.com/simonw/research/tree/main/smolmachines-untrusted-sandbox#readme">github.com/simonw/research — smolmachines-untrusted-sandbox</a> · <a href="https://www.oreilly.com/radar/the-ai-agents-stack-2026-edition/">oreilly.com/radar — The AI Agents Stack (2026 Edition)</a> · <a href="https://arcprize.org/scorecards/24ddb219-987e-464f-9050-6398a29cf5ac">arcprize.org — скоркарта 24ddb219</a> · <a href="https://github.com/guillaumemeyer/watermarks-remover">github.com/guillaumemeyer/watermarks-remover</a> · <a href="https://github.com/anthropics/skills/pull/1623">github.com/anthropics/skills/pull/1623</a> · <a href="https://github.com/anthropics/claude-plugins-official/pull/5595">claude-plugins-official/pull/5595</a> · <a href="https://github.com/anthropics/claude-plugins-official/pull/5597">/5597</a> · <a href="https://github.com/anthropics/claude-plugins-official/pull/5598">/5598</a> · <a href="https://github.com/anthropics/claude-plugins-official/pull/5600">/5600</a> · <a href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md">github.com/anthropics/claude-code — CHANGELOG.md</a> · <a href="https://github.com/anthropics/anthropic-sdk-python/blob/main/MIGRATION.md">anthropic-sdk-python — MIGRATION.md</a> · <a href="https://fabiensanglard.net/agent.md/index.html">fabiensanglard.net — My agent.md</a> · <a href="https://allaboutcoding.ghinda.com/a-week-of-using-codex-more-than-claude/">allaboutcoding.ghinda.com — A week of using Codex more than Claude</a> · <a href="https://www.laude.org/updates/headlong-a-microharness-for-persistent-agents">laude.org — Headlong</a> · <a href="https://code.joejag.com/2026/your-agent-is-not-the-model.html">code.joejag.com — Your Agent Is Not the Model</a> · <a href="https://simonwillison.net/2026/Aug/22/more-than-just-code-review/">simonwillison.net — More than just code review</a> · <a href="https://simonwillison.net/2026/Aug/23/drew-breunig/">simonwillison.net — Fable &amp; The End of the Free Lunch</a> · <a href="https://www.dbreunig.com/2026/08/23/fable-the-end-of-moore-s-law.html">dbreunig.com — Fable &amp; the end of Moore's Law</a> · <a href="https://arxiv.org/abs/2607.21503">arxiv.org/abs/2607.21503</a> · <a href="https://arxiv.org/abs/2608.16603">arxiv.org/abs/2608.16603</a> · <a href="https://status.claude.com/incidents/vgz5psbjmt1h">status.claude.com — инцидент vgz5psbjmt1h</a> · <a href="https://www.yeswehack.com/fr/learn-bug-bounty/triager-grade-reports-claude-code">yeswehack.com — Triager-grade reports with Claude Code</a></p>
 </section>
-
-<footer>
-  Прогон по расписанию cron-джобы <b>agent-digest</b> за окно 21–26.08.2026. Каталог ★10+,
-  ранжирование по звёздам, теги тематики. Пара файлов: этот HTML + <code>2026-08-26.md</code> рядом.
-  Собрано Claude Code 26.08.2026.
-</footer>
+  <footer>
+    <p>Agent Briefing · собрано cron-джобой <code>agent-digest</code>.</p>
+  </footer>
 </main>
-
 <script>
 (function(){
   const root=document.documentElement, LS=window.localStorage;
@@ -1507,6 +2002,80 @@ footer{margin-top:3rem; padding-top:1rem; border-top:3px solid var(--ink);
   addEventListener('scroll',()=>{ const h=document.documentElement;
     const p=h.scrollTop/(h.scrollHeight-h.clientHeight||1);
     bar.style.width=(p*100).toFixed(2)+'%'; },{passive:true});
+
+  function addCatalogToggle(id, label, blocks){
+    const section=document.getElementById(id); if(!section) return;
+    section.classList.add('catalog-collapsed');
+    if(blocks) section.classList.add('compact-blocks');
+    const button=document.createElement('button');
+    button.className='catalog-toggle';
+    button.type='button';
+    button.textContent=label;
+    button.setAttribute('aria-expanded','false');
+    section.appendChild(button);
+    button.addEventListener('click',()=>{
+      const collapsed=section.classList.toggle('catalog-collapsed');
+      button.setAttribute('aria-expanded',String(!collapsed));
+      button.textContent=collapsed?label:'Свернуть раздел';
+    });
+  }
+
+  function foldMethod(id, label){
+    const section=document.getElementById(id); if(!section) return;
+    const intro=section.querySelector('.section-intro'); if(!intro) return;
+    const details=document.createElement('details');
+    details.className='method-fold';
+    const summary=document.createElement('summary');
+    summary.textContent=label;
+    const body=document.createElement('div');
+    body.className='method-body';
+    while(intro.nextSibling) body.appendChild(intro.nextSibling);
+    details.append(summary,body);
+    section.appendChild(details);
+  }
+
+  function applyStarThreshold(id,min){
+    const section=document.getElementById(id); if(!section) return;
+    section.querySelectorAll(':scope > .item').forEach(item=>{
+      const score=item.querySelector('.stars');
+      const value=Number(score?.textContent.replace(/\D/g,''));
+      if(Number.isFinite(value)&&value<min) item.hidden=true;
+    });
+    section.querySelectorAll(':scope > .tail').forEach(list=>{
+      let visible=0;
+      list.querySelectorAll(':scope > li').forEach(row=>{
+        const value=Number(row.querySelector('.st')?.textContent.replace(/\D/g,''));
+        if(Number.isFinite(value)&&value<min) row.hidden=true;
+        else visible++;
+      });
+      if(!visible){
+        list.hidden=true;
+        const heading=list.previousElementSibling;
+        if(heading?.classList.contains('tail-h')) heading.hidden=true;
+      }
+    });
+  }
+
+  function prioritizeOfficialCatalogs(){
+    const section=document.getElementById('official'); if(!section) return;
+    const blocks=[...section.querySelectorAll(':scope > .block')];
+    const first=blocks[0]; if(!first) return;
+    const skills=blocks.find(x=>x.querySelector('h3')?.textContent.includes('anthropics/skills'));
+    const plugins=blocks.find(x=>x.querySelector('h3')?.textContent.includes('claude-plugins-official'));
+    if(skills) section.insertBefore(skills,first);
+    if(plugins) section.insertBefore(plugins,first);
+  }
+
+  prioritizeOfficialCatalogs();
+  applyStarThreshold('skills',40);
+  applyStarThreshold('plugins',40);
+  addCatalogToggle('official','Показать релизы моделей и CLI',true);
+  addCatalogToggle('arts','Показать все исследования',false);
+  foldMethod('periph','Открыть заметки о методе и отсеве');
+  foldMethod('sources','Открыть полный список источников');
+
+  const arts=document.getElementById('arts'), footer=document.querySelector('footer');
+  if(arts&&footer) footer.parentNode.insertBefore(arts,footer);
 })();
 </script>
 <!--general:foot-->
@@ -1534,11 +2103,11 @@ footer{margin-top:3rem; padding-top:1rem; border-top:3px solid var(--ink);
   <div class="gnrl-grid">
     <a class="gnrl-card" href="agents-weekly-2026-09-04.html">
       <img src="covers/agents-weekly-2026-09-04.svg" alt="" loading="lazy">
-      <b>Agent-дайджест — 26.08–04.09.2026</b><span>69 мин · 2026-09-04</span>
+      <b>Неделя агентной экосистемы — 26.08–04.09.2026</b><span>70 мин · 2026-09-04</span>
     </a>
     <a class="gnrl-card" href="agents-weekly-2026-08-18.html">
       <img src="covers/agents-weekly-2026-08-18.svg" alt="" loading="lazy">
-      <b>Agent-дайджест — 11–18.08.2026</b><span>29 мин · 2026-08-18</span>
+      <b>Неделя агентной экосистемы — 11–18.08.2026</b><span>30 мин · 2026-08-18</span>
     </a>
     <a class="gnrl-card" href="trendy-claude-codex.html">
       <img src="covers/trendy-claude-codex.svg" alt="" loading="lazy">
@@ -1547,4 +2116,5 @@ footer{margin-top:3rem; padding-top:1rem; border-top:3px solid var(--ink);
   </div>
 </nav>
 <!--/general:foot-->
-</body></html>
+</body>
+</html>
