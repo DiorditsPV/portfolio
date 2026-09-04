@@ -1,0 +1,31 @@
+{
+  "presentations": [
+    {
+      "slug": "generator-fich",
+      "title": "Генератор фич: подход",
+      "date": "2026-09-04",
+      "desc": "Разбор исследовательского пакета про генерацию продуктовых фич: какая эталонная модель из него собралась, почему она не ложится на реальную работу как есть и что из неё берётся в дело.",
+      "descEn": "A research pack on generating product features: the reference model it produced, why it does not fit real work as is, and what carries over.",
+      "tags": [
+        "продукт",
+        "ресёрч"
+      ],
+      "source": "~/dev/docs/lichnoe/research/generator-fich-podhod-2026-09-04.html",
+      "bytes": 68719
+    },
+    {
+      "slug": "product-lab-karta-processov",
+      "title": "Product Lab — карта процессов и их состояний",
+      "date": "2026-09-04",
+      "desc": "Слепок агентного рабочего пространства: 17 стадий от гипотезы до релиза — что уже работает, что перенесено донором и не адаптировано, что ещё не спроектировано.",
+      "descEn": "A snapshot of an agentic workspace: 17 stages from hypothesis to release — what works, what was imported but not adapted, what is not designed yet.",
+      "tags": [
+        "продукт",
+        "процессы",
+        "агенты"
+      ],
+      "source": "~/dev/docs/lichnoe/product-lab/karta-processov-2026-09-04.html",
+      "bytes": 53039
+    }
+  ]
+}

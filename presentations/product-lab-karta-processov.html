@@ -1,0 +1,717 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product Lab — карта процессов и их состояний</title>
+<style>
+:root{
+  --paper:#f4f2ec; --panel:#fbfaf7; --ink:#191c21; --ink-soft:#4a5159; --ink-faint:#767f88;
+  --rule:#d9d4c8; --rule-strong:#b9b2a1; --accent:#0d6e6e; --grid:rgba(25,28,33,.055);
+  --c-partial:#1f7a4d; --c-inwork:#1d5fb0; --c-imported:#6d4bb0; --c-donor:#9a6a08;
+  --c-none:#6b7480; --c-manual:#4a5a6e;
+  --tint:.10;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+:root[data-theme="dark"]{
+  --paper:#101318; --panel:#171b21; --ink:#e7eaee; --ink-soft:#a8b2bd; --ink-faint:#7b8593;
+  --rule:#2a3038; --rule-strong:#3d4650; --accent:#4fd1c5; --grid:rgba(255,255,255,.045);
+  --c-partial:#4ade80; --c-inwork:#7cb0ff; --c-imported:#b79cff; --c-donor:#f2c14e;
+  --c-none:#98a2af; --c-manual:#93a7bd;
+  --tint:.16;
+}
+:root[data-contrast="on"]{
+  --paper:#ffffff; --panel:#ffffff; --ink:#000000; --ink-soft:#101010; --ink-faint:#202020;
+  --rule:#000000; --rule-strong:#000000; --accent:#004a4a; --grid:transparent;
+  --c-partial:#0a5c32; --c-inwork:#0b3f86; --c-imported:#4a2a8a; --c-donor:#6b4600;
+  --c-none:#2b2b2b; --c-manual:#20303f; --tint:0;
+}
+:root[data-theme="dark"][data-contrast="on"]{
+  --paper:#000000; --panel:#000000; --ink:#ffffff; --ink-soft:#f0f0f0; --ink-faint:#e0e0e0;
+  --rule:#ffffff; --rule-strong:#ffffff; --accent:#5ff0e2; --grid:transparent;
+  --c-partial:#7dfaa8; --c-inwork:#9ec8ff; --c-imported:#d3bfff; --c-donor:#ffd968;
+  --c-none:#dcdcdc; --c-manual:#cfe0f0; --tint:0;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font:16px/1.62 var(--sans); -webkit-font-smoothing:antialiased;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:28px 28px;
+}
+main{width:min(1480px,93vw); margin:0 auto; padding:0 0 100px}
+a{color:var(--accent)}
+h1,h2,h3{line-height:1.18; letter-spacing:-.015em}
+h2{font-size:clamp(24px,2.4vw,34px); margin:0 0 6px}
+h3{font-size:19px; margin:30px 0 10px}
+p{margin:0 0 14px; max-width:none}
+code,.mono{font-family:var(--mono); font-size:.9em}
+code{background:color-mix(in srgb,var(--ink) 7%,transparent); padding:1px 5px; border-radius:4px}
+:root[data-contrast="on"] code{background:transparent; border:1px solid var(--rule)}
+
+/* ---- шапка ---- */
+header.top{
+  position:sticky; top:0; z-index:40; background:var(--paper);
+  border-bottom:1px solid var(--rule); backdrop-filter:saturate(1.2);
+}
+.topin{width:min(1480px,93vw); margin:0 auto; display:flex; gap:18px; align-items:center; padding:10px 0; flex-wrap:wrap}
+.brand{font-family:var(--mono); font-size:12.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); font-weight:700}
+nav.jump{display:flex; gap:14px; flex-wrap:wrap; margin-left:auto}
+nav.jump a{font-size:13.5px; text-decoration:none; color:var(--ink-soft); border-bottom:1px solid transparent; padding-bottom:2px}
+nav.jump a:hover{color:var(--ink); border-bottom-color:var(--accent)}
+.ctl{display:flex; gap:8px}
+button.t{
+  font:600 12.5px/1 var(--sans); color:var(--ink-soft); background:var(--panel);
+  border:1px solid var(--rule-strong); border-radius:20px; padding:7px 13px; cursor:pointer;
+}
+button.t:hover{color:var(--ink); border-color:var(--accent)}
+button.t[aria-pressed="true"]{background:var(--accent); color:var(--paper); border-color:var(--accent)}
+#bar{height:3px; background:var(--accent); width:0; transition:width .1s linear}
+
+/* ---- титул ---- */
+.hero{padding:52px 0 30px; border-bottom:1px solid var(--rule)}
+.hero h1{font-size:clamp(32px,4.6vw,58px); margin:0 0 16px; max-width:22ch}
+.hero .lede{font-size:clamp(17px,1.35vw,20px); color:var(--ink-soft); max-width:none}
+.stamp{font-family:var(--mono); font-size:12.5px; color:var(--ink-faint); letter-spacing:.06em; margin-bottom:18px}
+.kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px; margin-top:28px}
+.kpi{background:var(--panel); border:1px solid var(--rule); border-left:3px solid var(--accent); border-radius:3px; padding:14px 16px}
+.kpi b{display:block; font-family:var(--mono); font-size:29px; line-height:1.1; margin-bottom:4px}
+.kpi span{font-size:13.5px; color:var(--ink-soft)}
+
+section{padding:46px 0; border-bottom:1px solid var(--rule); scroll-margin-top:62px}
+.sec-kicker{font-family:var(--mono); font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin-bottom:9px}
+.note{background:var(--panel); border:1px solid var(--rule); border-left:3px solid var(--rule-strong); padding:14px 18px; border-radius:3px; margin:18px 0}
+
+/* ---- легенда ---- */
+.legend{display:grid; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); gap:12px; margin-top:20px}
+.lg{border:1px solid var(--rule); border-radius:3px; padding:13px 15px; background:var(--panel); border-left:4px solid var(--k)}
+.lg.manual,.stage.manual{border-left-style:dashed}
+.lg .h{display:flex; align-items:baseline; gap:9px; margin-bottom:5px}
+.lg .dot{width:11px; height:11px; border-radius:50%; background:var(--k); flex:none; border:1px solid var(--k)}
+.lg .nm{font-weight:700; color:var(--k)}
+.lg .cnt{margin-left:auto; font-family:var(--mono); font-size:12.5px; color:var(--ink-faint)}
+.lg .st{font-family:var(--mono); font-size:12px; color:var(--ink-faint); display:block; margin-bottom:5px}
+.lg p{font-size:13.8px; color:var(--ink-soft); margin:0}
+
+/* распределение */
+.dist{display:flex; height:34px; border:1px solid var(--rule-strong); border-radius:3px; overflow:hidden; margin-top:22px}
+.dist div.striped{background-image:repeating-linear-gradient(135deg,transparent 0 6px,rgba(255,255,255,.34) 6px 12px)}
+.dist div{display:flex; align-items:center; justify-content:center; font:700 12.5px var(--mono); color:var(--paper); background:var(--k)}
+:root[data-contrast="on"] .dist div{color:#fff; border-right:2px solid var(--paper)}
+:root[data-theme="dark"] .dist div{color:#0d1014}
+:root[data-theme="dark"][data-contrast="on"] .dist div{color:#000}
+
+/* ---- лента стадий ---- */
+.rail{margin-top:26px}
+.band{position:relative; padding-left:198px; margin-bottom:6px}
+.band-lbl{
+  position:absolute; left:0; top:0; width:122px; padding-top:8px;
+  font-family:var(--mono); font-size:11.5px; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--ink-faint); border-top:2px solid var(--rule-strong);
+}
+.band-lbl em{display:block; font-style:normal; font-size:10.5px; letter-spacing:.05em; text-transform:none; color:var(--ink-faint); opacity:.75; margin-top:2px}
+.stage{
+  display:grid; grid-template-columns:52px minmax(180px,1.15fr) 168px 1.5fr 1.2fr;
+  gap:14px; align-items:center;
+  background:var(--panel); border:1px solid var(--rule); border-left:5px solid var(--k);
+  border-radius:3px; padding:12px 16px; margin-bottom:8px; position:relative;
+}
+.stage::before{
+  content:""; position:absolute; left:-72px; top:50%; width:60px; height:1px; background:var(--rule-strong);
+}
+.stage::after{
+  content:""; position:absolute; left:-72px; top:-8px; bottom:-8px; width:1px; background:var(--rule-strong);
+}
+.band:last-child .stage:last-child::after{bottom:50%}
+.band:first-child .stage:first-child::after{top:50%}
+.num{font-family:var(--mono); font-size:22px; font-weight:700; color:var(--k); opacity:.9}
+.nmwrap .n{font-size:17.5px; font-weight:650; letter-spacing:-.01em}
+.nmwrap .sub{font-size:12.8px; color:var(--ink-faint); font-family:var(--mono)}
+.badge{
+  display:inline-block; font:700 11.5px/1.35 var(--mono); letter-spacing:.03em;
+  color:var(--k); border:1.5px solid var(--k); border-radius:3px; padding:5px 8px;
+  background:color-mix(in srgb,var(--k) calc(var(--tint)*100%),transparent);
+}
+.badge em{display:block; font-style:normal; font-weight:500; font-size:10.5px; letter-spacing:.02em; opacity:.85; margin-top:2px; text-transform:none}
+.facts{display:flex; flex-wrap:wrap; gap:6px}
+.chip{
+  font:500 12px/1.3 var(--mono); color:var(--ink-soft); background:transparent;
+  border:1px solid var(--rule-strong); border-radius:12px; padding:3px 9px; white-space:nowrap;
+}
+.chip b{color:var(--ink); font-weight:700}
+.chip.ok{color:var(--c-partial); border-color:var(--c-partial)}
+.chip.no{color:var(--ink-faint); border-style:dashed}
+.chip.dn{color:var(--c-donor); border-color:var(--c-donor)}
+.tmpl{font:600 12px var(--mono); color:var(--ink-soft)}
+.tmpl.v{color:var(--c-partial)}
+
+/* ---- svg слои ---- */
+figure{margin:24px 0 0}
+.svgwrap{background:var(--panel); border:1px solid var(--rule); border-radius:3px; padding:18px; overflow-x:auto}
+svg.diag{display:block; min-width:820px; width:100%; height:auto}
+svg.diag .bx{fill:var(--panel); stroke:var(--rule-strong); stroke-width:1.5}
+svg.diag .bx.hi{stroke:var(--accent); stroke-width:2.5}
+svg.diag .ttl{fill:var(--ink); font:700 15px var(--mono)}
+svg.diag .cap{fill:var(--ink-soft); font:400 12.5px var(--sans)}
+svg.diag .lbl{fill:var(--ink-soft); font:400 12px var(--sans)}
+svg.diag .lbl.sm{font-size:11px}
+svg.diag .ln{stroke:var(--ink-faint); stroke-width:1.6; fill:none}
+svg.diag .ln.acc{stroke:var(--accent); stroke-width:2}
+svg.diag .ln.dash{stroke-dasharray:5 5}
+svg.diag .ban{stroke:var(--c-donor); stroke-width:2; fill:none; stroke-dasharray:5 4}
+svg.diag .bantxt{fill:var(--c-donor); font:600 12px var(--sans)}
+figcaption{font-size:13.5px; color:var(--ink-faint); margin-top:10px}
+
+/* ---- таблицы / фазы ---- */
+.tbl{width:100%; border-collapse:collapse; margin-top:18px; font-size:14.5px}
+.tbl th,.tbl td{border:1px solid var(--rule); padding:9px 12px; text-align:left; vertical-align:top}
+.tbl th{background:var(--panel); font-size:12.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft)}
+.tblwrap{overflow-x:auto}
+.phases{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; margin-top:20px}
+.ph{background:var(--panel); border:1px solid var(--rule); border-radius:3px; padding:16px 18px}
+.ph h4{margin:0 0 4px; font-size:16.5px}
+.ph .meta{font:600 11.5px var(--mono); letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:10px}
+.ph ul{list-style:none; margin:0; padding:0}
+.ph li{font-size:14px; padding:5px 0 5px 26px; position:relative; color:var(--ink-soft); border-top:1px solid var(--rule)}
+.ph li:first-child{border-top:none}
+.ph li::before{position:absolute; left:0; top:5px; font:700 13px var(--mono)}
+.ph li.d::before{content:"✓"; color:var(--c-partial)}
+.ph li.d{color:var(--ink-faint); text-decoration:line-through; text-decoration-thickness:1px}
+.ph li.w::before{content:"▸"; color:var(--c-inwork)}
+.ph li.w{color:var(--ink); font-weight:600}
+.ph li.o::before{content:"○"; color:var(--ink-faint)}
+.findings{display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:16px; margin-top:20px}
+.fnd{background:var(--panel); border:1px solid var(--rule); border-top:3px solid var(--accent); border-radius:3px; padding:16px 18px}
+.fnd h4{margin:0 0 8px; font-size:16px}
+.fnd p{font-size:14.2px; color:var(--ink-soft); margin:0 0 8px}
+.fnd p:last-child{margin:0}
+ul.src{list-style:none; padding:0; margin:14px 0 0}
+ul.src li{padding:7px 0; border-top:1px solid var(--rule); font-size:14.2px; color:var(--ink-soft)}
+ul.src li b{color:var(--ink); font-family:var(--mono); font-size:13px; font-weight:700}
+
+@media (max-width:1080px){
+  .stage{grid-template-columns:46px 1fr; row-gap:10px}
+  .stage .st-badge{grid-column:1/-1}
+  .stage .facts{grid-column:1/-1}
+  .stage .tmplcell{grid-column:1/-1}
+}
+@media (max-width:760px){
+  main{width:94vw}
+  .band{padding-left:0}
+  .band-lbl{position:static; width:auto; border-top:2px solid var(--rule-strong); margin:18px 0 10px; padding-top:6px}
+  .stage::before,.stage::after{display:none}
+  nav.jump{display:none}
+  .hero{padding:32px 0 22px}
+}
+</style>
+</head><body>
+
+<header class="top">
+  <div class="topin">
+    <div class="brand">Product&nbsp;Lab · слепок 2026-09-04</div>
+    <nav class="jump">
+      <a href="#legend">Легенда</a><a href="#life">Стадии</a><a href="#layers">Слои</a>
+      <a href="#phases">Фазы</a><a href="#find">Выводы</a><a href="#src">Источники</a>
+    </nav>
+    <div class="ctl">
+      <button class="t" id="th" type="button">Тема: системная</button>
+      <button class="t" id="hc" type="button" aria-pressed="false">Контраст</button>
+    </div>
+  </div>
+  <div id="bar"></div>
+</header>
+
+<main>
+
+<div class="hero">
+  <div class="stamp">репозиторий ~/dev/projects/personal/product-lab · коммит 63142f5 · ветка docs/handoff-teardown</div>
+  <h1>Карта процессов Product&nbsp;Lab и их состояний</h1>
+  <p class="lede">Product Lab — агентное рабочее пространство, в котором продуктовая идея проходит
+  17 стадий от исходной гипотезы до релиза и обратной связи. Каждая стадия производит формализованный
+  артефакт, который становится входом следующей. Сам Product Lab собирается инкрементально: процесс
+  либо переносится от донора и адаптируется, либо проектируется с нуля — и только по явной команде.
+  Эта страница отвечает на один вопрос: <b>что уже работает, что в работе, что ещё не описано и где
+  стоит запрет на самостоятельное проектирование.</b></p>
+  <div class="kpis">
+    <div class="kpi"><b>0 / 17</b><span>стадий готовы полностью — исполняемый скилл есть только у одной, и та в середине адаптации</span></div>
+    <div class="kpi"><b>1</b><span>исполняемый скилл: <code>skills/concept</code>. Остальные четыре файла — заготовки на 8–9 строк</span></div>
+    <div class="kpi"><b>2 / 17</b><span>шаблонов результата утверждены (<code>validated</code>): <code>01-idea</code> и <code>03-concept</code></span></div>
+    <div class="kpi"><b>3</b><span>донора перенесены: concept, development, feature-pool. Адаптирован — ни один целиком</span></div>
+  </div>
+</div>
+
+<section id="legend">
+  <div class="sec-kicker">Как читать</div>
+  <h2>Шесть состояний и правило их вывода</h2>
+  <p>Ни одно состояние здесь не выведено «на глаз». Каждая стадия описана шестью независимо
+  проверяемыми полями: <b>State</b> — дословно из таблицы в <code>docs/ROADMAP.md</code>;
+  <b>скилл</b> — по фактическому содержимому <code>skills/&lt;name&gt;/SKILL.md</code>;
+  <b>template_status</b> — из frontmatter <code>templates/NN-&lt;stage&gt;.md</code>;
+  <b>артефакт</b> — из <code>docs/artifact-model.md</code>; <b>донор</b> — по наличию директории
+  в <code>donors/</code>; <b>фаза</b> — колонка Phase в ROADMAP. Цвет на диаграмме — производная
+  от State, а не отдельный словарь: под каждым цветом ниже указана порождающая строка ROADMAP.</p>
+
+  <div class="legend">
+    <div class="lg" style="--k:var(--c-partial)">
+      <div class="h"><span class="dot"></span><span class="nm">Частично готов</span><span class="cnt">1 стадия</span></div>
+      <span class="st">State: Import / adaptation</span>
+      <p>Скилл существует и исполняется, но адаптация продолжается: версия в <code>skills/</code> ещё
+      сверяется с донором. Максимальная зрелость, достигнутая в репозитории на сегодня.</p>
+    </div>
+    <div class="lg" style="--k:var(--c-inwork)">
+      <div class="h"><span class="dot"></span><span class="nm">В работе</span><span class="cnt">1 стадия</span></div>
+      <span class="st">State: Design</span>
+      <p>Процесс проектируется прямо сейчас, донора у него нет — основой служит методология
+      соседней стадии. Шаблон результата в статусе draft: структура ещё меняется.</p>
+    </div>
+    <div class="lg" style="--k:var(--c-imported)">
+      <div class="h"><span class="dot"></span><span class="nm">Донор перенесён</span><span class="cnt">1 стадия</span></div>
+      <span class="st">State: Import first, adapt second</span>
+      <p>Исходный материал лежит в репозитории как есть, адаптация не начиналась. Порядок задан
+      явно: сначала импорт без содержательной переработки, потом адаптация отдельной задачей.</p>
+    </div>
+    <div class="lg" style="--k:var(--c-donor)">
+      <div class="h"><span class="dot"></span><span class="nm">Донор есть, не адаптирован</span><span class="cnt">4 стадии</span></div>
+      <span class="st">State: Not adapted</span>
+      <p>Материал доступен внутри корпоративного донора development, но работа над стадией
+      не начиналась и скилла у неё нет. Это очередь фаз 2–3, а не пробел в замысле.</p>
+    </div>
+    <div class="lg" style="--k:var(--c-none)">
+      <div class="h"><span class="dot"></span><span class="nm">Не спроектирован</span><span class="cnt">8 стадий</span></div>
+      <span class="st">State: Not designed</span>
+      <p>Проектирование <b>запрещено</b> без явной команды — это ближайший аналог «заблокирован»:
+      блокирует правило инкрементальной работы, а не внешняя зависимость. Наличие заготовки
+      <code>SKILL.md</code>, папки или пункта фазы разрешением не является.</p>
+    </div>
+    <div class="lg manual" style="--k:var(--c-manual)">
+      <div class="h"><span class="dot"></span><span class="nm">Вручную по замыслу</span><span class="cnt">2 стадии</span></div>
+      <span class="st">State: Not designed · Source: None (пишет человек)</span>
+      <p>Формально те же <code>Not designed</code>, но это не пробел: стадию выполняет человек,
+      и автоматизировать её не собирались. Красить её как непроектированную Architecture значило бы
+      соврать о репозитории — отсюда отдельная группа.</p>
+    </div>
+  </div>
+
+  <div class="dist" role="img" aria-label="Распределение 17 стадий по группам: не спроектирован 8, донор есть 4, вручную 2, частично готов 1, в работе 1, донор перенесён 1">
+    <div style="--k:var(--c-partial); flex:1">1</div>
+    <div style="--k:var(--c-inwork); flex:1">1</div>
+    <div style="--k:var(--c-imported); flex:1">1</div>
+    <div style="--k:var(--c-donor); flex:4">4</div>
+    <div style="--k:var(--c-none); flex:8">8 не спроектировано</div>
+    <div class="striped" style="--k:var(--c-manual); flex:2">2</div>
+  </div>
+
+  <div class="note"><b>Кажущееся противоречие, которое им не является.</b> У стадии Idea
+  <code>template_status: validated</code> при <code>State: Not designed</code>. В модели репозитория
+  это согласовано: форма результата утверждена как контракт, а процесс её получения не проектируется,
+  потому что его выполняет человек. Зрелость шаблона и состояние процесса — разные вещи.</div>
+</section>
+
+<section id="life">
+  <div class="sec-kicker">Lifecycle</div>
+  <h2>17 стадий: от идеи до итерации</h2>
+  <p>Порядок жёсткий: сначала для кого и какая ценность, потом поведение, потом функциональность,
+  интерфейс, монетизация и метрики. Стадии сгруппированы в классы — логические группы из нескольких
+  шагов. Стадии не сцепляются автоматически: агент произвёл артефакт стадии — остановился и показал
+  результат, следующая стадия запускается отдельной командой.</p>
+  <p><b>Заготовка (stub)</b> в колонке скилла — это файл <code>SKILL.md</code> на 8–9 строк
+  с <code>status: stub</code>, который сообщает «не исполняется» и отсылает к ROADMAP. Навигационный
+  указатель, а не незаконченная реализация.</p>
+
+  <div class="rail">
+
+    <div class="band">
+      <div class="band-lbl">Discovery<em>вход в систему</em></div>
+      <div class="stage manual" style="--k:var(--c-manual)">
+        <div class="num">01</div>
+        <div class="nmwrap"><div class="n">Idea</div><div class="sub">фиксируем исходную гипотезу</div></div>
+        <div class="st-badge"><span class="badge">ВРУЧНУЮ<em>Not designed · пишет человек</em></span></div>
+        <div class="facts"><span class="chip no">скилл: не нужен</span><span class="chip"><b>IDEA.md</b></span><span class="chip no">донора нет</span></div>
+        <div class="tmplcell"><span class="tmpl v">шаблон 01-idea · validated</span></div>
+      </div>
+      <div class="stage manual" style="--k:var(--c-manual)">
+        <div class="num">02</div>
+        <div class="nmwrap"><div class="n">Brief</div><div class="sub">кратко фиксируем задачу и контекст</div></div>
+        <div class="st-badge"><span class="badge">ВРУЧНУЮ<em>Not designed · пишет человек</em></span></div>
+        <div class="facts"><span class="chip no">скилл: не нужен</span><span class="chip no">артефакт: TBD</span><span class="chip no">донора нет</span></div>
+        <div class="tmplcell"><span class="tmpl">шаблон 02-brief · draft</span></div>
+      </div>
+    </div>
+
+    <div class="band">
+      <div class="band-lbl">Concept<em>ценность и модель</em></div>
+      <div class="stage" style="--k:var(--c-partial)">
+        <div class="num">03</div>
+        <div class="nmwrap"><div class="n">Concept</div><div class="sub">формируем продуктовую модель</div></div>
+        <div class="st-badge"><span class="badge">ЧАСТИЧНО ГОТОВ<em>Import / adaptation · фаза 1</em></span></div>
+        <div class="facts"><span class="chip ok">скилл <b>исполняется</b></span><span class="chip"><b>CONCEPT.md</b></span><span class="chip dn">донор: donors/concept</span></div>
+        <div class="tmplcell"><span class="tmpl v">шаблон 03-concept · validated</span></div>
+      </div>
+      <div class="stage" style="--k:var(--c-inwork)">
+        <div class="num">04</div>
+        <div class="nmwrap"><div class="n">Product Strategy</div><div class="sub">позиционирование, монетизация, метрики, GTM</div></div>
+        <div class="st-badge"><span class="badge">В РАБОТЕ<em>Design · фаза 1</em></span></div>
+        <div class="facts"><span class="chip ok">ведёт <b>skills/concept</b></span><span class="chip"><b>STRATEGY.md</b></span><span class="chip no">донора нет</span></div>
+        <div class="tmplcell"><span class="tmpl">шаблон 04-product-strategy · draft</span></div>
+      </div>
+    </div>
+
+    <div class="band">
+      <div class="band-lbl">Definition<em>состав продукта</em></div>
+      <div class="stage" style="--k:var(--c-none)">
+        <div class="num">05</div>
+        <div class="nmwrap"><div class="n">Feature Pool</div><div class="sub">собираем потенциальные возможности</div></div>
+        <div class="st-badge"><span class="badge">НЕ СПРОЕКТИРОВАН<em>Not designed · фаза 2</em></span></div>
+        <div class="facts"><span class="chip no">скилл: TBD</span><span class="chip no">артефакт: TBD</span><span class="chip dn">донор: входной контракт</span></div>
+        <div class="tmplcell"><span class="tmpl">шаблон 05-feature-pool · draft</span></div>
+      </div>
+      <div class="stage" style="--k:var(--c-none)">
+        <div class="num">06</div>
+        <div class="nmwrap"><div class="n">Scope</div><div class="sub">выбираем состав версии</div></div>
+        <div class="st-badge"><span class="badge">НЕ СПРОЕКТИРОВАН<em>Not designed · фаза 2</em></span></div>
+        <div class="facts"><span class="chip no">skills/scope — заготовка</span><span class="chip"><b>SCOPE.md</b></span><span class="chip no">донора нет</span></div>
+        <div class="tmplcell"><span class="tmpl">шаблон 06-scope · draft</span></div>
+      </div>
+      <div class="stage" style="--k:var(--c-none)">
+        <div class="num">07</div>
+        <div class="nmwrap"><div class="n">Product Definition</div><div class="sub">описываем поведение продукта</div></div>
+        <div class="st-badge"><span class="badge">НЕ СПРОЕКТИРОВАН<em>Not designed · фаза 2</em></span></div>
+        <div class="facts"><span class="chip no">скилл: TBD</span><span class="chip"><b>PRODUCT.md</b></span><span class="chip no">донора нет</span></div>
+        <div class="tmplcell"><span class="tmpl">шаблон 07-product-definition · draft</span></div>
+      </div>
+    </div>
+
+    <div class="band">
+      <div class="band-lbl">Solution<em>техническое решение</em></div>
+      <div class="stage" style="--k:var(--c-none)">
+        <div class="num">08</div>
+        <div class="nmwrap"><div class="n">Architecture</div><div class="sub">проектируем техническое решение</div></div>
+        <div class="st-badge"><span class="badge">НЕ СПРОЕКТИРОВАН<em>Not designed · фаза 2</em></span></div>
+        <div class="facts"><span class="chip no">скилл: TBD</span><span class="chip"><b>ARCHITECTURE.md</b></span><span class="chip no">источник: частичное знание</span></div>
+        <div class="tmplcell"><span class="tmpl">шаблон 08-architecture · draft</span></div>
+      </div>
+      <div class="stage" style="--k:var(--c-none)">
+        <div class="num">09</div>
+        <div class="nmwrap"><div class="n">Specification</div><div class="sub">готовим решение к разработке</div></div>
+        <div class="st-badge"><span class="badge">НЕ СПРОЕКТИРОВАН<em>Not designed · фаза 2</em></span></div>
+        <div class="facts"><span class="chip no">скилл: TBD</span><span class="chip no">артефакт: TBD</span><span class="chip no">источник: частичное знание</span></div>
+        <div class="tmplcell"><span class="tmpl">шаблон 09-specification · draft</span></div>
+      </div>
+      <div class="stage" style="--k:var(--c-donor)">
+        <div class="num">10</div>
+        <div class="nmwrap"><div class="n">Tasks</div><div class="sub">раскладываем решение на исполняемые задачи</div></div>
+        <div class="st-badge"><span class="badge">ДОНОР, НЕ АДАПТИРОВАН<em>Not adapted · фаза 2</em></span></div>
+        <div class="facts"><span class="chip no">скилл: TBD</span><span class="chip"><b>tasks/</b></span><span class="chip dn">донор: обвязка development</span></div>
+        <div class="tmplcell"><span class="tmpl">шаблон 10-tasks · draft</span></div>
+      </div>
+    </div>
+
+    <div class="band">
+      <div class="band-lbl">Development<em>реализация</em></div>
+      <div class="stage" style="--k:var(--c-imported)">
+        <div class="num">11</div>
+        <div class="nmwrap"><div class="n">Development</div><div class="sub">реализуем изменение</div></div>
+        <div class="st-badge"><span class="badge">ДОНОР ПЕРЕНЕСЁН<em>Import first, adapt second · фаза 1</em></span></div>
+        <div class="facts"><span class="chip no">skills/development — заготовка</span><span class="chip">код + <b>knowledge/</b></span><span class="chip dn">донор: корпоративный RVI</span></div>
+        <div class="tmplcell"><span class="tmpl">шаблон 11-development · draft</span></div>
+      </div>
+      <div class="stage" style="--k:var(--c-none)">
+        <div class="num">12</div>
+        <div class="nmwrap"><div class="n">Validation</div><div class="sub">проверяем результат</div></div>
+        <div class="st-badge"><span class="badge">НЕ СПРОЕКТИРОВАН<em>Not designed · фаза 3</em></span></div>
+        <div class="facts"><span class="chip no">skills/development — заготовка</span><span class="chip no">артефакт: TBD</span><span class="chip no">донора нет</span></div>
+        <div class="tmplcell"><span class="tmpl">шаблон 12-validation · draft</span></div>
+      </div>
+      <div class="stage" style="--k:var(--c-donor)">
+        <div class="num">13</div>
+        <div class="nmwrap"><div class="n">Delivery</div><div class="sub">интегрируем изменение</div></div>
+        <div class="st-badge"><span class="badge">ДОНОР, НЕ АДАПТИРОВАН<em>Not adapted · фаза 3</em></span></div>
+        <div class="facts"><span class="chip no">skills/development — заготовка</span><span class="chip no">артефакт: TBD</span><span class="chip dn">донор: обвязка development</span></div>
+        <div class="tmplcell"><span class="tmpl">шаблон 13-delivery · draft</span></div>
+      </div>
+      <div class="stage" style="--k:var(--c-donor)">
+        <div class="num">14</div>
+        <div class="nmwrap"><div class="n">Documentation</div><div class="sub">обновляем знания</div></div>
+        <div class="st-badge"><span class="badge">ДОНОР, НЕ АДАПТИРОВАН<em>Not adapted · фаза 3</em></span></div>
+        <div class="facts"><span class="chip no">skills/development — заготовка</span><span class="chip"><b>knowledge/</b>, <b>changelog/</b></span><span class="chip dn">донор: rvi-kb-update</span></div>
+        <div class="tmplcell"><span class="tmpl">шаблон 14-documentation · draft</span></div>
+      </div>
+    </div>
+
+    <div class="band">
+      <div class="band-lbl">Release<em>выпуск</em></div>
+      <div class="stage" style="--k:var(--c-donor)">
+        <div class="num">15</div>
+        <div class="nmwrap"><div class="n">Release</div><div class="sub">выпускаем пользователю</div></div>
+        <div class="st-badge"><span class="badge">ДОНОР, НЕ АДАПТИРОВАН<em>Not adapted · фаза 3</em></span></div>
+        <div class="facts"><span class="chip no">skills/release — заготовка</span><span class="chip"><b>releases/</b></span><span class="chip dn">донор: rvi-release, прод из тега</span></div>
+        <div class="tmplcell"><span class="tmpl">шаблон 15-release · draft</span></div>
+      </div>
+    </div>
+
+    <div class="band">
+      <div class="band-lbl">Feedback<em>обратная связь</em></div>
+      <div class="stage" style="--k:var(--c-none)">
+        <div class="num">16</div>
+        <div class="nmwrap"><div class="n">Observation</div><div class="sub">собираем фактические данные после релиза</div></div>
+        <div class="st-badge"><span class="badge">НЕ СПРОЕКТИРОВАН<em>Not designed · вне фаз</em></span></div>
+        <div class="facts"><span class="chip no">скилл: TBD</span><span class="chip no">артефакт: TBD</span><span class="chip no">донора нет</span></div>
+        <div class="tmplcell"><span class="tmpl">шаблон 16-observation · draft</span></div>
+      </div>
+      <div class="stage" style="--k:var(--c-none)">
+        <div class="num">17</div>
+        <div class="nmwrap"><div class="n">Iteration</div><div class="sub">превращаем данные в следующий цикл</div></div>
+        <div class="st-badge"><span class="badge">НЕ СПРОЕКТИРОВАН<em>Not designed · вне фаз</em></span></div>
+        <div class="facts"><span class="chip no">скилл: TBD</span><span class="chip no">артефакт: TBD</span><span class="chip no">донора нет</span></div>
+        <div class="tmplcell"><span class="tmpl">шаблон 17-iteration · draft</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="layers">
+  <div class="sec-kicker">Устройство</div>
+  <h2>Слои репозитория и путь одной стадии</h2>
+  <p>Репозиторий разложен на пять слоёв, и каждый отвечает ровно на один вопрос. Разделение
+  строгое: смешение слоёв — главная ошибка, от которой защищают правила в <code>CLAUDE.md</code>.</p>
+
+  <figure>
+    <div class="svgwrap">
+      <svg class="diag" viewBox="0 0 960 486" role="img" aria-labelledby="difig">
+        <title id="difig">Схема слоёв: PRODUCT-LAB.md определяет стадии; donors адаптируются в skills; templates задают форму результата; ROADMAP даёт разрешение на работу; skills производят артефакты в projects; donors в рантайме не читаются</title>
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/>
+          </marker>
+        </defs>
+
+        <rect class="bx hi" x="210" y="8" width="540" height="58" rx="3"/>
+        <text class="ttl" x="480" y="32" text-anchor="middle">PRODUCT-LAB.md</text>
+        <text class="cap" x="480" y="52" text-anchor="middle">единственный источник истины: названия, порядок, классы и смысл 17 стадий</text>
+
+        <path class="ln acc" d="M480 66 L480 96"/>
+        <path class="ln acc" d="M120 96 L840 96"/>
+        <path class="ln acc" d="M120 96 L120 126" marker-end="url(#ar)"/>
+        <path class="ln acc" d="M480 96 L480 126" marker-end="url(#ar)"/>
+        <path class="ln acc" d="M840 96 L840 126" marker-end="url(#ar)"/>
+        <text class="lbl" x="496" y="89">определяет стадии и их порядок</text>
+
+        <rect class="bx" x="20" y="130" width="200" height="96" rx="3"/>
+        <text class="ttl" x="120" y="156" text-anchor="middle">donors/</text>
+        <text class="cap" x="120" y="177" text-anchor="middle">исходный материал</text>
+        <text class="cap" x="120" y="195" text-anchor="middle">как есть, не править</text>
+        <text class="lbl sm" x="120" y="214" text-anchor="middle">concept · development · feature-pool</text>
+
+        <rect class="bx hi" x="380" y="130" width="200" height="96" rx="3"/>
+        <text class="ttl" x="480" y="156" text-anchor="middle">skills/</text>
+        <text class="cap" x="480" y="177" text-anchor="middle">как агент получает</text>
+        <text class="cap" x="480" y="195" text-anchor="middle">результат стадии</text>
+        <text class="lbl" x="480" y="214" text-anchor="middle">1 исполняемый + 3 заготовки</text>
+
+        <rect class="bx" x="740" y="130" width="200" height="96" rx="3"/>
+        <text class="ttl" x="840" y="156" text-anchor="middle">templates/</text>
+        <text class="cap" x="840" y="177" text-anchor="middle">контракт результата:</text>
+        <text class="cap" x="840" y="195" text-anchor="middle">что получится на выходе</text>
+        <text class="lbl" x="840" y="214" text-anchor="middle">17 файлов · 2 validated</text>
+
+        <path class="ln" d="M220 178 L372 178" marker-end="url(#ar)"/>
+        <text class="lbl" x="296" y="170" text-anchor="middle">адаптация</text>
+        <path class="ln" d="M740 163 L588 163" marker-end="url(#ar)"/>
+        <text class="lbl" x="664" y="155" text-anchor="middle">задаёт форму</text>
+
+        <rect class="bx hi" x="260" y="290" width="420" height="86" rx="3"/>
+        <text class="ttl" x="470" y="316" text-anchor="middle">projects/&lt;project&gt;/</text>
+        <text class="cap" x="470" y="337" text-anchor="middle">единственное место для output по конкретной идее</text>
+        <text class="lbl" x="470" y="357" text-anchor="middle">IDEA · CONCEPT · STRATEGY · SCOPE · tasks/ · releases/ · STATUS</text>
+
+        <path class="ln acc" d="M480 226 L480 282" marker-end="url(#ar)"/>
+        <text class="lbl" x="492" y="258">прогон стадии для идеи</text>
+
+        <rect class="bx" x="740" y="290" width="200" height="86" rx="3"/>
+        <text class="ttl" x="840" y="316" text-anchor="middle">docs/</text>
+        <text class="cap" x="840" y="337" text-anchor="middle">ROADMAP.md — состояние</text>
+        <text class="cap" x="840" y="356" text-anchor="middle">artifact-model.md — где лежит</text>
+
+        <path class="ln dash" d="M740 320 L692 320 L692 200 L588 200" marker-end="url(#ar)"/>
+        <text class="lbl" x="702" y="252">разрешение на работу</text>
+
+        <path class="ban" d="M120 226 L120 434 L470 434 L470 384"/>
+        <circle cx="270" cy="434" r="13" fill="none" stroke="var(--c-donor)" stroke-width="2"/>
+        <path d="M262 426 L278 442 M278 426 L262 442" stroke="var(--c-donor)" stroke-width="2"/>
+        <text class="bantxt" x="296" y="458">donors/ — материал для адаптации процесса, а не рантайм-контекст:</text>
+        <text class="bantxt" x="296" y="476">при прогоне стадии для конкретной идеи они не читаются</text>
+      </svg>
+    </div>
+    <figcaption>Схема слоёв. Сплошные стрелки — обязательные связи; пунктир — управляющая:
+    ROADMAP разрешает работу над процессом. Перечёркнутая линия внизу — явный запрет:
+    донор не участвует в прогоне стадии.</figcaption>
+  </figure>
+
+  <h3>Три вопроса — три места</h3>
+  <div class="tblwrap"><table class="tbl">
+    <thead><tr><th>Вопрос</th><th>Где ответ</th><th>Что там лежит</th></tr></thead>
+    <tbody>
+      <tr><td>Что происходит на этой стадии</td><td><code>PRODUCT-LAB.md</code></td><td>Название, класс, смысл, чем выполняется, что производит. Определения стадий не дублируются больше нигде.</td></tr>
+      <tr><td>Что я получу на выходе</td><td><code>templates/NN-&lt;stage&gt;.md</code></td><td>Контракт результата с frontmatter: артефакт, формат, файл вывода, кардинальность, версия и статус шаблона. Промпта в шаблоне нет.</td></tr>
+      <tr><td>Как агент должен получить результат</td><td><code>skills/&lt;stage&gt;/SKILL.md</code></td><td>Алгоритм анализа, вопросы агента, гейты. Один скилл может вести несколько стадий — логика каждой в <code>stages/</code>.</td></tr>
+    </tbody>
+  </table></div>
+
+  <p style="margin-top:22px">За рамками пяти слоёв остаётся <code>examples/</code> — место для одного
+  продукта, прошедшего весь flow целиком. Директория пуста и заполняется только тогда, когда
+  соответствующие процессы адаптированы или спроектированы, поэтому на схеме её нет: сегодня
+  такого продукта не существует.</p>
+
+  <div class="note"><b>Правило изоляции проектов.</b> Любой артефакт, код, исследование или
+  release-материал по конкретной идее создаётся только внутри <code>projects/&lt;project&gt;/</code>.
+  Skills, templates, docs и donors — общие ресурсы Product Lab и состояния конкретного проекта
+  не содержат. Поэтому и эта страница лежит вне репозитория: состоянием процессов владеет
+  <code>docs/ROADMAP.md</code>, второго источника той же правды быть не должно.</div>
+</section>
+
+<section id="phases">
+  <div class="sec-kicker">Порядок сборки</div>
+  <h2>Четыре фазы — и что из них живо сейчас</h2>
+  <p>Фазы задают только очерёдность работ. Разрешение на работу даёт исключительно колонка State
+  в ROADMAP: пункт фазы, пустая заготовка или упоминание в BRIEF заданием не являются.
+  Живая работа сегодня — два выделенных ниже пункта фазы 1: у обоих донор уже импортирован, идёт или предстоит адаптация. Остальные незакрытые пункты не начаты.</p>
+  <div class="phases">
+    <div class="ph">
+      <h4>Фаза 1 — Foundation</h4>
+      <div class="meta">3 из 7 закрыто · 2 в работе</div>
+      <ul>
+        <li class="d">Структура репозитория</li>
+        <li class="d">Импорт доноров как есть: concept, development</li>
+        <li class="d">Статусы процессов и правила инкрементальной работы</li>
+        <li class="w">Перенос concept-скилла: адаптация v0 сверяется с донором</li>
+        <li class="w">Перенос development-скилла отдельной задачей</li>
+        <li class="o">Описать текущий development workflow</li>
+        <li class="o">Убрать корпоративные зависимости</li>
+      </ul>
+    </div>
+    <div class="ph">
+      <h4>Фаза 2 — Concept → Task</h4>
+      <div class="meta">не начата</div>
+      <ul>
+        <li class="o">Feature Pool skill</li>
+        <li class="o">Scope skill</li>
+        <li class="o">Product Definition skill</li>
+        <li class="o">Architecture skill</li>
+        <li class="o">Specification skill</li>
+        <li class="o">Шаблон задачи</li>
+      </ul>
+    </div>
+    <div class="ph">
+      <h4>Фаза 3 — Development lifecycle</h4>
+      <div class="meta">не начата</div>
+      <ul>
+        <li class="o">Validation</li>
+        <li class="o">Documentation</li>
+        <li class="o">Knowledge Base</li>
+        <li class="o">Модель Delivery</li>
+      </ul>
+    </div>
+    <div class="ph">
+      <h4>Фаза 4 — Orchestration</h4>
+      <div class="meta">не начата</div>
+      <ul>
+        <li class="o">Определение состояния проекта</li>
+        <li class="o">Маршрутизация скиллов</li>
+        <li class="o">Валидация артефактов</li>
+        <li class="o">Оркестрация workflow</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="find">
+  <div class="sec-kicker">Что видно из данных</div>
+  <h2>Четыре наблюдения</h2>
+  <div class="findings">
+    <div class="fnd">
+      <h4>Готовых стадий нет ни одной</h4>
+      <p>Единственная стадия с исполняемым скиллом — Concept, и она сама в середине адаптации:
+      версия <code>skills/concept/</code> (v0) ещё сверяется с донором. Остальные шестнадцать —
+      либо донор без адаптации, либо чистая заготовка.</p>
+      <p>Практический вывод: сегодня Product Lab запускается ровно на двух стадиях — Concept
+      и Product Strategy, обе через один скилл <code>skills/concept</code>.</p>
+    </div>
+    <div class="fnd">
+      <h4>Шаблоны опережают процессы</h4>
+      <p>Все 17 контрактов результата написаны, но утверждены только два — <code>01-idea</code>
+      и <code>03-concept</code>. Пятнадцать в статусе <code>draft</code>: структура отлаживается
+      и может меняться.</p>
+      <p>Путь к <code>validated</code> задан явно: draft → скилл и правила генерации → прогон
+      на реальных идеях → правка шаблона и скилла → validated. Пропустить прогон нельзя,
+      поэтому статус шаблона напрямую упирается в готовность процесса.</p>
+    </div>
+    <div class="fnd">
+      <h4>«Не спроектирован» — это запрет, а не пробел</h4>
+      <p>Восемь стадий в состоянии <code>Not designed</code>. Правило инкрементальной работы
+      делает это состояние блокирующим: наличие директории, файла-заготовки или упоминания
+      будущего процесса в BRIEF/ROADMAP не является разрешением его заполнить.</p>
+      <p>Снять блокировку может только явная команда, и смена состояния оформляется отдельным
+      коммитом с правкой таблицы в ROADMAP.</p>
+    </div>
+    <div class="fnd">
+      <h4>Легенда ROADMAP расходится со своей же таблицей</h4>
+      <p>Легенда определяет шесть состояний — <span class="mono">Not designed, Design, Import,
+      Adaptation, Adapted, Designed</span>. Таблица в том же файле фактически использует три
+      другие строки: <span class="mono">«Import / adaptation»</span>,
+      <span class="mono">«Import first, adapt second»</span>, <span class="mono">«Not adapted»</span>.
+      Ни одна из них в легенде не описана.</p>
+      <p>На этой странице State приведён дословно по таблице. Расхождение стоит устранить
+      отдельной правкой — либо расширив легенду, либо приведя таблицу к ней.</p>
+    </div>
+  </div>
+</section>
+
+<section id="src">
+  <div class="sec-kicker">Источники</div>
+  <h2>Откуда взят каждый факт</h2>
+  <p>Веб-ресёрч не проводился и был бы бессмысленным: предмет страницы — локальный приватный
+  репозиторий, внешних источников по нему не существует. Все факты выведены из файлов
+  на 2026-09-04, коммит <code>63142f5</code>, рабочее дерево чистое. Ничего не помечено
+  как непроверенное: каждое утверждение прочитано из перечисленных файлов.</p>
+  <ul class="src">
+    <li><b>PRODUCT-LAB.md</b> — состав, порядок и классы 17 стадий, что на каждой происходит, принципы системы</li>
+    <li><b>docs/ROADMAP.md</b> — таблица состояний процессов (колонка State и Skill), легенда состояний, четыре фазы с чекбоксами</li>
+    <li><b>docs/artifact-model.md</b> — артефакт каждой стадии и его расположение внутри проекта</li>
+    <li><b>CLAUDE.md</b> — правило инкрементальной работы, описание слоёв, правило единого источника, правило изоляции проектов</li>
+    <li><b>templates/01-idea.md … templates/17-iteration.md</b> — frontmatter каждого шаблона: <code>template_status</code>, <code>output</code>, <code>cardinality</code></li>
+    <li><b>skills/concept/SKILL.md</b> (56 строк + <code>stages/</code> + <code>reference/methodology.md</code> на 425 строк) — единственный исполняемый скилл</li>
+    <li><b>skills/development/SKILL.md, skills/release/SKILL.md, skills/scope/SKILL.md</b> — заготовки по 8–9 строк с <code>status: stub</code></li>
+    <li><b>donors/concept/SOURCE.md, donors/development/SOURCE.md, donors/feature-pool/SOURCE.md</b> — происхождение и состав каждого донора</li>
+  </ul>
+  <p style="margin-top:18px; color:var(--ink-faint); font-size:14px">Текстовая версия того же
+  разбора — <code>karta-processov-2026-09-04.md</code> в этой же папке.</p>
+</section>
+
+</main>
+
+<script>
+(function(){
+  var r=document.documentElement, th=document.getElementById('th'), hc=document.getElementById('hc');
+  var names={system:'Тема: системная',light:'Тема: светлая',dark:'Тема: тёмная'}, order=['system','light','dark'];
+  var mode=null, contrast=null;
+  try{mode=localStorage.getItem('pl-theme'); contrast=localStorage.getItem('pl-contrast');}catch(e){}
+  mode=names[mode]?mode:'system'; contrast=contrast==='on'?'on':'off';
+  function apply(){
+    if(mode==='system'){r.removeAttribute('data-theme');}else{r.setAttribute('data-theme',mode);}
+    r.setAttribute('data-contrast',contrast);
+    th.textContent=names[mode];
+    hc.setAttribute('aria-pressed',contrast==='on'?'true':'false');
+    try{localStorage.setItem('pl-theme',mode);localStorage.setItem('pl-contrast',contrast);}catch(e){}
+  }
+  th.addEventListener('click',function(){mode=order[(order.indexOf(mode)+1)%3];apply();});
+  hc.addEventListener('click',function(){contrast=contrast==='on'?'off':'on';apply();});
+  apply();
+  var bar=document.getElementById('bar');
+  function prog(){
+    var h=document.documentElement.scrollHeight-window.innerHeight;
+    bar.style.width=(h>0?(window.scrollY/h*100):0)+'%';
+  }
+  window.addEventListener('scroll',prog,{passive:true}); window.addEventListener('resize',prog); prog();
+})();
+</script>
+</body></html>

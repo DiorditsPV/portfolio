@@ -8,4 +8,8 @@ resume-ru.pdf
 resume-en.pdf
 lexis-light.webp
 lexis-dark.webp
-presentations/probe.html
+
+# ─── презентации: блок ниже переписывает tools/publish-presentation.mjs ───
+presentations/index.html
+presentations/generator-fich.html
+presentations/product-lab-karta-processov.html
