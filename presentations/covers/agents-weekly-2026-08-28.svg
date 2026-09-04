@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675" role="img">
+<defs>
+  <radialGradient id="g" cx="25%" cy="6%" r="105%">
+    <stop offset="0%" stop-color="#6d4cff" stop-opacity=".42"/>
+    <stop offset="55%" stop-color="#6d4cff" stop-opacity=".08"/>
+    <stop offset="100%" stop-color="#141024" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="h" color-interpolation-filters="sRGB">
+    <feColorMatrix type="hueRotate" values="1"/>
+  </filter>
+  <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0 0 L10 5 L0 10 z" fill="#b9aee8" fill-opacity=".6"/>
+  </marker>
+</defs>
+<rect width="1200" height="675" fill="#141024"/>
+<rect width="1200" height="675" fill="url(#g)"/>
+<g filter="url(#h)">
+<circle cx="600" cy="337" r="288" fill="none" stroke="#8b6dff" stroke-opacity="0.24" stroke-width="2" stroke-dasharray="10 14"/><circle cx="600" cy="337" r="240" fill="none" stroke="#8b6dff" stroke-opacity="0.33" stroke-width="2.5" stroke-dasharray="none"/><circle cx="600" cy="337" r="192" fill="none" stroke="#8b6dff" stroke-opacity="0.42" stroke-width="3" stroke-dasharray="10 14"/><circle cx="600" cy="337" r="144" fill="none" stroke="#8b6dff" stroke-opacity="0.51" stroke-width="3.5" stroke-dasharray="none"/><circle cx="600" cy="337" r="96" fill="none" stroke="#8b6dff" stroke-opacity="0.6" stroke-width="4" stroke-dasharray="10 14"/><circle cx="600" cy="337" r="48" fill="none" stroke="#8b6dff" stroke-opacity="0.69" stroke-width="4.5" stroke-dasharray="none"/><circle cx="667.2" cy="411.24" r="7.84" fill="#8b6dff"/><circle cx="569.94" cy="165.94" r="7.83" fill="#8b6dff"/><circle cx="693.32" cy="310.86" r="8.8" fill="#8b6dff"/><circle cx="648.54" cy="592.51" r="14.8" fill="#8b6dff"/><circle cx="674.66" cy="152.89" r="6.55" fill="#8b6dff"/><circle cx="799.94" cy="310.75" r="7.76" fill="#8b6dff"/><circle cx="515.99" cy="570.36" r="10.65" fill="#8b6dff"/>
+</g>
+</svg>
