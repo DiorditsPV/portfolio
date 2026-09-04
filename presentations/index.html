@@ -3,20 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Разборы — Pavel Diordits</title>
-<meta name="description" content="Разборы и исследования: самодостаточные html-страницы, каждая про одну тему.">
+<title>General — библиотека разборов Павла Диордица</title>
+<meta name="description" content="Визуальная библиотека материалов о технологиях, работе и личных исследованиях: сложные темы коротко, структурированно и с визуальными объяснениями.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◆</text></svg>">
 <meta name="theme-color" content="#f6f3f1" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0b0a0a" media="(prefers-color-scheme: dark)">
 <link rel="canonical" href="https://paveldiordits.site/presentations/">
+<meta name="robots" content="index, follow">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://paveldiordits.site/presentations/">
-<meta property="og:title" content="Разборы — Pavel Diordits">
-<meta property="og:description" content="Разборы и исследования: самодостаточные html-страницы, каждая про одну тему.">
+<meta property="og:site_name" content="paveldiordits.site">
+<meta property="og:title" content="General — библиотека разборов">
+<meta property="og:description" content="Визуальная библиотека материалов о технологиях, работе и личных исследованиях.">
 <meta property="og:image" content="https://paveldiordits.site/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="General — библиотека разборов">
+<meta name="twitter:description" content="Визуальная библиотека материалов о технологиях, работе и личных исследованиях.">
+<meta name="twitter:image" content="https://paveldiordits.site/og.png">
 <style>
-/* ВНИМАНИЕ: страница собирается tools/publish-presentation.mjs — правки здесь
-   затрутся. Меняй шаблон в скрипте и пересобирай: node tools/publish-presentation.mjs --rebuild */
+/* ВНИМАНИЕ: страница собирается tools/publish-presentation.mjs из tools/gallery-page.mjs.
+   Правки здесь затрутся — меняй шаблон и прогоняй --rebuild.
+   Блок токенов ниже вынут из index.html при сборке: он там источник правды. */
 
 /* ─────────────────────────── tokens ───────────────────────────
    Шесть наборов оформления. Каждый живёт в двух темах и задаёт
@@ -101,256 +108,379 @@ html[data-design="dawn-fog"].dark{
 html{color-scheme:light}
 html.dark{color-scheme:dark}
 body{
-  margin:0;min-height:100vh;background:var(--bg);color:var(--fg);
-  font-family:var(--font-sans);font-size:16px;letter-spacing:-.01em;line-height:1.6;
-  -webkit-font-smoothing:antialiased;
+  margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-sans);
+  font-size:16px;line-height:1.55;letter-spacing:-.01em;-webkit-font-smoothing:antialiased;
   transition:background-color .4s ease,color .4s ease;
 }
+/* Световой слой набора — как на главной: живёт только на первом экране. */
 #bg{
-  position:absolute;top:0;left:0;right:0;height:100vh;z-index:0;
-  pointer-events:none;background:var(--glow);
+  position:absolute;top:0;left:0;right:0;height:100vh;z-index:0;pointer-events:none;
+  background:var(--glow);
   -webkit-mask-image:linear-gradient(180deg,#000 58%,transparent 100%);
           mask-image:linear-gradient(180deg,#000 58%,transparent 100%);
 }
 header,main,footer{position:relative;z-index:1}
 a{color:inherit;text-decoration:none}
-button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+button,select,input{font:inherit;color:inherit}
+img{display:block;max-width:100%;height:auto}
 ::selection{background:var(--accent);color:var(--accent-fg)}
-.wrap{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 1rem}
-@media(min-width:640px){.wrap{padding:0 1.5rem}}
-@media(min-width:1024px){.wrap{padding:0 2rem}}
-.mono{font-family:var(--font-mono)}
-.eyebrow{
-  font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--muted);
-}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+.wrap{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 1.25rem}
+@media(min-width:900px){.wrap{padding:0 2rem}}
 
+/* ── шапка: логотип, разделы сайта, инструменты ── */
 header{
-  position:sticky;top:0;z-index:100;padding:1.25rem 0;
-  background:color-mix(in srgb,var(--bg) 82%,transparent);
+  position:sticky;top:0;z-index:50;padding:.75rem 0;
+  background:color-mix(in srgb,var(--bg) 84%,transparent);
   backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   border-bottom:1px solid transparent;transition:border-color .3s ease;
 }
 header.scrolled{border-bottom-color:var(--border)}
-.nav-row{display:flex;align-items:center;justify-content:space-between;gap:1rem}
-.home{
-  font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);
-  white-space:nowrap;transition:color .2s ease;
+.bar{display:flex;align-items:center;gap:1rem}
+.logo{font-weight:800;letter-spacing:-.04em;font-size:1.1rem;flex-shrink:0}
+.site-nav{
+  display:flex;align-items:center;gap:.25rem;margin:0 auto;
+  overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;
 }
-.home:hover{color:var(--fg)}
-.tools{display:flex;align-items:center;gap:.5rem;flex-shrink:0}
+.site-nav::-webkit-scrollbar{display:none}
+.site-nav a{
+  padding:.35rem .65rem;border-radius:8px;font-size:.875rem;color:var(--muted);
+  white-space:nowrap;transition:color .2s,background-color .2s;
+}
+.site-nav a:hover{color:var(--fg)}
+.site-nav a[aria-current]{color:var(--fg);font-weight:600}
+.tools{display:flex;align-items:center;gap:.4rem;flex-shrink:0}
 .tool-btn{
-  font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--muted);border:1px solid var(--border);
-  border-radius:999px;padding:.35rem .7rem;white-space:nowrap;
-  display:inline-flex;align-items:center;gap:.4rem;
-  transition:color .2s ease,border-color .2s ease,background-color .2s ease;
+  font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:.35rem .7rem;
+  white-space:nowrap;cursor:pointer;background:none;
+  transition:color .2s,border-color .2s;
 }
 .tool-btn:hover{color:var(--fg);border-color:var(--fg)}
-
-/* только longhand: шорткат padding затёр бы горизонтальные отступы .wrap
-   (та же специфичность, правило ниже) — и на узком экране текст лёг бы на края */
-.hero{padding-top:4rem;padding-bottom:2.5rem}
-.hero h1{font-size:clamp(2rem,6vw,3.25rem);line-height:1.05;letter-spacing:-.03em;margin:.6rem 0 1rem;font-weight:700}
-.hero p{margin:0;max-width:52ch;color:var(--muted)}
-
-main{padding-bottom:5rem}
-
-/* Рубрики. Разделяет не только заголовок, но и линия с воздухом: блоки должны
-   читаться как разные полки, а не как один поток карточек с подписями. */
-.block + .block{margin-top:3.5rem;padding-top:3rem;border-top:1px solid var(--border)}
-.block-head{display:flex;align-items:baseline;gap:.6rem}
-.block-title{font-size:1.375rem;letter-spacing:-.02em;margin:0;font-weight:650}
-.block-count{font-size:.6875rem;color:var(--muted)}
-.block-note{margin:.4rem 0 1.4rem;max-width:70ch;color:var(--muted);font-size:.9375rem}
-
-.grid{display:grid;gap:1rem;grid-template-columns:1fr}
-@media(min-width:700px){.grid{grid-template-columns:repeat(2,1fr)}}
-@media(min-width:1100px){.grid{grid-template-columns:repeat(3,1fr)}}
-
-.card{
-  display:flex;flex-direction:column;gap:.55rem;
-  background:var(--card);border:1px solid var(--border);border-radius:14px;
-  padding:1.25rem;transition:background-color .2s ease,border-color .2s ease,transform .2s ease;
+.icon-btn{
+  width:32px;height:32px;display:grid;place-items:center;border:1px solid var(--border);
+  border-radius:999px;background:none;color:var(--muted);cursor:pointer;
+  transition:color .2s,border-color .2s;
 }
-.card:hover{background:var(--card-hover);border-color:var(--fg);transform:translateY(-2px)}
-@media(prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
-.card-top{display:flex;justify-content:space-between;align-items:baseline;gap:.75rem;
-  font-size:.6875rem;letter-spacing:.08em;color:var(--muted)}
-.card h3{font-size:1.0625rem;line-height:1.3;letter-spacing:-.02em;margin:0;font-weight:650}
-.card .desc{margin:0;font-size:.9375rem;color:var(--muted)}
-.tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.35rem}
+.icon-btn:hover{color:var(--fg);border-color:var(--fg)}
+
+/* ── первый экран: объяснение слева, точка входа справа ── */
+.hero{display:grid;gap:2.25rem;padding:3rem 0 2.5rem;align-items:center}
+@media(min-width:1000px){.hero{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:3rem;padding:4rem 0 3rem}}
+.hero h1{font-size:clamp(2.75rem,7.5vw,4.5rem);line-height:1;letter-spacing:-.045em;margin:0 0 1rem;font-weight:800}
+.lede{font-size:clamp(1.0625rem,2.2vw,1.3125rem);line-height:1.35;margin:0 0 .85rem;max-width:30ch;letter-spacing:-.02em}
+.byline{margin:0 0 1.6rem;color:var(--muted);max-width:46ch}
+.search{position:relative}
+.search svg{position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--muted);opacity:.7;pointer-events:none}
+#q{
+  width:100%;padding:.9rem 1rem .9rem 2.85rem;border:1px solid var(--border);border-radius:12px;
+  background:var(--card);transition:border-color .2s;
+}
+#q:focus{outline:none;border-color:var(--accent)}
+
+.featured{
+  background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;display:grid;
+}
+@media(min-width:760px){.featured{grid-template-columns:1.2fr 1fr}}
+.featured-cover{position:relative;display:block;background:#0d0f14}
+.featured-cover img{width:100%;height:100%;object-fit:cover;aspect-ratio:16/9}
+@media(min-width:760px){.featured-cover img{aspect-ratio:auto;min-height:100%}}
+.pick{
+  position:absolute;top:1rem;left:1rem;padding:.35rem .7rem;border-radius:999px;
+  background:rgba(10,12,18,.72);color:#fff;font-size:.75rem;font-weight:600;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+.featured-body{padding:1.6rem;display:flex;flex-direction:column;gap:.7rem;justify-content:center}
+.featured-body h2{font-size:clamp(1.3rem,2.4vw,1.6rem);line-height:1.18;letter-spacing:-.03em;margin:0;font-weight:700}
+.featured-body p{margin:0;color:var(--muted)}
+.btn{
+  margin-top:.4rem;align-self:start;display:inline-flex;align-items:center;gap:.55rem;
+  padding:.7rem 1.1rem;border-radius:11px;background:var(--accent);color:var(--accent-fg);
+  font-weight:600;font-size:.9375rem;white-space:nowrap;transition:filter .2s,transform .2s;
+}
+.btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+
+/* ── полки: заголовок, счётчик, пояснение, сетка ── */
+.block + .block{margin-top:3.5rem;padding-top:3rem;border-top:1px solid var(--border)}
+.block-head{display:flex;align-items:baseline;gap:.65rem}
+.block-head h2{font-size:1.4rem;letter-spacing:-.03em;margin:0;font-weight:700}
+.count{font-family:var(--font-mono);font-size:.75rem;color:var(--muted)}
+.block-note{margin:.4rem 0 1.4rem;max-width:72ch;color:var(--muted);font-size:.9375rem}
+
+.grid{display:grid;gap:1.35rem;grid-template-columns:1fr}
+@media(min-width:680px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1080px){.grid{grid-template-columns:repeat(3,1fr)}}
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;
+  display:flex;flex-direction:column;transition:border-color .2s,transform .2s,background-color .2s;
+}
+.card:hover{background:var(--card-hover);border-color:var(--fg);transform:translateY(-3px)}
+@media(prefers-reduced-motion:reduce){.card,.btn{transition:none}.card:hover{transform:none}}
+.card-cover{display:block;position:relative;background:#0d0f14;border-bottom:1px solid var(--border)}
+.card-cover img{width:100%;aspect-ratio:16/9;object-fit:cover;transition:transform .35s ease}
+.card:hover .card-cover img{transform:scale(1.035)}
+.badge{
+  position:absolute;left:.7rem;top:.7rem;padding:.2rem .55rem;border-radius:999px;
+  background:rgba(10,12,18,.72);color:#fff;font-size:.6875rem;font-weight:600;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+.card-body{padding:1.1rem 1.2rem 1.2rem;display:flex;flex-direction:column;gap:.5rem;flex:1}
+.card-body h3{font-size:1.0625rem;line-height:1.3;letter-spacing:-.025em;margin:0;font-weight:650}
+.card-desc{
+  margin:0;color:var(--muted);font-size:.9375rem;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.tags{display:flex;flex-wrap:wrap;gap:.35rem}
 .tags span{
   font-family:var(--font-mono);font-size:.625rem;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:.15rem .5rem;
+  color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:.12rem .5rem;
 }
-.empty{color:var(--muted)}
+.card-meta{
+  display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;margin-top:auto;padding-top:.3rem;
+  font-size:.8125rem;color:var(--muted);
+}
+.topic{color:var(--topic);font-weight:600}
+.dot{opacity:.45}
+.lang{border:1px solid var(--border);border-radius:5px;padding:0 .3rem;font-size:.6875rem;letter-spacing:.03em}
 
-footer{border-top:1px solid var(--border);padding:2rem 0;color:var(--muted);font-size:.8125rem}
-.foot-row{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.empty{
+  margin:2rem 0 0;padding:3rem 1rem;text-align:center;color:var(--muted);
+  border:1px dashed var(--border);border-radius:16px;
+}
+
+/* ── автор ── */
+.author{
+  margin:3.5rem 0 0;padding:1.85rem;background:var(--card);border:1px solid var(--border);border-radius:18px;
+  display:flex;flex-wrap:wrap;align-items:center;gap:1.5rem;justify-content:space-between;
+}
+.author p{margin:0;max-width:58ch;color:var(--muted)}
+.author strong{color:var(--fg)}
+.author-links{display:flex;flex-wrap:wrap;gap:.5rem}
+.author-links a{
+  padding:.55rem .95rem;border:1px solid var(--border);border-radius:10px;font-size:.875rem;
+  transition:border-color .2s,color .2s;
+}
+.author-links a:hover{border-color:var(--fg)}
+
+main{padding-bottom:4rem}
+footer{border-top:1px solid var(--border);padding:1.75rem 0 3rem;color:var(--muted);font-size:.8125rem}
+.foot-row{display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between}
 </style>
 </head>
 <body>
 <div id="bg" aria-hidden="true"></div>
 
 <header id="site-header">
-  <div class="wrap nav-row">
-    <a class="home" href="https://paveldiordits.site/" data-ru="← Pavel Diordits" data-en="← Pavel Diordits">← Pavel Diordits</a>
+  <div class="wrap bar">
+    <a class="logo" href="https://paveldiordits.site/">PD</a>
+    <nav class="site-nav">
+      <a href="https://paveldiordits.site/">Главная</a>
+      <a href="https://paveldiordits.site/#experience">Обо мне</a>
+      <a href="https://paveldiordits.site/#projects">Проекты</a>
+      <a href="./" aria-current="page">General</a>
+      <a href="https://paveldiordits.site/#contact">Контакты</a>
+    </nav>
     <div class="tools">
+      <button class="icon-btn" id="to-search" type="button" aria-label="Найти материал">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>
+        </svg>
+      </button>
       <button class="tool-btn" id="design-toggle" type="button"></button>
-      <button class="tool-btn" id="lang-toggle" type="button"></button>
-      <button class="tool-btn" id="theme-toggle" type="button"></button>
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Переключить тему"></button>
     </div>
   </div>
 </header>
 
 <main>
   <section class="wrap hero">
-    <span class="eyebrow" data-ru="Разборы" data-en="Writeups">Разборы</span>
-    <h1 data-ru="Разборы и исследования" data-en="Writeups &amp; research">Разборы и исследования</h1>
-    <p data-ru="Каждая страница — самодостаточный разбор одной темы: собственная вёрстка, свои темы оформления, список источников в конце. Ничего не подгружается со стороны."
-       data-en="Each page is a self-contained writeup on a single topic: its own layout, its own theming, sources listed at the end. Nothing is loaded from anywhere else.">Каждая страница — самодостаточный разбор одной темы: собственная вёрстка, свои темы оформления, список источников в конце. Ничего не подгружается со стороны.</p>
+    <div>
+      <h1>General</h1>
+      <p class="lede">Визуальная библиотека о технологиях, работе и личных исследованиях</p>
+      <p class="byline">Я собираю сложные темы в формате HTML-презентаций: коротко, структурированно и с визуальными объяснениями.</p>
+      <div class="search">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>
+        </svg>
+        <input id="q" type="search" placeholder="Найти презентацию или тему" aria-label="Поиск по библиотеке" autocomplete="off">
+      </div>
+    </div>
+      <article class="featured">
+        <a class="featured-cover" href="trendy-claude-codex.html" tabindex="-1" aria-hidden="true">
+          <img src="covers/trendy-claude-codex.svg" alt="" width="1200" height="675">
+          <span class="pick">★ Выбор автора</span>
+        </a>
+        <div class="featured-body">
+          <h2><a href="trendy-claude-codex.html">Тренды агентной разработки — Claude и Codex, июль 2026</a></h2>
+          <p>Срез по четырём направлениям за июль 2026 — Claude Code и Agent SDK, OpenAI Codex, MCP, практики комьюнити. Сквозной сюжет: обе экосистемы синхронно сделали мультиагентность штатным режимом.</p>
+          <div class="card-meta"><span class="topic" style="--topic:#7c5cff">AI и агенты</span><span class="dot">·</span><span>16&nbsp;минут</span><span class="dot">·</span><span>4 августа 2026</span></div>
+          <a class="btn" href="trendy-claude-codex.html">Открыть презентацию
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/>
+            </svg>
+          </a>
+        </div>
+      </article>
   </section>
 
-  <section class="wrap">
-    <section class="block">
-      <div class="block-head">
-        <h2 class="block-title" data-ru="Product Lab" data-en="Product Lab">Product Lab</h2>
-        <span class="block-count mono">2</span>
+  <div class="wrap" id="shelf">
+      <section class="block">
+        <div class="block-head">
+          <h2>Product Lab</h2>
+          <span class="count">2</span>
+        </div>
+        <p class="block-note">Одна продуктовая лаборатория: исследование, из которого выросла её модель фич, и карта её процессов.</p>
+        <div class="grid">
+          <article class="card" data-q="генератор фич: подход разбор исследовательского пакета про генерацию продуктовых фич: какая эталонная модель из него собралась и почему она не ложится на реальную работу как есть. product lab личные проекты продукт ресёрч как читать что здесь и чего здесь нет часть 1 что искали что нашли — шесть вещей чего отрасль не знает вовсе часть 2 эталонная модель поток девять ворот движок: две оси семнадцать линз контракт кандидата и прослеживаемость часть 3 почему эталон не ложится как есть что есть на самом деле шесть мест, где эталон ломает работу часть 4 что берём: рабочая версия на шесть правил правило 1. единый список входов правило 2. сначала проблема, потом решения правило 3. три решения разных классов, одно — без разработки правило 4. каталог линз правило 5. восемь полей на кандидата вместо семидесяти трёх правило 6. нельзя закрыть фичу, не записав, что вышло единственные ворота часть 5 как это масштабируется механизм три правила, которые держат конструкцию при росте как это соотносится с режимами эталона что откладывается сознательно часть 6 что делать дальше справка где что лежит источники на чём стоит документ">
+            <a class="card-cover" href="generator-fich.html" tabindex="-1" aria-hidden="true">
+              <img src="covers/generator-fich.svg" alt="" loading="lazy" width="1200" height="675">
+              
+            </a>
+            <div class="card-body">
+              <h3><a href="generator-fich.html">Генератор фич: подход</a></h3>
+              <p class="card-desc">Разбор исследовательского пакета про генерацию продуктовых фич: какая эталонная модель из него собралась и почему она не ложится на реальную работу как есть.</p>
+              <div class="tags"><span>продукт</span><span>ресёрч</span></div>
+              <div class="card-meta"><span class="topic" style="--topic:#2f6bff">Личные проекты</span><span class="dot">·</span><span>24&nbsp;минуты</span><span class="dot">·</span><span>4 сентября 2026</span></div>
+            </div>
+          </article>
+          <article class="card" data-q="product lab — карта процессов и их состояний слепок агентного рабочего пространства: 17 стадий от гипотезы до релиза — что уже работает, что перенесено донором, что ещё не спроектировано. product lab личные проекты продукт процессы шесть состояний и правило их вывода 17 стадий: от идеи до итерации слои репозитория и путь одной стадии три вопроса — три места четыре фазы — и что из них живо сейчас четыре наблюдения откуда взят каждый факт">
+            <a class="card-cover" href="product-lab-karta-processov.html" tabindex="-1" aria-hidden="true">
+              <img src="covers/product-lab-karta-processov.svg" alt="" loading="lazy" width="1200" height="675">
+              <span class="badge">★ Лучшее</span>
+            </a>
+            <div class="card-body">
+              <h3><a href="product-lab-karta-processov.html">Product Lab — карта процессов и их состояний</a></h3>
+              <p class="card-desc">Слепок агентного рабочего пространства: 17 стадий от гипотезы до релиза — что уже работает, что перенесено донором, что ещё не спроектировано.</p>
+              <div class="tags"><span>продукт</span><span>процессы</span></div>
+              <div class="card-meta"><span class="topic" style="--topic:#2f6bff">Личные проекты</span><span class="dot">·</span><span>12&nbsp;минут</span><span class="dot">·</span><span>4 сентября 2026</span></div>
+            </div>
+          </article>
+        </div>
+      </section>
+      <section class="block">
+        <div class="block-head">
+          <h2>Agents Weekly</h2>
+          <span class="count">5</span>
+        </div>
+        <p class="block-note">Дайджест агент-экосистемы по расписанию. Каждый выпуск закрывает своё окно наблюдения и не повторяет сюжеты прошлых прогонов, поэтому выпуски читаются подряд, а не выборочно.</p>
+        <div class="grid">
+          <article class="card" data-q="agent-дайджест — 28.08–04.09.2026 claude fable 5.1 и mythos 5.1 — крупнейший официальный релиз за историю серии. экосистема ответила кластером из десяти репозиториев про учёт квот. agents weekly ai и агенты дайджест сводка официальное claude fable 5.1 и mythos 5.1 · 01.09 anthropics/skills — ноль новых скиллов, две содержательные правки claude-plugins-official — один новый плагин на 254 коммита claude code cli 2.1.251 → 2.1.260 commerce agents blueprint · 02.09 release notes платформы — не проверялись отдельно скиллы 32 ★10–30 — одной строкой плагины и инструменты 23 ★10–30 — одной строкой статьи и подходы 6 замечено, но не подтверждено на периферии отсев по звёздам дефект метода, найденный в этом прогоне вышедшее за окно уже показанное вне охвата темы seo-агрегаторы как радар двойники непокрытые каналы пустые и невалидируемые источники github api и поиск официальное hacker news статьи и исследования блог саймона уиллисона веб-поиск">
+            <a class="card-cover" href="agents-weekly-2026-09-04.html" tabindex="-1" aria-hidden="true">
+              <img src="covers/agents-weekly-2026-09-04.svg" alt="" loading="lazy" width="1200" height="675">
+              <span class="badge">★ Лучшее</span>
+            </a>
+            <div class="card-body">
+              <h3><a href="agents-weekly-2026-09-04.html">Agent-дайджест — 28.08–04.09.2026</a></h3>
+              <p class="card-desc">Claude Fable 5.1 и Mythos 5.1 — крупнейший официальный релиз за историю серии. Экосистема ответила кластером из десяти репозиториев про учёт квот.</p>
+              <div class="tags"><span>дайджест</span></div>
+              <div class="card-meta"><span class="topic" style="--topic:#7c5cff">AI и агенты</span><span class="dot">·</span><span>39&nbsp;минут</span><span class="dot">·</span><span>4 сентября 2026</span></div>
+            </div>
+          </article>
+          <article class="card" data-q="agent-дайджест — 26–28.08.2026 самое короткое окно серии — два дня, 17 позиций каталога. первый прогон на исправленном методе сбора. agents weekly ai и агенты дайджест сводка официальное anthropics/skills — ноль коммитов claude-plugins-official — один плагин и три бампа claude code cli 2.1.247 → 2.1.250 release notes платформы — не проверялись отдельно скиллы 13 ★10–30 — одной строкой плагины и инструменты 4 ★10–30 — одной строкой статьи и подходы 6 замечено, но не подтверждено на периферии источники">
+            <a class="card-cover" href="agents-weekly-2026-08-28.html" tabindex="-1" aria-hidden="true">
+              <img src="covers/agents-weekly-2026-08-28.svg" alt="" loading="lazy" width="1200" height="675">
+              
+            </a>
+            <div class="card-body">
+              <h3><a href="agents-weekly-2026-08-28.html">Agent-дайджест — 26–28.08.2026</a></h3>
+              <p class="card-desc">Самое короткое окно серии — два дня, 17 позиций каталога. Первый прогон на исправленном методе сбора.</p>
+              <div class="tags"><span>дайджест</span></div>
+              <div class="card-meta"><span class="topic" style="--topic:#7c5cff">AI и агенты</span><span class="dot">·</span><span>38&nbsp;минут</span><span class="dot">·</span><span>28 августа 2026</span></div>
+            </div>
+          </article>
+          <article class="card" data-q="agent-дайджест — 21–26.08.2026 главная новость окна — не в каталоге, а в методе: gh search repos --sort=stars звёзды не сортирует, значит «топ-100» прошлых прогонов топом не был. agents weekly ai и агенты дайджест сводка официальное anthropics/skills — один коммит, но по делу claude-plugins-official — впервые за два окна новые плагины claude code cli 2.1.239 → 2.1.246 release notes платформы — пусто скиллы 38 ★10–30 — одной строкой плагины и инструменты 24 ★10–30 — одной строкой статьи и подходы 9 замечено, но не подтверждено на периферии источники">
+            <a class="card-cover" href="agents-weekly-2026-08-26.html" tabindex="-1" aria-hidden="true">
+              <img src="covers/agents-weekly-2026-08-26.svg" alt="" loading="lazy" width="1200" height="675">
+              <span class="badge">★ Лучшее</span>
+            </a>
+            <div class="card-body">
+              <h3><a href="agents-weekly-2026-08-26.html">Agent-дайджест — 21–26.08.2026</a></h3>
+              <p class="card-desc">Главная новость окна — не в каталоге, а в методе: gh search repos --sort=stars звёзды не сортирует, значит «топ-100» прошлых прогонов топом не был.</p>
+              <div class="tags"><span>дайджест</span></div>
+              <div class="card-meta"><span class="topic" style="--topic:#7c5cff">AI и агенты</span><span class="dot">·</span><span>40&nbsp;минут</span><span class="dot">·</span><span>26 августа 2026</span></div>
+            </div>
+          </article>
+          <article class="card" data-q="agent-дайджест — 18–21.08.2026 трёхдневное окно с разбором собственной методики: почему счётчики двух соседних прогонов между собой несравнимы. agents weekly ai и агенты дайджест сводка официальное anthropics/skills — ни одного нового скилла 1 коммит за окно claude-plugins-official — 95 коммитов, ни одного нового плагина claude managed agents — где на самом деле шла официальная работа релизы 18 и 19 августа claude code cli 2.1.236 → 2.1.238 выжимка по агент-разработке скиллы 16 ★10–30 — одной строкой плагины и инструменты 8 ★10–30 — одной строкой статьи и подходы 5 на периферии источники">
+            <a class="card-cover" href="agents-weekly-2026-08-21.html" tabindex="-1" aria-hidden="true">
+              <img src="covers/agents-weekly-2026-08-21.svg" alt="" loading="lazy" width="1200" height="675">
+              
+            </a>
+            <div class="card-body">
+              <h3><a href="agents-weekly-2026-08-21.html">Agent-дайджест — 18–21.08.2026</a></h3>
+              <p class="card-desc">Трёхдневное окно с разбором собственной методики: почему счётчики двух соседних прогонов между собой несравнимы.</p>
+              <div class="tags"><span>дайджест</span></div>
+              <div class="card-meta"><span class="topic" style="--topic:#7c5cff">AI и агенты</span><span class="dot">·</span><span>26&nbsp;минут</span><span class="dot">·</span><span>21 августа 2026</span></div>
+            </div>
+          </article>
+          <article class="card" data-q="agent-дайджест — 11–18.08.2026 самое насыщенное окно серии: 1348 новых репозиториев, 87 с ★10+, и взрывной рост экосистемы вокруг deepseek harness. agents weekly ai и агенты дайджест сводка официальное anthropics/skills — два новых скилла и большое обновление claude-api claude-plugins-official — 243 коммита за неделю claude code — шесть релизов, 2.1.228 → 2.1.234 (номер .230 пропущен) скиллы 41 в каталоге коротко — ★ 10–30 плагины и инструменты 24 в каталоге коротко — ★ 10–30 статьи и подходы 11 на периферии источники">
+            <a class="card-cover" href="agents-weekly-2026-08-18.html" tabindex="-1" aria-hidden="true">
+              <img src="covers/agents-weekly-2026-08-18.svg" alt="" loading="lazy" width="1200" height="675">
+              
+            </a>
+            <div class="card-body">
+              <h3><a href="agents-weekly-2026-08-18.html">Agent-дайджест — 11–18.08.2026</a></h3>
+              <p class="card-desc">Самое насыщенное окно серии: 1348 новых репозиториев, 87 с ★10+, и взрывной рост экосистемы вокруг DeepSeek Harness.</p>
+              <div class="tags"><span>дайджест</span></div>
+              <div class="card-meta"><span class="topic" style="--topic:#7c5cff">AI и агенты</span><span class="dot">·</span><span>29&nbsp;минут</span><span class="dot">·</span><span>18 августа 2026</span></div>
+            </div>
+          </article>
+        </div>
+      </section>
+      <section class="block">
+        <div class="block-head">
+          <h2>Агентная разработка</h2>
+          <span class="count">1</span>
+        </div>
+        <p class="block-note">Разовые разборы инструментов и трендов — не серия, а срез на дату.</p>
+        <div class="grid">
+          <article class="card" data-q="тренды агентной разработки — claude и codex, июль 2026 срез по четырём направлениям за июль 2026 — claude code и agent sdk, openai codex, mcp, практики комьюнити. сквозной сюжет: обе экосистемы синхронно сделали мультиагентность штатным режимом.  ai и агенты тренды codex 01 шесть сквозных трендов месяца т1 флот агентов вместо одного умного агента т2 control plane — продукт месяца, а не модель т3 знания уезжают из промптов в репозиторий т4 контекст сбрасывают, а не растят т5 спор «skills vs mcp» закрыт: каждому своё т6 бутылочное горлышко — верификация и доверие 02 claude code / agent sdk / skills продукт: субагенты и ограничители платформа: память и sdk модели: линейка claude 5 расслоилась под агентные нагрузки skills: фаза «доверие вместо объёма» 03 openai codex модели: gpt-5.6 — sol / terra / luna (09.07) cli: v0.143 → v0.146, почти ежедневная альфа-каденция продукт и стратегия 04 model context protocol спека 2026-07-28: что изменилось экосистема: рост быстрее, чем поддержка 05 комьюнити-практики паттерны оркестрации open-source инструменты месяца скептицизм и уроки прода 06 источники">
+            <a class="card-cover" href="trendy-claude-codex.html" tabindex="-1" aria-hidden="true">
+              <img src="covers/trendy-claude-codex.svg" alt="" loading="lazy" width="1200" height="675">
+              <span class="badge">★ Лучшее</span>
+            </a>
+            <div class="card-body">
+              <h3><a href="trendy-claude-codex.html">Тренды агентной разработки — Claude и Codex, июль 2026</a></h3>
+              <p class="card-desc">Срез по четырём направлениям за июль 2026 — Claude Code и Agent SDK, OpenAI Codex, MCP, практики комьюнити. Сквозной сюжет: обе экосистемы синхронно сделали мультиагентность штатным режимом.</p>
+              <div class="tags"><span>тренды</span><span>codex</span></div>
+              <div class="card-meta"><span class="topic" style="--topic:#7c5cff">AI и агенты</span><span class="dot">·</span><span>16&nbsp;минут</span><span class="dot">·</span><span>4 августа 2026</span></div>
+            </div>
+          </article>
+        </div>
+      </section>
+    <p class="empty" id="empty" hidden>Ничего не нашлось. Попробуйте другое слово.</p>
+
+    <div class="author">
+      <p><strong>Павел Диордиц</strong> — Lead Data Engineer. Разбираю архитектуру данных, агентные инструменты и практические подходы к разработке — и выкладываю разборы сюда.</p>
+      <div class="author-links">
+        <a href="https://paveldiordits.site/#projects">Проекты</a>
+        <a href="https://paveldiordits.site/#experience">Опыт</a>
+        <a href="mailto:diordic@gmail.com">Написать</a>
       </div>
-      <p class="block-note" data-ru="Одна продуктовая лаборатория: исследование, из которого выросла её модель фич, и карта её процессов." data-en="One product lab: the research its feature model grew out of, and the map of its processes.">Одна продуктовая лаборатория: исследование, из которого выросла её модель фич, и карта её процессов.</p>
-      <div class="grid">
-      <a class="card" href="generator-fich.html">
-        <div class="card-top">
-          <time class="mono" datetime="2026-09-04">2026-09-04</time>
-          <span class="mono size">67&nbsp;КБ</span>
-        </div>
-        <h3>Генератор фич: подход</h3>
-        <p class="desc" data-ru="Разбор исследовательского пакета про генерацию продуктовых фич: какая эталонная модель из него собралась, почему она не ложится на реальную работу как есть и что из неё берётся в дело." data-en="A research pack on generating product features: the reference model it produced, why it does not fit real work as is, and what carries over.">Разбор исследовательского пакета про генерацию продуктовых фич: какая эталонная модель из него собралась, почему она не ложится на реальную работу как есть и что из неё берётся в дело.</p>
-        <div class="tags"><span>продукт</span><span>ресёрч</span></div>
-      </a>
-      <a class="card" href="product-lab-karta-processov.html">
-        <div class="card-top">
-          <time class="mono" datetime="2026-09-04">2026-09-04</time>
-          <span class="mono size">52&nbsp;КБ</span>
-        </div>
-        <h3>Product Lab — карта процессов и их состояний</h3>
-        <p class="desc" data-ru="Слепок агентного рабочего пространства: 17 стадий от гипотезы до релиза — что уже работает, что перенесено донором и не адаптировано, что ещё не спроектировано." data-en="A snapshot of an agentic workspace: 17 stages from hypothesis to release — what works, what was imported but not adapted, what is not designed yet.">Слепок агентного рабочего пространства: 17 стадий от гипотезы до релиза — что уже работает, что перенесено донором и не адаптировано, что ещё не спроектировано.</p>
-        <div class="tags"><span>продукт</span><span>процессы</span><span>агенты</span></div>
-      </a>
-      </div>
-    </section>
-    <section class="block">
-      <div class="block-head">
-        <h2 class="block-title" data-ru="Agents Weekly" data-en="Agents Weekly">Agents Weekly</h2>
-        <span class="block-count mono">5</span>
-      </div>
-      <p class="block-note" data-ru="Дайджест агент-экосистемы по расписанию. Каждый выпуск закрывает своё окно наблюдения; сюжеты прошлых прогонов в нём не повторяются, поэтому выпуски читаются подряд, а не выборочно." data-en="A scheduled digest of the agent ecosystem. Each issue closes its own observation window and does not repeat earlier runs, so the issues read in sequence rather than at random.">Дайджест агент-экосистемы по расписанию. Каждый выпуск закрывает своё окно наблюдения; сюжеты прошлых прогонов в нём не повторяются, поэтому выпуски читаются подряд, а не выборочно.</p>
-      <div class="grid">
-      <a class="card" href="agents-weekly-2026-09-04.html">
-        <div class="card-top">
-          <time class="mono" datetime="2026-09-04">2026-09-04</time>
-          <span class="mono size">104&nbsp;КБ</span>
-        </div>
-        <h3>Agent-дайджест — 28.08–04.09.2026</h3>
-        <p class="desc" data-ru="Claude Fable 5.1 и Mythos 5.1 — крупнейший официальный релиз за историю серии. Экосистема ответила кластером из десяти репозиториев про учёт квот: счётчики, менюбары, прокси-ротаторы." data-en="Claude Fable 5.1 and Mythos 5.1 — the largest official release in the series so far, answered by a cluster of ten quota-tracking repositories.">Claude Fable 5.1 и Mythos 5.1 — крупнейший официальный релиз за историю серии. Экосистема ответила кластером из десяти репозиториев про учёт квот: счётчики, менюбары, прокси-ротаторы.</p>
-        <div class="tags"><span>окно 28.08–04.09</span></div>
-      </a>
-      <a class="card" href="agents-weekly-2026-08-28.html">
-        <div class="card-top">
-          <time class="mono" datetime="2026-08-28">2026-08-28</time>
-          <span class="mono size">92&nbsp;КБ</span>
-        </div>
-        <h3>Agent-дайджест — 26–28.08.2026</h3>
-        <p class="desc" data-ru="Самое короткое окно серии — два дня, 17 позиций каталога. Первый прогон на исправленном методе сбора: расхождение, ради которого его чинили, больше не воспроизводится." data-en="The shortest window in the series — two days, 17 catalogue entries. First run on the fixed collection method; the discrepancy it was fixed for no longer reproduces.">Самое короткое окно серии — два дня, 17 позиций каталога. Первый прогон на исправленном методе сбора: расхождение, ради которого его чинили, больше не воспроизводится.</p>
-        <div class="tags"><span>окно 26–28.08</span></div>
-      </a>
-      <a class="card" href="agents-weekly-2026-08-26.html">
-        <div class="card-top">
-          <time class="mono" datetime="2026-08-26">2026-08-26</time>
-          <span class="mono size">108&nbsp;КБ</span>
-        </div>
-        <h3>Agent-дайджест — 21–26.08.2026</h3>
-        <p class="desc" data-ru="Главная новость окна — не в каталоге, а в методе: gh search repos --sort=stars звёзды не сортирует, значит «топ-100 по звёздам» двух прошлых прогонов топом не был." data-en="The window's main story is the method, not the catalogue: gh search repos --sort=stars does not sort by stars, so the previous runs' top-100 was not a top-100.">Главная новость окна — не в каталоге, а в методе: gh search repos --sort=stars звёзды не сортирует, значит «топ-100 по звёздам» двух прошлых прогонов топом не был.</p>
-        <div class="tags"><span>окно 21–26.08</span></div>
-      </a>
-      <a class="card" href="agents-weekly-2026-08-21.html">
-        <div class="card-top">
-          <time class="mono" datetime="2026-08-21">2026-08-21</time>
-          <span class="mono size">73&nbsp;КБ</span>
-        </div>
-        <h3>Agent-дайджест — 18–21.08.2026</h3>
-        <p class="desc" data-ru="Трёхдневное окно с разбором собственной методики: почему счётчики двух соседних прогонов между собой несравнимы и какая величина сопоставима на самом деле." data-en="A three-day window that audits its own methodology: why the counters of two adjacent runs are not comparable, and which figure actually is.">Трёхдневное окно с разбором собственной методики: почему счётчики двух соседних прогонов между собой несравнимы и какая величина сопоставима на самом деле.</p>
-        <div class="tags"><span>окно 18–21.08</span></div>
-      </a>
-      <a class="card" href="agents-weekly-2026-08-18.html">
-        <div class="card-top">
-          <time class="mono" datetime="2026-08-18">2026-08-18</time>
-          <span class="mono size">85&nbsp;КБ</span>
-        </div>
-        <h3>Agent-дайджест — 11–18.08.2026</h3>
-        <p class="desc" data-ru="Самое насыщенное окно серии: 1348 новых репозиториев, 87 с ★10+. Отдельный сюжет — взрывной рост экосистемы вокруг DeepSeek Harness, четверть всего верхнего тира." data-en="The densest window in the series: 1348 new repositories, 87 with 10+ stars, and an ecosystem burst around DeepSeek Harness taking a quarter of the top tier.">Самое насыщенное окно серии: 1348 новых репозиториев, 87 с ★10+. Отдельный сюжет — взрывной рост экосистемы вокруг DeepSeek Harness, четверть всего верхнего тира.</p>
-        <div class="tags"><span>окно 11–18.08</span></div>
-      </a>
-      </div>
-    </section>
-    <section class="block">
-      <div class="block-head">
-        <h2 class="block-title" data-ru="Агентная разработка" data-en="Agentic development">Агентная разработка</h2>
-        <span class="block-count mono">1</span>
-      </div>
-      <p class="block-note" data-ru="Разовые разборы инструментов и трендов — не серия, а срез на дату." data-en="One-off writeups on tooling and trends — not a series, a snapshot at a date.">Разовые разборы инструментов и трендов — не серия, а срез на дату.</p>
-      <div class="grid">
-      <a class="card" href="trendy-claude-codex.html">
-        <div class="card-top">
-          <time class="mono" datetime="2026-08-04">2026-08-04</time>
-          <span class="mono size">42&nbsp;КБ</span>
-        </div>
-        <h3>Тренды агентной разработки — Claude и Codex, июль 2026</h3>
-        <p class="desc" data-ru="Срез по четырём направлениям за июль 2026 — Claude Code и Agent SDK, OpenAI Codex, MCP, практики комьюнити. Сквозной сюжет: обе экосистемы синхронно сделали мультиагентность штатным режимом." data-en="A July 2026 snapshot across four fronts — Claude Code and the Agent SDK, OpenAI Codex, MCP, community practice. The through-line: both ecosystems made multi-agent work the default mode.">Срез по четырём направлениям за июль 2026 — Claude Code и Agent SDK, OpenAI Codex, MCP, практики комьюнити. Сквозной сюжет: обе экосистемы синхронно сделали мультиагентность штатным режимом.</p>
-        <div class="tags"><span>тренды</span><span>codex</span><span>mcp</span></div>
-      </a>
-      </div>
-    </section>
-  </section>
+    </div>
+  </div>
 </main>
 
 <footer>
   <div class="wrap foot-row">
-    <span id="foot-left"></span>
-    <span data-ru="Каждый разбор — один файл · без трекеров"
-          data-en="Every writeup is a single file · no trackers">Каждый разбор — один файл · без трекеров</span>
+    <span id="copy"></span>
+    <span>8 разборов · каждый — один самодостаточный файл, без трекеров</span>
   </div>
 </footer>
 
 <script>
-// Тема, язык и набор оформления берутся из тех же ключей localStorage, что и на
-// основном сайте, — переход между страницами не сбрасывает выбор. У самих
-// презентаций ключи свои, с префиксом (fg-theme, pl-theme), так что не спорят.
+// Тема и набор света живут в тех же ключах localStorage, что и на главной, —
+// переход между разделами не сбрасывает выбор.
 const DESIGNS = [
-  { id:'two-sources', ru:'Два света', en:'Two sources' },
-  { id:'cold-leak',   ru:'Засветка',  en:'Cold leak' },
-  { id:'dawn-fog',    ru:'Рассвет',   en:'Dawn fog' },
+  { id:'two-sources', ru:'Два света' },
+  { id:'cold-leak',   ru:'Засветка' },
+  { id:'dawn-fog',    ru:'Рассвет' },
 ];
 const $ = s => document.querySelector(s);
 const ls = {
   get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } },
   set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} },
 };
-
-// Умолчание — как на основном сайте: английский. Заголовки разборов остаются
-// на языке оригинала, переводится только хром страницы.
-let lang = ls.get('lang') || 'en';
-
-function applyLang() {
-  document.documentElement.lang = lang;
-  document.querySelectorAll('[data-ru]').forEach(el => {
-    const v = el.dataset[lang];
-    if (v != null) el.textContent = v;
-  });
-  $('#lang-toggle').textContent = lang === 'ru' ? 'EN' : 'RU';
-  syncDesignLabel();
-}
 
 function designIndex() {
   const i = DESIGNS.findIndex(d => d.id === ls.get('design'));
@@ -360,34 +490,54 @@ function applyDesign(i) {
   const d = DESIGNS[(i + DESIGNS.length) % DESIGNS.length];
   document.documentElement.dataset.design = d.id;
   ls.set('design', d.id);
-  syncDesignLabel();
+  $('#design-toggle').textContent = (designIndex() + 1) + '/' + DESIGNS.length + ' · ' + d.ru;
 }
-function syncDesignLabel() {
-  const i = designIndex(), d = DESIGNS[i];
-  $('#design-toggle').textContent = (i + 1) + '/' + DESIGNS.length + ' · ' + (d[lang] ?? d.en);
-}
-
 function applyTheme(dark) {
   document.documentElement.classList.toggle('dark', dark);
   ls.set('theme', dark ? 'dark' : 'light');
   $('#theme-toggle').textContent = dark ? '☾' : '☀';
 }
-
-// Стартовое состояние: сохранённый выбор, иначе системная тема.
 const savedTheme = ls.get('theme');
 applyTheme(savedTheme ? savedTheme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches);
 applyDesign(designIndex());
-applyLang();
-
 $('#theme-toggle').onclick = () => applyTheme(!document.documentElement.classList.contains('dark'));
 $('#design-toggle').onclick = () => applyDesign(designIndex() + 1);
-$('#lang-toggle').onclick = () => { lang = lang === 'ru' ? 'en' : 'ru'; ls.set('lang', lang); applyLang(); };
-
-$('#foot-left').textContent = '© ' + new Date().getFullYear() + ' Pavel Diordits';
+$('#copy').textContent = '© ' + new Date().getFullYear() + ' Павел Диордиц';
 
 addEventListener('scroll', () => {
   $('#site-header').classList.toggle('scrolled', scrollY > 8);
 }, { passive: true });
+
+// ── поиск ────────────────────────────────────────────────────────────────────
+// Индекс вшит в разметку (data-q на каждой карточке): страница ничего не
+// подгружает и работает из file://. Ищет по названию, описанию, серии,
+// направлению, тегам и заголовкам разделов самой презентации — их собирает
+// публикатор. Полка, где ничего не совпало, скрывается целиком вместе с
+// заголовком: иначе остались бы висеть пустые рубрики.
+const blocks = [...document.querySelectorAll('.block')];
+const empty = $('#empty');
+const q = $('#q');
+
+function apply() {
+  const needle = q.value.trim().toLowerCase();
+  const words = needle ? needle.split(/\s+/) : [];
+  let shown = 0;
+  for (const b of blocks) {
+    let n = 0;
+    for (const c of b.querySelectorAll('.card')) {
+      const ok = !words.length || words.every(w => c.dataset.q.includes(w));
+      c.hidden = !ok;
+      if (ok) n++;
+    }
+    b.hidden = n === 0;
+    b.querySelector('.count').textContent = n;
+    shown += n;
+  }
+  empty.hidden = shown > 0;
+}
+q.addEventListener('input', apply);
+$('#to-search').onclick = () => { q.scrollIntoView({ block: 'center', behavior: 'smooth' }); q.focus(); };
+apply();
 </script>
 </body>
 </html>
