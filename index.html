@@ -430,6 +430,8 @@ const T = {
     { id:"experience", en:"Experience",  ru:"Опыт" },
     { id:"projects",   en:"Projects",    ru:"Проекты" },
     { id:"opensource", en:"Open Source", ru:"Open Source" },
+    // отдельная страница, а не секция: список разборов растёт сам по себе
+    { href:"/presentations/", en:"Writeups", ru:"Разборы" },
     { id:"contact",    en:"Contact",     ru:"Контакты" },
   ],
   "hero.eyebrow": { en:"Lead Data Engineer · 6+ years in data · Moscow",
@@ -644,8 +646,9 @@ function render() {
   $$('[data-k]').forEach(el => { el.textContent = L(T[el.dataset.k]); });
 
   // навигация
+  // Пункт с href ведёт на отдельную страницу, с id — скроллит к секции.
   $('#nav').innerHTML = T.nav
-    .map(n => `<a href="#${n.id}">${esc(n[lang])}</a>`).join('');
+    .map(n => `<a href="${n.href ? esc(n.href) : '#' + n.id}">${esc(n[lang])}</a>`).join('');
 
   // имя героя — по буквам, чтобы каждая реагировала на курсор
   $('#hero-name').innerHTML = L(ME.name).split('').map(ch =>
