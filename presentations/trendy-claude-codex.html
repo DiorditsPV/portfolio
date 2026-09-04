@@ -1,0 +1,400 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тренды агентной разработки — Claude и Codex, июль 2026</title>
+<style>
+:root{
+  --bg:#f6f4ef; --bg-alt:#ffffff; --ink:#1d2433; --ink-soft:#4a5468;
+  --accent:#b4540a; --accent2:#0a6b74; --line:#d8d2c4; --card:#ffffff;
+  --chip:#efe9dc; --code:#eee8da; --shadow:0 2px 10px rgba(29,36,51,.07);
+  --mark:#fff3d6;
+}
+:root[data-theme="dark"]{
+  --bg:#12151d; --bg-alt:#181c27; --ink:#e8e6df; --ink-soft:#a8adbd;
+  --accent:#f0913f; --accent2:#4fc3ce; --line:#2a3040; --card:#1a1f2b;
+  --chip:#232939; --code:#202634; --shadow:0 2px 10px rgba(0,0,0,.35);
+  --mark:#3a3320;
+}
+:root[data-contrast="high"]{
+  --bg:#ffffff; --bg-alt:#ffffff; --ink:#000000; --ink-soft:#1a1a1a;
+  --accent:#8a3c00; --accent2:#00494f; --line:#000000; --card:#ffffff;
+  --chip:#f0f0f0; --code:#f0f0f0; --shadow:none; --mark:#ffe9a8;
+}
+:root[data-contrast="high"][data-theme="dark"]{
+  --bg:#000000; --bg-alt:#000000; --ink:#ffffff; --ink-soft:#e8e8e8;
+  --accent:#ffb066; --accent2:#7fe3ec; --line:#ffffff; --card:#000000;
+  --chip:#1a1a1a; --code:#1a1a1a; --mark:#4d3c00;
+}
+:root[data-contrast="high"] .card,
+:root[data-contrast="high"] .trend,
+:root[data-contrast="high"] table{border-width:2px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:17px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+#progress{position:fixed;top:0;left:0;height:4px;background:var(--accent);width:0;z-index:60}
+header.top{
+  position:sticky;top:0;z-index:50;background:var(--bg-alt);
+  border-bottom:1px solid var(--line);padding:.55rem 2vw;
+  display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
+}
+header.top .brand{font-weight:700;font-size:.95rem;letter-spacing:.02em}
+header.top .brand .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--accent)}
+nav{display:flex;gap:.15rem;flex-wrap:wrap;flex:1}
+nav a{
+  color:var(--ink-soft);text-decoration:none;font-size:.85rem;
+  padding:.3rem .6rem;border-radius:6px;
+}
+nav a:hover{background:var(--chip);color:var(--ink)}
+.controls{display:flex;gap:.4rem}
+.controls button{
+  font:inherit;font-size:.8rem;cursor:pointer;color:var(--ink);
+  background:var(--chip);border:1px solid var(--line);border-radius:7px;padding:.3rem .65rem;
+}
+.controls button:hover{border-color:var(--accent)}
+main{max-width:1450px;width:94%;margin:0 auto;padding:1.5rem 0 4rem}
+.hero{padding:3rem 0 1.5rem}
+.hero .kicker{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85rem;
+  color:var(--accent2);letter-spacing:.08em;text-transform:uppercase;
+}
+h1{font-size:clamp(1.9rem,4vw,3rem);line-height:1.15;margin:.4rem 0 1rem;max-width:100%}
+.hero p.lead{font-size:1.15rem;color:var(--ink-soft);margin:0}
+.meta-chips{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.2rem}
+.meta-chips span{
+  background:var(--chip);border:1px solid var(--line);border-radius:999px;
+  padding:.25rem .8rem;font-size:.8rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+section{margin-top:3.2rem}
+h2{
+  font-size:1.7rem;margin:0 0 .4rem;
+  display:flex;align-items:baseline;gap:.6rem;
+}
+h2 .num{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--accent);font-size:1.1rem}
+.section-sub{color:var(--ink-soft);margin:0 0 1.4rem;font-size:1rem}
+h3{font-size:1.15rem;margin:1.8rem 0 .5rem;color:var(--accent2)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(370px,1fr));gap:1rem}
+.trend{
+  background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:1.2rem 1.3rem;box-shadow:var(--shadow);
+}
+.trend h3{margin:0 0 .5rem;font-size:1.05rem;color:var(--ink)}
+.trend h3 b{color:var(--accent);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;margin-right:.4rem}
+.trend p{margin:.4rem 0;font-size:.95rem;color:var(--ink-soft)}
+.trend p strong{color:var(--ink)}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:1.3rem 1.5rem;box-shadow:var(--shadow);margin:1rem 0;
+}
+.card h3{margin-top:0}
+ul{padding-left:1.3rem;margin:.6rem 0}
+li{margin:.45rem 0}
+li::marker{color:var(--accent)}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;background:var(--code);padding:.1em .35em;border-radius:5px}
+mark{background:var(--mark);color:inherit;padding:0 .2em;border-radius:3px}
+table{width:100%;border-collapse:collapse;margin:1rem 0;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:.93rem}
+th,td{padding:.6rem .8rem;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--chip);font-size:.85rem}
+tr:last-child td{border-bottom:none}
+.table-wrap{overflow-x:auto}
+.callout{
+  border-left:4px solid var(--accent);background:var(--card);
+  border-radius:0 10px 10px 0;padding:.9rem 1.2rem;margin:1.2rem 0;
+  box-shadow:var(--shadow);
+}
+.callout.teal{border-left-color:var(--accent2)}
+.callout p{margin:.3rem 0}
+figure.diagram{margin:1.5rem 0;padding:0}
+figure.diagram svg{width:100%;height:auto;display:block}
+figcaption{font-size:.85rem;color:var(--ink-soft);margin-top:.5rem;text-align:center}
+.sources ol{padding-left:1.5rem}
+.sources li{margin:.4rem 0;font-size:.9rem;word-break:break-word}
+.sources a{color:var(--accent2)}
+a{color:var(--accent2)}
+footer{margin-top:4rem;padding:1.5rem 0;border-top:1px solid var(--line);color:var(--ink-soft);font-size:.85rem}
+.disclaimer{font-size:.88rem;color:var(--ink-soft);border:1px dashed var(--line);border-radius:10px;padding:.8rem 1.1rem;margin-top:1.5rem}
+@media(max-width:760px){
+  main{width:92%}
+  .grid{grid-template-columns:1fr}
+  nav{display:none}
+  body{font-size:16px}
+}
+</style>
+</head><body>
+<div id="progress"></div>
+<header class="top">
+  <div class="brand"><span class="mono">agentic/</span>тренды·июль 2026</div>
+  <nav>
+    <a href="#trends">Сквозные тренды</a>
+    <a href="#claude">Claude</a>
+    <a href="#codex">Codex</a>
+    <a href="#mcp">MCP</a>
+    <a href="#community">Практики</a>
+    <a href="#sources">Источники</a>
+  </nav>
+  <div class="controls">
+    <button id="themeBtn" title="Переключить тему">◐ Тема</button>
+    <button id="contrastBtn" title="Повышенная контрастность">◮ Контраст</button>
+  </div>
+</header>
+
+<main>
+<div class="hero">
+  <div class="kicker">research · 2026-08-04 · claude code × codex × mcp × community</div>
+  <h1>Тренды агентной разработки:<br>Claude и Codex, июль 2026</h1>
+  <p class="lead">Что изменилось за месяц в двух главных агентных экосистемах — концепции,
+  подходы, MCP, скиллы и инструменты. Сводка по четырём направлениям веб-ресёрча
+  (четыре параллельных агента, ~60 источников).</p>
+  <div class="meta-chips">
+    <span>Claude Code v2.1.195→221</span>
+    <span>Codex CLI v0.143→146</span>
+    <span>MCP spec 2026-07-28</span>
+    <span>GPT-5.6 · Opus 5</span>
+  </div>
+</div>
+
+<section id="trends">
+  <h2><span class="num">01</span>Шесть сквозных трендов месяца</h2>
+  <p class="section-sub">То, что происходит одновременно в обеих экосистемах и в практике команд — а значит, это тренд индустрии, а не фича одного вендора.</p>
+  <div class="grid">
+    <div class="trend">
+      <h3><b>Т1</b>Флот агентов вместо одного умного агента</h3>
+      <p>Единица работы больше не «сессия с агентом», а <strong>дерево параллельных агентов</strong>, которым человек управляет как диспетчер. Обе экосистемы синхронно сделали это штатным режимом.</p>
+      <p>Claude Code: субагенты запускаются в фоне по умолчанию, вложенность до 3 уровней, до 200 субагентов на сессию, <code>/fork</code> копирует разговор в отдельную фоновую сессию. Codex: multi-agent V2 с настраиваемыми моделями суб-агентов, до 8 параллельных агентов в облачных песочницах, «ultra»-режим GPT-5.6 координирует несколько агентов.</p>
+      <p>У практиков: git worktrees как стандарт изоляции (4–8 агентов на разработчика), Gas Town Стива Йегги на 20–30 агентов, Ralph loop для ночных прогонов.</p>
+    </div>
+    <div class="trend">
+      <h3><b>Т2</b>Control plane — продукт месяца, а не модель</h3>
+      <p>Июльские релизы обоих вендоров почти целиком про <strong>управляемость</strong>, а не про интеллект: approval-режимы, квоты, детекция опасных команд, resumable-задачи, review-поверхности. Формула обозревателей: <mark>«the workflow shell around the model is becoming the product»</mark>.</p>
+      <p>Характерный почерк — «capability + guardrail в одном релизе»: вместе с ростом автономии сразу вводятся ограничители. Команды в ответ строят vendor-agnostic «tool harness»: единые политики, eval-гейты на агентных PR, телеметрия — страховку от ретайрмента инструментов.</p>
+    </div>
+    <div class="trend">
+      <h3><b>Т3</b>Знания уезжают из промптов в репозиторий</h3>
+      <p>Правила проекта кодируются в версионируемых файлах — <code>AGENTS.md</code>, <code>CLAUDE.md</code>, скиллы, спецификации — а не в героическом промпте каждой сессии. Разовый промптинг публично считается антипаттерном.</p>
+      <p>AGENTS.md — в 60 000+ проектов, развивается под Linux Foundation (AAIF) и впервые получил контролируемые исследования: пять тестов показали сокращение токенов, времени и лишних правок. Spec-driven development (GitHub Spec Kit, EARS-формат требований) к середине 2026 есть у каждого крупного инструмента.</p>
+    </div>
+    <div class="trend">
+      <h3><b>Т4</b>Контекст сбрасывают, а не растят</h3>
+      <p>Консенсус практиков — <strong>«ruthless context resets»</strong>: не копить историю, а дисциплинированно начинать итерацию со свежим окном, вынося состояние в файловую систему или леджер задач. Compaction стал и продуктовой фичей, и темой arXiv-статей.</p>
+      <p>Anthropic перенесла долговременную память агентов на уровень платформы: beta <code>agent-memory-2026-07-22</code> во всех SDK плюс Dreaming — фоновая курация памяти между сеансами. Самодельные схемы «summaries + индексация» вытесняются платформенным примитивом.</p>
+    </div>
+    <div class="trend">
+      <h3><b>Т5</b>Спор «skills vs MCP» закрыт: каждому своё</h3>
+      <p>Для локальной разработки побеждает связка <strong>CLI + Skills</strong>: типовой MCP-сетап съедал ~72% контекстного окна токенами tool definitions ещё до первого действия агента, а <code>gh</code> CLI со скиллом-инструкцией делает то же дешевле.</p>
+      <p>Ниша MCP оформилась — <strong>аутентифицированный remote-доступ</strong> с централизованным OAuth, аудитом и governance для энтерпрайза. Skills пакуют знание («как делать»), MCP пакует доступ («к данным за auth») — комплементарные вещи, а не конкуренты.</p>
+    </div>
+    <div class="trend">
+      <h3><b>Т6</b>Бутылочное горлышко — верификация и доверие</h3>
+      <p>Тон комьюнити сместился с «может ли агент кодить» на «можем ли мы это контролировать и мерить». Генерация быстрая, но <strong>ревью и доверие к выходу не масштабируются</strong>; «bounded subtasks + human checkpoints» признаны рабочими, полная автономия — нет.</p>
+      <p>Экосистемы — в кризисе качества: 36% публичных скиллов содержат prompt-injection (Snyk ToxicSkills), каждый шестой remote MCP-сервер в реестре мёртв. Рынок смещается от размера каталогов к trust infrastructure: сканирование, кураторство, бенчмарки.</p>
+    </div>
+  </div>
+</section>
+
+<section id="claude">
+  <h2><span class="num">02</span>Claude Code / Agent SDK / Skills</h2>
+  <p class="section-sub">Месяц релизов v2.1.195 → v2.1.221: субагентная модель, guardrails, память как примитив платформы, расслоение линейки моделей.</p>
+
+  <h3>Продукт: субагенты и ограничители</h3>
+  <div class="card">
+    <ul>
+      <li><strong>Субагенты стали фоновыми по умолчанию</strong> — Claude продолжает работать, пока они выполняются; вложенность до 3 уровней (было 1) и лимит 200 субагентов на сессию (v2.1.219, 24.07); стриминг текста субагентов через <code>--forward-subagent-text</code>.</li>
+      <li><code>/fork</code> переосмыслен: теперь копирует разговор в новую фоновую сессию (видна в <code>claude agents</code>), а прежнее поведение — вложенный субагент — вынесено в новую команду <code>/subtask</code> (v2.1.212, 17.07).</li>
+      <li>MCP-инструменты автоматически уходят в фон после 2 минут выполнения — длинные операции не блокируют разговор.</li>
+      <li><strong>Guardrails в паре с каждой способностью</strong>: сессионный лимит 200 вызовов WebSearch; fail-closed проверки Bash на хитрых редиректах и командах длиннее 10 000 символов; закрыты обходы permissions (правила <code>dir/**</code>, PowerShell 5.1); <code>/verify</code> и <code>/code-review</code> больше не запускаются моделью самовольно; переспрос перед <code>rm -rf</code> с неразрешёнными переменными.</li>
+      <li>Встроенный in-app браузер на Desktop (неделя 28) — Claude открывает документацию и сайты и взаимодействует со страницами; команда <code>/doctor</code> — диагностика установки с автопочинкой.</li>
+      <li>Опубликованные артефакты могут вызывать MCP-коннекторы зрителя при открытии страницы (неделя 29); screen reader mode для VoiceOver/NVDA.</li>
+      <li><code>/code-review</code> выполняется как фоновый субагент и не забивает контекст разговора (v2.1.218, 22.07); облачные сессии переживают рестарт контейнера — прерванный ход перезапускается при resume.</li>
+    </ul>
+  </div>
+
+  <h3>Платформа: память и SDK</h3>
+  <div class="card">
+    <ul>
+      <li><strong>Память агентов — платформенный примитив</strong>: beta header <code>agent-memory-2026-07-22</code> во всех восьми SDK; персистентная память перестаёт быть самоделкой поверх сессий.</li>
+      <li>В Agent SDK <code>set_model</code> применяется mid-turn — следующий round-trip идёт уже на новой модели. Выбор модели становится архитектурным решением внутри одного агентного цикла (дешёвая модель на механику, дорогая на анализ).</li>
+      <li>SDK можно использовать в счёт подписки Pro/Max — ниже порог входа для продакшн-агентов.</li>
+      <li>Паттерны с Code with Claude 2026, активно обсуждавшиеся в июле: <strong>Dreaming</strong> (фоновая курация памяти между сеансами), <strong>Outcomes</strong> (отдельный грейдер-агент оценивает результат — +10,1% качества без смены модели), Multi-Agent Orchestration на общей файловой системе.</li>
+      <li><strong>Claude Cowork</strong> вышел в web и mobile (07.07): remote-сессии выполняются на серверах Anthropic и продолжаются, даже когда все устройства пользователя офлайн. Локальный CLI перестаёт быть местом исполнения и становится одним из входов.</li>
+    </ul>
+  </div>
+
+  <h3>Модели: линейка Claude 5 расслоилась под агентные нагрузки</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Модель</th><th>Дата</th><th>Роль в агентной разработке</th></tr>
+    <tr><td><strong>Sonnet 5</strong></td><td>30.06</td><td>Дефолт подписок Pro/Team/Enterprise: топ-уровень кодинга и tool use по цене Sonnet, нативное окно 1M токенов, adaptive thinking по умолчанию. Массовый агентный кодинг.</td></tr>
+    <tr><td><strong>Opus 5</strong></td><td>24.07</td><td>«Рабочая лошадка» длинных задач: ~уровень Fable за половину цены, safety-классификаторы срабатывают на ~85% реже, beta Automatic Fallbacks (маршрутизация на менее мощную модель вместо ошибки). Дефолт на Max и в Claude Code.</td></tr>
+    <tr><td><strong>Fable 5 / Mythos 5</strong></td><td>09.06</td><td>Фронтир. Впервые в отрасли модели побывали под экспортными ограничениями США (12.06–01.07, после демонстрации обхода защит для поиска уязвимостей), затем возвращены глобально.</td></tr>
+  </table></div>
+
+  <h3>Skills: фаза «доверие вместо объёма»</h3>
+  <div class="card">
+    <ul>
+      <li>SKILL.md — открытый стандарт под управлением AAIF, принят ~40 платформами, включая Codex CLI, GitHub Copilot, Cursor, Gemini CLI. В SkillsMP проиндексировано <strong>1,9 млн скиллов</strong> с GitHub.</li>
+      <li>Бенчмарк <strong>SkillsBench</strong> (Stanford/CMU/Berkeley/Oxford): курируемые скиллы поднимают pass rate в среднем на +16,2 п.п. (в healthcare — до +51,9). Но средняя оценка качества 47 150 публичных скиллов — лишь 6,2/12.</li>
+      <li>Snyk <strong>ToxicSkills</strong>: 36% протестированных скиллов содержат prompt-injection уязвимости; аудит нашёл ~6,3 проблемы на скилл.</li>
+      <li>Вывод рынка: количество перестало быть преимуществом — конкуренция маркетплейсов смещается к security-сканированию, кураторству и бенчмаркам. Сама Anthropic держит курируемый репозиторий из 17 официальных скиллов — осознанная ставка на качество.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="codex">
+  <h2><span class="num">03</span>OpenAI Codex</h2>
+  <p class="section-sub">GPT-5.6 как новый дефолт, четыре стабильных релиза CLI за месяц и агрессивная стратегия платформы: плагины, миграция с конкурентов, встраивание в чужие оболочки.</p>
+
+  <h3>Модели: GPT-5.6 — Sol / Terra / Luna (09.07)</h3>
+  <div class="card">
+    <ul>
+      <li><strong>Sol</strong> — флагман и новый дефолт Codex: заявлен state-of-the-art по кодингу и <strong>+54% token-efficiency</strong> на кодинговых задачах; контекстное окно 272 000 токенов.</li>
+      <li><strong>Terra</strong> — баланс для повседневных задач; <strong>Luna</strong> — быстрая и дешёвая (с 30.07 цена снижена на 80%: $0.20/$1.20 за 1M токенов input/output).</li>
+      <li>Тир <strong>Sol Ultra</strong> подтверждён для Codex; «ultra»-режим ускорения координирует несколько агентов в параллельных workflow. GPT-5.4 выведен из эксплуатации 23.07.</li>
+    </ul>
+  </div>
+
+  <h3>CLI: v0.143 → v0.146, почти ежедневная альфа-каденция</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Релиз</th><th>Дата</th><th>Главное</th></tr>
+    <tr><td>v0.143</td><td>08.07</td><td>Remote plugins по умолчанию, npm-источники для plugin marketplace, маршрутизация через системные прокси.</td></tr>
+    <tr><td>v0.144</td><td>09–10.07</td><td>Approval-режим <strong>«writes»</strong>: read-only действия проходят без подтверждения, записи требуют approve. Интерактивная MCP-auth без experimental-флага. В патчах — улучшенная детекция опасных команд (расширенные формы <code>rm</code>).</td></tr>
+    <tr><td>v0.145</td><td>21–22.07</td><td><strong>Sub-agents и memories</strong>; multi-agent V2 с настраиваемыми моделями суб-агентов; <code>/import</code> — миграция настроек, MCP-серверов, плагинов, сессий и memories <strong>из Cursor и Claude Code</strong>; логин Amazon Bedrock; аудио-ввод.</td></tr>
+    <tr><td>v0.146</td><td>28–29.07</td><td>Fork и закрепление тредов, side-conversations без закрытия текущей, Agent Plugins manifests, публикация workspace-плагинов, marketplace-плагины для Bedrock и Claude Code, Code Mode по WebSocket.</td></tr>
+  </table></div>
+
+  <h3>Продукт и стратегия</h3>
+  <div class="card">
+    <ul>
+      <li>Codex влился в десктоп-приложение ChatGPT: общие плагины, режимы Chat/Codex, интеграция голоса, <strong>multi-repository code review</strong>, шаринг контекста экрана на macOS.</li>
+      <li>Облачный агент: до 8 параллельных суб-агентов в изолированных песочницах; запуск задач из GitHub, Linear и Slack-тредов; cross-device handoff и iOS-релиз; возобновление задач, упёршихся в usage-limit.</li>
+      <li><strong>Codex как agent provider в GitHub Copilot для JetBrains</strong> (07.07): Codex перестаёт быть только «своим» клиентом OpenAI и становится подключаемым движком внутри конкурирующей экосистемы.</li>
+      <li>Стратегия захвата: <code>/import</code> из Cursor/Claude Code плюс marketplace-плагины «для Claude Code» — прямое снижение стоимости миграции с конкурентов.</li>
+      <li><strong>AGENTS.md</strong> под AAIF/Linux Foundation: 60 000+ проектов, Ambassador-программа (138 человек из 41 страны), анонс конференций AGNTCon + MCPCon, пять контролируемых тестов эффективности.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="mcp">
+  <h2><span class="num">04</span>Model Context Protocol</h2>
+  <p class="section-sub">28 июля вышла крупнейшая ревизия протокола за его историю — MCP перепозиционируется в «HTTP для агентов»: тонкий stateless-слой транспорта и авторизации.</p>
+
+  <h3>Спека 2026-07-28: что изменилось</h3>
+  <div class="card">
+    <ul>
+      <li><strong>Stateless core</strong> — главная новость: удалены <code>initialize</code>-handshake и <code>Mcp-Session-Id</code>; каждый запрос самодостаточен и несёт версию, идентичность и capabilities в <code>_meta</code>. Это открывает serverless/edge-деплой и обычные round-robin балансировщики без sticky sessions.</li>
+      <li><strong>MRTR</strong> (Multi Round-Trip Requests) — вместо server-initiated запросов: сервер возвращает <code>resultType: "input_required"</code> и дозапрашивает данные без постоянного соединения.</li>
+      <li>Header-based routing (<code>Mcp-Method</code>, <code>Mcp-Name</code>) — шлюзы маршрутизируют без парсинга JSON; кэшируемые <code>tools/list</code> с <code>ttlMs</code>/<code>cacheScope</code> — ответ на критику раздувания контекста.</li>
+      <li>Authorization hardening: выравнивание с OAuth 2.0/OIDC, переход с Dynamic Client Registration на Client ID Metadata Documents (CIMD).</li>
+      <li><strong>Deprecated</strong>: Roots, Sampling, Logging, legacy HTTP+SSE транспорт — с первой формальной deprecation policy (минимум 12 месяцев поддержки). «Богатая» двунаправленная часть протокола почти не использовалась клиентами.</li>
+      <li><strong>Extensions framework</strong>: официальный статус получили MCP Apps (интерактивные UI в чате — совместная работа Anthropic и OpenAI), Tasks (долгие операции) и Enterprise Managed Authorization.</li>
+      <li>Tier 1 SDK (TypeScript, Python, Go, C#) поддержали спеку в день релиза. Claude принял её сразу: плюс enterprise-auth через IdP, observability-дашборды и MCP tunnels (research preview).</li>
+    </ul>
+  </div>
+
+  <h3>Экосистема: рост быстрее, чем поддержка</h3>
+  <div class="callout">
+    <p>Отчёт «State of the MCP Ecosystem» (MCP Queen, июль, 43 320 live-проб): в реестре <strong>18 849 серверов</strong>, но <strong>17,2% remote-серверов мертвы</strong> — endpoint не отвечает. Качество поляризовано: 53% — оценка A, но 29% — D/F. <strong>56% серверов работают без аутентификации.</strong> Сильная сторона: 102 013 тулзов, 99,7% с типизированной input schema.</p>
+  </div>
+  <div class="card">
+    <ul>
+      <li>Масштаб: 10 000+ публичных серверов в проде, 97 млн месячных загрузок SDK (против 100 тысяч на старте). В каталоге коннекторов Claude — 950+ серверов.</li>
+      <li>Управление стало зрелым и мультивендорным: AAIF (Linux Foundation; сооснователи Anthropic, Block, OpenAI; платиновые члены AWS, Google, Microsoft, Cloudflare), 10-недельный RC-цикл с валидацией SDK-мейнтейнерами — процесс уровня W3C/IETF, а не проект одного вендора.</li>
+      <li>Следующий вызов экосистемы — не количество, а верификация, аптайм и безопасность каталога; открывается рынок рейтингов и мониторинга.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="community">
+  <h2><span class="num">05</span>Комьюнити-практики</h2>
+  <p class="section-sub">Что реально делают команды: паттерны оркестрации, инструменты месяца и отрезвляющие уроки прода.</p>
+
+  <h3>Паттерны оркестрации</h3>
+  <div class="card">
+    <ul>
+      <li><strong>Git worktrees — стандарт изоляции.</strong> Каждому агенту — свой worktree, своя ветка, свой <code>CLAUDE.md</code> с ограничением скоупа; запуск в tmux-панелях. Практический потолок — 4–5 агентов на ноутбуке (упор в RAM/CPU), дальше remote-машины. Дисциплина: <code>git diff main..agent/branch</code> перед каждым merge, слияние по одной ветке, rebase на main. Узкое место — ревью, а не агенты.</li>
+      <li><strong>Ralph loop</strong> (Geoff Huntley) — примитивный bash-цикл, снова и снова запускающий агента по списку задач <em>со свежим контекстом на каждой итерации</em>: filesystem как память, stop-hooks против преждевременного завершения. Работает на больших, хорошо специфицированных и механически верифицируемых задачах (миграции, портирование, массовые правки под тестами); стоимость порядка $10–12/час. Родственная методология — <strong>RPI</strong>: Research → Plan → Implement (Dex Horthy, HumanLayer).</li>
+      <li><strong>Gas Town</strong> (Steve Yegge) — оркестратор на 20–30 параллельных агентов (Claude Code, Copilot, Codex, Gemini) поверх Beads — версионируемого леджера задач: каждая единица работы — bead, при падении сессии следующая продолжает с того же места. К лету — федерация Wasteland и облачная версия с Kilo: оркестрация флота уходит в облако.</li>
+      <li><strong>Жанр месяца — посты «мой агентный сетап»</strong>. Образец от Domenic Denicola (23.07): одноразовая Ubuntu-VM на домашнем десктопе, доступ по Tailscale с ноута и телефона, агенты с <code>approval_policy = "never"</code> (риск принят за счёт одноразовости VM и частых коммитов), worktrees для параллельных сессий, AGENTS.md с практиками проекта, chezmoi для синка dotfiles между машинами.</li>
+    </ul>
+  </div>
+
+  <h3>Open-source инструменты месяца</h3>
+  <div class="card">
+    <p>По каталогам awesome-cli-coding-agents и awesome-agent-orchestrators (звёзды — по вторичным сводкам, не перепроверены по первоисточнику):</p>
+    <ul>
+      <li><strong>Claw Code</strong> (~195k★) — clean-room реimplement архитектуры Claude Code на Python/Rust; по сообщениям, самый быстрый репозиторий в истории GitHub до 100k звёзд.</li>
+      <li><strong>OpenCode</strong> (~191k★) — добавил Scout-субагента для ресёрча внешней документации и фоновые субагенты.</li>
+      <li><strong>claude-flow</strong> (~67k★) — «multi-agent swarms»; <strong>vibe-kanban</strong> (~28k★) — kanban-интерфейс администрирования агентов; <strong>cmux</strong> и <strong>herdr</strong> — параллельные раннеры сессий; <strong>agent-deck</strong> — единый TUI для Claude/Codex/Gemini/OpenCode; <strong>fractal</strong> — иерархические агентные циклы поверх worktrees; <strong>Aeon</strong> — автономные прогоны на GitHub Actions.</li>
+    </ul>
+  </div>
+
+  <h3>Скептицизм и уроки прода</h3>
+  <div class="card">
+    <ul>
+      <li><strong>«Deploy агента и operate агента — разные проблемы».</strong> Большинство enterprise-пилотов не доходит до прода; прогноз Forbes (07.07) — 40% agentic-проектов отменят к 2027. Решают governance и operational readiness, а не выбор модели.</li>
+      <li><strong>Инциденты</strong>: агент Cursor у PocketOS удалил прод-БД и бэкапы «за девять секунд»; антипример параллелизма — «45-миллиардный токен-рерайт» проекта Grit, где нескоординированные правки каскадно ломали ветки; июльские атаки — prompt-injection в defensive-агентов и RCE.</li>
+      <li><strong>После ретайрмента Gemini CLI</strong> команды перестали ставить на один инструмент: обвязка поверх списка одобренных агентов, единые workflow-шаблоны PR, policy-контроли, eval-гейты (линт, лицензии, лимит размера diff), телеметрия (cycle time, change failure rate). Инструменты сменяемы — интерфейсы и политики нет.</li>
+      <li><strong>«Walk away and return» редко срабатывает</strong>: скорость генерации больше никого не впечатляет; хвастаются пропускной способностью ревью и тем, что агент «не удалил прод».</li>
+    </ul>
+  </div>
+
+  <div class="callout teal">
+    <p><strong>Итог месяца одной фразой:</strong> индустрия перестала спорить, умеют ли агенты писать код, — и занялась тем, как ими управлять: изоляция, леджеры задач, квоты, eval-гейты, верификация. Control plane важнее модели.</p>
+  </div>
+</section>
+
+<section id="sources" class="sources">
+  <h2><span class="num">06</span>Источники</h2>
+  <p class="section-sub">Основные использованные материалы. Полный текстовый разбор — в соседнем файле <code>trendy-agentnoy-razrabotki-claude-codex-2026-08-04.md</code>.</p>
+  <ol>
+    <li>Claude Code — What's new: <a href="https://code.claude.com/docs/en/whats-new">code.claude.com/docs/en/whats-new</a>; changelog-агрегатор: <a href="https://releasebot.io/updates/anthropic/claude-code">releasebot.io/updates/anthropic/claude-code</a></li>
+    <li>Anthropic Opus 5: <a href="https://techcrunch.com/2026/07/24/anthropic-launches-opus-5/">techcrunch.com — Anthropic launches Opus 5</a>; Fable 5: <a href="https://www.anthropic.com/news/redeploying-fable-5">anthropic.com/news/redeploying-fable-5</a></li>
+    <li>Skills-экосистема: <a href="https://agentman.ai/blog/agent-skills-ecosystem-report-2026">agentman.ai — Agent Skills Ecosystem Report 2026</a>; <a href="https://www.agensi.io/learn/agent-skills-open-standard">agensi.io — Agent Skills open standard</a></li>
+    <li>Codex releases: <a href="https://github.com/openai/codex/releases">github.com/openai/codex/releases</a>; <a href="https://releasebot.io/updates/openai/codex">releasebot.io/updates/openai/codex</a>; GPT-5.6: <a href="https://openai.com/index/gpt-5-6/">openai.com/index/gpt-5-6</a></li>
+    <li>Codex в JetBrains: <a href="https://github.blog/changelog/2026-07-07-codex-as-agent-provider-and-agentic-enhancements-in-jetbrains-ides/">github.blog — Codex as agent provider</a></li>
+    <li>AGENTS.md / AAIF: <a href="https://openai.com/index/agentic-ai-foundation/">openai.com — Agentic AI Foundation</a>; <a href="https://aaif.io/projects/agents-md">aaif.io/projects/agents-md</a></li>
+    <li>Спека MCP 2026-07-28: <a href="https://blog.modelcontextprotocol.io/posts/2026-07-28/">blog.modelcontextprotocol.io</a>; разбор изменений: <a href="https://stacktr.ee/blog/mcp-2026-spec-changes">stacktr.ee/blog/mcp-2026-spec-changes</a>; <a href="https://claude.com/blog/bringing-mcp-2026-07-28-to-claude">claude.com — Bringing MCP 2026-07-28 to Claude</a></li>
+    <li>Состояние MCP-реестра: <a href="https://mcpqueen.com/reports/state-of-mcp-2026-07">mcpqueen.com — State of MCP, July 2026</a></li>
+    <li>Skills vs MCP: <a href="https://opensource.posit.co/blog/2026-07-03_ai-newsletter/">opensource.posit.co — AI Newsletter 03.07</a>; <a href="https://milvus.io/blog/is-mcp-dead-cli-and-skills-for-ai-agents.md">milvus.io — Is MCP Dead?</a></li>
+    <li>Git worktrees playbook: <a href="https://www.developersdigest.tech/blog/git-worktrees-claude-code-parallel-agents-guide">developersdigest.tech — Git Worktrees + Claude Code</a></li>
+    <li>Ralph loop / RPI: <a href="https://linearb.io/blog/dex-horthy-humanlayer-rpi-methodology-ralph-loop">linearb.io — RPI methodology</a>; <a href="https://ralphloop.sh/blog/what-is-the-ralph-technique/">ralphloop.sh</a></li>
+    <li>Gas Town: <a href="https://thenewstack.io/steve-yegges-ai-agent-orchestration-project-gas-town-comes-to-the-cloud-and-brings-the-wasteland-with-it/">thenewstack.io — Gas Town comes to the cloud</a></li>
+    <li>Agent controls: <a href="https://www.developersdigest.tech/blog/codex-claude-code-july-agent-controls">developersdigest.tech — July agent controls</a></li>
+    <li>Context engineering: <a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">anthropic.com — Effective context engineering</a></li>
+    <li>Tool harness: <a href="https://apptension.com/blog/july-2026-why-ai-coding-teams-bet-on-tool-harnesses">apptension.com — Why teams bet on tool harnesses</a></li>
+    <li>Сетап-пост месяца: <a href="https://domenic.me/agentic-coding-setup/">domenic.me — Agentic coding setup</a></li>
+  </ol>
+  <div class="disclaimer">
+    <strong>Оговорка о достоверности.</strong> Часть фактуры — из вторичных агрегаторов (Developers Digest, Releasebot, awesome-каталоги): официальные страницы OpenAI блокировали автоматический фетч, поэтому детали релизов Codex восстановлены по трём независимым агрегаторам changelog'ов (данные между ними согласуются). Цифры звёзд GitHub (Claw Code, OpenCode и др.) и детали инцидента PocketOS не перепроверены по первоисточникам — при публичном использовании перепроверить.
+  </div>
+</section>
+
+<footer>
+  Собрано 2026-08-04 · четыре параллельных research-агента · пара к файлу
+  <span class="mono">trendy-agentnoy-razrabotki-claude-codex-2026-08-04.md</span>
+</footer>
+</main>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  var t=localStorage.getItem('trends-theme');
+  if(t){root.setAttribute('data-theme',t);}
+  else if(matchMedia('(prefers-color-scheme: dark)').matches){root.setAttribute('data-theme','dark');}
+  if(localStorage.getItem('trends-contrast')==='high'){root.setAttribute('data-contrast','high');}
+  document.getElementById('themeBtn').onclick=function(){
+    var cur=root.getAttribute('data-theme')==='dark'?'light':'dark';
+    root.setAttribute('data-theme',cur);localStorage.setItem('trends-theme',cur);
+  };
+  document.getElementById('contrastBtn').onclick=function(){
+    var on=root.getAttribute('data-contrast')==='high';
+    if(on){root.removeAttribute('data-contrast');localStorage.removeItem('trends-contrast');}
+    else{root.setAttribute('data-contrast','high');localStorage.setItem('trends-contrast','high');}
+  };
+  var bar=document.getElementById('progress');
+  addEventListener('scroll',function(){
+    var h=document.documentElement.scrollHeight-innerHeight;
+    bar.style.width=(h>0?(scrollY/h*100):0)+'%';
+  },{passive:true});
+})();
+</script>
+</body></html>

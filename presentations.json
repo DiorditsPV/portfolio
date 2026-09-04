@@ -1,8 +1,22 @@
 {
   "presentations": [
     {
+      "slug": "agents-weekly-2026-09-04",
+      "title": "Agent-дайджест — 28.08–04.09.2026",
+      "category": "agents-weekly",
+      "date": "2026-09-04",
+      "desc": "Claude Fable 5.1 и Mythos 5.1 — крупнейший официальный релиз за историю серии. Экосистема ответила кластером из десяти репозиториев про учёт квот: счётчики, менюбары, прокси-ротаторы.",
+      "descEn": "Claude Fable 5.1 and Mythos 5.1 — the largest official release in the series so far, answered by a cluster of ten quota-tracking repositories.",
+      "tags": [
+        "окно 28.08–04.09"
+      ],
+      "source": "~/dev/docs/lichnoe/research/agent-digest/2026-09-04.html",
+      "bytes": 106703
+    },
+    {
       "slug": "generator-fich",
       "title": "Генератор фич: подход",
+      "category": "product-lab",
       "date": "2026-09-04",
       "desc": "Разбор исследовательского пакета про генерацию продуктовых фич: какая эталонная модель из него собралась, почему она не ложится на реальную работу как есть и что из неё берётся в дело.",
       "descEn": "A research pack on generating product features: the reference model it produced, why it does not fit real work as is, and what carries over.",
@@ -16,6 +30,7 @@
     {
       "slug": "product-lab-karta-processov",
       "title": "Product Lab — карта процессов и их состояний",
+      "category": "product-lab",
       "date": "2026-09-04",
       "desc": "Слепок агентного рабочего пространства: 17 стадий от гипотезы до релиза — что уже работает, что перенесено донором и не адаптировано, что ещё не спроектировано.",
       "descEn": "A snapshot of an agentic workspace: 17 stages from hypothesis to release — what works, what was imported but not adapted, what is not designed yet.",
@@ -26,6 +41,73 @@
       ],
       "source": "~/dev/docs/lichnoe/product-lab/karta-processov-2026-09-04.html",
       "bytes": 53039
+    },
+    {
+      "slug": "agents-weekly-2026-08-28",
+      "title": "Agent-дайджест — 26–28.08.2026",
+      "category": "agents-weekly",
+      "date": "2026-08-28",
+      "desc": "Самое короткое окно серии — два дня, 17 позиций каталога. Первый прогон на исправленном методе сбора: расхождение, ради которого его чинили, больше не воспроизводится.",
+      "descEn": "The shortest window in the series — two days, 17 catalogue entries. First run on the fixed collection method; the discrepancy it was fixed for no longer reproduces.",
+      "tags": [
+        "окно 26–28.08"
+      ],
+      "source": "~/dev/docs/lichnoe/research/agent-digest/2026-08-28.html",
+      "bytes": 94264
+    },
+    {
+      "slug": "agents-weekly-2026-08-26",
+      "title": "Agent-дайджест — 21–26.08.2026",
+      "category": "agents-weekly",
+      "date": "2026-08-26",
+      "desc": "Главная новость окна — не в каталоге, а в методе: gh search repos --sort=stars звёзды не сортирует, значит «топ-100 по звёздам» двух прошлых прогонов топом не был.",
+      "descEn": "The window's main story is the method, not the catalogue: gh search repos --sort=stars does not sort by stars, so the previous runs' top-100 was not a top-100.",
+      "tags": [
+        "окно 21–26.08"
+      ],
+      "source": "~/dev/docs/lichnoe/research/agent-digest/2026-08-26.html",
+      "bytes": 110537
+    },
+    {
+      "slug": "agents-weekly-2026-08-21",
+      "title": "Agent-дайджест — 18–21.08.2026",
+      "category": "agents-weekly",
+      "date": "2026-08-21",
+      "desc": "Трёхдневное окно с разбором собственной методики: почему счётчики двух соседних прогонов между собой несравнимы и какая величина сопоставима на самом деле.",
+      "descEn": "A three-day window that audits its own methodology: why the counters of two adjacent runs are not comparable, and which figure actually is.",
+      "tags": [
+        "окно 18–21.08"
+      ],
+      "source": "~/dev/docs/lichnoe/research/agent-digest/2026-08-21.html",
+      "bytes": 74535
+    },
+    {
+      "slug": "agents-weekly-2026-08-18",
+      "title": "Agent-дайджест — 11–18.08.2026",
+      "category": "agents-weekly",
+      "date": "2026-08-18",
+      "desc": "Самое насыщенное окно серии: 1348 новых репозиториев, 87 с ★10+. Отдельный сюжет — взрывной рост экосистемы вокруг DeepSeek Harness, четверть всего верхнего тира.",
+      "descEn": "The densest window in the series: 1348 new repositories, 87 with 10+ stars, and an ecosystem burst around DeepSeek Harness taking a quarter of the top tier.",
+      "tags": [
+        "окно 11–18.08"
+      ],
+      "source": "~/dev/docs/lichnoe/research/agent-digest/2026-08-18.html",
+      "bytes": 87207
+    },
+    {
+      "slug": "trendy-claude-codex",
+      "title": "Тренды агентной разработки — Claude и Codex, июль 2026",
+      "category": "agent-research",
+      "date": "2026-08-04",
+      "desc": "Срез по четырём направлениям за июль 2026 — Claude Code и Agent SDK, OpenAI Codex, MCP, практики комьюнити. Сквозной сюжет: обе экосистемы синхронно сделали мультиагентность штатным режимом.",
+      "descEn": "A July 2026 snapshot across four fronts — Claude Code and the Agent SDK, OpenAI Codex, MCP, community practice. The through-line: both ecosystems made multi-agent work the default mode.",
+      "tags": [
+        "тренды",
+        "codex",
+        "mcp"
+      ],
+      "source": "~/dev/docs/lichnoe/research/trendy-agentnoy-razrabotki-claude-codex-2026-08-04.html",
+      "bytes": 43233
     }
   ]
 }

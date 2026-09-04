@@ -41,6 +41,35 @@ const MARK = '# ─── презентации: блок ниже перепи
 // достаточно поменять строку здесь и пересобрать (--rebuild).
 const BASE = 'https://paveldiordits.site/presentations/';
 
+// Блоки галереи. Порядок здесь — порядок на странице; внутри блока новые сверху.
+// Новая рубрика заводится строкой сюда, а не правкой разметки.
+const CATEGORIES = [
+  {
+    id: 'product-lab', ru: 'Product Lab', en: 'Product Lab',
+    noteRu: 'Одна продуктовая лаборатория: исследование, из которого выросла её модель фич, и карта её процессов.',
+    noteEn: 'One product lab: the research its feature model grew out of, and the map of its processes.',
+  },
+  {
+    id: 'agents-weekly', ru: 'Agents Weekly', en: 'Agents Weekly',
+    noteRu: 'Дайджест агент-экосистемы по расписанию. Каждый выпуск закрывает своё окно наблюдения; сюжеты прошлых прогонов в нём не повторяются, поэтому выпуски читаются подряд, а не выборочно.',
+    noteEn: 'A scheduled digest of the agent ecosystem. Each issue closes its own observation window and does not repeat earlier runs, so the issues read in sequence rather than at random.',
+  },
+  {
+    id: 'agent-research', ru: 'Агентная разработка', en: 'Agentic development',
+    noteRu: 'Разовые разборы инструментов и трендов — не серия, а срез на дату.',
+    noteEn: 'One-off writeups on tooling and trends — not a series, a snapshot at a date.',
+  },
+  {
+    id: 'interactive', ru: 'Интерактивное', en: 'Interactive',
+    noteRu: 'Не статья, а работающий тренажёр: открывается и используется прямо на странице.',
+    noteEn: 'Not an article but a working trainer: open it and use it right on the page.',
+  },
+];
+
+// Страховка для реестра, поправленного руками: страница без рубрики не должна
+// молча пропасть из галереи, оставшись при этом в манифесте.
+const OTHER = { id: null, ru: 'Прочее', en: 'Other', noteRu: '', noteEn: '' };
+
 const die = m => { console.error(`ОШИБКА: ${m}`); process.exit(1); };
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -56,6 +85,7 @@ function parseArgs(argv) {
     else if (v === '--desc') a.desc = val();
     else if (v === '--desc-en') a.descEn = val();
     else if (v === '--date') a.date = val();
+    else if (v === '--category') a.category = val();
     else if (v === '--tag') a.tags.push(val());
     else if (v === '--unpublish') a.unpublish = val();
     else if (v === '--rebuild') a.rebuild = true;
@@ -86,13 +116,37 @@ function publish(a) {
 
   const html = fs.readFileSync(src, 'utf8');
 
-  // Сервер выкладки проверяет, что файл — действительно HTML, и валит весь
-  // деплой, если нет. Проверяем здесь же, чтобы узнать об этом до пуша.
-  if (!/<html[\s>]/i.test(html)) die(`${src} не похож на HTML — сервер такой файл отвергнет`);
+  // Предполётный контроль. Сервер выкладки сам проверяет, что файл — HTML, и
+  // валит весь деплой целиком, если нет; остальное он пропустит, а на публичном
+  // адресе это уже видно посетителю. Дешевле поймать здесь.
+  if (!/<html[\s>]/i.test(html))
+    die(`в ${path.basename(src)} нет элемента <html> — это фрагмент, а не страница.\n`
+      + 'Браузер такое дорисует, но сервер выкладки проверяет файл на HTML и отвергнет его,\n'
+      + 'уронив весь деплой. Оберни страницу целиком: <!DOCTYPE html><html lang="ru">…');
+
+  if (!/<meta[^>]+charset/i.test(html))
+    die(`в ${path.basename(src)} нет <meta charset> — nginx отдаёт text/html без charset,\n`
+      + 'и кириллица на боевом адресе останется на усмотрение браузера. Добавь <meta charset="utf-8">.');
+
+  if (!/<meta[^>]+name=["']viewport/i.test(html))
+    die(`в ${path.basename(src)} нет <meta name="viewport"> — на телефоне страница откроется\n`
+      + 'свёрстанной под десктоп и уменьшенной. Добавь viewport width=device-width.');
+
+  // Не отказ, а предупреждение: страница работает, но перестаёт быть самодостаточной.
+  const ext = [...html.matchAll(/<link[^>]+href=["'](https?:\/\/[^"']+)/gi),
+               ...html.matchAll(/<script[^>]+src=["'](https?:\/\/[^"']+)/gi)]
+    .map(m => new URL(m[1]).host);
+  if (ext.length)
+    console.warn(`ВНИМАНИЕ: страница тянет стили или скрипты со стороны — ${[...new Set(ext)].join(', ')}.\n`
+      + '  Сайт заявлен как «без внешних запросов»; посетитель уйдёт на этот хост. Лучше вшить в файл.');
 
   const title = a.title || (html.match(/<title>([^<]*)<\/title>/i)?.[1] || '').trim();
   if (!title) die('в файле нет <title>, а --title не задан');
   if (!a.desc) die('нужен --desc: одна фраза о чём разбор, она попадёт в карточку');
+  if (!a.category) die(`нужен --category — блок галереи. Есть: ${CATEGORIES.map(c => c.id).join(', ')}`);
+  if (!CATEGORIES.some(c => c.id === a.category))
+    die(`нет рубрики «${a.category}». Есть: ${CATEGORIES.map(c => c.id).join(', ')}\n`
+      + 'Новая заводится строкой в CATEGORIES внутри этого скрипта.');
 
   // Дата: явная, иначе из имени файла (скилл его так и называет), иначе сегодня.
   const date = a.date || src.match(/(\d{4}-\d{2}-\d{2})/)?.[1] || new Date().toISOString().slice(0, 10);
@@ -105,6 +159,7 @@ function publish(a) {
   const entry = {
     slug: a.slug,
     title,
+    category: a.category,
     date,
     desc: a.desc,
     descEn: a.descEn || null,
@@ -172,16 +227,34 @@ const card = p => {
           <time class="mono" datetime="${esc(p.date)}">${esc(p.date)}</time>
           <span class="mono size">${kb}&nbsp;КБ</span>
         </div>
-        <h2>${esc(p.title)}</h2>
+        <h3>${esc(p.title)}</h3>
         <p class="desc" data-ru="${esc(p.desc)}" data-en="${esc(p.descEn || p.desc)}">${esc(p.desc)}</p>
         ${p.tags.length ? `<div class="tags">${p.tags.map(t => `<span>${esc(t)}</span>`).join('')}</div>` : ''}
       </a>`;
 };
 
+// Каждая рубрика — свой блок с заголовком и пояснением; пустые не выводятся.
+function block(cat, items) {
+  return `    <section class="block">
+      <div class="block-head">
+        <h2 class="block-title" data-ru="${esc(cat.ru)}" data-en="${esc(cat.en)}">${esc(cat.ru)}</h2>
+        <span class="block-count mono">${items.length}</span>
+      </div>
+      ${cat.noteRu ? `<p class="block-note" data-ru="${esc(cat.noteRu)}" data-en="${esc(cat.noteEn)}">${esc(cat.noteRu)}</p>` : ''}
+      <div class="grid">
+${items.map(card).join('\n')}
+      </div>
+    </section>`;
+}
+
 function buildGallery(reg) {
   const list = reg.presentations;
+  const groups = [...CATEGORIES, OTHER]
+    .map(cat => [cat, list.filter(p => (p.category ?? null) === cat.id)])
+    .filter(([, items]) => items.length);
+
   const body = list.length
-    ? `    <div class="grid">\n${list.map(card).join('\n')}\n    </div>`
+    ? groups.map(([cat, items]) => block(cat, items)).join('\n')
     : `    <p class="empty" data-ru="Пока пусто." data-en="Nothing here yet.">Пока пусто.</p>`;
 
   const html = `<!doctype html>
@@ -264,6 +337,15 @@ header.scrolled{border-bottom-color:var(--border)}
 .hero p{margin:0;max-width:52ch;color:var(--muted)}
 
 main{padding-bottom:5rem}
+
+/* Рубрики. Разделяет не только заголовок, но и линия с воздухом: блоки должны
+   читаться как разные полки, а не как один поток карточек с подписями. */
+.block + .block{margin-top:3.5rem;padding-top:3rem;border-top:1px solid var(--border)}
+.block-head{display:flex;align-items:baseline;gap:.6rem}
+.block-title{font-size:1.375rem;letter-spacing:-.02em;margin:0;font-weight:650}
+.block-count{font-size:.6875rem;color:var(--muted)}
+.block-note{margin:.4rem 0 1.4rem;max-width:70ch;color:var(--muted);font-size:.9375rem}
+
 .grid{display:grid;gap:1rem;grid-template-columns:1fr}
 @media(min-width:700px){.grid{grid-template-columns:repeat(2,1fr)}}
 @media(min-width:1100px){.grid{grid-template-columns:repeat(3,1fr)}}
@@ -277,7 +359,7 @@ main{padding-bottom:5rem}
 @media(prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
 .card-top{display:flex;justify-content:space-between;align-items:baseline;gap:.75rem;
   font-size:.6875rem;letter-spacing:.08em;color:var(--muted)}
-.card h2{font-size:1.0625rem;line-height:1.3;letter-spacing:-.02em;margin:0;font-weight:650}
+.card h3{font-size:1.0625rem;line-height:1.3;letter-spacing:-.02em;margin:0;font-weight:650}
 .card .desc{margin:0;font-size:.9375rem;color:var(--muted)}
 .tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.35rem}
 .tags span{

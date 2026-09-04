@@ -11,5 +11,11 @@ lexis-dark.webp
 
 # ─── презентации: блок ниже переписывает tools/publish-presentation.mjs ───
 presentations/index.html
+presentations/agents-weekly-2026-09-04.html
 presentations/generator-fich.html
 presentations/product-lab-karta-processov.html
+presentations/agents-weekly-2026-08-28.html
+presentations/agents-weekly-2026-08-26.html
+presentations/agents-weekly-2026-08-21.html
+presentations/agents-weekly-2026-08-18.html
+presentations/trendy-claude-codex.html

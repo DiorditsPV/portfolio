@@ -1,0 +1,1109 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent-дайджест — 21–26.08.2026</title>
+<style>
+:root{
+  --bg:#f6f3ec; --panel:#fdfbf6; --ink:#2b2620; --muted:#6f675c;
+  --accent:#d95f02; --accent-ink:#8a3c00; --line:#e3dccd; --chip:#efe9dc;
+  --badge-bg:#2b2620; --badge-fg:#f6f3ec; --mark:#fff3e6;
+}
+html[data-theme="dark"]{
+  --bg:#171512; --panel:#1f1c18; --ink:#ece5d8; --muted:#9a917f;
+  --accent:#f08c3a; --accent-ink:#f4a869; --line:#332e27; --chip:#282420;
+  --badge-bg:#ece5d8; --badge-fg:#171512; --mark:#33220f;
+}
+@media (prefers-color-scheme: dark){
+  html:not([data-theme]){
+    --bg:#171512; --panel:#1f1c18; --ink:#ece5d8; --muted:#9a917f;
+    --accent:#f08c3a; --accent-ink:#f4a869; --line:#332e27; --chip:#282420;
+    --badge-bg:#ece5d8; --badge-fg:#171512; --mark:#33220f;
+  }
+}
+html[data-contrast="on"]{
+  --muted:var(--ink); --line:currentColor;
+}
+html[data-contrast="on"] .item,html[data-contrast="on"] .block,
+html[data-contrast="on"] nav.toc{ border-width:2px; }
+html[data-contrast="on"] a{ text-decoration-thickness:2px; }
+html[data-contrast="on"] .tag{ outline:1px solid var(--ink); }
+
+*{box-sizing:border-box; margin:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--ink);
+  font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  padding-bottom:4rem;
+}
+#progress{position:fixed; top:0; left:0; height:4px; width:0; background:var(--accent); z-index:50}
+main{max-width:1400px; width:min(96vw,1400px); margin:0 auto; padding:0 1.2rem}
+a{color:var(--accent-ink); text-decoration:underline; text-decoration-color:var(--accent); text-underline-offset:3px}
+a:hover{color:var(--accent)}
+
+header.masthead{padding:2.6rem 0 1.4rem; border-bottom:3px solid var(--ink)}
+.eyebrow{display:flex; flex-wrap:wrap; gap:.6rem; align-items:center;
+  font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
+.eyebrow .mock{background:var(--accent); color:#fff; padding:.15rem .55rem; border-radius:3px; letter-spacing:.1em; font-weight:700}
+html[data-contrast="on"] .eyebrow .mock{outline:2px solid var(--ink)}
+h1{font-size:clamp(2rem,4.6vw,3.4rem); line-height:1.06; letter-spacing:-.015em; margin:.5rem 0 .6rem}
+h1 .win{color:var(--accent)}
+.meta{color:var(--muted); font-size:.95rem; max-width:70ch}
+.controls{float:right; display:flex; gap:.5rem; margin-top:.2rem}
+.controls button{
+  font:inherit; font-size:.82rem; cursor:pointer; padding:.4rem .8rem;
+  border:1.5px solid var(--ink); background:var(--panel); color:var(--ink); border-radius:4px;
+}
+.controls button[aria-pressed="true"]{background:var(--ink); color:var(--bg)}
+
+nav.toc{
+  position:sticky; top:0; z-index:40; background:var(--bg);
+  display:flex; flex-wrap:wrap; gap:.2rem .4rem; padding:.55rem 0;
+  border-bottom:1.5px solid var(--line); margin-bottom:1.8rem; font-size:.88rem;
+}
+nav.toc a{text-decoration:none; color:var(--ink); padding:.25rem .6rem; border-radius:4px}
+nav.toc a:hover{background:var(--chip)}
+nav.toc .n{color:var(--accent); font-weight:700; margin-left:.25rem}
+
+section{margin:2.6rem 0}
+h2{font-size:1.7rem; letter-spacing:-.01em; margin-bottom:.9rem; display:flex; align-items:baseline; gap:.6rem; flex-wrap:wrap}
+h2 .count{font-size:1rem; color:var(--accent); font-weight:700}
+.rank-note{color:var(--muted); font-size:.9rem; margin:-.4rem 0 1rem}
+
+.lead{font-size:1.08rem; line-height:1.62; background:var(--panel); border:1.5px solid var(--line);
+  border-left:5px solid var(--accent); padding:1.2rem 1.4rem; border-radius:6px}
+.lead b{color:var(--accent-ink)}
+.lead p+p{margin-top:.8rem}
+.lead ul{margin:.5rem 0 0 1.15rem; display:grid; gap:.5rem}
+.lead li::marker{color:var(--accent)}
+.lead .g{margin-top:1rem; font-weight:700; color:var(--accent-ink); font-size:.98rem;
+  letter-spacing:.02em}
+.signal{margin-top:1rem; font-size:.95rem; color:var(--muted); border-top:1.5px dashed var(--line); padding-top:.8rem}
+.signal b{color:var(--accent-ink)}
+
+.item{
+  display:grid; grid-template-columns:5.2rem 1fr; gap:1rem; align-items:start;
+  padding:.85rem 1rem; border:1.5px solid var(--line); border-radius:6px;
+  background:var(--panel); margin-bottom:.55rem;
+}
+.stars{
+  justify-self:stretch; text-align:center; font-weight:800; font-size:.92rem;
+  background:var(--badge-bg); color:var(--badge-fg); border-radius:4px; padding:.28rem .3rem;
+  font-variant-numeric:tabular-nums;
+}
+.stars.hot{background:var(--accent); color:#fff}
+html[data-contrast="on"] .stars{outline:1.5px solid var(--ink)}
+.item h4{font-size:1.02rem; margin-bottom:.15rem; font-weight:700}
+.item p{color:var(--ink); font-size:.97rem}
+.note{color:var(--muted); font-style:italic}
+.tag{display:inline-block; font-size:.72rem; letter-spacing:.06em; text-transform:uppercase;
+  background:var(--chip); color:var(--muted); border-radius:3px; padding:.12rem .5rem;
+  margin-left:.5rem; white-space:nowrap; vertical-align:.12em; font-style:normal}
+.tag.warm{color:var(--accent-ink)}
+
+h3.tail-h{font-size:.85rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted);
+  margin:1.5rem 0 .6rem}
+ul.tail{list-style:none; padding:0; border-top:1.5px solid var(--line)}
+ul.tail li{padding:.5rem .2rem; border-bottom:1px dashed var(--line); font-size:.95rem;
+  display:flex; flex-wrap:wrap; gap:.15rem .6rem; align-items:baseline}
+ul.tail .st{font-weight:800; font-variant-numeric:tabular-nums; min-width:3rem; color:var(--accent-ink)}
+ul.tail .desc{flex:1 1 24rem}
+.othersrc{margin-top:.9rem; font-size:.92rem; color:var(--muted); font-style:italic}
+
+.block{border:1.5px solid var(--line); background:var(--panel); border-radius:6px;
+  padding:1.15rem 1.35rem; margin-bottom:.9rem}
+.block h3{font-size:1.12rem; margin-bottom:.55rem}
+.block h3 .src{color:var(--muted); font-weight:400; font-size:.85rem}
+.block ul{padding-left:1.2rem; display:grid; gap:.45rem}
+.block li::marker{color:var(--accent)}
+mark{background:var(--mark); color:inherit; padding:0 .2rem; border-radius:2px}
+
+.arts .item{grid-template-columns:5.2rem 1fr}
+.pts{background:var(--chip); color:var(--ink); font-weight:800; border-radius:4px;
+  text-align:center; padding:.28rem .3rem; font-size:.85rem}
+.pts small{display:block; font-weight:400; font-size:.62rem; color:var(--muted); letter-spacing:.08em}
+
+.periph li b:first-child{color:var(--accent-ink)}
+.sources ul{padding-left:1.2rem; display:grid; gap:.35rem; word-break:break-all}
+
+footer{margin-top:3rem; padding-top:1rem; border-top:3px solid var(--ink);
+  color:var(--muted); font-size:.88rem}
+
+@media (max-width:720px){
+  .controls{float:none; margin-bottom:.8rem}
+  .item,.arts .item{grid-template-columns:1fr}
+  .stars,.pts{justify-self:start; padding:.28rem .7rem}
+  ul.tail .desc{flex-basis:100%}
+}
+</style></head><body>
+<div id="progress" aria-hidden="true"></div>
+<main>
+<header class="masthead">
+  <div class="controls">
+    <button id="themeBtn" aria-pressed="false">◐ Тема</button>
+    <button id="contrastBtn" aria-pressed="false">▣ Контраст</button>
+  </div>
+  <p class="eyebrow"><span class="mock">Прогон по расписанию</span> Agent-дайджест · cron-джоба agent-digest</p>
+  <h1>Новое в агент-экосистеме<br><span class="win">21–26 августа 2026</span></h1>
+  <p class="meta">Окно: 2026-08-21 07:47 UTC → 2026-08-26 09:10 UTC. Репозитории и сюжеты,
+  показанные в прошлых прогонах, не повторяются. Звёзды — на момент сбора.</p>
+</header>
+
+<nav class="toc" aria-label="Разделы">
+  <a href="#svodka">Сводка</a>
+  <a href="#official">Официальное</a>
+  <a href="#skills">Скиллы<span class="n">38</span></a>
+  <a href="#plugins">Плагины<span class="n">24</span></a>
+  <a href="#arts">Статьи и подходы<span class="n">9</span></a>
+  <a href="#periph">На периферии</a>
+  <a href="#sources">Источники</a>
+</nav>
+
+<section id="svodka">
+  <h2>Сводка</h2>
+  <div class="lead">
+    <p>Пятидневное окно, и главная его новость — не в каталоге, а в самом методе сбора.
+    <mark>Команда <code>gh search repos --sort=stars</code>, прописанная в задании джобы,
+    звёзды не сортирует.</mark> Проверено прямым сравнением: на запросе <code>"claude skill"</code>
+    она отдаёт первой пятёркой репозитории с ★6, ★3, ★3, ★3, ★3, тогда как REST-эндпоинт
+    <code>search/repositories</code> с <code>sort=stars&amp;order=desc</code> на том же запросе
+    и том же окне отдаёт ★940, ★216, ★118, ★73, ★56. То есть «топ-100 по звёздам», на который
+    опирались оба прошлых прогона, топом по звёздам не был — это была квазислучайная выборка
+    из потока, а «★N» в прошлых дайджестах означало ранг внутри такой выборки, а не позицию
+    в окне. Практическое следствие видно сразу: через исправленный запрос нашлись
+    <b>14 репозиториев с ★10+</b>, которых сломанный метод не показал вовсе, включая
+    <a href="https://github.com/alchaincyf/huashu-excel">alchaincyf/huashu-excel</a> ★279,
+    <a href="https://github.com/adnanakil/nobuzz">adnanakil/nobuzz</a> ★216 и
+    <a href="https://github.com/bendrape1-byte/silk-design">bendrape1-byte/silk-design</a> ★118.</p>
+
+    <p>Этот прогон собран обоими способами и объединён, чтобы не потерять то, что находил
+    старый: <b>480 уникальных репозиториев</b> в рабочей выборке (форки отброшены, отсечка
+    ровно по 07:47:02 UTC, ранее показанные — исключены), из них <b>62 набрали ★10+</b>,
+    и все 62 вошли в каталог — 38 в блок скиллов, 24 в блок плагинов и инструментов.
+    README проверён у каждого из 62: пустых нет. Сырой счётчик GitHub по топику
+    <code>claude-code</code> за окно — <b>1597 репозиториев</b> (форки включены, отсечка
+    по началу суток 21.08); с числами прошлых прогонов он по-прежнему не сопоставим.</p>
+
+    <p>Официальная сторона в этом окне живее, чем в прошлом: в <code>anthropics/skills</code>
+    единственный коммит, но содержательный — руководство по переезду Python SDK с 0.x на 1.x;
+    в официальном marketplace впервые за два окна появились <mark>новые плагины</mark>, и один
+    из них — от Unity Technologies. CLI прошёл восемь версий, 2.1.239 → 2.1.246. При этом
+    release notes платформы за окно <mark>пусты</mark>: последняя запись датирована 20 августа.</p>
+
+    <p class="g">Официальное</p>
+    <ul>
+      <li><a href="https://github.com/anthropics/skills/pull/1623">claude-api: гайд по переезду Python SDK 0.x → 1.x</a> —
+      единственный коммит в <code>anthropics/skills</code> за окно (PR #1623, +303 строки):
+      новый файл <code>sdk-upgrade.md</code> и подкоманда <code>upgrade</code> у бандлового скилла.</li>
+      <li><a href="https://github.com/Unity-Technologies/unity-agent-plugin">unity</a> —
+      официальный плагин Unity Technologies, 18 скиллов по геймдеву, монетизации, локализации,
+      мультиплееру и Shader Graph (<a href="https://github.com/anthropics/claude-plugins-official/pull/5595">PR #5595</a>).</li>
+      <li><a href="https://github.com/anthropics/claude-plugins-official/pull/5600">netsuite-ai-companion и netsuite-finance-analyst</a> —
+      Oracle NetSuite перестроил раскладку и добавил два плагина к существующему <code>netsuite-suitecloud</code>.</li>
+      <li><a href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md">Claude Code 2.1.239 → 2.1.246</a> —
+      <code>promptCacheTtl</code>/<code>subagentPromptCacheTtl</code>, разбивка по <code>/loop</code>
+      в <code>/usage</code>, модель и уровень effort у каждого сабагента в <code>/tasks</code>,
+      частичный результат сабагента вместо «готово» на упоре в <code>maxTurns</code>.</li>
+    </ul>
+
+    <p class="g">Экосистема</p>
+    <ul>
+      <li><a href="https://github.com/duty1g/x64dbg-mcp-server">duty1g/x64dbg-mcp-server</a> ★1429 —
+      нативный MCP-плагин для отладчика x64dbg на Zig; топ окна и самый далёкий от скиллов пункт каталога.</li>
+      <li><a href="https://github.com/nateherkai/scroll-craft">nateherkai/scroll-craft</a> ★940 —
+      скилл скролл-сайтов, который проверяет собственную работу скриншотами скролла.</li>
+      <li><a href="https://github.com/kgoedecke/doop">kgoedecke/doop</a> ★385 —
+      многопользовательский дизайн-холст, где агент правит фреймы через встроенный MCP-сервер наравне с человеком.</li>
+      <li><a href="https://github.com/rome-os/rome">rome-os/rome</a> ★343 —
+      «агентная ОС»: масштабировать предлагается не модель, а среду вокруг неё <i>(сигнал вне звёзд: организация)</i>.</li>
+      <li><a href="https://github.com/sodiumsun/agenttrail">sodiumsun/agenttrail</a> ★248 —
+      локальная карта наблюдаемости: план агента против того, что он реально трогает в файловой системе.</li>
+      <li><a href="https://github.com/adnanakil/nobuzz">adnanakil/nobuzz</a> ★216 —
+      скилл <code>/debuzz</code>, отдающий ответ Claude другой модели, чтобы убрать «голос BuzzFeed»;
+      найден через HN, а не через GitHub-поиск.</li>
+      <li><a href="https://github.com/mkanat/skills">mkanat/skills</a> ★48 —
+      скиллы про качество кода от Макса Канат-Александера, автора «Code Simplicity»
+      <i>(сигнал вне звёзд: известный автор)</i>.</li>
+      <li><a href="https://github.com/atinux/docster">atinux/docster</a> ★35 —
+      скилл про написание документации от Себастьена Шопена, создателя Nuxt
+      <i>(сигнал вне звёзд: известный автор)</i>.</li>
+      <li><a href="https://github.com/yeswehack/claude-kit">yeswehack/claude-kit</a> ★37 —
+      плагин баг-баунти-платформы YesWeHack для отчётов, которые триажер может проверить
+      <i>(сигнал вне звёзд: организация)</i>.</li>
+    </ul>
+
+    <p class="g">Обсуждения</p>
+    <ul>
+      <li><a href="https://fabiensanglard.net/agent.md/index.html">My agent.md to improve LLM-assisted code quality</a> —
+      414 очков на HN, лучший результат окна: Фабьен Сангляр разбирает свой <code>agent.md</code> по правилам.</li>
+      <li><a href="https://allaboutcoding.ghinda.com/a-week-of-using-codex-more-than-claude/">A week of using Codex more than Claude</a> —
+      244 очка: неделя параллельной работы, вывод про «делает больше, чем просили» против «делает ровно что сказали».</li>
+      <li><a href="https://www.laude.org/updates/headlong-a-microharness-for-persistent-agents">Headlong: A microharness for persistent agents</a> —
+      120 очков: харнесс на &lt;10K строк Bash, в котором агент не замирает между задачами.</li>
+      <li><a href="https://code.joejag.com/2026/your-agent-is-not-the-model.html">Your Agent Is Not the Model</a> —
+      73 очка: разделение «модель / инференс-сервис / харнесс» как инструмент диагностики.</li>
+      <li><a href="https://simonwillison.net/2026/Aug/22/more-than-just-code-review/">More than just code review</a> —
+      Саймон Уиллисон о том, что ключевой навык — уверенно поручить и уверенно проверить,
+      а не прочитать каждую строку.</li>
+    </ul>
+
+    <p class="signal"><b>Оговорка о сигнале.</b> Звёзды в этом окне особенно плохо работают
+    мерой полезности. Из первой пятёрки каталога три позиции — не про агент-разработку:
+    MCP-плагин для отладчика, скилл скролл-сайтов и репозиторий-копия чужого проекта по снятию
+    AI-меток. При этом две самые содержательные для практики находки, <code>mkanat/skills</code>
+    и <code>atinux/docster</code>, стоят на ★48 и ★35 и попали бы в хвост, если бы не имена
+    авторов. Ранг в каталоге — это ранг по звёздам, и только по ним.</p>
+  </div>
+</section>
+
+<section id="official">
+  <h2>Официальное</h2>
+
+  <div class="block">
+    <h3>anthropics/skills — один коммит, но по делу</h3>
+    <p>За окно в репозиторий официальных скиллов ушёл <b>ровно один коммит</b> —
+    <code>3b3fad9</code> от 21.08 17:10 UTC, merge PR
+    <a href="https://github.com/anthropics/skills/pull/1623">#1623</a>
+    «Update claude-api skill: Python SDK 0.x to 1.x upgrade guide». Изменено 4 файла, +303/−6 строк:</p>
+    <ul>
+      <li><b>новый</b> <code>skills/claude-api/python/claude-api/sdk-upgrade.md</code> (+286) — пошаговое руководство переезда;</li>
+      <li><code>skills/claude-api/SKILL.md</code> (+3) — маршрутизация на новую подкоманду;</li>
+      <li><code>skills/claude-api/python/claude-api/README.md</code> (+6/−6) — HTTP-слой 1.x;</li>
+      <li><code>skills/claude-api/shared/live-sources.md</code> (+8).</li>
+    </ul>
+    <p style="margin-top:.7rem">Повод описан в самом PR: <code>anthropic</code> 1.0.0 вышел на PyPI,
+    HTTP-слой переехал с <code>httpx</code> на поддерживаемый форк <code>httpx2</code>, минимальный
+    Python поднят до 3.10, удалён давно устаревший API (Text Completions, <code>LegacyAPIResponse</code>).
+    Автор PR отдельно объясняет, почему это не механическая правка: <mark><code>httpx.Timeout</code>
+    или <code>httpx.Client</code>, переданные в клиент 1.x, падают не на импорте, а на запросе</mark>,
+    а мокирование и трейсинг, патчащие <code>httpx</code>, тихо перестают видеть трафик SDK.
+    Существовавшая подкоманда <code>migrate</code> покрывает миграции моделей, а не апгрейды
+    пакета, — маршрутизировать такие запросы было некуда.</p>
+    <p style="margin-top:.7rem">Структура руководства, по описанию PR: шаг 0 подтверждает область
+    работ и проверяет, что 1.x вообще опубликован, прежде чем писать пин; шаг 1 — таблица
+    инвентаризации, строка на каждый сигнал для грепа (<code>import httpx</code>,
+    <code>with_raw_response</code>, <code>completions.create</code>, инструментовка <code>respx</code> /
+    <code>pytest_httpx</code> / OpenTelemetry), и та же таблица, прогнанная в конце, работает
+    проверкой; шаги 2–8 — бамп зависимости, замена объектов <code>httpx</code> на <code>httpx2</code>,
+    await у асинхронного <code>.with_raw_response</code>, удаление Text Completions и выпиленных
+    параметров сэмплинга.</p>
+    <p style="margin-top:.7rem">Релиз самого SDK — <a href="https://platform.claude.com/docs/en/release-notes/api">запись
+    от 20 августа</a> в release notes платформы, то есть за сутки до начала окна; сам
+    <a href="https://github.com/anthropics/anthropic-sdk-python/blob/main/MIGRATION.md">migration guide</a>
+    живёт в репозитории SDK.</p>
+  </div>
+
+  <div class="block">
+    <h3>claude-plugins-official — впервые за два окна новые плагины</h3>
+    <p>8 коммитов за окно, и в отличие от прошлого прогона это не только бампы версий.
+    В marketplace сейчас <b>289 плагинов</b>.</p>
+    <ul>
+      <li><b><a href="https://github.com/anthropics/claude-plugins-official/pull/5595">unity</a></b>
+      (merged 24.08 20:52 UTC) — партнёрский листинг Unity Technologies, 18 скиллов: геймдев,
+      монетизация, локализация, мультиплеер, Shader Graph. Только скиллы, без <code>.mcp.json</code>,
+      лицензия Unity Companion, источник запинен на коммит <code>36052397</code> репозитория
+      <a href="https://github.com/Unity-Technologies/unity-agent-plugin">Unity-Technologies/unity-agent-plugin</a>.</li>
+      <li><b><a href="https://github.com/anthropics/claude-plugins-official/pull/5600">netsuite-ai-companion и netsuite-finance-analyst</a></b>
+      (merged 25.08 03:14 UTC) — Oracle NetSuite перешёл на публикацию из ветки
+      <code>ai-plugins-dist</code> репозитория
+      <a href="https://github.com/oracle/netsuite-suitecloud-sdk/tree/ai-plugins-dist/anthropic">oracle/netsuite-suitecloud-sdk</a>,
+      по плагину на подкаталог. Старый сводный бандл заменён тремя реальными плагинами;
+      <code>netsuite-suitecloud</code> сохранил слаг, поэтому установленные копии обновятся на месте.
+      Оба новых требуют NetSuite AI Connector Service.</li>
+      <li><b><a href="https://github.com/anthropics/claude-plugins-official/pull/5597">claude-security 0.10.2 → 0.10.2.3</a></b>
+      — два релиза собственного плагина Anthropic за окно (21.08 и 24.08), тела PR пустые, кроме
+      номера версии: содержание изменений публично не раскрыто.</li>
+      <li><a href="https://github.com/anthropics/claude-plugins-official/pull/5598">Атрибуция unity и qodo</a>
+      — обеим записям добавлено поле <code>author</code>, которого не хватало для отображения партнёра.</li>
+      <li>Бампы версий партнёрских плагинов (carta: три плагина) — одной фоновой строкой.</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>Claude Code CLI 2.1.239 → 2.1.246</h3>
+    <p>Восемь версий за окно, из них 2.1.240 и 2.1.241 — «bug fixes and reliability improvements»
+    без деталей. Существенное для агент-разработки:</p>
+    <ul>
+      <li><b>Многоагентность и сабагенты.</b> Сабагент, упёршийся в лимит <code>maxTurns</code>,
+      теперь возвращает результат с пометкой «частичный» и подсказкой продолжить через
+      <code>SendMessage</code>, а не выглядит завершившимся. В <code>/tasks</code> показываются
+      модель и уровень effort каждого сабагента. <code>←</code> или <code>/background</code> во время
+      динамического workflow больше не перезапускают его законченных сабагентов молча — сначала
+      спрашивают и говорят, сколько будет перезапущено. Починены фоновые сабагенты, не
+      просыпавшиеся после завершения последней фоновой Bash-задачи.</li>
+      <li><b>Кэш и стоимость.</b> Настройки <code>promptCacheTtl</code> и
+      <code>subagentPromptCacheTtl</code> — часовой prompt-кэш на основном диалоге при
+      пятиминутном у сабагентов. Managed-настройка <code>modelPricing</code>: <code>/cost</code>,
+      статус-строка и телеметрия считают по контрактным ставкам организации, а не по прайс-листу.
+      В <code>/usage</code> — разбивка по Loops: число прогонов, токены, токены на прогон и время
+      последнего.</li>
+      <li><b>Плагины и скиллы.</b> <code>/reload-plugins</code> больше не рапортует 0 скиллов для
+      плагинов, объявляющих их как <code>skills/*/SKILL.md</code>. Плагин-скиллы с префиксом
+      <code>&lt;plugin&gt;:</code> в <code>name</code> перестали дублировать его в меню.
+      <code>claude plugin update</code> работает по голому имени. Починены установка при
+      <code>plugin.json</code> с BOM и дубликаты SHA-каталогов в кэше плагинов.</li>
+      <li><b>Модели.</b> Настройка <code>modelPicker</code> — курируемый упорядоченный список
+      моделей в <code>/model</code> с любым написанием id, включая Vertex/Bedrock. Исправлено, что
+      <code>/model</code> молча игнорировал выбор Ultracode.</li>
+      <li><b>Прочее.</b> Неинтерактивные сессии (<code>-p</code>, SDK, облачные) автоматически
+      продолжают ответ, оборванный ошибкой сервера или обрывом связи. <code>/cd</code> применяет
+      настройки, хуки, <code>.mcp.json</code>, скиллы и агентов нового каталога сразу, а не после
+      <code>--resume</code>. Прерванные MCP-вызовы в headless/remote больше не рапортуются модели
+      как «завершились без вывода». Аргументы MCP-инструмента с пустой схемой отправляются в своём
+      настоящем типе, а не строкой JSON.</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>Release notes платформы — пусто</h3>
+    <p>За окно в <a href="https://platform.claude.com/docs/en/release-notes/api">release notes
+    Claude Platform</a> нет ни одной записи: последняя датирована 20 августа (Python SDK v1.0),
+    то есть до начала окна. В прошлом прогоне вся официальная активность шла именно там
+    (Managed Agents 18 и 19 августа) — в этом окне она вернулась в репозитории скиллов,
+    плагинов и CLI.</p>
+  </div>
+</section>
+
+<section id="skills">
+  <h2>Скиллы <span class="count">38</span></h2>
+  <p class="rank-note">Ранжировано строго по звёздам. Развёрнутый абзац — ★30+ либо сигнал вне звёзд.</p>
+
+  <div class="item">
+    <div class="stars hot">★940</div>
+    <div>
+      <h4><a href="https://github.com/nateherkai/scroll-craft">nateherkai/scroll-craft</a><span class="tag">дизайн</span></h4>
+      <p>Скилл Claude Code для скролл-ориентированных сайтов, и интересен он не темой, а устройством
+      контроля качества. Автор формулирует проблему как две крайности типового AI-вывода: либо приличная
+      и забываемая страница, либо «яркая скролл-анимация с контрастом текста 2.1:1 и заголовком, который
+      на телефоне переносится на шесть строк». Внутри — восемь взаимоисключающих «грамматик страницы»
+      (filmic one-shot, chaptered editorial и другие): не темы, а разные модели навигации и разные
+      концовки, так что три демо-сборки в README не делят общий скелет. Ключевая механика вынесена прямо
+      в описание репозитория: <mark>скилл верифицирует себя, снимая скриншоты собственного скролла</mark>. MIT.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars hot">★795</div>
+    <div>
+      <h4><a href="https://github.com/ShadowAqueduct/watermark-remover">ShadowAqueduct/watermark-remover</a><span class="tag">медиа</span></h4>
+      <p>Agent skill плюс сервис на stdlib Python, снимающий AI-провенанс-метки из текста и файлов:
+      невидимый Unicode и bidi-символы детерминированной обработкой, статистические переписывающие хуки,
+      C2PA и метаданные из PNG, JPEG, SVG, PDF, DOCX, HTML, MD. Скилл — тонкий HTTP-клиент, Python на
+      хосте агента не нужен.</p>
+      <p style="margin-top:.6rem"><b>Это продолжение сюжета прошлого прогона, и оно поучительнее самого
+      скилла.</b> README сохранил CI-бейджи и ссылки на релизы оригинала —
+      <a href="https://github.com/guillaumemeyer/watermarks-remover">guillaumemeyer/watermarks-remover</a>,
+      у которого ★18380 и дата создания 11.08, — но поле «Author» переписано, а сам репозиторий не помечен
+      как форк. В прошлом дайджесте в этой же роли фигурировал <code>Leutenegger/watermarks-remover</code>
+      ★927; на момент этого прогона он <mark>отдаёт 404</mark>. За одно окно копия исчезла и её место
+      заняла новая, набравшая ★795 за трое суток.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars hot">★303</div>
+    <div>
+      <h4><a href="https://github.com/bam-bam-2/solo-skills">bam-bam-2/solo-skills</a><span class="tag">процесс</span></h4>
+      <p>Корейский набор из 26 скиллов «производственного кита одиночного предпринимателя»: продуктовые
+      видео, вёрстка PDF электронных книг, блог-посты, протоколы встреч, клиентские переписки, ответы на
+      комментарии. Автор утверждает, что автоматизировал 49 задач, ведя сообщество шесть наборов подряд,
+      и выложил те 26, которые можно забрать как есть; остальные завязаны на его аккаунты и серверы и
+      оставлены списком в <code>fleet.md</code>. Формат — обычный <code>SKILL.md</code>, работает в
+      Claude Code, Codex, OpenCode; у восьми скиллов приложены исполняемые скрипты. MIT.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars hot">★279</div>
+    <div>
+      <h4><a href="https://github.com/alchaincyf/huashu-excel">alchaincyf/huashu-excel</a><span class="tag">данные</span></h4>
+      <p>Сквозной скилл анализа данных и Excel: диагностика грязной таблицы → чистка → согласование с
+      постановкой задачи → анализ → сверка → выдача. Аргумент автора сформулирован через вопрос «а как ты
+      это число посчитал?»: ответить обычно мешает не память, а то, что число с самого начала нельзя было
+      проследить. И отдельно — что <mark>ошибающийся AI не бросает исключение</mark>: неверный код падает,
+      неверный анализ данных молча выдаёт цифру. Заявлен как agent-agnostic, единственная зависимость —
+      <code>openpyxl</code>. MIT. <i>Найден только исправленным запросом.</i></p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars hot">★216</div>
+    <div>
+      <h4><a href="https://github.com/adnanakil/nobuzz">adnanakil/nobuzz</a><span class="tag">процесс</span></h4>
+      <p>Скилл <code>/debuzz</code>, который берёт последний ответ Claude и прогоняет его через другую
+      модель (Gemini через CLI Antigravity), чтобы перевести с «миллениального кликбейта» на обычный язык.
+      Автор описывает проблему как неизлечимое состояние хорошего инженера, который «говорит так, будто
+      читает TED-доклад о собственном пул-реквесте»: спрашиваешь, почему тест флакует, получаешь «несущее
+      допущение», три пронумерованных откровения и торжественную ремарку, что третье — самое поучительное.
+      Конструктивно важна одна деталь: <mark>скилл обязан печатать перевод дословно</mark>, потому что если
+      дать Claude «причесать» результат, ровно тот голос, который убирали, возвращается. Репозиторий занял
+      <b>360 очков на HN</b> 21.08 и в GitHub-поиск этого прогона не попал — см. «На периферии».</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars">★156</div>
+    <div>
+      <h4><a href="https://github.com/yizhiyanhua-ai/fireworks-open-eli5">yizhiyanhua-ai/fireworks-open-eli5</a><span class="tag">медиа</span> <span class="note">(организация)</span></h4>
+      <p>Интерактивные визуальные объяснялки «с опорой на доказательства» для Codex и Claude Code,
+      Apache-2.0, аккаунт-организация. Заявка — генерировать объяснение, у которого видно, на чём оно
+      основано; проверить эту заявку по README в рамках прогона не удалось, поэтому здесь она приведена
+      как заявка автора, а не как факт.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars">★125</div>
+    <div>
+      <h4><a href="https://github.com/itshen/source-reading-methodology">itshen/source-reading-methodology</a><span class="tag">процесс</span></h4>
+      <p>Методология превращения незнакомого большого репозитория в учебный курс: выбрать открытый проект,
+      прочитать его исходники вместе с AI и выпустить результат, в котором каждое утверждение проверяемо.
+      Четыре фазы, переиспользуемые шаблоны, список из 28 типовых граблей. Проверяемая часть: по этой
+      методологии выпущены два курса разбора исходников — DeepSeek Harness и OpenAI Codex, суммарно 61
+      занятие, и автор утверждает, что в главах по Codex 1270 ссылок на исходники с номерами строк,
+      выверенных побайтово. Книга-образец
+      <a href="https://itshen.github.io/source-reading-methodology/">выложена онлайн</a>.
+      Цифры про курсы — <i>заявление автора, в рамках прогона не перепроверялись</i>. MIT.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars">★118</div>
+    <div>
+      <h4><a href="https://github.com/bendrape1-byte/silk-design">bendrape1-byte/silk-design</a><span class="tag">дизайн</span></h4>
+      <p>Скилл Claude Code для веб-интерфейсов, которые «хорошо двигаются». Диагноз тот же, что у
+      scroll-craft: сгенерированные страницы выходят статичными — дефолтные скроллбары, секции, которые
+      просто появляются, hover-состояния, которые ничего не делают. Решение проще: каталог приёмов анимации
+      и дизайн-токенов плюс инструкция агенту тянуться к ним по умолчанию, а не только по просьбе.
+      В README — семь реально задеплоенных сайтов, собранных этим скиллом. MIT, репозиторий на 81 КБ —
+      самый лёгкий в верхней десятке. <i>Найден только исправленным запросом.</i></p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars">★91</div>
+    <div>
+      <h4><a href="https://github.com/sidkh/term-radar">sidkh/term-radar</a><span class="tag">процесс</span></h4>
+      <p>Самый маленький содержательный скилл окна: <mark>весь он — 16 строк markdown</mark>. Идея —
+      распознавать в собственных формулировках пользователя устоявшиеся термины предметной области и
+      дописывать их под ответом агента со ссылкой на Google Images: «практическое знание, которым люди
+      пользуются, но не могут внятно сформулировать» → <i>tacit knowledge</i>. Так словарь области
+      набирается по ходу работы. Автор специально отмечает, что скилл спроектирован ненавязчивым и
+      пропускаемым — длинных описаний в контекст он не кладёт. Лицензии в репозитории нет.
+      <i>Найден только исправленным запросом.</i></p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars">★79</div>
+    <div>
+      <h4><a href="https://github.com/KurosawaGeeker/femboy-skill">KurosawaGeeker/femboy-skill</a><span class="tag">вне темы</span></h4>
+      <p>Китайский agent skill для MTF, кроссдресс- и гендерно-разнообразных взрослых, на базе открытой
+      базы знаний, с медицинскими предохранителями. К агент-разработке отношения не имеет; в каталоге —
+      только потому, что каталог ранжируется по звёздам, и как иллюстрация к «Оговорке о сигнале».</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars">★56</div>
+    <div>
+      <h4><a href="https://github.com/Cripacx/mediagen">Cripacx/mediagen</a><span class="tag">медиа</span></h4>
+      <p>Скилл генерации изображений и видео для Claude Code и других кодинг-агентов: Gemini, OpenAI и
+      Kie AI за одним CLI и MCP-сервером. Отдельно заявлена маркировка контента по EU AI Act — редкий
+      случай, когда медиа-скилл сразу учитывает регуляторику. MIT.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars">★56</div>
+    <div>
+      <h4><a href="https://github.com/nevertoday/xxd-panel-028">nevertoday/xxd-panel-028</a><span class="tag">вне темы</span></h4>
+      <p>Превращение фотографий в «тихие» изометрические бумажные миниатюры в исходной палитре, четыре
+      комбинируемые схемы вывода. Лицензии нет. К агент-разработке отношения не имеет.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars">★51</div>
+    <div>
+      <h4><a href="https://github.com/appeeky/ua-skills">appeeky/ua-skills</a><span class="tag">интеграция</span> <span class="note">(организация)</span></h4>
+      <p>Скиллы платного роста мобильных приложений, работающие поверх живых данных через APPEEKY MCP.
+      Ещё один случай, когда организация упаковывает предметную экспертизу как скилл и раздаёт её как
+      маркетинговый канал к собственному MCP-сервису.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars">★48</div>
+    <div>
+      <h4><a href="https://github.com/amElnagdy/review-skills">amElnagdy/review-skills</a><span class="tag">код-качество</span></h4>
+      <p>Один из двух самых практичных скиллов окна. <code>debate-review</code> устраивает разбор PR двумя
+      моделями: основной ревьюер читает изменения, второй пытается сбить его находки, основной выносит
+      окончательное решение. На PR ложится <b>одна</b> ревью с инлайн-комментариями, опубликованная из
+      вашего же аккаунта <code>gh</code>, <code>glab</code> или <code>az</code>. Находки, пережившие спор,
+      публикуются как согласованные; те, что второй ревьюер опроверг, а основной оставил, — как спорные,
+      с аргументами обеих сторон. Второй скилл, <code>babysit-pr</code>, ведёт раунды дальше: проверяет
+      каждую находку, чинит блокеры, отвечает в треде, резолвит и перезапускает ревью. Оба явно ограничены
+      в правах: <mark>не редактируют код, не аппрувят, не реквестят изменения и не публикуют дважды для
+      одного head sha</mark>. Работают через любой уже используемый агент. Ставится через
+      <code>npx skills add</code>, в репозитории есть CI с тестами. MIT.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars">★48</div>
+    <div>
+      <h4><a href="https://github.com/mkanat/skills">mkanat/skills</a><span class="tag warm">код-качество</span> <span class="note">(сигнал вне звёзд: известный автор)</span></h4>
+      <p>Автор — <b>Макс Канат-Александер</b>, Executive Distinguished Engineer в Capital One, до этого
+      LinkedIn и Google, автор книг «Code Simplicity» и «Understanding Software». Единственный
+      содержательный скилл в наборе — <code>cleanup</code>: он многократно ищет дублирование информации,
+      повторную работу, лишний защитный код и случайную сложность.</p>
+      <p style="margin-top:.6rem">Ценно здесь измерение, а не описание. Автор попросил Codex собрать
+      полностью покрытую тестами инкрементальную систему сборки <code>minibuild</code> на GPT-5.6 Sol —
+      с basedpyright в strict, ruff с включёнными <code>ALL</code>-проверками и 100% покрытием без
+      моков, — и код сам не правил. Затем прогнал <code>cleanup</code>: пять раз подряд скилл отработал
+      сам и сделал 9 значимых рефакторингов, ещё пять запусков вручную дали 23. На бенчмарке в 10 001
+      задачу вычищенная версия оказалась <mark>в 1.34 раза быстрее</mark> при меньшем потреблении памяти.
+      Репозиторий содержит <code>before/</code>, <code>after/</code>, полный дифф и харнесс замера
+      производительности — редкий случай, когда заявку скилла можно проверить, не устанавливая его. CC0-1.0.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars">★43</div>
+    <div>
+      <h4><a href="https://github.com/WalrusQuant/sports-analytic-skills">WalrusQuant/sports-analytic-skills</a><span class="tag">данные</span></h4>
+      <p>Библиотека Agent Skills по спортивной аналитике для нескольких видов спорта. Формулировка автора —
+      «переносимое суждение для спортивного моделирования»: доктрина, валидация, контроль утечек данных и
+      честная оценка. Тот же жанр, что huashu-excel: предметная дисциплина, упакованная в скилл, чтобы
+      агент не выдавал правдоподобные, но непроверяемые числа.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars">★39</div>
+    <div>
+      <h4><a href="https://github.com/liangdabiao/deepseek-v4-flash-vision-video-rag">liangdabiao/deepseek-v4-flash-vision-video-rag</a><span class="tag">медиа</span></h4>
+      <p>Video RAG на визуальной модели DeepSeek: разбор видео по таймлайну с одноразовой индексацией
+      кадров, затем локальный грубый отбор → визуальное переранжирование → развёрнутый ответ со ссылками
+      вида <code>[MM:SS]</code> и автогенерируемой самодостаточной HTML-страницей с вырезанным фрагментом
+      и ключевыми кадрами. Лицензии нет. Парная работа того же автора для PDF — ниже, на ★14.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars">★38</div>
+    <div>
+      <h4><a href="https://github.com/Neko3000/deepseek-whalechan">Neko3000/deepseek-whalechan</a><span class="tag">вне темы</span></h4>
+      <p>Спецификация консистентного дизайна персонажа, библиотека визуальных ассетов и набор для создания
+      агентов вокруг маскота Whale-chan. Лицензии нет. К агент-разработке отношения не имеет.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars">★35</div>
+    <div>
+      <h4><a href="https://github.com/atinux/docster">atinux/docster</a><span class="tag warm">документация</span> <span class="note">(сигнал вне звёзд: известный автор)</span></h4>
+      <p>Автор — <b>Себастьен Шопен</b>, создатель Nuxt, сейчас работает над open source в Vercel. Скилл
+      помогает агентам писать документацию лучше, с поддержкой
+      <a href="https://comark.dev/syntax/components">компонентов Comark</a>. Репозиторий демонстративно
+      минимальный — 17 КБ, README на 651 байт, всё содержание в <code>SKILL.md</code>; ставится через
+      <code>npx skills add atinux/docster</code>. В credits честно указаны источники: скилл
+      <code>docs-writer</code> из Gemini CLI и
+      <a href="https://github.com/vuejs/docs/blob/main/.github/contributing/writing-guide.md">руководство
+      по написанию документации Vue</a>. MIT. Полезен здесь не столько сам скилл, сколько образец жанра:
+      известный автор кладёт один файл и не делает вокруг него инфраструктуры.
+      <i>Найден только исправленным запросом.</i></p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars">★34</div>
+    <div>
+      <h4><a href="https://github.com/oil-oil/oil-skill-creator">oil-oil/oil-skill-creator</a><span class="tag">процесс</span></h4>
+      <p>Скилл для создания, ревью, доработки и публикации других скиллов — «писать скилл как продукт».
+      Тезис вынесен в README цитатой: <mark>«прохождение статической проверки доказывает только отсутствие
+      проблем в известной структуре, но не то, что скилл действительно полезен»</mark>. Три режима:
+      создание, Review (только чтение, отчёт по P0/P1/P2, файлы не трогает) и доработка (сохраняет
+      неизменяемый снимок до правок, затем меняет точечно и перепроверяет). Заявленные проверки — границы
+      срабатывания в обе стороны, читаемость для слабых моделей, расход токенов, нейтральность к хосту,
+      кроссплатформенность; на выходе — тесты триггеров, агрегация результатов, локальная страница ревью и
+      воспроизводимый пакет публикации. MIT.</p>
+    </div>
+  </div>
+
+  <h3 class="tail-h">★10–30 — одной строкой</h3>
+  <ul class="tail">
+    <li><span class="st">★28</span><span class="desc"><a href="https://github.com/bydtesla1609/intent-debugger">bydtesla1609/intent-debugger</a><span class="tag">процесс</span> — прояснение требований и выравнивание намерения: превращает сырую идею в проверяемую постановку.</span></li>
+    <li><span class="st">★26</span><span class="desc"><a href="https://github.com/angelwzr/linux-phone-porting">angelwzr/linux-phone-porting</a><span class="tag">интеграция</span> — скилл для портирования mainline Linux на Android-телефон; CC-BY-4.0.</span></li>
+    <li><span class="st">★26</span><span class="desc"><a href="https://github.com/kharmanskyi/open-steps">kharmanskyi/open-steps</a><span class="tag">процесс</span> — переводит вывод кодинг-агента на человеческий: честные отчёты, прямые вердикты, выполнимые шаги. MIT.</span></li>
+    <li><span class="st">★26</span><span class="desc"><a href="https://github.com/xjli360/sealeap-amazon-ad-skills">xjli360/sealeap-amazon-ad-skills</a><span class="tag">интеграция</span> — 9 «evidence-first» скиллов по рекламе Amazon: диагностика, архитектура кампаний, листинги, таргетинг, AMC.</span></li>
+    <li><span class="st">★21</span><span class="desc"><a href="https://github.com/musoyangrigor/scroll-video-website-skill">musoyangrigor/scroll-video-website-skill</a><span class="tag">медиа</span> — превращает видео в управляемый скроллом canvas с WebP-кадрами и прогрессивной загрузкой.</span></li>
+    <li><span class="st">★20</span><span class="desc"><a href="https://github.com/ra1nyxin/immersive-vibration-response-skill">ra1nyxin/immersive-vibration-response-skill</a><span class="tag">вне темы</span> — скилл управления носимым устройством из Codex/Claude Code/Cursor; к агент-разработке отношения не имеет.</span></li>
+    <li><span class="st">★18</span><span class="desc"><a href="https://github.com/RandalSchwartz/dart-sdk-skills">RandalSchwartz/dart-sdk-skills</a><span class="tag warm">код-качество</span> — скиллы по версиям Dart и Flutter, языковым фичам, миграциям виджетов и поиску minSdk; автор — <b>Рэндал Шварц</b> <i>(сигнал вне звёзд: известный автор)</i>. MIT.</span></li>
+    <li><span class="st">★15</span><span class="desc"><a href="https://github.com/CanerKocak/clanker-skills">CanerKocak/clanker-skills</a><span class="tag">процесс</span> — «evidence-first» скиллы для Codex, Claude Code, OpenCode, Pi и Grok: планирование, ревью, анализ цепочек вызовов, аудит безопасности, качество данных.</span></li>
+    <li><span class="st">★15</span><span class="desc"><a href="https://github.com/chyiiiiiiiiiiii/yiibu">chyiiiiiiiiiiii/yiibu</a><span class="tag">медиа</span> — папка телефонных клипов → готовый к публикации ролик 9:16 за один шаг, планка качества держится гейтами, а не памятью. MIT.</span></li>
+    <li><span class="st">★15</span><span class="desc"><a href="https://github.com/johncattrall/keymap-ai">johncattrall/keymap-ai</a><span class="tag">интеграция</span> — аудит раскладок ZMK/QMK, настройка home row mods, слоевые трекболы, генерация диаграмм в CI. MIT.</span></li>
+    <li><span class="st">★14</span><span class="desc"><a href="https://github.com/liangdabiao/deepseek-v4-flash-vision-rag">liangdabiao/deepseek-v4-flash-vision-rag</a><span class="tag">медиа</span> — парная работа к video-RAG выше: вопросы к PDF с указанием страницы и показом её оригинала, включая сканы.</span></li>
+    <li><span class="st">★13</span><span class="desc"><a href="https://github.com/398894496-arch/runtime36">398894496-arch/runtime36</a><span class="tag">память</span> — «второй мозг» для кодинг-агентов: закрыть день, дистиллировать в Obsidian, вернуться к странице завтра. MIT.</span></li>
+    <li><span class="st">★13</span><span class="desc"><a href="https://github.com/Arnie936/ai-brand-kit">Arnie936/ai-brand-kit</a><span class="tag">дизайн</span> — четыре немецкоязычных скилла Claude Code: установка → бренд-интервью → бренд-кит → сайты в фирменном стиле. <i>Найден только исправленным запросом.</i></span></li>
+    <li><span class="st">★12</span><span class="desc"><a href="https://github.com/Boring-Stuff-Club/the-scribble-thing-skill">Boring-Stuff-Club/the-scribble-thing-skill</a><span class="tag">медиа</span> — превращение штриховых иллюстраций в scribe-анимации; аккаунт-организация. MIT.</span></li>
+        <li><span class="st">★11</span><span class="desc"><a href="https://github.com/NicholasSpisak/excalidraw">NicholasSpisak/excalidraw</a><span class="tag">медиа</span> — Claude Code и Codex рисуют настоящие диаграммы Excalidraw: флоучарты, вайрфреймы, слайды, SWOT, Lean Canvas. MIT.</span></li>
+    <li><span class="st">★11</span><span class="desc"><a href="https://github.com/aiopshwang/goal-to-proof">aiopshwang/goal-to-proof</a><span class="tag">процесс</span> — заставляет агента доводить нетривиальную работу до конца и подтверждать результат прямыми доказательствами по размеру задачи. MIT.</span></li>
+    <li><span class="st">★10</span><span class="desc"><a href="https://github.com/anhe2021212-spec/Turritopsis">anhe2021212-spec/Turritopsis</a><span class="tag">память</span> — общее знание о проекте и передача контекста между кодинг-агентами на длинных проектах. MIT.</span></li>
+    <li><span class="st">★10</span><span class="desc"><a href="https://github.com/automateyournetwork/pyATS_skills">automateyournetwork/pyATS_skills</a><span class="tag">интеграция</span> — скиллы pyATS для агентов: сетевая автоматизация Cisco. <i>Найден только исправленным запросом.</i></span></li>
+  </ul>
+  <p class="othersrc">Из других источников: одна позиция — <code>adnanakil/nobuzz</code> ★216 пришла
+  с Hacker News (360 очков, 21.08), в GitHub-поиске прогона её не было. Разбор причины — в «На периферии».</p>
+</section>
+
+<section id="plugins">
+  <h2>Плагины и инструменты <span class="count">24</span></h2>
+  <p class="rank-note">Ранжировано строго по звёздам.</p>
+
+  <div class="item">
+    <div class="stars hot">★1429</div>
+    <div>
+      <h4><a href="https://github.com/duty1g/x64dbg-mcp-server">duty1g/x64dbg-mcp-server</a><span class="tag">интеграция</span></h4>
+      <p>Топ окна с большим отрывом и самый далёкий от скиллов пункт каталога. Нативный MCP-плагин для
+      отладчика x64dbg, выставляющий всю его функциональность по HTTP: брейкпоинты, пошаговое исполнение,
+      чтение памяти, дамп регистров. Подключается любой MCP-совместимый ассистент. Написан на <b>Zig</b>:
+      без зависимостей, один бинарник, кросс-компиляция под x32 и x64 с любого хоста — ни .NET, ни Python,
+      ни рантайма, плагин просто кладётся в каталог плагинов x64dbg. Транспорты — streamable HTTP и SSE,
+      MCP 2024-11-05. MIT. Жанрово это не «скилл для Claude», а показатель того, куда расходится MCP:
+      реверс-инжиниринг и ред-тим как обычный потребитель протокола.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars hot">★385</div>
+    <div>
+      <h4><a href="https://github.com/kgoedecke/doop">kgoedecke/doop</a><span class="tag">дизайн</span></h4>
+      <p>Открытая альтернатива Paper.design: многопользовательский дизайн-холст для людей <b>и</b> агентов.
+      Каждый дизайн живёт на разделяемом Canvas (<code>/c/&lt;id&gt;</code>), внутри — Frames, артборды,
+      рендерящие настоящий HTML в песочных iframe. Люди правят в браузере, агенты — через встроенный
+      MCP-сервер, стримя свои дизайны вживую; курсоры, присутствие, правки фреймов, статус агента и лента
+      активности видны всем одновременно. AGPL-3.0, есть облачная версия. Интересен как редкий пример, где
+      <mark>агент — не отдельный режим работы, а ещё один участник на общем холсте</mark>.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars hot">★343</div>
+    <div>
+      <h4><a href="https://github.com/rome-os/rome">rome-os/rome</a><span class="tag">процесс</span> <span class="note">(сигнал вне звёзд: организация)</span></h4>
+      <p>Заявка сформулирована прямо против доминирующей: <mark>«основной прогресс в AI даёт масштабирование
+      моделей — Rome масштабирует другую ось, среду»</mark>: инструменты, рабочие процессы, память и
+      интерфейсы, внутри которых агент работает. Практически это огороженная среда, где человек и агент
+      работают вместе, а агенты строят собственные харнессы, проектируют собственные SOP и оркестрируют
+      процессы под управлением человека; доказавшие себя способности закрепляются. Есть сайт, документация,
+      «App Store» и облачная версия. MIT, TypeScript, аккаунт-организация.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars hot">★248</div>
+    <div>
+      <h4><a href="https://github.com/sodiumsun/agenttrail">sodiumsun/agenttrail</a><span class="tag">наблюдаемость</span></h4>
+      <p>Локальный открытый слой наблюдаемости для кодинг-агентов, и его центральная идея — сопоставление
+      двух сигналов: <b>declared</b> (компонент и задача, над которыми агент говорит, что работает) против
+      <b>observed</b> (файлы, которые он меняет прямо сейчас, включая правки уже «законченного»).
+      <mark>Когда сигналы расходятся, видно, куда смотреть.</mark> Карта показывает 5–9 реальных компонентов
+      со стрелками зависимостей и честными состояниями done / working / blocked; законченная карточка
+      подсвечивается, если её файлы снова тронули. Работает с Claude Code, OpenAI Codex, Cursor и вообще
+      любым агентом, который правит файлы. Запуск — <code>npx agenttrail --open</code>, без аккаунта,
+      глобальной установки и телеметрии. MIT.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars">★73</div>
+    <div>
+      <h4><a href="https://github.com/ADScanPro/Claude-AD">ADScanPro/Claude-AD</a><span class="tag">безопасность</span></h4>
+      <p>Плагин Claude Code с методологией внутреннего пентеста Active Directory: скиллы, агенты и
+      слэш-команды, задающие порядок фаз, ограничения среды, которые ломают инструментарий, телеметрию,
+      которую оставляет каждая техника, и связь находки с контролем комплаенса (DORA/NIS2/ENS). Покрытые
+      техники — Kerberoasting, ADCS ESC1-17, DCSync, злоупотребление ACL, NTLM relay, делегирование;
+      управляет стандартным инструментарием: netexec, impacket, certipy, bloodyAD, BloodHound CE.
+      Формулировка авторов про распределение ролей точная: <mark>«вы всё ещё ведёте проект — Claude несёт
+      метод»</mark>. MIT, версия 0.1.0.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars">★68</div>
+    <div>
+      <h4><a href="https://github.com/Stupidoodle/swissdevjobs-cli">Stupidoodle/swissdevjobs-cli</a><span class="tag">интеграция</span></h4>
+      <p>Поиск и отклик по ~4700 вакансиям с открытыми зарплатами в семи странах из терминала или из
+      агента: Python-CLI без зависимостей плюс MCP-сервер плюс плагин Claude Code. MIT. Пример уже
+      сложившегося паттерна упаковки: один источник данных раздаётся сразу тремя интерфейсами, из которых
+      агентный — не главный, а равноправный.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars">★65</div>
+    <div>
+      <h4><a href="https://github.com/forcewake/hermes-conductor">forcewake/hermes-conductor</a><span class="tag warm">мульти-агентность</span></h4>
+      <p>Самый содержательный материал окна по многоагентной оркестрации. Продакшн-паттерны запуска внешних
+      кодинг-агентов — Claude Code, OpenCode, Codex CLI, MiMo, agy и любых других, правящих файлы, — под
+      одним kanban-контроллером Hermes Agent. Дирижёр работает в профиле «route-only» с явной установкой
+      <mark>«не делай работу, только маршрутизируй»</mark>: декомпозиция, веерный запуск, верификация,
+      интеграция. Каждый агент сидит в собственной worktree-полосе, а диффы, тесты и коммиты проверяет
+      контроллер — принципиально <b>не</b> доверяя самоотчёту агента («zero trust in self-reports»).
+      Заявленная основа — 18 продакшн-досок, 367 карточек, 566 диспатчей агентов и разборы инцидентов;
+      <i>цифры проверить в рамках прогона нельзя, это заявление автора</i>. MIT.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars">★47</div>
+    <div>
+      <h4><a href="https://github.com/Bil0000/agents-fleet">Bil0000/agents-fleet</a><span class="tag">процесс</span></h4>
+      <p>Пустой рабочий «источник правды» для Claude Code и Codex на macOS и Linux: согласованно держит
+      правила, настройки, скиллы, команды, хуки, плагины, MCP-серверы, секреты, обновления и настройку
+      Claude-Mem. В репозитории только движок и пустые каталоги — конфигурации автора там нет. Отдельно
+      ценна инструкция по безопасности: <mark>форкать запрещено</mark> (форк публичного репозитория
+      публичен), нужно делать приватный репозиторий из шаблона, а в стартовом промпте агенту явно
+      предписано сперва проверить, что <code>git remote get-url origin</code> не указывает на исходный
+      репозиторий. MIT.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars">★41</div>
+    <div>
+      <h4><a href="https://github.com/DavidCarliez/cover">DavidCarliez/cover</a><span class="tag">безопасность</span></h4>
+      <p>Двусторонний прокси приватности для кодинг-агентов на Go. Подобранные чувствительные значения
+      заменяются локально на реалистичные детерминированные подстановки до того, как запрос уйдёт с машины,
+      а в обычных и потоковых ответах совпадающие «фейки» переводятся обратно в оригиналы. <mark>Модель
+      получает связный контекст, агент и инструменты продолжают работать с настоящим окружением.</mark>
+      Политики — <code>pseudonymize</code> и <code>placeholder</code> (обратимые), а также mask, redact,
+      block и allow. Apache-2.0, есть CI. Прямой ответ на вопрос, который в корпоративном контуре встаёт
+      раньше всех остальных.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="stars">★37</div>
+    <div>
+      <h4><a href="https://github.com/yeswehack/claude-kit">yeswehack/claude-kit</a><span class="tag warm">безопасность</span> <span class="note">(сигнал вне звёзд: организация)</span></h4>
+      <p>Плагин от баг-баунти-платформы <b>YesWeHack</b> для отчётов, которые триажер может быстро
+      проверить. Заявленный риск сформулирован точно и относится далеко не только к баг-баунти: AI ускоряет
+      написание отчёта, но может дописать технические детали, которые никто не проверял. Поэтому инструмент
+      составляет, структурирует и валидирует отчёт <mark>только из фактов, которые дал пользователь</mark> —
+      реальные URL, пейлоады, ответы, наблюдаемое поведение, — а при нехватке спрашивает, а не догадывается.
+      Одна установка добавляет постоянно действующий слой дисциплины на каждую сессию и три скилла по
+      запросу: написание, триаж и проверки по классам уязвимостей. Плагин сам себе marketplace. GPL-3.0;
+      есть <a href="https://www.yeswehack.com/fr/learn-bug-bounty/triager-grade-reports-claude-code">разбор
+      от платформы</a>. <i>Найден только исправленным запросом.</i></p>
+    </div>
+  </div>
+
+  <h3 class="tail-h">★10–30 — одной строкой</h3>
+  <ul class="tail">
+    <li><span class="st">★28</span><span class="desc"><a href="https://github.com/2005selene2005-a11y/susu-phone-agent">2005selene2005-a11y/susu-phone-agent</a><span class="tag">интеграция</span> — мост к Android-устройству для Claude Code через MCP и Shizuku, без рута и без опроса модели. MIT.</span></li>
+    <li><span class="st">★23</span><span class="desc"><a href="https://github.com/mcarlssen/claude-adversarial-review">mcarlssen/claude-adversarial-review</a><span class="tag">код-качество</span> — плагин, прогоняющий состязательное многоагентное ревью незакоммиченного диффа до коммита. <i>Найден только исправленным запросом.</i></span></li>
+    <li><span class="st">★22</span><span class="desc"><a href="https://github.com/VincentHHY/big-picture">VincentHHY/big-picture</a><span class="tag">процесс</span> — плагины, держащие детали реализации ниже явной черты: ответ, который можно оценить и по которому можно действовать, не читая код. По умолчанию выключены, включаются на сессию. MIT.</span></li>
+    <li><span class="st">★22</span><span class="desc"><a href="https://github.com/alhinawi/telegram-notifier">alhinawi/telegram-notifier</a><span class="tag">интеграция</span> — универсальные уведомления в Telegram для Antigravity, Claude Code, Codex, Cursor и Windsurf, с удалённым управлением. <i>Найден только исправленным запросом.</i></span></li>
+    <li><span class="st">★21</span><span class="desc"><a href="https://github.com/dbl8005/sitrep-panel">dbl8005/sitrep-panel</a><span class="tag">наблюдаемость</span> — живой локальный HTML-отчёт, который Claude обновляет по ходу работы: статус-борд, повествование, скриншоты, лог свежим сверху, live-reload. Без облака и сборки. MIT.</span></li>
+    <li><span class="st">★21</span><span class="desc"><a href="https://github.com/shoebpate1/ai-agent-hacking-writeups">shoebpate1/ai-agent-hacking-writeups</a><span class="tag">безопасность</span> — подборка публичных разборов атак на агентов: prompt injection, злоупотребление инструментами, отравление памяти, утечка данных. <i>Найден только исправленным запросом.</i></span></li>
+    <li><span class="st">★19</span><span class="desc"><a href="https://github.com/SinghAbhinav04/dev-house">SinghAbhinav04/dev-house</a><span class="tag warm">мульти-агентность</span> — «команда разработки» внутри Claude Code: участники, которых вы создаёте, на выбранных моделях, со своими ролями, скиллами и правами. <i>Найден только исправленным запросом.</i></span></li>
+    <li><span class="st">★17</span><span class="desc"><a href="https://github.com/MrMarudi/academy-coach">MrMarudi/academy-coach</a><span class="tag">процесс</span> — бесплатный плагин: изучение продуктов Anthropic по официальной программе Claude Academy плюс ревью вашей настройки и привычек против best practices Anthropic.</span></li>
+    <li><span class="st">★16</span><span class="desc"><a href="https://github.com/bashebr/ai-native-sdlc">bashebr/ai-native-sdlc</a><span class="tag">процесс</span> — скилл и плагин для Codex и Claude Code, реализующие AI-Native SDLC от Anthropic: Plan → Design → Build → Test → Deploy → Maintain с человеческими гейтами на каждой передаче. MIT.</span></li>
+    <li><span class="st">★15</span><span class="desc"><a href="https://github.com/l3a0/claude-plugins">l3a0/claude-plugins</a><span class="tag">интеграция</span> — личный marketplace с одним плагином <code>kindle-highlights</code>: дословное извлечение заметок Kindle с восстановлением обрезанных мест. Взял 45 очков на HN 24.08. MIT.</span></li>
+    <li><span class="st">★12</span><span class="desc"><a href="https://github.com/nerdlab-dev/crm">nerdlab-dev/crm</a><span class="tag">интеграция</span> — корейский установщик удалённого MCP для CRM-кампаний: Cafe24, KakaoTalk brand message, купоны, UTM; аккаунт-организация. MIT.</span></li>
+    <li><span class="st">★12</span><span class="desc"><a href="https://github.com/ptmrio/harness-subagent">ptmrio/harness-subagent</a><span class="tag warm">мульти-агентность</span> — вызвать Codex из Claude Code, Grok Build из Codex и так далее: родитель пишет бриф, диспатчит другой харнесс одноразовым сабагентом и синтезирует результат. Аргумент автора: модель, ревьюящая собственную работу, воспроизводит собственные слепые зоны, а иначе обученный харнесс — нет. MIT.</span></li>
+    <li><span class="st">★11</span><span class="desc"><a href="https://github.com/Milkdomeda/ai-mechanical-3dcad-design-agent">Milkdomeda/ai-mechanical-3dcad-design-agent</a><span class="tag">интеграция</span> — детерминированные процессы механического 3D-CAD, инженерные знания, валидация и MCP-инструменты для кодинг-агента. Не скилл: пакет, CLI и MCP-сервер, собственного LLM-клиента внутри нет.</span></li>
+    <li><span class="st">★11</span><span class="desc"><a href="https://github.com/Jason-smithy/claude-certified-architect-foundations-ccao-f">Jason-smithy/claude-certified-architect-foundations-ccao-f</a><span class="tag">процесс</span> — материалы подготовки к сертификации Anthropic Claude Certified Architect Foundations: пять доменов, 25 сценарных вопросов, гайд по MCP. MIT.</span></li>
+  </ul>
+  <p class="othersrc">Из других источников: пусто — все позиции этого блока пришли из GitHub-поиска.</p>
+</section>
+
+<section id="arts" class="arts">
+  <h2>Статьи и подходы <span class="count">9</span></h2>
+
+  <div class="item">
+    <div class="pts">414<small>HN</small></div>
+    <div>
+      <h4><a href="https://fabiensanglard.net/agent.md/index.html">My agent.md to improve LLM-assisted code quality</a><span class="tag">21.08</span></h4>
+      <p>Лучший результат окна на HN (<a href="https://news.ycombinator.com/item?id=49410932">обсуждение</a>).
+      Фабьен Сангляр описывает конкретную проблему: агентные IDE дали скорость, но качество вывода —
+      «спагетти без структуры и комментариев», и он раз за разом повторял одни и те же замечания в каждой
+      новой сессии, так что после чистки выигрыш в скорости обнулялся. Ответ — файл <code>agent.md</code>,
+      который вкладывается в промпт в начале сессии. Правила конкретные и проверяемые, а не декларативные:
+      минимум слов в текстах для человека; магические числа — в именованные константы; меньше вложенности,
+      ранние возвраты; имена функций короче 30 символов; перечисления вместо булевых параметров;
+      программирование по уровням абстракции с явными границами слоёв; семь правил на сообщения коммитов;
+      починка бага начинается с теста.</p>
+      <p style="margin-top:.6rem">Результат он формулирует сам: качество «резко улучшилось» и стало «очень
+      близко к тому, что я написал бы руками». И тут же ставит границу: <mark>«LLM постоянно галлюцинируют,
+      и доверять им нельзя. Я всё ещё много проверяю и итерирую, но теперь сосредоточен на архитектуре и
+      дизайне, а не на стиле кода»</mark>. Отдельно — приём против размывания контекста: держать сессии
+      короткими и явно просить перечитать <code>agent.md</code>, когда качество поехало.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="pts">244<small>HN</small></div>
+    <div>
+      <h4><a href="https://allaboutcoding.ghinda.com/a-week-of-using-codex-more-than-claude/">A week of using Codex more than Claude</a><span class="tag">21.08</span></h4>
+      <p>Лучан Гинда неделю вёл рабочие задачи в двух TUI параллельно: Codex на gpt-5.6-sol xhigh против
+      Claude Code на opus-5 xhigh, macOS
+      (<a href="https://news.ycombinator.com/item?id=49393051">обсуждение</a>). Наблюдения конкретные:
+      Codex писал на Ruby/Rails меньше комментариев и давал более простые, самодостаточные решения, тогда
+      как Claude строил более сложные архитектуры с дополнительными абстракциями; Codex быстрее выдавал
+      первые изменения, но дольше доводил PR до конца и ошибался с ветками, где Claude лучше понимал
+      намерение разветвиться и держать работу синхронной. Вывод автора: <mark>«Claude пытается сделать
+      больше, чем просили, и угадать, что тебе может понадобиться»</mark>, а «Codex — скорее напарник,
+      который делает, что сказали, но не переусердствует».</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="pts">120<small>HN</small></div>
+    <div>
+      <h4><a href="https://www.laude.org/updates/headlong-a-microharness-for-persistent-agents">Headlong: A microharness for persistent agents</a><span class="tag">24.08</span></h4>
+      <p>Laude Institute и MIT выпустили открытый харнесс, в котором агент не реактивный, а непрерывный
+      (<a href="https://news.ycombinator.com/item?id=49428882">обсуждение</a>,
+      <a href="https://github.com/laude-institute/headlong">репозиторий</a>). Обычный харнесс замирает между
+      задачами; Headlong держит агента в петле внутреннего монолога, даже когда внешнего ввода нет, так что
+      агент сам расставляет приоритеты, ведёт собственные проекты и сводит несколько параллельных разговоров
+      в один поток мысли. Авторы называют это «микрохарнессом» и настаивают на простоте и прозрачности:
+      ядро — <mark>«меньше 10 тысяч строк Bash»</mark>.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="pts">73<small>HN</small></div>
+    <div>
+      <h4><a href="https://code.joejag.com/2026/your-agent-is-not-the-model.html">Your Agent Is Not the Model</a><span class="tag">23.08</span></h4>
+      <p>Джо Райт разводит понятия, которые в разговоре обычно слипаются
+      (<a href="https://news.ycombinator.com/item?id=49418163">обсуждение</a>). Модель — только
+      математическое ядро, обученная сеть. Агентная <b>система</b> — три взаимозависимых слоя: модель,
+      инференс-сервис, который её хостит, и харнесс, слой прикладной логики, формирующий вход, трактующий
+      выход и подключающий инструменты. Практическая польза диагностическая: плохие рассуждения обычно
+      означают, что харнесс не дал модели контекста; медленный инференс — проблема инфраструктуры;
+      сорванная интеграция инструментов — почти всегда харнесс. Формулировка автора: <mark>«Когда ты можешь
+      назвать слой, ты можешь починить слой»</mark>. Одна и та же модель ведёт себя по-разному в Claude
+      Desktop, Cursor, ChatGPT и самописном LangChain именно из-за различий харнесса.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="pts">—<small>блог</small></div>
+    <div>
+      <h4><a href="https://simonwillison.net/2026/Aug/22/more-than-just-code-review/">More than just code review</a><span class="tag">22.08</span></h4>
+      <p>Саймон Уиллисон: ключевой навык продуктивной работы с кодинг-агентами — уметь уверенно поручить
+      изменение и уверенно проверить, что оно сделано правильно, — и это <b>не</b> обязательно означает
+      прочитать каждую строку. Его аргумент в пользу: построчное ревью и исторически было недостаточным
+      способом валидации изменений. Цитата: <mark>«Ключевой навык продуктивного использования кодинг-агентов —
+      уметь уверенно поручить им, как внести изменения, и затем уверенно проверить, что эти изменения внесены
+      правильным образом»</mark>. Прямо рифмуется с <code>agent.md</code> Сангляра, который перенёс внимание
+      со стиля кода на архитектуру.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="pts">—<small>блог</small></div>
+    <div>
+      <h4><a href="https://simonwillison.net/2026/Aug/23/drew-breunig/">Fable &amp; The End of the Free Lunch</a><span class="tag">23.08</span></h4>
+      <p>Уиллисон цитирует Дрю Бройнига
+      (<a href="https://www.dbreunig.com/2026/08/23/fable-the-end-of-moore-s-law.html">оригинал</a>):
+      с появлением премиальных моделей вроде Fable больше нельзя рассчитывать, что следующая модель решит
+      проблему сама. Приходится решать, какая работа уходит на дорогую фронтир-модель, а какая — на дешёвую,
+      и внимание смещается со «подождём следующего релиза» на стратегию контекста и способ работы.
+      Цитируемая фраза Бройнига: <mark>«Мы стали думать, какая работа куда идёт»</mark>. Для практики это
+      ровно та рамка, в которой стоит читать появившиеся в этом же окне настройки
+      <code>promptCacheTtl</code>/<code>subagentPromptCacheTtl</code> и <code>modelPricing</code> в CLI.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="pts">51<small>HN</small></div>
+    <div>
+      <h4><a href="https://arxiv.org/abs/2607.21503">Agentic Context Management: Memory and Cost as Architecture Problems</a><span class="tag">26.08</span></h4>
+      <p>Препринт arXiv, поднявшийся на HN в последний день окна
+      (<a href="https://news.ycombinator.com/item?id=49443523">обсуждение</a>). Заявленный тезис —
+      рассматривать память и стоимость агента как архитектурные задачи, а не как параметры настройки.
+      <mark>Содержание работы в рамках прогона не читалось</mark>, здесь приведены только название, ссылка
+      и факт попадания в окно; по вторичным источникам не пересказывается.</p>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="pts">79<small>HN</small></div>
+    <div>
+      <h4><a href="https://arxiv.org/abs/2608.16603">Characterizing Agentic Flooding of Government Services</a><span class="tag">24.08</span></h4>
+      <p>Препринт про заваливание государственных сервисов агентным трафиком
+      (<a href="https://news.ycombinator.com/item?id=49422227">обсуждение</a>). <mark>Не читался</mark>;
+      включён как сигнал о том, что тема «агенты как источник нагрузки на публичную инфраструктуру» вышла
+      на HN, а не как пересказ выводов.</p>
+    </div>
+  </div>
+
+  <div class="block" style="margin-top:1.2rem">
+    <h3>Замечено, но не подтверждено</h3>
+    <ul>
+      <li><b>A/B-тест сниженных уровней effort в Claude Code</b> — 215 очков на HN 22.08
+      (<a href="https://news.ycombinator.com/item?id=49401549">обсуждение</a>). Первоисточник —
+      <a href="https://twitter.com/argofowl/status/2091150597374537729">пост в X</a>, то есть наблюдение
+      одного пользователя. Официального подтверждения нет, в CHANGELOG за окно ничего соответствующего не
+      появилось. <mark>По вторичным источникам, не подтверждено.</mark></li>
+      <li><b><a href="https://github.com/microsoft/agent-lightning/releases/tag/v1.0.1">Agent Lightning v1.0</a></b>
+      — 55 очков на HN 24.08; релиз Microsoft, содержание релиза в рамках прогона не разбиралось.</li>
+      <li><b>Сбои Claude и API</b> — 76 и 32 очка на HN 24.08
+      (<a href="https://status.claude.com/incidents/vgz5psbjmt1h">статус-страница</a>): повышенный уровень
+      ошибок на нескольких моделях. Для агент-разработки значимо только как фон, но окно им задето.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="periph" class="periph">
+  <h2>На периферии</h2>
+  <div class="block">
+    <ul>
+      <li><b>Дефект метода сбора — главное, что стоит унести из этого прогона.</b> Команда
+      <code>gh search repos --sort=stars</code>, прописанная и в SKILL.md, и в промпте джобы, звёзды не
+      сортирует; флаг молча игнорируется, и с <code>--order=desc</code> тоже. Проверка прямая:
+      <code>gh search repos "claude skill" --created=">=2026-08-21" --sort=stars --limit 5</code> возвращает
+      ★6, ★3, ★3, ★3, ★3, а <code>gh api search/repositories -f q='claude skill created:&gt;=2026-08-21'
+      -f sort=stars -f order=desc</code> на том же окне — ★940, ★216, ★118, ★73, ★56. Минимум звёзд в
+      «топ-100 по звёздам» из старой команды был <b>0</b> при 1655 репозиториях в потоке — этого одного
+      достаточно, чтобы увидеть, что сортировки нет. <b>Следствия:</b> каталоги обоих прошлых прогонов были
+      выборками из потока, а не топами по звёздам, и их «★N» означало ранг внутри случайной выборки.
+      <b>Что сделано:</b> собрано обоими способами, результаты объединены (480 уникальных против 299 у
+      одного только исправленного и 358 у одного только старого). <b>Что стоит поправить:</b> заменить
+      команду в задании джобы и в SKILL.md на вызов REST-эндпоинта.</li>
+
+      <li><b>Пропуск, который поймал HN, а не GitHub.</b>
+      <a href="https://github.com/adnanakil/nobuzz">adnanakil/nobuzz</a> ★216 создан 21.08 в 14:18 UTC и в
+      четвёрку GitHub-запросов не попал ни разу — при том что в описании прямо написано «A Claude Code
+      skill». Причина — у репозитория <mark>нет ни одного топика</mark>, а по текстовым запросам он в
+      сломанной выборке не всплыл. Нашёлся через Hacker News, где взял 360 очков. Это единственная позиция
+      каталога «из других источников» и наглядная иллюстрация, зачем в сборе больше одного канала.</li>
+
+      <li><b>Репозитории-копии продолжаются, и предыдущая копия исчезла.</b>
+      <a href="https://github.com/ShadowAqueduct/watermark-remover">ShadowAqueduct/watermark-remover</a> ★795 —
+      не форк по флагу GitHub, но README сохранил CI-бейджи и ссылки на релизы оригинала
+      <a href="https://github.com/guillaumemeyer/watermarks-remover">guillaumemeyer/watermarks-remover</a>
+      (★18380, создан 11.08), с переписанным полем «Author». Копия из прошлого дайджеста,
+      <code>Leutenegger/watermarks-remover</code> ★927, сейчас отдаёт <mark>404</mark>. За одно окно одна
+      копия исчезла, другая набрала ★795 за трое суток.</li>
+
+      <li><b>Отсев ★&lt;10.</b> В рабочей выборке 480 репозиториев, <b>418</b> не дотянули до ★10 и в
+      каталог не включены. Число — по выборке, а не по полному потоку окна. Заметные исключения:
+      <a href="https://github.com/AS-FOSS/aegis-skills">AS-FOSS/aegis-skills</a> ★9 — оборонительные скиллы
+      по безопасности;
+      <a href="https://github.com/Egoist-Machines/switchboard">Egoist-Machines/switchboard</a> ★5 —
+      локальная модель-нейтральная память, один общий стор для OpenCode, Claude Code и других;
+      <a href="https://github.com/Morningstar202604/AgentSeed">Morningstar202604/AgentSeed</a> ★7 — гибрид
+      скилла и MCP-сервера против галлюцинаций, проверяющий код перед выдачей;
+      <a href="https://github.com/devopsinside/burn-o-meter">devopsinside/burn-o-meter</a> ★5 — сколько на
+      самом деле стоят ваши агенты: токены, траты, эффективность кэша, лимиты;
+      <a href="https://github.com/aiopshwang/verify-regression-tests">aiopshwang/verify-regression-tests</a> ★8 —
+      проверка, что регрессионный тест падает именно из-за целевого бага.</li>
+
+      <li><b>Вне темы, но в каталоге.</b> Три позиции ★20+ к агент-разработке отношения не имеют и включены
+      только потому, что каталог ранжируется по звёздам: <code>KurosawaGeeker/femboy-skill</code> ★79,
+      <code>nevertoday/xxd-panel-028</code> ★56, <code>ra1nyxin/immersive-vibration-response-skill</code> ★20.
+      Ещё две — <code>Neko3000/deepseek-whalechan</code> ★38 и <code>liangdabiao/*-vision-rag</code> ★39/★14 —
+      про генерацию медиа, а не про агентов как таковых.</li>
+
+      <li><b><code>skills.sh</code> как складывающийся канал установки.</b> У четырёх каталожных позиций
+      разных авторов — <code>mkanat/skills</code>, <code>amElnagdy/review-skills</code>,
+      <code>atinux/docster</code>, <code>sidkh/term-radar</code> — а также у
+      <code>alchaincyf/huashu-excel</code> в README стоит бейдж <a href="https://skills.sh">skills.sh</a> и
+      инструкция <code>npx skills add &lt;owner&gt;/&lt;repo&gt;</code>. Это <mark>сторонний реестр, не
+      Anthropic</mark>; в этом окне он выглядит уже не экспериментом, а дефолтным способом раздать скилл вне
+      официального marketplace. Отдельного разбора реестра в этом прогоне не делалось — отмечено как
+      наблюдение по READMEs.</li>
+
+      <li><b>Вышло за окно, но всплыло в нём.</b>
+      <a href="https://simonwillison.net/2026/Feb/23/agentic-engineering-patterns/">Software Engineering in
+      the Agentic Era</a> — 34 очка на HN 23.08, но сам пост датирован февралём 2026; по правилу окна в
+      каталог статей не идёт. Запись release notes платформы про <b>Python SDK v1.0</b> датирована 20 августа —
+      на сутки раньше начала окна; приведена в «Официальном» как повод для PR #1623, а не как находка окна.</li>
+
+      <li><b>Каналы, которые не отработали или не покрывались.</b> WebSearch по подходам агент-разработки за
+      окно дал только SEO-агрегаторы и недатированные обзоры плюс препринты вне окна; ни одна позиция оттуда
+      в дайджест не взята — использованы исключительно как наводка. Архивная страница
+      <code>simonwillison.net/2026/Aug/</code> отдаётся постранично и через WebFetch первую страницу за окно
+      не показала — посты собраны обходом дневных страниц 21–26 августа. Два препринта arXiv включены по
+      названию и ссылке, <b>без чтения</b>. Тела PR релизов <code>claude-security</code> пустые — что именно
+      изменилось в 0.10.2 → 0.10.2.3, публично не раскрыто.</li>
+
+      <li><b>Границы прогона.</b> Дайджест собран джобой <code>xxx</code> (ежедневно в 09:00), а не штатной
+      <code>agent-digest</code> (пятница, 10:00). Обе читают один и тот же
+      <code>~/.cache/agent-digest/state.json</code>, поэтому окно 21→26.08 закрыто этим прогоном, и
+      пятничный прогон получит окно от 26.08, а не от 21.08.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="sources" class="sources">
+  <h2>Источники</h2>
+  <ul>
+    <li>GitHub REST <code>search/repositories</code> с <code>sort=stars&amp;order=desc</code> — запросы
+    <code>topic:claude-code</code>, <code>"claude skill"</code>, <code>"claude plugin"</code>,
+    <code>"agent skills"</code>, окно <code>created:&gt;=2026-08-21</code>, отсечка по 2026-08-21T07:47:02Z</li>
+    <li><code>gh search repos --sort=stars</code> — те же четыре запроса; сохранено как второй сбор и для
+    сверки метода</li>
+    <li><code>gh api repos/&lt;owner&gt;/&lt;repo&gt;</code> и <code>/readme</code> — проверка содержимого
+    62 репозиториев каталога</li>
+    <li><a href="https://github.com/anthropics/skills/pull/1623">github.com/anthropics/skills/pull/1623</a></li>
+    <li><a href="https://github.com/anthropics/claude-plugins-official/pull/5595">claude-plugins-official/pull/5595</a> ·
+    <a href="https://github.com/anthropics/claude-plugins-official/pull/5597">/5597</a> ·
+    <a href="https://github.com/anthropics/claude-plugins-official/pull/5598">/5598</a> ·
+    <a href="https://github.com/anthropics/claude-plugins-official/pull/5600">/5600</a></li>
+    <li><a href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md">github.com/anthropics/claude-code — CHANGELOG.md</a></li>
+    <li><a href="https://platform.claude.com/docs/en/release-notes/api">platform.claude.com — release notes API</a></li>
+    <li><a href="https://github.com/anthropics/anthropic-sdk-python/blob/main/MIGRATION.md">anthropic-sdk-python — MIGRATION.md</a></li>
+    <li>Hacker News Algolia <code>search_by_date</code> — запросы <code>claude</code>, <code>agents</code>,
+    <code>agent skills</code>; окно и порог ≥30 очков отфильтрованы на своей стороне</li>
+    <li><a href="https://fabiensanglard.net/agent.md/index.html">fabiensanglard.net — My agent.md</a></li>
+    <li><a href="https://allaboutcoding.ghinda.com/a-week-of-using-codex-more-than-claude/">allaboutcoding.ghinda.com — A week of using Codex more than Claude</a></li>
+    <li><a href="https://www.laude.org/updates/headlong-a-microharness-for-persistent-agents">laude.org — Headlong</a></li>
+    <li><a href="https://code.joejag.com/2026/your-agent-is-not-the-model.html">code.joejag.com — Your Agent Is Not the Model</a></li>
+    <li><a href="https://simonwillison.net/2026/Aug/22/more-than-just-code-review/">simonwillison.net — More than just code review</a></li>
+    <li><a href="https://simonwillison.net/2026/Aug/23/drew-breunig/">simonwillison.net — Fable &amp; The End of the Free Lunch</a></li>
+    <li><a href="https://www.dbreunig.com/2026/08/23/fable-the-end-of-moore-s-law.html">dbreunig.com — Fable &amp; the end of Moore's Law</a></li>
+    <li><a href="https://arxiv.org/abs/2607.21503">arxiv.org/abs/2607.21503</a> ·
+    <a href="https://arxiv.org/abs/2608.16603">arxiv.org/abs/2608.16603</a> — только заголовки, тексты не читались</li>
+    <li><a href="https://status.claude.com/incidents/vgz5psbjmt1h">status.claude.com — инцидент vgz5psbjmt1h</a></li>
+    <li><a href="https://github.com/guillaumemeyer/watermarks-remover">github.com/guillaumemeyer/watermarks-remover</a> — оригинал, от которого произведена копия ★795</li>
+    <li><a href="https://www.yeswehack.com/fr/learn-bug-bounty/triager-grade-reports-claude-code">yeswehack.com — Triager-grade reports with Claude Code</a></li>
+    <li>Вторичные (только как наводки, не для цитирования): atlan.com, github.com/VoltAgent/awesome-ai-agent-papers, twitter.com/argofowl</li>
+  </ul>
+</section>
+
+<footer>
+  Прогон по расписанию cron-джобы <b>agent-digest</b> за окно 21–26.08.2026. Каталог ★10+,
+  ранжирование по звёздам, теги тематики. Пара файлов: этот HTML + <code>2026-08-26.md</code> рядом.
+  Собрано Claude Code 26.08.2026.
+</footer>
+</main>
+
+<script>
+(function(){
+  const root=document.documentElement, LS=window.localStorage;
+  const themeBtn=document.getElementById('themeBtn'), contrastBtn=document.getElementById('contrastBtn');
+  const savedT=LS.getItem('ad-theme'); if(savedT) root.setAttribute('data-theme',savedT);
+  const savedC=LS.getItem('ad-contrast'); if(savedC==='on') root.setAttribute('data-contrast','on');
+  function isDark(){ const t=root.getAttribute('data-theme');
+    if(t) return t==='dark';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches; }
+  function syncBtns(){ themeBtn.setAttribute('aria-pressed', String(isDark()));
+    contrastBtn.setAttribute('aria-pressed', String(root.getAttribute('data-contrast')==='on')); }
+  themeBtn.addEventListener('click',()=>{ const next=isDark()?'light':'dark';
+    root.setAttribute('data-theme',next); LS.setItem('ad-theme',next); syncBtns(); });
+  contrastBtn.addEventListener('click',()=>{ const on=root.getAttribute('data-contrast')==='on';
+    if(on){ root.removeAttribute('data-contrast'); LS.setItem('ad-contrast','off'); }
+    else { root.setAttribute('data-contrast','on'); LS.setItem('ad-contrast','on'); }
+    syncBtns(); });
+  syncBtns();
+  const bar=document.getElementById('progress');
+  addEventListener('scroll',()=>{ const h=document.documentElement;
+    const p=h.scrollTop/(h.scrollHeight-h.clientHeight||1);
+    bar.style.width=(p*100).toFixed(2)+'%'; },{passive:true});
+})();
+</script>
+</body></html>
