@@ -135,7 +135,17 @@ function unpublish(slug) {
 // ── манифест ─────────────────────────────────────────────────────────────────
 function rewriteManifest(reg) {
   const text = fs.readFileSync(MANIFEST, 'utf8');
-  const head = text.split(MARK)[0].replace(/\s+$/, '');
+  const at = text.indexOf(MARK);
+
+  // Маркера нет, а пути презентаций есть — значит строку маркера кто-то стёр или
+  // покорёжил (в ней рамочные символы U+2500, их легко испортить форматтером или
+  // перекодировкой). Дописывать второй блок нельзя: пути задвоятся, и каждый
+  // следующий --rebuild будет наращивать файл. Останавливаемся и говорим, что чинить.
+  if (at === -1 && /^presentations\//m.test(text))
+    die(`в deploy.manifest есть строки presentations/, но нет строки-маркера:\n  ${MARK}\n`
+      + 'Верни её перед этими путями — без неё блок не переписать, а второй блок дал бы дубли.');
+
+  const head = (at === -1 ? text : text.slice(0, at)).replace(/\s+$/, '');
   const lines = reg.presentations.length
     ? ['presentations/index.html', ...reg.presentations.map(p => `presentations/${p.slug}.html`)]
     : [];
