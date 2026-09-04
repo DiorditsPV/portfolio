@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675" role="img">
+<defs>
+  <radialGradient id="g" cx="54%" cy="14%" r="105%">
+    <stop offset="0%" stop-color="#6d4cff" stop-opacity=".42"/>
+    <stop offset="55%" stop-color="#6d4cff" stop-opacity=".08"/>
+    <stop offset="100%" stop-color="#141024" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="h" color-interpolation-filters="sRGB">
+    <feColorMatrix type="hueRotate" values="9"/>
+  </filter>
+  <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0 0 L10 5 L0 10 z" fill="#b9aee8" fill-opacity=".6"/>
+  </marker>
+</defs>
+<rect width="1200" height="675" fill="#141024"/>
+<rect width="1200" height="675" fill="url(#g)"/>
+<g filter="url(#h)">
+<rect x="190" y="227" width="140" height="220" rx="14" fill="#6d4cff" fill-opacity="0.18" stroke="#8b6dff" stroke-width="2.2"/><path d="M340 337 L430 337" stroke="#b9aee8" stroke-width="2.4" stroke-opacity=".6" marker-end="url(#a)"/><circle cx="260" cy="300" r="7" fill="#8b6dff" fill-opacity="0.51"/><circle cx="260" cy="338" r="7" fill="#8b6dff" fill-opacity="0.62"/><circle cx="260" cy="376" r="7" fill="#8b6dff" fill-opacity="0.99"/><rect x="440" y="244" width="128" height="186" rx="14" fill="#6d4cff" fill-opacity="0.32" stroke="#8b6dff" stroke-width="2.2"/><path d="M578 337 L680 337" stroke="#b9aee8" stroke-width="2.4" stroke-opacity=".6" marker-end="url(#a)"/><circle cx="504" cy="300" r="7" fill="#8b6dff" fill-opacity="0.65"/><circle cx="504" cy="338" r="7" fill="#8b6dff" fill-opacity="0.51"/><circle cx="504" cy="376" r="7" fill="#8b6dff" fill-opacity="0.78"/><rect x="690" y="261" width="116" height="152" rx="14" fill="#6d4cff" fill-opacity="0.46" stroke="#8b6dff" stroke-width="2.2"/><path d="M816 337 L930 337" stroke="#b9aee8" stroke-width="2.4" stroke-opacity=".6" marker-end="url(#a)"/><circle cx="748" cy="300" r="7" fill="#8b6dff" fill-opacity="0.56"/><circle cx="748" cy="338" r="7" fill="#8b6dff" fill-opacity="0.95"/><rect x="940" y="278" width="104" height="118" rx="14" fill="#6d4cff" fill-opacity="0.6" stroke="#8b6dff" stroke-width="2.2"/><circle cx="992" cy="300" r="7" fill="#8b6dff" fill-opacity="0.96"/><circle cx="992" cy="338" r="7" fill="#8b6dff" fill-opacity="0.99"/>
+</g>
+</svg>
