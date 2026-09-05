@@ -342,7 +342,7 @@ pre.tree{font-size:.8rem;line-height:1.5}
     <dt>Создан</dt><dd>2 сентября 2026</dd>
     <dt>Звёзды / форки</dt><dd>338 / 30 <span class="muted small">(на 5 сентября 2026)</span></dd>
     <dt>Лицензия</dt><dd>отсутствует</dd>
-    <dt>История</dt><dd>один squash-коммит; каталог токенов v1.10.0</dd>
+    <dt>История</dt><dd>18 коммитов за 29.08–03.09.2026; каталог токенов v1.10.0</dd>
     <dt>Стек</dt><dd>Python 3.10+, Pillow, NumPy, OpenCV, fontTools; GPT-Image-2 edit</dd>
     <dt>Дата разбора</dt><dd>5 сентября 2026</dd>
   </dl>
@@ -985,8 +985,8 @@ legible. Keep all small metadata literal and conventional.</pre>
         <li><strong>Документация на 100 % китайская.</strong> Для агента это не барьер, для человека-мейнтейнера вне китайского рынка — да. Контролируемые теги и алиасы тоже только китайские.</li>
         <li><strong>Тяжёлая церемония.</strong> На один постер — preflight-отчёт, возможно rectify, <code>recipe.json</code>, <code>creative-brief.md</code>, <code>design-plan.json</code>, спецификация, подложка и отчёт, при <code>reinterpret</code> — глиф-бриф, промпт, манифест, readback. Это 10–20 вызовов инструментов до одной картинки. Для профессионального результата оправдано; для «быстро посмотреть» — нет, и скилл честно заявляет, что не для этого.</li>
         <li><strong>Шрифты не в поставке.</strong> Без собственного CJK-шрифта с полным покрытием подложка не соберётся — <code>typeset_compose.py</code> откажет на первом отсутствующем глифе. Правильное, но неочевидное для новичка требование; в README его нет.</li>
-        <li><strong>История сплющена.</strong> Один коммит «Compile design tokens into imagegen handoff» — эволюцию решений не проследить; версия каталога 1.10.0 намекает на десяток итераций, которых в git нет.</li>
-        <li><strong>Тесты покрывают скрипты, не результат.</strong> 24 теста проверяют компилятор подложки, гейт handoff, рантайм и preflight — то, что детерминировано. Качества постеров они не измеряют, и в репозитории нет ни одного примерного прогона с промежуточными артефактами, по которому можно понять, как выглядит «правильный» <code>design-plan.json</code> на реальном кейсе.</li>
+        <li><strong>Примеры вычищены при релизе.</strong> История — 18 коммитов за шесть дней (29.08–03.09.2026). До релиз-коммита <code>01be93b</code> в репозитории лежала папка <code>examples/</code> с шестью реальными прогонами по Датуну и Инсяню — постер, подложка, сетка, промпт и спека на каждый; релиз удалил её вместе со старым пакетом <code>chinese-architecture-poster/</code>. Увидеть настоящий прогон теперь можно только через <code>git show</code> по старым коммитам — и это ранняя версия пайплайна, до токенов и контракта трёх картинок.</li>
+        <li><strong>Тесты покрывают скрипты, не результат.</strong> 24 теста проверяют компилятор подложки, гейт handoff, рантайм и preflight — то, что детерминировано. Качества постеров они не измеряют, и в текущем дереве нет ни одного примерного прогона с промежуточными артефактами, по которому можно понять, как выглядит «правильный» <code>design-plan.json</code> на реальном кейсе.</li>
       </ol>
     </div>
   </div>
@@ -1054,7 +1054,7 @@ legible. Keep all small metadata literal and conventional.</pre>
     <p class="kicker">Что реально использовано при разборе</p>
   </div>
   <ol>
-    <li>Репозиторий <a href="https://github.com/op7418/guizang-yingzao-skill">github.com/op7418/guizang-yingzao-skill</a> — README, <code>yingzao/SKILL.md</code>, все файлы <code>references/</code>, <code>scripts/</code>, <code>tests/</code>, <code>assets/</code>. Клон от 5 сентября 2026, ветка <code>main</code>, коммит <code>58c9b87</code>.</li>
+    <li>Репозиторий <a href="https://github.com/op7418/guizang-yingzao-skill">github.com/op7418/guizang-yingzao-skill</a> — README, <code>yingzao/SKILL.md</code>, все файлы <code>references/</code>, <code>scripts/</code>, <code>tests/</code>, <code>assets/</code>. Клон от 5 сентября 2026, ветка <code>main</code>, коммит <code>58c9b87</code>; полная история из 18 коммитов и удалённая папка <code>examples/</code> — через <code>git log</code> и <code>git show</code>.</li>
     <li>Метаданные репозитория и автора — звёзды, даты, лицензия, топики: GitHub REST API, <a href="https://api.github.com/repos/op7418/guizang-yingzao-skill">api.github.com/repos/op7418/guizang-yingzao-skill</a> и <a href="https://api.github.com/users/op7418/repos">api.github.com/users/op7418/repos</a>.</li>
     <li>Профиль автора и другие скиллы: <a href="https://github.com/op7418?tab=repositories">github.com/op7418</a>, <a href="https://github.com/op7418/guizang-ppt-skill">guizang-ppt-skill</a>, <a href="https://github.com/op7418/guizang-social-card-skill">guizang-social-card-skill</a>, <a href="https://github.com/op7418/guizang-material-illustration">guizang-material-illustration</a>.</li>
     <li>Инструмент установки <code>npx skills add</code>: <a href="https://github.com/vercel-labs/skills">github.com/vercel-labs/skills</a>, <a href="https://www.skills.sh/agent/claude-code">skills.sh/agent/claude-code</a>.</li>
