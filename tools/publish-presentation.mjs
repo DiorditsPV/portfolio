@@ -1,4 +1,4 @@
-// Публикует html-разбор в библиотеку General и пересобирает её страницу.
+// Публикует html-разбор в Журнал и пересобирает его ленту.
 //
 // Скилл present-html кладёт пару <name>.md + <name>.html в ~/dev/docs/<тема>/ —
 // там источник правды содержания и всё, что публиковать не нужно. На сайт файл
@@ -14,14 +14,15 @@
 //
 // Что делает публикация:
 //   1. проверяет файл (см. предполётный контроль ниже) и копирует в presentations/;
-//   2. считает время просмотра и вытаскивает заголовки разделов — по ним потом ищет
-//      поиск на странице библиотеки;
+//   2. считает время просмотра и вытаскивает заголовки разделов — они лежат в
+//      реестре как ключевые слова записи;
 //   3. рисует обложку-заглушку presentations/covers/<slug>.svg;
-//   4. дописывает в копию og-теги и подвал «ещё по теме» между маркерами —
-//      исходник в ~/dev/docs при этом не трогается;
+//   4. дописывает в копию og-теги, кнопку возврата, снятие повышенного контраста
+//      и подвал «ещё по теме» между маркерами — исходник в ~/dev/docs не трогается;
 //   5. заносит запись в presentations.json — реестр в репозитории, который браузер
 //      никогда не грузит: это исходник сборки, а не данные страницы;
-//   6. пересобирает presentations/index.html и переписывает в deploy.manifest
+//   6. пересобирает ленту presentations/index.html и presentations/rss.xml,
+//      обновляет блок последних записей на главной и переписывает в deploy.manifest
 //      блок под маркером, не трогая строки выше.
 //
 // Дальше — обычный git push: выкладку делает .github/workflows/deploy.yml.
@@ -29,7 +30,7 @@
 // Статусы из замысла раскладываются так: «черновик» и «приватная» — это файл,
 // который просто не публиковали, он остаётся в ~/dev/docs; «по ссылке» — флаг
 // --unlisted: страница уезжает на сервер и открывается по прямому адресу, но в
-// библиотеке не показывается. Счётчика просмотров и режима владельца в браузере
+// журнале не показывается. Счётчика просмотров и режима владельца в браузере
 // нет и быть не может: сайт — статические файлы на nginx, без бэкенда и авторизации.
 //
 // Зависимостей нет, сборки нет — как и у остального репозитория.
@@ -38,18 +39,20 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { coverSvg } from './cover.mjs';
-import { galleryPage } from './gallery-page.mjs';
+import { journalPage, humanDate, plural, JOURNAL_TITLE, JOURNAL_ABOUT } from './journal-page.mjs';
+import { rssFeed } from './rss.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIR = path.join(ROOT, 'presentations');
 const COVERS = path.join(DIR, 'covers');
 const REGISTRY = path.join(ROOT, 'presentations.json');
 const MANIFEST = path.join(ROOT, 'deploy.manifest');
+const SITE_PAGE = path.join(ROOT, 'index.html');
 
 // Всё ниже этой строки в манифесте принадлежит скрипту и переписывается целиком.
 const MARK = '# ─── презентации: блок ниже переписывает tools/publish-presentation.mjs ───';
 
-// Адрес библиотеки. Сегодня это подкаталог основного сайта; когда на сервере
+// Адрес журнала. Сегодня это подкаталог основного сайта; когда на сервере
 // появится vhost presentations.paveldiordits.site с root на этот же каталог,
 // достаточно поменять строку здесь и прогнать --rebuild.
 const BASE = 'https://paveldiordits.site/presentations/';
@@ -57,12 +60,14 @@ const SITE = 'https://paveldiordits.site/';
 
 const AUTHOR = {
   name: 'Павел Диордиц',
-  about: 'Lead Data Engineer. Разбираю архитектуру данных, агентные инструменты и практические подходы к разработке — и выкладываю разборы сюда.',
   email: 'diordic@gmail.com',
 };
 
-// Направления библиотеки. Порядок здесь — порядок фильтров на странице; цвет
-// работает маркером темы в карточке, на обложке и на кнопке фильтра.
+// Сколько записей показывает блок журнала на главной. Три ложатся в ряд на
+// широком экране и не превращают главную в ленту — за лентой посетитель идёт сюда.
+const ON_HOME = 3;
+
+// Направления журнала. Цвет работает маркером темы в строке записи и на обложке.
 // Пустые направления на странице не показываются, поэтому список может опережать
 // содержание — заводить тему заранее не вредно.
 const TOPICS = [
@@ -75,7 +80,7 @@ const TOPICS = [
   { id: 'travel',           ru: 'Путешествия',      color: '#c93f70' },
 ];
 
-// Полки библиотеки. Порядок здесь — порядок блоков на странице. Полка задаётся
+// Полки журнала. Порядок здесь — порядок разделов на странице. Полка задаётся
 // либо серией (несколько выпусков одного замысла), либо направлением — тогда в
 // неё попадает всё из этого направления, что не входит ни в одну серию.
 // Пустые полки не выводятся, поэтому список может опережать содержание.
@@ -164,6 +169,7 @@ const headings = html => [...html.matchAll(/<h[23][^>]*>([\s\S]{0,200}?)<\/h[23]
 // Всё между маркерами; перед каждой сборкой старая вставка вырезается, поэтому
 // пересборка не наслаивает блоки и не требует исходного файла.
 const HEAD_A = '<!--general:head-->', HEAD_B = '<!--/general:head-->';
+const TOP_A = '<!--general:top-->', TOP_B = '<!--/general:top-->';
 const FOOT_A = '<!--general:foot-->', FOOT_B = '<!--/general:foot-->';
 
 const cut = (html, a, b) => {
@@ -179,7 +185,7 @@ function headBlock(p, ogImage) {
   return `${HEAD_A}
 <meta property="og:type" content="article">
 <meta property="og:url" content="${BASE}${p.slug}.html">
-<meta property="og:site_name" content="General · paveldiordits.site">
+<meta property="og:site_name" content="Журнал · paveldiordits.site">
 <meta property="og:title" content="${esc(p.title)}">
 <meta property="og:description" content="${esc(p.desc)}">
 <meta property="og:image" content="${ogImage}">
@@ -188,8 +194,42 @@ function headBlock(p, ogImage) {
 <meta name="twitter:description" content="${esc(p.desc)}">
 <meta name="twitter:image" content="${ogImage}">
 <link rel="canonical" href="${BASE}${p.slug}.html">
+<link rel="alternate" type="application/rss+xml" title="${esc(JOURNAL_TITLE)}" href="${BASE}rss.xml">
+${CONTRAST_OFF}
 ${HEAD_B}`;
 }
+
+// Режим повышенного контраста снят со всех разборов. Каждый генератор делал его
+// по-своему — кнопки #contrastBtn, #btn-contrast, #ct, #hc, #hcBtn, состояние то
+// в data-contrast="on", то ="high", то классом .hc на <html>, — и вырезать это из
+// девяти разных файлов значило бы девять разных правок, которые вернутся с первой
+// же переопубликацией из ~/dev/docs. Поэтому режим не вырезается, а глушится
+// одним слоем: кнопка прячется, состояние снимается и не возвращается из
+// localStorage. Разметку и скрипты разбора не трогаем — семь из девяти держат
+// ссылку на кнопку и упадут на null, уронив вместе с собой переключатель темы.
+const CONTRAST_OFF = `<style>
+#contrastBtn,#btn-contrast,#ct,#hc,#hcBtn,
+button[title*="онтраст"],button[aria-label*="онтраст"]{display:none!important}
+</style>
+<script>
+(function(){
+  var r=document.documentElement;
+  function off(){
+    if(r.hasAttribute('data-contrast')) r.removeAttribute('data-contrast');
+    if(r.classList.contains('hc')) r.classList.remove('hc');
+  }
+  off();
+  // Наблюдатель, а не разовый вызов: собственный скрипт страницы поднимает режим
+  // из localStorage позже, уже после этой вставки, — снимаем сразу же, до отрисовки.
+  new MutationObserver(off).observe(r,{attributes:true,attributeFilter:['data-contrast','class']});
+  // Кнопки будущих разборов с неизвестным id: прячем по подписи, не удаляя узел.
+  addEventListener('DOMContentLoaded',function(){
+    [].forEach.call(document.querySelectorAll('button'),function(b){
+      if(/контраст/i.test(b.textContent||'')) b.style.display='none';
+    });
+  });
+})();
+</script>`;
 
 // «Похожие материалы» после разбора: сначала своя серия, потом своя тема.
 const relatedFor = (p, all) => {
@@ -218,10 +258,32 @@ function footBlock(p, all) {
 .gnrl-card img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
 .gnrl-card b{display:block;padding:.8rem .9rem .2rem;font-size:.9375rem;font-weight:600}
 .gnrl-card span{display:block;padding:0 .9rem .9rem;font-size:.8125rem;opacity:.6}
+/* Стили кнопки возврата. Сама кнопка стоит не здесь, а в начале <body>: она в
+   потоке, поэтому резервирует своё место и не накрывает то, что разбор нарисовал
+   у себя вверху (у четырёх выпусков там собственный переключатель темы). Sticky
+   держит её на виду при прокрутке — до подвала на длинном разборе крутить долго. */
+.gnrl-upwrap{
+  position:sticky;top:0;z-index:70;padding:.7rem 0 .1rem .75rem;
+  /* Полоса тянется во всю ширину, но кликам не мешает — ловит их только кнопка. */
+  pointer-events:none;
+}
+.gnrl-up{
+  pointer-events:auto;display:inline-flex;align-items:center;
+  padding:.4rem .8rem;border-radius:999px;font-size:.8125rem;font-weight:600;
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color:inherit;text-decoration:none;border:1px solid rgba(128,128,128,.35);
+  /* Серый в полупрозрачности и цвет текста по наследству: подложка одинаково
+     ложится и на светлую, и на тёмную страницу, а системный Canvas — нет, он не
+     знает про тему разбора и на тёмной странице стал бы белым пятном. */
+  background:rgba(127,127,127,.2);
+  backdrop-filter:blur(10px) saturate(1.4);-webkit-backdrop-filter:blur(10px) saturate(1.4);
+}
+.gnrl-up:hover{border-color:rgba(128,128,128,.75)}
+@media print{.gnrl-upwrap{display:none}}
 </style>
 <nav class="gnrl">
   <div class="gnrl-top">
-    <a class="gnrl-back" href="${BASE}">← General · библиотека разборов</a>
+    <a class="gnrl-back" href="${BASE}">← Журнал</a>
     <span class="gnrl-h">Ещё по теме</span>
   </div>
   ${rel.length ? `<div class="gnrl-grid">
@@ -231,11 +293,31 @@ ${rel.map(x => `    <a class="gnrl-card" href="${esc(x.slug)}.html">
     </a>`).join('\n')}
   </div>` : ''}
 </nav>
+<script>
+// Кнопка вверху — настоящая ссылка на журнал: без скриптов и на прямом заходе
+// она ведёт хотя бы туда. Если посетитель пришёл по ссылке с сайта, она вместо
+// этого возвращает на ту же страницу и в ту же точку прокрутки, откуда он ушёл, —
+// это и есть «назад», а не «в начало журнала».
+(function(){
+  var a=document.getElementById('gnrl-up');
+  if(!a||history.length<2) return;
+  var from=document.referrer||'';
+  if(from.indexOf(location.origin+'/')!==0||from===location.href) return;
+  a.addEventListener('click',function(e){ e.preventDefault(); history.back(); });
+})();
+</script>
 ${FOOT_B}`;
 }
 
+// Кнопка возврата. Стоит первой в <body>, чтобы занимать своё место в потоке, а
+// не висеть поверх чужой вёрстки: у четырёх выпусков ровно там их собственный
+// переключатель темы, и фиксированная кнопка его накрывала.
+const topBlock = () => `${TOP_A}
+<div class="gnrl-upwrap"><a class="gnrl-up" id="gnrl-up" href="${BASE}">← Назад</a></div>
+${TOP_B}`;
+
 function writeCopy(p, all, srcHtml) {
-  let html = cut(cut(srcHtml, HEAD_A, HEAD_B), FOOT_A, FOOT_B);
+  let html = cut(cut(cut(srcHtml, HEAD_A, HEAD_B), TOP_A, TOP_B), FOOT_A, FOOT_B);
   const ogImage = fs.existsSync(path.join(COVERS, `${p.slug}.png`))
     ? `${BASE}covers/${p.slug}.png`
     : `${SITE}og.png`;
@@ -244,6 +326,13 @@ function writeCopy(p, all, srcHtml) {
   html = /<\/head>/i.test(html)
     ? html.replace(/<\/head>/i, `${head}\n</head>`)
     : html.replace(/<body[^>]*>/i, m => `${m}\n${head}`);
+
+  // Кнопка — сразу за <body>. Тега может не быть (браузер его дорисует, а
+  // предполётный контроль требует только <html>), тогда кладём в начало файла.
+  const top = topBlock();
+  html = /<body[^>]*>/i.test(html)
+    ? html.replace(/<body[^>]*>/i, m => `${m}\n${top}`)
+    : `${top}\n${html}`;
 
   const foot = footBlock(p, all);
   html = /<\/body>/i.test(html)
@@ -366,7 +455,7 @@ function rewriteManifest(reg) {
       + 'Верни её перед этими путями — без неё блок не переписать, а второй блок дал бы дубли.');
 
   const head = (at === -1 ? text : text.slice(0, at)).replace(/\s+$/, '');
-  const lines = reg.presentations.length ? ['presentations/index.html'] : [];
+  const lines = reg.presentations.length ? ['presentations/index.html', 'presentations/rss.xml'] : [];
   for (const p of reg.presentations) {
     lines.push(`presentations/${p.slug}.html`);
     for (const e of ['svg', 'png'])
@@ -375,9 +464,45 @@ function rewriteManifest(reg) {
   fs.writeFileSync(MANIFEST, `${head}\n\n${MARK}\n${lines.join('\n')}${lines.length ? '\n' : ''}`);
 }
 
+// ── блок журнала на главной ──────────────────────────────────────────────────
+// Главная — единственный файл без сборки, и портить это ради трёх карточек
+// нельзя. Поэтому данные вшиваются в неё тем же приёмом, что и пути в манифест:
+// строки между маркерами принадлежат скрипту, всё остальное — человеку.
+// Даты и время просмотра кладём уже готовыми парами {en, ru}: на главной есть
+// переключатель языка, но нет ни календаря, ни склонений — и заводить их там
+// ради одного блока значило бы дублировать то, что уже есть здесь.
+const HOME_A = '/* ── journal:latest — блок ниже переписывает tools/publish-presentation.mjs ── */';
+const HOME_B = '/* ── /journal:latest ── */';
+
+const MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const dateEn = iso => {
+  const [y, m, d] = iso.split('-').map(Number);
+  return `${d} ${MONTHS_EN[m - 1]} ${y}`;
+};
+
+function writeHomeBlock(entries) {
+  const text = fs.readFileSync(SITE_PAGE, 'utf8');
+  const i = text.indexOf(HOME_A), j = text.indexOf(HOME_B);
+  if (i === -1 || j === -1 || j < i)
+    die(`в index.html нет маркеров блока журнала:\n  ${HOME_A}\n  ${HOME_B}\n`
+      + 'Верни их вокруг массива JOURNAL — без них последние записи на главной не обновить.');
+
+  const js = s => JSON.stringify(s);
+  const rows = entries.slice(0, ON_HOME).map(p =>
+    `  { slug: ${js(p.slug)},\n`
+    + `    title: ${js(p.title)},\n`
+    + `    desc: { en: ${js(p.descEn || p.desc)}, ru: ${js(p.desc)} },\n`
+    + `    date: { en: ${js(dateEn(p.date))}, ru: ${js(humanDate(p.date))} },\n`
+    + `    read: { en: ${js(`${p.minutes} min`)}, `
+    + `ru: ${js(`${p.minutes} ${plural(p.minutes, 'минута', 'минуты', 'минут')}`)} } },`).join('\n');
+
+  fs.writeFileSync(SITE_PAGE,
+    `${text.slice(0, i)}${HOME_A}\nconst JOURNAL = [\n${rows}\n];\n${HOME_B}${text.slice(j + HOME_B.length)}`);
+}
+
 // ── сборка ───────────────────────────────────────────────────────────────────
 // Токены оформления не копируются, а вынимаются из index.html при каждой сборке:
-// три набора света × две темы живут в одном месте, и General не может разъехаться
+// три набора света × две темы живут в одном месте, и журнал не может разъехаться
 // с главной — тот же приём, что у tools/build-assets.mjs с резюме.
 function designTokens() {
   const site = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
@@ -406,9 +531,16 @@ function rebuild(reg) {
   const listed = all.filter(p => p.status !== 'unlisted');
   const feature = listed.find(p => p.feature) || listed[0];
 
-  // Раскладываем по полкам в порядке GROUPS; всё, что не подошло ни к одной,
-  // не теряется, а собирается в хвостовую полку — иначе материал молча исчез бы
-  // со страницы, оставшись при этом в манифесте и на сервере.
+  // Лента: всё подряд от новых к старым. Реестр и так хранится в этом порядке,
+  // но сортируем ещё раз — запись могли поправить руками, а хронология здесь
+  // не оформление, а сама подача.
+  const entries = [...listed].sort((a, b) => b.date.localeCompare(a.date) || a.slug.localeCompare(b.slug));
+
+  // Серии в колонке сбоку считаются по тем же правилам, по которым раньше
+  // строились полки: серия, а если её нет — направление. Поток они не режут,
+  // но подпись у записи берётся отсюда, поэтому раскладка нужна целиком.
+  // Всё, что не подошло ни к одной, собирается в хвостовую — иначе материал
+  // молча остался бы без подписи, лёжа при этом в манифесте и на сервере.
   const taken = new Set();
   const groups = GROUPS.map(g => ({
     ru: g.ru, note: g.note,
@@ -423,7 +555,8 @@ function rebuild(reg) {
   if (rest.length) groups.push({ ru: 'Прочее', note: '', items: rest });
 
   fs.mkdirSync(DIR, { recursive: true });
-  fs.writeFileSync(path.join(DIR, 'index.html'), galleryPage({
+  fs.writeFileSync(path.join(DIR, 'index.html'), journalPage({
+    entries,
     groups,
     feature,
     topics: TOPICS,
@@ -433,6 +566,12 @@ function rebuild(reg) {
     ogImage: feature && fs.existsSync(path.join(COVERS, `${feature.slug}.png`))
       ? `${BASE}covers/${feature.slug}.png` : `${SITE}og.png`,
   }));
+
+  fs.writeFileSync(path.join(DIR, 'rss.xml'), rssFeed({
+    entries, base: BASE, author: AUTHOR, title: JOURNAL_TITLE, about: JOURNAL_ABOUT,
+  }));
+
+  writeHomeBlock(entries);
 }
 
 // ── ход ──────────────────────────────────────────────────────────────────────
@@ -446,5 +585,5 @@ rewriteManifest(reg);
 
 const listed = reg.presentations.filter(p => p.status !== 'unlisted').length;
 const hidden = reg.presentations.length - listed;
-console.log(`библиотека пересобрана: ${listed} в витрине${hidden ? `, ${hidden} по ссылке` : ''}`
-  + ` → presentations/index.html, deploy.manifest обновлён`);
+console.log(`журнал пересобран: ${listed} на полках${hidden ? `, ${hidden} по ссылке` : ''}`
+  + ` → presentations/index.html, presentations/rss.xml, блок на главной, deploy.manifest`);

@@ -315,6 +315,35 @@ section{scroll-margin-top:5rem}
 .repo .arrow{margin-left:auto;color:var(--muted);transition:transform .25s ease,color .25s ease}
 .repo:hover .arrow{transform:translateX(3px);color:var(--accent)}
 
+/* ── журнал: три последние записи, дальше — на /presentations/ ── */
+#journal{padding:1rem 0 5rem}
+.jrn-list{display:grid;grid-template-columns:1fr;gap:1rem}
+@media(min-width:760px){.jrn-list{grid-template-columns:repeat(3,1fr);gap:1.25rem}}
+.jrn-item{
+  display:flex;flex-direction:column;border:1px solid var(--border);border-radius:.75rem;
+  overflow:hidden;background:var(--card);transition:border-color .25s ease,background-color .25s ease;
+}
+.jrn-item:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--border));background:var(--card-hover)}
+/* height:auto обязателен: на странице нет общего правила для img, и без него
+   побеждает атрибут height="675" из разметки — обложка встаёт в натуральный
+   рост вместо кадра 16:9. Атрибуты при этом нужны, они держат место до загрузки. */
+.jrn-item img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-bottom:1px solid var(--border)}
+.jrn-body{padding:.95rem 1.1rem 1.15rem}
+.jrn-meta{display:block;font-family:var(--font-mono);font-size:.6875rem;color:var(--muted);letter-spacing:.03em}
+.jrn-title{display:block;margin-top:.45rem;font-weight:600;font-size:.9375rem;line-height:1.35;letter-spacing:-.01em}
+.jrn-desc{
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+  margin-top:.35rem;font-size:.8125rem;color:var(--muted);
+}
+.jrn-all{
+  display:inline-flex;align-items:center;gap:.45rem;margin-top:1.5rem;
+  font-family:var(--font-mono);font-size:.75rem;letter-spacing:.05em;color:var(--muted);
+  transition:color .2s ease;
+}
+.jrn-all:hover{color:var(--fg)}
+.jrn-all svg{transition:transform .25s ease}
+.jrn-all:hover svg{transform:translateX(3px)}
+
 #contact{padding:4rem 0;text-align:center;display:flex;flex-direction:column;align-items:center}
 #contact h2{font-size:clamp(1.75rem,4vw,2.25rem);font-weight:700;letter-spacing:-.02em;margin:0 0 .9rem}
 #contact p.lead{color:var(--muted);max-width:46ch;margin:0 auto 2rem}
@@ -399,6 +428,14 @@ footer{border-top:1px solid var(--border);padding:2rem 0;margin-top:1rem}
     <div class="repo-grid" id="repo-grid"></div>
   </section>
 
+  <section id="journal" class="wrap">
+    <div class="sec-head reveal">
+      <h2 data-k="sec.journal"></h2><span class="rule"></span><span class="idx">04</span>
+    </div>
+    <div class="jrn-list" id="jrn-list"></div>
+    <a class="jrn-all reveal" id="jrn-all" href="/presentations/"></a>
+  </section>
+
   <section id="contact" class="wrap reveal">
     <h2 data-k="contact.title"></h2>
     <p class="lead" data-k="contact.lead"></p>
@@ -430,8 +467,6 @@ const T = {
     { id:"experience", en:"Experience",  ru:"Опыт" },
     { id:"projects",   en:"Projects",    ru:"Проекты" },
     { id:"opensource", en:"Open Source", ru:"Open Source" },
-    // отдельная страница, а не секция: библиотека разборов растёт сама по себе
-    { href:"/presentations/", en:"General", ru:"General" },
     { id:"contact",    en:"Contact",     ru:"Контакты" },
   ],
   "hero.eyebrow": { en:"Lead Data Engineer · 6+ years in data · Moscow",
@@ -442,6 +477,8 @@ const T = {
   "sec.experience": { en:"Experience",  ru:"Опыт" },
   "sec.projects":   { en:"Projects",    ru:"Проекты" },
   "sec.opensource": { en:"Open Source", ru:"Open Source" },
+  "sec.journal":    { en:"Journal",     ru:"Журнал" },
+  "journal.all":    { en:"All entries", ru:"Все записи" },
   "contact.title":  { en:"Get in Touch", ru:"Связаться" },
   "contact.lead": {
     en:"Open to conversations about data platforms, pipeline architecture and high-load data services.",
@@ -603,6 +640,31 @@ const T = {
   ],
 };
 
+/* ── журнал ──
+   Единственные данные на странице, которые правятся не руками: три последние
+   записи вшивает tools/publish-presentation.mjs при каждой сборке журнала.
+   Строки между маркерами принадлежат скрипту — их правка потеряется. Сам блок
+   на главной живёт в секции #journal, а лента целиком — на /presentations/. */
+/* ── journal:latest — блок ниже переписывает tools/publish-presentation.mjs ── */
+const JOURNAL = [
+  { slug: "generator-fich",
+    title: "Генератор фич: что выяснило исследование и что из него брать",
+    desc: { en: "Разбор исследовательского пакета о генерации фич: 24 источника, что измерено и что назначено, модель из 14 шагов и 9 гейтов и минимальная версия для Product Lab.", ru: "Разбор исследовательского пакета о генерации фич: 24 источника, что измерено и что назначено, модель из 14 шагов и 9 гейтов и минимальная версия для Product Lab." },
+    date: { en: "5 Sep 2026", ru: "5 сентября 2026" },
+    read: { en: "57 min", ru: "57 минут" } },
+  { slug: "headcount",
+    title: "headcount — «компания из агентов» для Claude Code: разбор",
+    desc: { en: "Разбор headcount — маркетплейса из 16 департаментов и 172 скиллов для Claude Code: что реально приезжает при установке, почему бюджет списка скиллов в 1% окна решает больше, чем качество текста, и как ставить по одному департаменту, не сломав то, что уже стоит.", ru: "Разбор headcount — маркетплейса из 16 департаментов и 172 скиллов для Claude Code: что реально приезжает при установке, почему бюджет списка скиллов в 1% окна решает больше, чем качество текста, и как ставить по одному департаменту, не сломав то, что уже стоит." },
+    date: { en: "5 Sep 2026", ru: "5 сентября 2026" },
+    read: { en: "15 min", ru: "15 минут" } },
+  { slug: "yingzao-skill",
+    title: "Yingzao: скилл-постер Guizang под микроскопом",
+    desc: { en: "Разбор скилла Guizang, который превращает фото китайской архитектуры в editorial-постер: детерминированный Python как ворота перед единственным вызовом GPT-Image-2, 104 дизайн-токена для поиска, а не для промпта, и семь приёмов, которые стоит забрать в свои скиллы.", ru: "Разбор скилла Guizang, который превращает фото китайской архитектуры в editorial-постер: детерминированный Python как ворота перед единственным вызовом GPT-Image-2, 104 дизайн-токена для поиска, а не для промпта, и семь приёмов, которые стоит забрать в свои скиллы." },
+    date: { en: "5 Sep 2026", ru: "5 сентября 2026" },
+    read: { en: "40 min", ru: "40 минут" } },
+];
+/* ── /journal:latest ── */
+
 /* ══════════════════════════════════════════════════════════════════════
    РЕНДЕР
    ══════════════════════════════════════════════════════════════════════ */
@@ -708,6 +770,20 @@ function render() {
       <span><span class="rname">${esc(r.name)}</span><span class="rdesc" style="display:block">${esc(L(r.d))}</span></span>
       <span class="arrow">${ICON_ARROW}</span>
     </a>`).join('');
+
+  // журнал — три последние записи; заголовки записей русские и на английской
+  // версии страницы тоже: сами разборы написаны по-русски, переводить витрину
+  // к непереведённому тексту было бы обманом.
+  $('#jrn-list').innerHTML = JOURNAL.map(j => `
+    <a class="jrn-item reveal" href="/presentations/${esc(j.slug)}.html">
+      <img src="presentations/covers/${esc(j.slug)}.svg" alt="" loading="lazy" width="1200" height="675">
+      <span class="jrn-body">
+        <span class="jrn-meta">${esc(L(j.date))} · ${esc(L(j.read))}</span>
+        <span class="jrn-title">${esc(j.title)}</span>
+        <span class="jrn-desc">${esc(L(j.desc))}</span>
+      </span>
+    </a>`).join('');
+  $('#jrn-all').innerHTML = `${esc(L(T['journal.all']))}${ICON_ARROW}`;
 
   // контакты
   const mail = $('#mail-link');
