@@ -1,570 +1,983 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Неделя 23 экосистемы Claude — снимок и что с ним стало</title>
-<meta name="description" content="Июньский срез популярных репозиториев и навыков Claude за неделю 28.05–04.06.2026, перемеренный 4 сентября: что выстрелило, что просело и почему недельный рейтинг не пережил квартала.">
+<title>Неделя 23 экосистемы Claude — снимок и перемер</title>
+<meta name="description" content="Июньский срез популярных репозиториев и навыков Claude за неделю 28.05–04.06.2026, перемеренный 4 сентября: недельный рейтинг не пережил квартала, у трёх позиций звёзды пошли вниз.">
 <style>
-/* ─────────────────────────────────────────────────────────────
-   Оформление под предмет: два замера одного и того же, разнесённые
-   во времени. Отсюда всё — бумажная основа архивной карточки,
-   моноширинные числа, полоса дельты между «тогда» и «сейчас»,
-   и терракотовый акцент правки поверх спокойного текста.
-   ───────────────────────────────────────────────────────────── */
-:root{
-  --paper:#faf7f2; --card:#fffdfa; --ink:#1b1a17; --muted:#6f6a60; --faint:#928c81;
-  --rule:#e6e0d4; --rule-soft:#f0ebe1;
-  --accent:#b4522f;      /* правка, ревизия */
-  --up:#2f7d5b;          /* вырос */
-  --down:#a33a2a;        /* просел */
-  --mark:#f6e6c9;
-  --shadow:0 1px 2px rgba(27,26,23,.05);
+:root {
+  --page: #f4f6f8;
+  --surface: #ffffff;
+  --surface-soft: #eef2f6;
+  --ink: #111827;
+  --muted: #667085;
+  --subtle: #98a2b3;
+  --line: #dfe4ea;
+  --accent: #3157d5;
+  --accent-soft: #e9edff;
+  --accent-ink: #2849b8;
+  --success: #16794b;
+  --warning: #b54708;
+  --badge-bg: #eef2f6;
+  --badge-fg: #344054;
+  --mark: #fff2c6;
+  --shadow: 0 18px 45px rgba(16, 24, 40, .08);
 }
-html[data-theme="dark"]{
-  --paper:#14130f; --card:#1c1a15; --ink:#ece7dd; --muted:#9c9486; --faint:#7d7568;
-  --rule:#2e2a22; --rule-soft:#24211b;
-  --accent:#e08a5f; --up:#5fb98d; --down:#e0705c; --mark:#3a2f1c;
-  --shadow:none;
+
+html[data-theme="dark"] {
+  --page: #0d1117;
+  --surface: #151b23;
+  --surface-soft: #1d2632;
+  --ink: #edf1f7;
+  --muted: #a6b0c0;
+  --subtle: #7d899a;
+  --line: #2a3544;
+  --accent: #8ba3ff;
+  --accent-soft: #1d2b57;
+  --accent-ink: #b7c5ff;
+  --success: #55c795;
+  --warning: #f5a15f;
+  --badge-bg: #25303e;
+  --badge-fg: #d7deea;
+  --mark: #493b16;
+  --shadow: 0 22px 60px rgba(0, 0, 0, .32);
 }
-@media (prefers-color-scheme: dark){
-  html:not([data-theme="light"]){
-    --paper:#14130f; --card:#1c1a15; --ink:#ece7dd; --muted:#9c948e; --faint:#7d7568;
-    --rule:#2e2a22; --rule-soft:#24211b;
-    --accent:#e08a5f; --up:#5fb98d; --down:#e0705c; --mark:#3a2f1c;
-    --shadow:none;
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]) {
+    --page: #0d1117;
+    --surface: #151b23;
+    --surface-soft: #1d2632;
+    --ink: #edf1f7;
+    --muted: #a6b0c0;
+    --subtle: #7d899a;
+    --line: #2a3544;
+    --accent: #8ba3ff;
+    --accent-soft: #1d2b57;
+    --accent-ink: #b7c5ff;
+    --success: #55c795;
+    --warning: #f5a15f;
+    --badge-bg: #25303e;
+    --badge-fg: #d7deea;
+    --mark: #493b16;
+    --shadow: 0 22px 60px rgba(0, 0, 0, .32);
   }
 }
-/* Повышенный контраст: уважает текущую тему, убирает полутона и заливки. */
-html[data-contrast="on"]{
-  --muted:#000; --faint:#000; --rule:#000; --rule-soft:#000; --card:#fff; --paper:#fff; --ink:#000;
-  --mark:#ffe9a8; --shadow:none;
+
+html[data-contrast="on"] {
+  --muted: var(--ink);
+  --subtle: var(--ink);
+  --line: currentColor;
 }
-html[data-contrast="on"][data-theme="dark"],
-html[data-contrast="on"]:not([data-theme="light"]) .dark-probe{}
-@media (prefers-color-scheme: dark){
-  html[data-contrast="on"]:not([data-theme="light"]){
-    --muted:#fff; --faint:#fff; --rule:#fff; --rule-soft:#fff; --card:#000; --paper:#000; --ink:#fff;
-    --mark:#4a3a10;
-  }
+
+* { box-sizing: border-box; margin: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--page);
+  color: var(--ink);
+  font: 14px/1.48 Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  padding-bottom: 5rem;
+  text-rendering: optimizeLegibility;
 }
-html[data-contrast="on"][data-theme="dark"]{
-  --muted:#fff; --faint:#fff; --rule:#fff; --rule-soft:#fff; --card:#000; --paper:#000; --ink:#fff;
-  --mark:#4a3a10;
+
+#progress {
+  position: fixed;
+  inset: 0 auto auto 0;
+  z-index: 100;
+  width: 0;
+  height: 3px;
+  background: var(--accent);
 }
-html[data-contrast="on"] .card,
-html[data-contrast="on"] table,
-html[data-contrast="on"] .bar{border-width:2px}
-/* В контрасте фоновая переменная становится сплошной, и заливка code съела бы
-   собственный текст. Здесь чип рисуется рамкой, а не фоном. */
+
+.sitebar {
+  height: 56px;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--page) 88%, transparent);
+  backdrop-filter: blur(16px);
+}
+
+.sitebar-inner {
+  width: min(1180px, calc(100% - 40px));
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.brand {
+  color: var(--ink);
+  font-weight: 760;
+  letter-spacing: -.025em;
+  text-decoration: none;
+}
+
+.brand span { color: var(--subtle); font-weight: 500; }
+.site-actions, .controls { display: flex; align-items: center; gap: 8px; }
+.back-link { color: var(--muted); font-size: .9rem; text-decoration: none; }
+.back-link:hover { color: var(--ink); }
+
+.controls button {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+}
+
+main { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+a { color: var(--accent-ink); text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent); text-underline-offset: 3px; }
+a:hover { color: var(--accent); }
+
+.masthead {
+  min-height: 280px;
+  padding: 38px 0 32px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(270px, .72fr);
+  gap: clamp(48px, 8vw, 104px);
+  align-items: end;
+}
+
+.issue-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 16px;
+  color: var(--accent-ink);
+  font-size: .85rem;
+  font-weight: 650;
+}
+
+.issue-label::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 5px var(--accent-soft);
+}
+
+h1 {
+  max-width: 840px;
+  font-size: clamp(2.45rem, 4.8vw, 4.15rem);
+  line-height: .95;
+  letter-spacing: -.065em;
+  font-weight: 760;
+}
+
+h1 .win { color: var(--accent); display: block; }
+.deck {
+  max-width: 750px;
+  margin-top: 20px;
+  color: var(--muted);
+  font-size: clamp(.96rem, 1.25vw, 1.08rem);
+  line-height: 1.5;
+}
+
+.issue-facts { border-top: 1px solid var(--line); }
+.fact {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.fact span { color: var(--muted); font-size: .88rem; }
+.fact strong { text-align: right; font-size: .9rem; }
+
+.toc-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  margin-inline: calc(50% - 50vw);
+  padding-inline: max(20px, calc((100vw - 1180px) / 2));
+  border-block: 1px solid var(--line);
+  background: color-mix(in srgb, var(--page) 91%, transparent);
+  backdrop-filter: blur(18px);
+}
+
+nav.toc {
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+nav.toc::-webkit-scrollbar { display: none; }
+nav.toc a {
+  flex: none;
+  padding: 8px 12px;
+  border-radius: 9px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: .88rem;
+  font-weight: 550;
+}
+nav.toc a:hover { background: var(--surface-soft); color: var(--ink); }
+nav.toc .n {
+  margin-left: 5px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: .72rem;
+}
+
+section { scroll-margin-top: 70px; margin: 52px 0; }
+.section-kicker {
+  margin-bottom: 14px;
+  color: var(--accent-ink);
+  font-size: .78rem;
+  font-weight: 720;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+h2 {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: clamp(1.5rem, 2.6vw, 2.08rem);
+  line-height: 1.05;
+  letter-spacing: -.045em;
+}
+h2 .count {
+  color: var(--subtle);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.section-intro, .rank-note {
+  max-width: 710px;
+  margin-bottom: 24px;
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+.brief-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(280px, .7fr);
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.primary-brief {
+  position: relative;
+  overflow: hidden;
+  min-height: 250px;
+  padding: clamp(24px, 3vw, 34px);
+  border-radius: 18px;
+  background: #17213a;
+  color: #f6f8fc;
+  box-shadow: var(--shadow);
+}
+.primary-brief::after {
+  content: "";
+  position: absolute;
+  right: -90px;
+  bottom: -140px;
+  width: 380px;
+  height: 380px;
+  border: 1px solid rgba(139, 163, 255, .25);
+  border-radius: 50%;
+  box-shadow: 0 0 0 55px rgba(139, 163, 255, .06), 0 0 0 110px rgba(139, 163, 255, .035);
+}
+.primary-brief > * { position: relative; z-index: 1; }
+.primary-brief .label { color: #9fb1ff; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.primary-brief h3 { max-width: 660px; margin-top: 22px; font-size: clamp(1.85rem, 3.4vw, 3.15rem); line-height: 1.08; letter-spacing: -.035em; }
+.primary-brief h3 { margin-top: 14px; font-size: clamp(1.6rem, 2.65vw, 2.45rem); }
+.primary-brief p { max-width: 650px; margin-top: 14px; color: #bdc7d8; font-size: .97rem; }
+.primary-brief .takeaway { margin-top: 18px; color: #fff; font-weight: 650; }
+
+.metrics { display: grid; gap: 8px; }
+.metric {
+  min-height: 76px;
+  padding: 14px 18px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+}
+.metric strong { display: block; font-size: 1.5rem; line-height: 1.05; letter-spacing: -.035em; }
+.metric span { display: block; margin-top: 5px; color: var(--muted); font-size: .8rem; }
+
+.highlights {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  margin-top: 30px;
+  border-block: 1px solid var(--line);
+}
+.highlight { padding: 18px 20px 20px 0; }
+.highlight + .highlight { padding-left: 20px; border-left: 1px solid var(--line); }
+.highlight .number { color: var(--subtle); font-size: .82rem; font-weight: 700; }
+.highlight h3 { margin-top: 10px; font-size: 1.08rem; line-height: 1.25; letter-spacing: -.018em; }
+.highlight p { margin-top: 7px; color: var(--muted); font-size: .86rem; }
+.highlight a { display: inline-block; margin-top: 10px; font-size: .82rem; font-weight: 650; text-decoration: none; }
+
+.editor-picks {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border-block: 1px solid var(--line);
+}
+
+.popular-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 36px;
+  margin-top: 26px;
+}
+.popular-group { border-top: 2px solid var(--ink); }
+.popular-heading {
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.popular-heading h3 { font-size: .96rem; letter-spacing: -.015em; }
+.popular-heading a { font-size: .8rem; font-weight: 650; text-decoration: none; }
+.popular-row {
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr);
+  gap: 16px;
+  min-height: 118px;
+  padding: 17px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: start;
+}
+.popular-score {
+  display: inline-flex;
+  justify-content: center;
+  padding: 6px 7px;
+  border-radius: 8px;
+  background: var(--surface-soft);
+  color: var(--accent-ink);
+  font-size: .78rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+.popular-row h4 { font-size: .9rem; line-height: 1.3; }
+.popular-row h4 a { color: var(--ink); text-decoration: none; }
+.popular-row h4 a:hover { color: var(--accent); }
+.popular-row p { margin-top: 5px; color: var(--muted); font-size: .78rem; line-height: 1.42; }
+.editor-mark {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--accent-ink);
+  font-size: .7rem;
+  font-weight: 700;
+}
+.popular-row.featured .popular-score { background: var(--accent); color: #fff; }
+
+.official-overview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 36px;
+  margin-top: 26px;
+}
+.official-overview article {
+  padding: 20px 0 22px;
+  border-block: 2px solid var(--ink);
+}
+.official-overview article + article { border-top-color: var(--accent); }
+.official-stat {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--muted);
+  font-size: .78rem;
+}
+.official-stat strong { color: var(--ink); text-align: right; }
+.official-overview h3 { margin-top: 14px; font-size: .92rem; }
+.official-overview h3 a { color: var(--ink); text-decoration: none; }
+.official-overview h3 a:hover { color: var(--accent); }
+.official-overview p { margin-top: 4px; color: var(--muted); font-size: .78rem; }
+.pick {
+  padding: 18px 20px 20px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.pick + .pick { padding-left: 20px; border-left: 1px solid var(--line); }
+.pick .kind { color: var(--accent-ink); font-size: .76rem; font-weight: 700; }
+.pick h3 { margin-top: 10px; font-size: 1.02rem; line-height: 1.25; }
+.pick p { margin-top: 7px; color: var(--muted); font-size: .84rem; }
+.pick a { display: inline-block; margin-top: 10px; font-size: .82rem; font-weight: 650; text-decoration: none; }
+
+#official, #skills, #plugins, #arts, #periph, #sources { max-width: 920px; margin-inline: auto; }
+
+.block {
+  padding: 22px 0 25px;
+  border-top: 1px solid var(--line);
+}
+.block:last-child { border-bottom: 1px solid var(--line); }
+.block h3 { margin-bottom: 12px; font-size: clamp(1.02rem, 1.6vw, 1.28rem); line-height: 1.3; letter-spacing: -.02em; }
+.block h3 .src { color: var(--subtle); font-size: .82rem; font-weight: 500; letter-spacing: 0; }
+.block p + p, .block p + ul, .block ul + p { margin-top: 12px; }
+.block ul { padding-left: 1.25rem; display: grid; gap: 7px; }
+.block li::marker { color: var(--accent); }
+.block .g { margin-top: 20px; font-size: .84rem; font-weight: 720; color: var(--ink); }
+
+.item {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+  padding: 17px 0 19px;
+  border-top: 1px solid var(--line);
+}
+.item:last-of-type { border-bottom: 1px solid var(--line); }
+.stars, .pts {
+  justify-self: stretch;
+  padding: 7px 8px;
+  border-radius: 8px;
+  background: var(--badge-bg);
+  color: var(--badge-fg);
+  text-align: center;
+  font-size: .82rem;
+  font-weight: 720;
+  font-variant-numeric: tabular-nums;
+}
+.stars.hot { background: var(--accent-soft); color: var(--accent-ink); }
+.pts small { display: block; color: var(--muted); font-size: .58rem; font-weight: 500; letter-spacing: .06em; }
+.item h4 { margin-bottom: 6px; font-size: .94rem; line-height: 1.32; }
+.item h4 a { color: var(--ink); text-decoration: none; }
+.item h4 a:hover { color: var(--accent); }
+.item p { color: var(--muted); font-size: .85rem; }
+.item p b { color: var(--ink); }
+.note { color: var(--muted); font-style: italic; font-weight: 400; }
+.tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: .64rem;
+  font-style: normal;
+  font-weight: 650;
+  vertical-align: .14em;
+  white-space: nowrap;
+}
+.tag.warm { color: var(--warning); }
+
+h3.tail-h { margin: 42px 0 14px; color: var(--muted); font-size: .82rem; letter-spacing: .05em; text-transform: uppercase; }
+ul.tail { list-style: none; padding: 0; border-top: 1px solid var(--line); }
+ul.tail li {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 64px minmax(150px, auto) minmax(0, 1fr);
+  gap: 14px;
+  font-size: .9rem;
+}
+ul.tail .st { color: var(--accent-ink); font-weight: 700; font-variant-numeric: tabular-nums; }
+ul.tail .st { grid-column: 1; grid-row: 1 / span 2; }
+ul.tail li > a { grid-column: 2 / span 2; grid-row: 1; }
+ul.tail .tag { grid-column: 2; grid-row: 2; justify-self: start; margin-left: 0; }
+ul.tail .desc { grid-column: 3; grid-row: 2; min-width: 0; }
+.othersrc { margin-top: 20px; color: var(--muted); font-size: .9rem; font-style: italic; }
+mark { padding: 1px 3px; border-radius: 3px; background: var(--mark); color: inherit; }
+
+.catalog-collapsed > .item:nth-of-type(n+4),
+.catalog-collapsed > .tail-h,
+.catalog-collapsed > .tail,
+.catalog-collapsed > .othersrc { display: none; }
+.catalog-collapsed.compact-blocks > .block { display: none; }
+.catalog-collapsed > .item p {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+.catalog-toggle {
+  margin-top: 24px;
+  padding: 11px 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: .88rem;
+  font-weight: 650;
+}
+.catalog-toggle:hover { border-color: var(--accent); color: var(--accent-ink); }
+
+.method-fold {
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+.method-fold > summary {
+  padding: 20px 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: var(--ink);
+  font-weight: 650;
+  cursor: pointer;
+  list-style: none;
+}
+.method-fold > summary::-webkit-details-marker { display: none; }
+.method-fold > summary::after { content: "+"; color: var(--subtle); font-size: 1.2rem; }
+.method-fold[open] > summary::after { content: "−"; }
+.method-body { padding: 8px 0 36px; }
+.method-body .block { border-top: 0; border-bottom: 1px solid var(--line); }
+
+.sources ul { padding-left: 1.2rem; display: grid; gap: 8px; word-break: break-word; }
+footer {
+  max-width: 920px;
+  margin: 72px auto 0;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .78rem;
+}
+
+@media (max-width: 900px) {
+  .masthead { grid-template-columns: 1fr; min-height: auto; gap: 44px; padding-top: 52px; }
+  .issue-facts { max-width: 520px; }
+  .brief-grid { grid-template-columns: 1fr; }
+  .metrics { grid-template-columns: repeat(3, 1fr); }
+  .metric { min-height: auto; }
+  .highlights, .editor-picks { grid-template-columns: 1fr; }
+  .popular-columns { grid-template-columns: 1fr; gap: 28px; }
+  .official-overview { grid-template-columns: 1fr; gap: 22px; }
+  .highlight { padding: 26px 0; }
+  .highlight + .highlight { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
+}
+
+@media (max-width: 640px) {
+  body { font-size: 13.5px; }
+  main, .sitebar-inner { width: min(100% - 28px, 1180px); }
+  .sitebar { height: 56px; }
+  .back-link { display: none; }
+  .masthead { padding: 42px 0 36px; }
+  h1 { font-size: clamp(2.35rem, 13vw, 3.7rem); }
+  .deck { margin-top: 20px; }
+  .toc-wrap { padding-inline: 14px; }
+  section { margin: 68px 0; }
+  .brief-grid { margin-top: 24px; }
+  .primary-brief { min-height: auto; border-radius: 18px; }
+  .metrics { grid-template-columns: 1fr; }
+  .editor-picks { gap: 10px; }
+  .popular-row { min-height: 0; }
+  .item { grid-template-columns: 1fr; gap: 12px; }
+  .stars, .pts { justify-self: start; min-width: 72px; }
+  ul.tail li { grid-template-columns: 54px minmax(0, 1fr); }
+  ul.tail .st { grid-column: 1; grid-row: 1 / span 3; }
+  ul.tail li > a, ul.tail .tag, ul.tail .desc { grid-column: 2; }
+  ul.tail li > a { grid-row: 1; }
+  ul.tail .tag { grid-row: 2; }
+  ul.tail .desc { grid-row: 3; }
+}
+
+</style>
+<style>
+/* Дополнение к оформлению Agent Briefing: у дайджестов нет таблиц, списков и
+   полос сравнения, а этому выпуску они нужны. Всё на переменных образца,
+   поэтому тема и контраст переключаются вместе со всей страницей. */
+
+section > p, section > ul, section > ol, section > blockquote { font-size: 15px; line-height: 1.62; }
+section > p { margin: 0 0 .9rem; }
+section > ul, section > ol { margin: 0 0 1rem; padding-left: 1.2rem; }
+section li { margin: .35rem 0; }
+section h3 {
+  font-size: 1.05rem; margin: 1.9rem 0 .5rem; letter-spacing: -.01em;
+}
+section h4 {
+  font-size: .95rem; margin: 1.4rem 0 .4rem; letter-spacing: -.01em;
+}
+section h4 .st { color: var(--accent); font-weight: 600; }
+
+blockquote {
+  margin: 1.2rem 0; padding: 1rem 1.2rem;
+  background: var(--surface-soft); border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0; color: var(--muted); font-size: 14px;
+}
+blockquote p { margin: 0 0 .7rem; }
+blockquote p:last-child { margin: 0; }
+
+.panel {
+  margin: 1.3rem 0; padding: 1.1rem 1.2rem;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+}
+.panel h4 { margin: 0 0 .5rem; }
+.panel > :last-child { margin-bottom: 0; }
+
+/* Таблицы тянутся на всю ширину и прокручиваются в узком окне. */
+.tw { overflow-x: auto; margin: 1.2rem 0; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: .55rem .75rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+th {
+  font-size: 11px; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--subtle); white-space: nowrap; font-weight: 600;
+}
+tbody tr:last-child td { border-bottom: none; }
+td.num { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; white-space: nowrap; }
+.up { color: var(--success); font-weight: 600; }
+.down { color: var(--warning); font-weight: 600; }
+
+/* Полосы сравнения: бледная — июньский замер, плотная — сентябрьский.
+   Числа всегда напечатаны рядом, полоса лишь помогает сравнить глазами. */
+.bars { margin: 1.4rem 0; display: grid; gap: .95rem; }
+.brow { display: grid; grid-template-columns: minmax(0, 16rem) 1fr; gap: .3rem 1rem; align-items: center; }
+@media (max-width: 760px) { .brow { grid-template-columns: 1fr; } }
+.brow .bname {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.5px; word-break: break-all; color: var(--muted);
+}
+.bpair { display: grid; gap: .25rem; }
+.bar { position: relative; height: 1.32rem; border: 1px solid var(--line); border-radius: 4px; }
+.bar i { position: absolute; inset: 0 auto 0 0; display: block; border-radius: 3px; }
+.bar.then i { background: var(--badge-bg); }
+.bar.now  i { background: var(--accent); opacity: .8; }
+.bar.now.fell i { background: var(--warning); opacity: .8; }
+.bar span {
+  position: absolute; top: 50%; transform: translateY(-50%); left: .3rem;
+  font: 600 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink);
+  background: var(--page); padding: .16rem .32rem; border-radius: 3px;
+}
+.bar span.out { left: auto; right: .3rem; color: var(--muted); }
+html[data-contrast="on"] .bar span { border: 1px solid currentColor; }
 html[data-contrast="on"] code,
-html[data-contrast="on"] mark{background:transparent;border:1px solid currentColor;padding:0 .28em}
-/* Подложка цветом страницы, а не прозрачная: в контрасте заливка полосы
-   сплошная, и прозрачная подпись слилась бы с ней. */
-html[data-contrast="on"] .bar span{background:var(--paper);border:1px solid currentColor}
+html[data-contrast="on"] mark { border: 1px solid currentColor; }
 
-*,*::before,*::after{box-sizing:border-box}
-html{color-scheme:light}
-html[data-theme="dark"]{color-scheme:dark}
-@media (prefers-color-scheme: dark){html:not([data-theme="light"]){color-scheme:dark}}
-body{
-  margin:0;background:var(--paper);color:var(--ink);
-  font:400 17px/1.62 "Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
-  -webkit-font-smoothing:antialiased;letter-spacing:.002em;
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .88em;
+  background: var(--surface-soft); padding: .08em .32em; border-radius: 4px;
 }
-.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em}
-code{
-  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;
-  background:var(--rule-soft);padding:.08em .34em;border-radius:4px;
+.srcs { columns: 2; column-gap: 2rem; padding-left: 1.1rem; }
+@media (max-width: 760px) { .srcs { columns: 1; } }
+.srcs li {
+  break-inside: avoid; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px;
 }
-a{color:inherit;text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:.18em}
-a:hover{color:var(--accent)}
-mark{background:var(--mark);color:inherit;padding:.02em .16em;border-radius:3px}
-
-/* ── прогресс и переключатели ── */
-#progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:60}
-.tools{position:fixed;top:.85rem;right:.9rem;display:flex;gap:.4rem;z-index:61}
-.tools button{
-  font:600 12px/1 ui-monospace,Menlo,monospace;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--muted);background:var(--card);border:1px solid var(--rule);border-radius:999px;
-  padding:.5rem .8rem;cursor:pointer;box-shadow:var(--shadow);
-}
-.tools button:hover{color:var(--ink);border-color:var(--ink)}
-.tools button[aria-pressed="true"]{color:var(--accent);border-color:var(--accent)}
-
-/* ── ширина: основной блок держит 70–80 % окна, потолок только против 4K ── */
-main{width:min(78vw,1460px);margin:0 auto;padding:0 1.1rem 6rem}
-@media(max-width:1100px){main{width:92vw}}
-@media(max-width:640px){main{width:100%;padding:0 1rem 4rem}}
-main > *{max-width:none}
-
-header.top{padding:5rem 0 2.2rem;border-bottom:2px solid var(--ink)}
-.kicker{
-  font:600 12px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--accent);margin:0 0 1.1rem;
-}
-h1{
-  font-size:clamp(2.1rem,4.6vw,3.5rem);line-height:1.06;letter-spacing:-.02em;margin:0 0 1.1rem;
-  font-weight:700;
-}
-.deck{font-size:clamp(1.06rem,1.7vw,1.3rem);color:var(--muted);margin:0 0 1.6rem}
-.stamps{display:flex;flex-wrap:wrap;gap:.5rem 2.2rem;font-size:.94rem;color:var(--muted)}
-.stamps b{color:var(--ink);font-weight:600}
-
-nav.toc{
-  position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:1px solid var(--rule);
-  margin-bottom:2.6rem;padding:.75rem 0;display:flex;gap:1.1rem;overflow-x:auto;
-  scrollbar-width:none;font-size:.9rem;
-}
-nav.toc::-webkit-scrollbar{display:none}
-nav.toc a{white-space:nowrap;text-decoration:none;color:var(--muted)}
-nav.toc a:hover,nav.toc a.here{color:var(--accent)}
-
-section{padding:2.6rem 0;border-top:1px solid var(--rule-soft)}
-section:first-of-type{border-top:none}
-h2{font-size:clamp(1.5rem,2.6vw,2.05rem);line-height:1.15;letter-spacing:-.015em;margin:0 0 .5rem;font-weight:700}
-h3{font-size:1.16rem;margin:2rem 0 .5rem;font-weight:700}
-h4{font-size:1.02rem;margin:1.5rem 0 .4rem;font-weight:700}
-p{margin:0 0 1.05rem}
-.lead{font-size:1.1rem}
-ul,ol{margin:0 0 1.1rem;padding-left:1.3rem}
-li{margin:.4rem 0}
-.note{color:var(--muted);font-size:.95rem}
-
-blockquote{
-  margin:1.4rem 0;padding:1rem 1.3rem;border-left:3px solid var(--accent);
-  background:var(--card);color:var(--muted);font-size:.97rem;
-}
-blockquote p:last-child{margin:0}
-
-.card{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:1.3rem 1.4rem;box-shadow:var(--shadow)}
-.card + .card{margin-top:1rem}
-
-/* ── таблицы: на всю ширину, с горизонтальной прокруткой в узком окне ── */
-.tw{overflow-x:auto;margin:1.3rem 0}
-table{width:100%;border-collapse:collapse;font-size:.97rem}
-th,td{text-align:left;padding:.62rem .8rem;border-bottom:1px solid var(--rule-soft);vertical-align:top}
-th{
-  font:600 11px/1.3 ui-monospace,Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--muted);border-bottom:1px solid var(--rule);white-space:nowrap;
-}
-tbody tr:last-child td{border-bottom:none}
-td.num{font-family:ui-monospace,Menlo,monospace;white-space:nowrap}
-.up{color:var(--up);font-weight:600}
-.down{color:var(--down);font-weight:600}
-
-/* ── полоса дельты: «тогда» бледная, «сейчас» плотная ── */
-.bars{margin:1.5rem 0;display:grid;gap:1rem}
-.row{display:grid;grid-template-columns:minmax(0,17rem) 1fr;gap:.35rem 1.1rem;align-items:center}
-@media(max-width:760px){.row{grid-template-columns:1fr}}
-.row .name{font-family:ui-monospace,Menlo,monospace;font-size:.88rem;word-break:break-all}
-.pair{display:grid;gap:.28rem}
-.bar{position:relative;height:1.28rem;border:1px solid var(--rule);border-radius:3px;background:transparent}
-.bar i{position:absolute;inset:0 auto 0 0;display:block;border-radius:2px}
-.bar.then i{background:var(--rule);}
-.bar.now  i{background:var(--accent);opacity:.85}
-.bar.now.fell i{background:var(--down);opacity:.75}
-/* Подписи лежат поверх полосы, а заливка у длинных полос доходит до края —
-   поэтому у обеих своя подложка: читаются в любой теме и при любой длине. */
-.bar span{
-  position:absolute;top:50%;transform:translateY(-50%);left:.35rem;
-  font:600 11px/1 ui-monospace,Menlo,monospace;color:var(--ink);
-  background:var(--card);padding:.16rem .34rem;border-radius:3px;
-}
-.bar span.out{left:auto;right:.35rem;color:var(--muted)}
-
-footer{border-top:2px solid var(--ink);padding:2.2rem 0 0;color:var(--muted);font-size:.93rem}
-.src-list{columns:2;column-gap:2.4rem}
-@media(max-width:760px){.src-list{columns:1}}
-.src-list li{break-inside:avoid;font-family:ui-monospace,Menlo,monospace;font-size:.84rem}
 </style>
 <!--general:head-->
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://paveldiordits.site/presentations/claude-w23-peremer.html">
 <meta property="og:site_name" content="General · paveldiordits.site">
-<meta property="og:title" content="Неделя 23 экосистемы Claude — снимок и что с ним стало">
+<meta property="og:title" content="Неделя 23 экосистемы Claude — снимок и перемер">
 <meta property="og:description" content="Июньский срез популярных репозиториев и навыков Claude за неделю 28.05–04.06, перемеренный три месяца спустя: недельный рейтинг не пережил квартала, а у трёх позиций счётчик звёзд пошёл вниз.">
 <meta property="og:image" content="https://paveldiordits.site/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Неделя 23 экосистемы Claude — снимок и что с ним стало">
+<meta name="twitter:title" content="Неделя 23 экосистемы Claude — снимок и перемер">
 <meta name="twitter:description" content="Июньский срез популярных репозиториев и навыков Claude за неделю 28.05–04.06, перемеренный три месяца спустя: недельный рейтинг не пережил квартала, а у трёх позиций счётчик звёзд пошёл вниз.">
 <meta name="twitter:image" content="https://paveldiordits.site/og.png">
 <link rel="canonical" href="https://paveldiordits.site/presentations/claude-w23-peremer.html">
 <!--/general:head-->
-</head>
-<body>
+</head><body>
 <div id="progress" aria-hidden="true"></div>
-<div class="tools">
-  <button id="themeBtn" type="button" aria-pressed="false">Тема</button>
-  <button id="contrastBtn" type="button" aria-pressed="false">Контраст</button>
+<div class="controls">
+  <button id="themeBtn" aria-pressed="false" aria-label="Переключить тему" title="Тема">◐</button>
+  <button id="contrastBtn" aria-pressed="false" aria-label="Повысить контраст" title="Контраст">◩</button>
 </div>
-
 <main>
-<header class="top">
-  <p class="kicker">Экосистема Claude · неделя 28.05 – 04.06.2026 · перемер 04.09.2026</p>
-  <h1>Снимок недели и что с ним стало за три месяца</h1>
-  <p class="deck">Два июньских обзора — популярные репозитории и популярные навыки — сведены вместе
-  и перемерены. Рядом с числом «тогда» стоит число «сейчас», снятое поштучно через GitHub API.</p>
-  <div class="stamps">
-    <span>Окно наблюдения <b>28.05 – 04.06.2026</b></span>
-    <span>Перемер <b>04.09.2026</b></span>
-    <span>Проверено <b>25 репозиториев</b></span>
-    <span>Лидер по росту <b>×31,3</b></span>
+<header class="masthead">
+  <div>
+    <p class="issue-label">Agent Briefing · спецвыпуск</p>
+    <h1>Снимок недели <span class="win">и перемер</span></h1>
+    <p class="deck">Июньский срез популярных репозиториев и навыков Claude, проверенный три месяца спустя: рядом с числом «тогда» стоит число «сейчас».</p>
+  </div>
+  <div class="issue-facts" aria-label="Параметры выпуска">
+    <div class="fact"><span>Окно наблюдения</span><strong>28.05 – 04.06.2026</strong></div>
+    <div class="fact"><span>Перемер</span><strong>04.09.2026</strong></div>
+    <div class="fact"><span>Проверено</span><strong>25 репозиториев</strong></div>
+    <div class="fact"><span>Лидер по росту</span><strong>×31,3</strong></div>
   </div>
 </header>
 
-<nav class="toc" aria-label="Разделы">
-  <a href="#glavnoe">Главный вывод</a>
-  <a href="#prosadka">Просадка звёзд</a>
-  <a href="#t1">Мульти-модельность</a>
-  <a href="#t2">Память</a>
-  <a href="#t3">Skills вне кода</a>
-  <a href="#t4">Правила агентов</a>
-  <a href="#t5">Обвязка и UX</a>
-  <a href="#giants">Зрелые репозитории</a>
-  <a href="#gloss">Глоссарий</a>
-  <a href="#src">Источники</a>
-</nav>
-
-<section id="metod">
-  <h2>Как читать этот разбор</h2>
-  <p class="lead">Исходные обзоры были снимками: «сколько звёзд сейчас». Снимку три месяца, поэтому
-  здесь он не пересказан, а перемерен. Так обзор перестаёт быть устаревшим и становится проверяемым:
-  видно не только что выстрелило за неделю, но и что из этого пережило квартал.</p>
-  <blockquote>
-    <p><b>Метод исходного среза.</b> Через GitHub API брались репозитории, созданные за последние
-    семь дней, отсортированные по звёздам. Для свежего репозитория общее число звёзд примерно равно
-    набранному за неделю — поэтому «новизна ≈ популярность недели».</p>
-    <p><b>Метод перемера.</b> 4 сентября 2026, <code>GET /repos/{owner}/{repo}</code>, поля
-    <code>stargazers_count</code>, <code>language</code>, <code>archived</code>. Проверены все
-    18 репозиториев когорты недели и все 7 зрелых. Июньские числа взяты из исходных обзоров как есть
-    и отдельно не перепроверялись.</p>
-  </blockquote>
-</section>
+<div class="toc-wrap">
+  <nav class="toc" aria-label="Разделы">
+    <a href="#glavnoe">Главный вывод</a>
+    <a href="#prosadka">Просадка звёзд</a>
+    <a href="#t1">Мульти-модельность<span class="n">4</span></a>
+    <a href="#t2">Память<span class="n">2</span></a>
+    <a href="#t3">Skills вне кода<span class="n">9</span></a>
+    <a href="#t4">Правила агентов<span class="n">1</span></a>
+    <a href="#t5">Обвязка и UX<span class="n">2</span></a>
+    <a href="#giants">Зрелые<span class="n">7</span></a>
+    <a href="#gloss">Глоссарий</a>
+    <a href="#periph">Метод</a>
+    <a href="#sources">Источники</a>
+  </nav>
+</div>
 
 <section id="glavnoe">
-  <h2>Главный вывод: недельный рейтинг не пережил трёх месяцев</h2>
-  <p>Из тройки лидеров июня в сентябрьской тройке остался один.</p>
+  <p class="section-kicker">Перемер</p>
+  <h2>Недельный рейтинг не пережил трёх месяцев</h2>
+  <p class="section-intro">Исходные обзоры были снимками «сколько звёзд сейчас». Снимку три месяца, поэтому он не пересказан, а перемерен поштучно через GitHub API. Из тройки лидеров июня в сентябрьской тройке остался один.</p>
+
   <div class="tw">
   <table>
     <thead><tr><th>Место</th><th>Июнь, 04.06.2026</th><th>Сентябрь, 04.09.2026</th></tr></thead>
     <tbody>
-      <tr><td class="num">1</td><td class="mono">OnlyTerp/UltraCode-Shim ★258</td><td class="mono"><mark>zhnt/loushang ★1345</mark></td></tr>
-      <tr><td class="num">2</td><td class="mono">bernardohcrocha/persistia-for-claude-code ★225</td><td class="mono">OnlyTerp/UltraCode-Shim ★425</td></tr>
-      <tr><td class="num">3</td><td class="mono">Christian-Katzmann/app-it ★167</td><td class="mono">Chenruishuo/posterly ★396</td></tr>
+      <tr><td class="num">1</td><td class="num">OnlyTerp/UltraCode-Shim ★258</td><td class="num"><mark>zhnt/loushang ★1345</mark></td></tr>
+      <tr><td class="num">2</td><td class="num">bernardohcrocha/persistia-for-claude-code ★225</td><td class="num">OnlyTerp/UltraCode-Shim ★425</td></tr>
+      <tr><td class="num">3</td><td class="num">Christian-Katzmann/app-it ★167</td><td class="num">Chenruishuo/posterly ★396</td></tr>
     </tbody>
   </table>
   </div>
-  <p><code>zhnt/loushang</code> в июне стоял предпоследним — ★43, вскользь, как «вариация той же идеи
-  через MCP». За три месяца он вырос в 31 раз и стал самым звёздным репозиторием всей когорты недели.
-  Сегодня он описан как AI-native harness с маршрутизацией провайдеров под GPT, Claude, DeepSeek,
-  Qwen, Kimi, GLM и MiniMax, устойчивыми сессиями и управлением инструментами — то есть не обёртка
-  над чужой моделью, а самостоятельная оболочка. Тема мульти-модельности угадала направление, но не
-  угадала, кто по нему уйдёт дальше всех.</p>
-  <div class="card">
+
+  <p><code>zhnt/loushang</code> в июне стоял предпоследним — ★43, вскользь, как «вариация той же идеи через MCP». За три месяца он вырос в 31 раз и стал самым звёздным репозиторием всей когорты недели. Сегодня он описан как AI-native harness с маршрутизацией провайдеров под GPT, Claude, DeepSeek, Qwen, Kimi, GLM и MiniMax, устойчивыми сессиями и управлением инструментами — то есть не обёртка над чужой моделью, а самостоятельная оболочка. Тема мульти-модельности угадала направление, но не угадала, кто по нему уйдёт дальше всех.</p>
+
+  <div class="panel">
     <h4>Что из этого следует для чтения любых недельных срезов</h4>
-    <p style="margin:0">Звёзды за первую неделю жизни репозитория меряют не качество, а заметность
-    запуска: попадание в рассылку, удачный заголовок, тред на Hacker News. Позиция в недельном топе —
-    это ранг внутри окна наблюдения, а не прогноз. Проверяемым срез становится только при повторном
-    замере.</p>
+    <p>Звёзды за первую неделю жизни репозитория меряют не качество, а заметность запуска: попадание в рассылку, удачный заголовок, тред на Hacker News. Позиция в недельном топе — это ранг внутри окна наблюдения, а не прогноз. Проверяемым срез становится только при повторном замере.</p>
   </div>
 </section>
 
 <section id="prosadka">
+  <p class="section-kicker">Аномалия</p>
   <h2>Просадка звёзд: у трёх позиций счётчик пошёл вниз</h2>
-  <p>Звёзды обычно только растут — снять звезду руками можно, но массово это редкость. Тем заметнее
-  три исключения.</p>
+  <p class="section-intro">Звёзды обычно только растут — снять звезду руками можно, но массово это редкость. Тем заметнее три исключения.</p>
+
   <div class="tw">
   <table>
     <thead><tr><th>Репозиторий</th><th>Июнь</th><th>Сентябрь</th><th>Изменение</th></tr></thead>
     <tbody>
-      <tr><td class="mono">bernardohcrocha/persistia-for-claude-code</td><td class="num">★225</td><td class="num">★170</td><td class="num down">−55 · −24 %</td></tr>
-      <tr><td class="mono">razr001/align-dev</td><td class="num">★59</td><td class="num">★35</td><td class="num down">−24 · −41 %</td></tr>
-      <tr><td class="mono">YonghaoZhao722/cc-sanitizer</td><td class="num">★62</td><td class="num">★33</td><td class="num down">−29 · −47 %</td></tr>
+      <tr><td class="num">bernardohcrocha/persistia-for-claude-code</td><td class="num">★225</td><td class="num">★170</td><td class="num down">−55 · −24 %</td></tr>
+      <tr><td class="num">razr001/align-dev</td><td class="num">★59</td><td class="num">★35</td><td class="num down">−24 · −41 %</td></tr>
+      <tr><td class="num">YonghaoZhao722/cc-sanitizer</td><td class="num">★62</td><td class="num">★33</td><td class="num down">−29 · −47 %</td></tr>
     </tbody>
   </table>
   </div>
-  <p>Единственное правдоподобное объяснение падения на четверть и сильнее — <mark>чистка накрученных
-  звёзд</mark>: GitHub периодически удаляет аккаунты, торгующие звёздами, и вместе с ними исчезают их
-  отметки. Проверить это со стороны нельзя: API отдаёт только текущее число, историю удалённых
-  отметок он не показывает. Поэтому вывод помечен как <b>наиболее вероятное объяснение, а не
-  подтверждённый факт</b> — альтернатива (массовое разочарование и ручное снятие звёзд) выглядит
-  менее правдоподобно, но не исключена.</p>
-  <p>Практический смысл: недельный топ уязвим к накрутке ровно потому, что порог входа в него низкий.
-  Сто звёзд за неделю купить дёшево, и в снимке они неотличимы от настоящих. Второй замер их выдаёт.</p>
-  <p class="note"><code>kurikomi-labs/komi-learn</code> (★57 → ★79) за это время переведён в архив —
-  помечен владельцем как более не поддерживаемый.</p>
+
+  <p>Единственное правдоподобное объяснение падения на четверть и сильнее — <mark>чистка накрученных звёзд</mark>: GitHub периодически удаляет аккаунты, торгующие звёздами, и вместе с ними исчезают их отметки. Проверить это со стороны нельзя: API отдаёт только текущее число, историю удалённых отметок он не показывает. Поэтому вывод помечен как <strong>наиболее вероятное объяснение, а не подтверждённый факт</strong> — альтернатива (массовое разочарование и ручное снятие звёзд) выглядит менее правдоподобно, но не исключена.</p>
+
+  <p>Практический смысл: недельный топ уязвим к накрутке ровно потому, что порог входа в него низкий. Сто звёзд за неделю купить дёшево, и в снимке они неотличимы от настоящих. Второй замер их выдаёт.</p>
+
+  <p class="note"><code>kurikomi-labs/komi-learn</code> (★57 → ★79) за это время переведён в архив — помечен владельцем как более не поддерживаемый.</p>
 </section>
 
 <section id="t1">
-  <h2>Тема 1. Мульти-модельность: отвязать оболочку от вендора</h2>
-  <p><b>О чём тема.</b> Claude Code — это оболочка (harness): сам агент, терминальный цикл,
-  инструменты и работа с файлами. Модель, которая внутри думает, — отдельный слой. Тема недели была
-  в том, чтобы разорвать эту связку: заставить привычную оболочку работать на чужих моделях или
-  раздавать подзадачи нескольким моделям сразу.</p>
-  <p>Зачем это людям: оболочку хочется сохранить, потому что к ней привыкли и под неё написаны
-  скиллы, а за инференс — платить там, где дешевле, или там, где уже оплачено.</p>
+  <p class="section-kicker">Тема 1</p>
+  <h2>Мульти-модельность: отвязать оболочку от вендора <span class="count">4 репозитория</span></h2>
+  <p class="section-intro">Claude Code — это оболочка (harness): сам агент, терминальный цикл, инструменты и работа с файлами. Модель, которая внутри думает, — отдельный слой. Тема недели была в том, чтобы разорвать эту связку.</p>
 
-  <div class="bars" data-bars>
-    <div class="row"><div class="name">zhnt/loushang</div><div class="pair">
+  <p>Зачем это людям: оболочку хочется сохранить, потому что к ней привыкли и под неё написаны скиллы, а за инференс — платить там, где дешевле, или там, где уже оплачено.</p>
+
+  <div class="bars">
+    <div class="brow"><div class="bname">zhnt/loushang</div><div class="bpair">
       <div class="bar then" data-v="43"><span>★43</span><span class="out">июнь</span></div>
-      <div class="bar now"  data-v="1345"><span>★1345</span><span class="out">сентябрь · ×31,3</span></div></div></div>
-    <div class="row"><div class="name">OnlyTerp/UltraCode-Shim</div><div class="pair">
+      <div class="bar now" data-v="1345"><span>★1345</span><span class="out">сентябрь · ×31,3</span></div></div></div>
+    <div class="brow"><div class="bname">OnlyTerp/UltraCode-Shim</div><div class="bpair">
       <div class="bar then" data-v="258"><span>★258</span><span class="out">июнь</span></div>
-      <div class="bar now"  data-v="425"><span>★425</span><span class="out">сентябрь · ×1,6</span></div></div></div>
-    <div class="row"><div class="name">ethanhq/cc-fleet</div><div class="pair">
+      <div class="bar now" data-v="425"><span>★425</span><span class="out">сентябрь · ×1,6</span></div></div></div>
+    <div class="brow"><div class="bname">ethanhq/cc-fleet</div><div class="bpair">
       <div class="bar then" data-v="91"><span>★91</span><span class="out">июнь</span></div>
-      <div class="bar now"  data-v="211"><span>★211</span><span class="out">сентябрь · ×2,3</span></div></div></div>
-    <div class="row"><div class="name">mai-yyy/multi-llm-mcp</div><div class="pair">
+      <div class="bar now" data-v="211"><span>★211</span><span class="out">сентябрь · ×2,3</span></div></div></div>
+    <div class="brow"><div class="bname">mai-yyy/multi-llm-mcp</div><div class="bpair">
       <div class="bar then" data-v="38"><span>★38</span><span class="out">июнь</span></div>
-      <div class="bar now"  data-v="114"><span>★114</span><span class="out">сентябрь · ×3,0</span></div></div></div>
+      <div class="bar now" data-v="114"><span>★114</span><span class="out">сентябрь · ×3,0</span></div></div></div>
   </div>
 
-  <h4>OnlyTerp/UltraCode-Shim — Python, ★258 → ★425</h4>
-  <p>Лидер той недели. Локальный прокси, дающий режим ultracode поверх любой модели, которую вы уже
-  оплачиваете у другого провайдера. Настройка сводится к одному <code>config.json</code>, дальше
-  агент донастраивает себя через <code>AGENTS.md</code>. Самый прямолинейный ответ на задачу: ничего
-  не переписывать, подменить адрес модели.</p>
+  <h4><span class="st">★258 → ★425</span> · OnlyTerp/UltraCode-Shim <span class="tag">Python</span></h4>
+  <p>Лидер той недели. Локальный прокси, дающий режим ultracode поверх любой модели, которую вы уже оплачиваете у другого провайдера. Настройка сводится к одному <code>config.json</code>, дальше агент донастраивает себя через <code>AGENTS.md</code>. Самый прямолинейный ответ на задачу: ничего не переписывать, подменить адрес модели.</p>
 
-  <h4>ethanhq/cc-fleet — Go, ★91 → ★211</h4>
-  <p>«Флот» моделей. В отличие от простого прокси здесь акцент на оркестрацию: DeepSeek, GLM, Qwen,
-  Kimi и MiniMax поднимаются как полноценные тиммейты или как одноразовые (one-shot) сабагенты под
-  конкретную подзадачу, и несколько разных моделей работают параллельно под управлением одного
-  дирижёра.</p>
+  <h4><span class="st">★91 → ★211</span> · ethanhq/cc-fleet <span class="tag">Go</span></h4>
+  <p>«Флот» моделей. В отличие от простого прокси здесь акцент на оркестрацию: DeepSeek, GLM, Qwen, Kimi и MiniMax поднимаются как полноценные тиммейты или как одноразовые (one-shot) сабагенты под конкретную подзадачу, и несколько разных моделей работают параллельно под управлением одного дирижёра.</p>
 
-  <h4>mai-yyy/multi-llm-mcp и zhnt/loushang — две «вариации», оказавшиеся разными вещами</h4>
-  <p>В июне они выглядели одинаково: Claude дирижирует и вызывает другие модели как внешние
-  инструменты по протоколу MCP. Перемер показал разное. <code>multi-llm-mcp</code> остался
-  MCP-сервером и вырос втрое, до ★114. <code>loushang</code> перерос исходную рамку: сегодня это
-  самостоятельная оболочка с маршрутизацией провайдеров, устойчивыми сессиями, управлением
-  инструментами и прослеживаемой сдачей работы. Заявка не «подключить чужую модель к Claude Code»,
-  а <mark>«сделать свой Claude Code»</mark>.</p>
+  <h4>Две «вариации», оказавшиеся разными вещами</h4>
+  <p>В июне <code>mai-yyy/multi-llm-mcp</code> и <code>zhnt/loushang</code> выглядели одинаково: Claude дирижирует и вызывает другие модели как внешние инструменты по протоколу MCP. Перемер показал разное. <code>multi-llm-mcp</code> остался MCP-сервером и вырос втрое, до ★114. <code>loushang</code> перерос исходную рамку: сегодня это самостоятельная оболочка с маршрутизацией провайдеров, устойчивыми сессиями, управлением инструментами и прослеживаемой сдачей работы. Заявка не «подключить чужую модель к Claude Code», а <mark>«сделать свой Claude Code»</mark>.</p>
 
-  <div class="card">
-    <h4 style="margin-top:0">Термины</h4>
-    <ul style="margin-bottom:0">
-      <li><b>Proxy / shim</b> — промежуточный слой, перехватывающий запросы агента к модели и
-      перенаправляющий их в другую; агент подмены не замечает.</li>
-      <li><b>Multi-LLM orchestration</b> — один агент-дирижёр дробит задачу, раздаёт куски разным
-      моделям и собирает результат.</li>
-      <li><b>MCP (Model Context Protocol)</b> — открытый протокол подключения внешних инструментов и
-      серверов к агенту; здесь через него агент дёргает сторонние модели как инструмент.</li>
-      <li><b>One-shot субагент</b> — разовый дочерний агент на одну задачу, без состояния между
-      вызовами.</li>
+  <div class="panel">
+    <h4>Термины</h4>
+    <ul>
+      <li><strong>Proxy / shim</strong> — промежуточный слой, перехватывающий запросы агента к модели и перенаправляющий их в другую; агент подмены не замечает.</li>
+      <li><strong>Multi-LLM orchestration</strong> — один агент-дирижёр дробит задачу, раздаёт куски разным моделям и собирает результат.</li>
+      <li><strong>MCP (Model Context Protocol)</strong> — открытый протокол подключения внешних инструментов и серверов к агенту; здесь через него агент дёргает сторонние модели как инструмент.</li>
+      <li><strong>One-shot субагент</strong> — разовый дочерний агент на одну задачу, без состояния между вызовами.</li>
     </ul>
   </div>
 </section>
 
 <section id="t2">
-  <h2>Тема 2. Память и самообучение</h2>
-  <p><b>О чём тема.</b> У агента из коробки память живёт внутри сессии: закрыл — забыл. Персистентная
-  память — это файлы или база, переживающие перезапуск, чтобы агент помнил контекст, решения и ваши
-  привычки. Соседняя идея — самообучение: агент сам, без явных команд, копит наблюдения о том, как вы
-  работаете, и подстраивается.</p>
+  <p class="section-kicker">Тема 2</p>
+  <h2>Память и самообучение <span class="count">2 репозитория</span></h2>
+  <p class="section-intro">У агента из коробки память живёт внутри сессии: закрыл — забыл. Персистентная память — это файлы или база, переживающие перезапуск, чтобы агент помнил контекст, решения и ваши привычки.</p>
 
-  <div class="bars" data-bars>
-    <div class="row"><div class="name">bernardohcrocha/persistia-for-claude-code</div><div class="pair">
+  <div class="bars">
+    <div class="brow"><div class="bname">bernardohcrocha/persistia-for-claude-code</div><div class="bpair">
       <div class="bar then" data-v="225"><span>★225</span><span class="out">июнь</span></div>
       <div class="bar now fell" data-v="170"><span>★170</span><span class="out">сентябрь · −24 %</span></div></div></div>
-    <div class="row"><div class="name">kurikomi-labs/komi-learn</div><div class="pair">
+    <div class="brow"><div class="bname">kurikomi-labs/komi-learn</div><div class="bpair">
       <div class="bar then" data-v="57"><span>★57</span><span class="out">июнь</span></div>
-      <div class="bar now"  data-v="79"><span>★79</span><span class="out">сентябрь · архив</span></div></div></div>
+      <div class="bar now" data-v="79"><span>★79</span><span class="out">сентябрь · архив</span></div></div></div>
   </div>
 
-  <p><code>bernardohcrocha/persistia-for-claude-code</code> давал Claude Code персистентную память:
-  контекст и факты сохраняются между сессиями. В июне он был вторым по популярности за неделю, и это
-  читалось как подтверждение, что потеря памяти между запусками болезненна для тех, кто работает с
-  агентом ежедневно. Сегодня у него на четверть меньше звёзд, а сама ниша занята зрелым
-  <code>thedotmack/claude-mem</code> с ★93 164.</p>
+  <p><code>bernardohcrocha/persistia-for-claude-code</code> давал Claude Code персистентную память: контекст и факты сохраняются между сессиями. В июне он был вторым по популярности за неделю, и это читалось как подтверждение, что потеря памяти между запусками болезненна для тех, кто работает с агентом ежедневно. Сегодня у него на четверть меньше звёзд, а сама ниша занята зрелым <code>thedotmack/claude-mem</code> с ★93 164.</p>
 
-  <p><code>kurikomi-labs/komi-learn</code> обещал непрерывную память плюс самоулучшение, причём без
-  команд: агент сам учится тому, как вы работаете. Репозиторий заархивирован — заявка красивая, но
-  развития не получила.</p>
+  <p><code>kurikomi-labs/komi-learn</code> обещал непрерывную память плюс самоулучшение, причём без команд: агент сам учится тому, как вы работаете. Репозиторий заархивирован — заявка красивая, но развития не получила.</p>
 
-  <p><b>Вывод по теме за квартал.</b> Спрос на память подтвердился, но выиграли его не однонедельные
-  проекты, а зрелый инструмент.</p>
+  <p><strong>Вывод по теме за квартал.</strong> Спрос на память подтвердился, но выиграли его не однонедельные проекты, а зрелый инструмент.</p>
 </section>
 
 <section id="t3">
-  <h2>Тема 3. Skills вышли за пределы кода</h2>
-  <p><b>О чём тема.</b> Skill (навык) — переносимая единица поведения агента: папка с манифестом
-  <code>SKILL.md</code>, где описано, что навык делает и по каким триггерам запускается (часто как
-  слэш-команда <code>/имя</code>). Агент подхватывает навык и выполняет его как
-  мини-программу-инструкцию, не меняя самого агента. Формат сделал поведение агента модульным и
-  расшариваемым: навык публикуется на GitHub, и другой человек ставит его себе.</p>
-  <p>Главное наблюдение недели — формат ушёл из инженерных ниш в гуманитарные и научные. Перемер это
-  подтвердил: три из четырёх самых быстрорастущих позиций когорты — не про код.</p>
+  <p class="section-kicker">Тема 3</p>
+  <h2>Skills вышли за пределы кода <span class="count">9 репозиториев</span></h2>
+  <p class="section-intro">Skill (навык) — переносимая единица поведения агента: папка с манифестом <code>SKILL.md</code>, где описано, что навык делает и по каким триггерам запускается. Агент подхватывает навык и выполняет его как мини-программу-инструкцию, не меняя самого агента.</p>
 
-  <div class="bars" data-bars>
-    <div class="row"><div class="name">Chenruishuo/posterly · наука</div><div class="pair">
+  <p>Главное наблюдение недели — формат ушёл из инженерных ниш в гуманитарные и научные. Перемер это подтвердил: три из четырёх самых быстрорастущих позиций когорты — не про код.</p>
+
+  <div class="bars">
+    <div class="brow"><div class="bname">Chenruishuo/posterly · наука</div><div class="bpair">
       <div class="bar then" data-v="74"><span>★74</span><span class="out">июнь</span></div>
-      <div class="bar now"  data-v="396"><span>★396</span><span class="out">сентябрь · ×5,4</span></div></div></div>
-    <div class="row"><div class="name">Arenbai/SecSkills · безопасность</div><div class="pair">
+      <div class="bar now" data-v="396"><span>★396</span><span class="out">сентябрь · ×5,4</span></div></div></div>
+    <div class="brow"><div class="bname">Arenbai/SecSkills · безопасность</div><div class="bpair">
       <div class="bar then" data-v="86"><span>★86</span><span class="out">июнь</span></div>
-      <div class="bar now"  data-v="234"><span>★234</span><span class="out">сентябрь · ×2,7</span></div></div></div>
-    <div class="row"><div class="name">Christian-Katzmann/app-it · девтул</div><div class="pair">
+      <div class="bar now" data-v="234"><span>★234</span><span class="out">сентябрь · ×2,7</span></div></div></div>
+    <div class="brow"><div class="bname">Christian-Katzmann/app-it · девтул</div><div class="bpair">
       <div class="bar then" data-v="167"><span>★167</span><span class="out">июнь</span></div>
-      <div class="bar now"  data-v="217"><span>★217</span><span class="out">сентябрь · ×1,3</span></div></div></div>
-    <div class="row"><div class="name">LLMQuant/skills · квант-финансы</div><div class="pair">
+      <div class="bar now" data-v="217"><span>★217</span><span class="out">сентябрь · ×1,3</span></div></div></div>
+    <div class="brow"><div class="bname">LLMQuant/skills · квант-финансы</div><div class="bpair">
       <div class="bar then" data-v="69"><span>★69</span><span class="out">июнь</span></div>
-      <div class="bar now"  data-v="210"><span>★210</span><span class="out">сентябрь · ×3,0</span></div></div></div>
-    <div class="row"><div class="name">ayi-ai/ayi-nonviolent-communication · общение</div><div class="pair">
+      <div class="bar now" data-v="210"><span>★210</span><span class="out">сентябрь · ×3,0</span></div></div></div>
+    <div class="brow"><div class="bname">ayi-ai/ayi-nonviolent-communication · общение</div><div class="bpair">
       <div class="bar then" data-v="127"><span>★127</span><span class="out">июнь</span></div>
-      <div class="bar now"  data-v="176"><span>★176</span><span class="out">сентябрь · ×1,4</span></div></div></div>
-    <div class="row"><div class="name">temorozov/claude-tutors · образование</div><div class="pair">
+      <div class="bar now" data-v="176"><span>★176</span><span class="out">сентябрь · ×1,4</span></div></div></div>
+    <div class="brow"><div class="bname">temorozov/claude-tutors · образование</div><div class="bpair">
       <div class="bar then" data-v="83"><span>★83</span><span class="out">июнь</span></div>
-      <div class="bar now"  data-v="141"><span>★141</span><span class="out">сентябрь · ×1,7</span></div></div></div>
-    <div class="row"><div class="name">MrLee2R/Intelligrapher · научная графика</div><div class="pair">
+      <div class="bar now" data-v="141"><span>★141</span><span class="out">сентябрь · ×1,7</span></div></div></div>
+    <div class="brow"><div class="bname">MrLee2R/Intelligrapher · научная графика</div><div class="bpair">
       <div class="bar then" data-v="58"><span>★58</span><span class="out">июнь</span></div>
-      <div class="bar now"  data-v="110"><span>★110</span><span class="out">сентябрь · ×1,9</span></div></div></div>
-    <div class="row"><div class="name">wahahaazhe/KnowGT · девтул</div><div class="pair">
+      <div class="bar now" data-v="110"><span>★110</span><span class="out">сентябрь · ×1,9</span></div></div></div>
+    <div class="brow"><div class="bname">wahahaazhe/KnowGT · девтул</div><div class="bpair">
       <div class="bar then" data-v="41"><span>★41</span><span class="out">июнь</span></div>
-      <div class="bar now"  data-v="62"><span>★62</span><span class="out">сентябрь · ×1,5</span></div></div></div>
-    <div class="row"><div class="name">razr001/align-dev · девтул</div><div class="pair">
+      <div class="bar now" data-v="62"><span>★62</span><span class="out">сентябрь · ×1,5</span></div></div></div>
+    <div class="brow"><div class="bname">razr001/align-dev · девтул</div><div class="bpair">
       <div class="bar then" data-v="59"><span>★59</span><span class="out">июнь</span></div>
       <div class="bar now fell" data-v="35"><span>★35</span><span class="out">сентябрь · −41 %</span></div></div></div>
   </div>
 
   <h3>Общение и soft skills</h3>
-  <p><code>ayi-ai/ayi-nonviolent-communication</code> — навык ННО: ненасильственное общение, англ.
-  NVC, методика Маршалла Розенберга. Она предлагает отделять наблюдение от оценки, называть чувства и
-  потребности и формулировать просьбы. Агент помогает переписать резкое сообщение в бесконфликтное по
-  этой схеме. Кода в навыке нет вообще, и именно высокий рейтинг чисто гуманитарного навыка стал
-  сигналом, что Skills вышли в мейнстрим за пределы разработки.</p>
+  <p><code>ayi-ai/ayi-nonviolent-communication</code> — навык ННО: ненасильственное общение, англ. NVC, методика Маршалла Розенберга. Она предлагает отделять наблюдение от оценки, называть чувства и потребности и формулировать просьбы. Агент помогает переписать резкое сообщение в бесконфликтное по этой схеме. Кода в навыке нет вообще, и именно высокий рейтинг чисто гуманитарного навыка стал сигналом, что Skills вышли в мейнстрим за пределы разработки.</p>
 
   <h3>Наука и публикации</h3>
-  <p><code>Chenruishuo/posterly</code> — рост в 5,4 раза и третье место когорты сегодня. Генерация
-  научных постеров: агент собирает постер одним файлом HTML/CSS и рендерит его в PDF через
-  headless Chromium — браузер без интерфейса, используемый как движок печати. Закрывает типовую
-  академическую задачу «сверстать постер к конференции» без вёрстки руками. В июне он был седьмым по
-  звёздам: за квартал академическая ниша оказалась живее, чем выглядела в снимке.</p>
-  <p><code>LLMQuant/skills</code> — пакет навыков для квантовой аналитики: количественные методы в
-  трейдинге и исследованиях рынка. Узкопрофессиональная ниша, выросшая втрое.</p>
-  <p><code>MrLee2R/Intelligrapher</code> — навык научной графики: качественные иллюстрации и диаграммы
-  для публикаций. Соседняя с posterly ниша визуализации.</p>
+  <p><code>Chenruishuo/posterly</code> — рост в 5,4 раза и третье место когорты сегодня. Генерация научных постеров: агент собирает постер одним файлом HTML/CSS и рендерит его в PDF через headless Chromium — браузер без интерфейса, используемый как движок печати. Закрывает типовую академическую задачу «сверстать постер к конференции» без вёрстки руками. В июне он был седьмым по звёздам: за квартал академическая ниша оказалась живее, чем выглядела в снимке.</p>
+  <p><code>LLMQuant/skills</code> — пакет навыков для квантовой аналитики: количественные методы в трейдинге и исследованиях рынка. Узкопрофессиональная ниша, выросшая втрое.</p>
+  <p><code>MrLee2R/Intelligrapher</code> — навык научной графики: качественные иллюстрации и диаграммы для публикаций. Соседняя с posterly ниша визуализации.</p>
 
   <h3>Образование</h3>
-  <p><code>temorozov/claude-tutors</code> — навыки-репетиторы: агент разбивает тему, объясняет и
-  сопровождает обучение. Подтверждает спрос на агента-наставника, а не только агента-исполнителя.</p>
+  <p><code>temorozov/claude-tutors</code> — навыки-репетиторы: агент разбивает тему, объясняет и сопровождает обучение. Подтверждает спрос на агента-наставника, а не только агента-исполнителя.</p>
 
   <h3>Безопасность</h3>
-  <p><code>Arenbai/SecSkills</code> — навыки для пентеста по стандарту PTES (Penetration Testing
-  Execution Standard) — общепринятой методологии тестов на проникновение, от разведки до отчёта.
-  Показывает, что в формат заворачивают и строгие профессиональные методологии, а не только хелперы.
-  Инструмент <b>двойного назначения</b> (dual-use): применим и для защиты, и для атаки, поэтому
-  уместен только в легальном контексте — пентест по договору, CTF, обучение.</p>
+  <p><code>Arenbai/SecSkills</code> — навыки для пентеста по стандарту PTES (Penetration Testing Execution Standard) — общепринятой методологии тестов на проникновение, от разведки до отчёта. Показывает, что в формат заворачивают и строгие профессиональные методологии, а не только хелперы. Инструмент <strong>двойного назначения</strong> (dual-use): применим и для защиты, и для атаки, поэтому уместен только в легальном контексте — пентест по договору, CTF, обучение.</p>
 
   <h3>Девтул-навыки</h3>
-  <p><code>Christian-Katzmann/app-it</code> — самый звёздный навык недели в июне. Превращает
-  локальный проект в нативное macOS Dock-приложение без Electron, то есть без тяжёлого встроенного
-  браузерного движка: лёгкая нативная упаковка вместо привычного «обернём в Chromium».</p>
-  <p><code>wahahaazhe/KnowGT</code> — навык ежедневного брифинга по GitHub Trending: агент сам
-  собирает дайджест трендовых репозиториев и подаёт его.</p>
-  <p><code>razr001/align-dev</code> — генерирует общие coding standards и сам <code>SKILL.md</code>
-  сразу для нескольких агентов, «навык про навыки». Единственный из группы с просадкой счётчика.</p>
+  <p><code>Christian-Katzmann/app-it</code> — самый звёздный навык недели в июне. Превращает локальный проект в нативное macOS Dock-приложение без Electron, то есть без тяжёлого встроенного браузерного движка: лёгкая нативная упаковка вместо привычного «обернём в Chromium».</p>
+  <p><code>wahahaazhe/KnowGT</code> — навык ежедневного брифинга по GitHub Trending: агент сам собирает дайджест трендовых репозиториев и подаёт его.</p>
+  <p><code>razr001/align-dev</code> — генерирует общие coding standards и сам <code>SKILL.md</code> сразу для нескольких агентов, «навык про навыки». Единственный из группы с просадкой счётчика.</p>
 </section>
 
 <section id="t4">
-  <h2>Тема 4. Синхронизация правил агентов</h2>
-  <p><b>О чём тема.</b> У каждого агентного инструмента свой файл-инструкция:
-  <code>CLAUDE.md</code> у Claude Code, <code>AGENTS.md</code> как общий стандарт,
-  <code>.cursorrules</code> у Cursor, плюс Copilot, Windsurf, Cline, Aider, Gemini. Если работаешь
-  несколькими инструментами, правила расходятся. Тема — держать их согласованными из одного источника
-  правды.</p>
+  <p class="section-kicker">Тема 4</p>
+  <h2>Синхронизация правил агентов <span class="count">1 репозиторий</span></h2>
+  <p class="section-intro">У каждого агентного инструмента свой файл-инструкция: <code>CLAUDE.md</code> у Claude Code, <code>AGENTS.md</code> как общий стандарт, <code>.cursorrules</code> у Cursor, плюс Copilot, Windsurf, Cline, Aider, Gemini. Если работаешь несколькими инструментами, правила расходятся.</p>
 
-  <div class="bars" data-bars>
-    <div class="row"><div class="name">PanisHandsome/ai-rules-sync</div><div class="pair">
+  <div class="bars">
+    <div class="brow"><div class="bname">PanisHandsome/ai-rules-sync</div><div class="bpair">
       <div class="bar then" data-v="105"><span>★105</span><span class="out">июнь</span></div>
-      <div class="bar now"  data-v="119"><span>★119</span><span class="out">сентябрь · ×1,1</span></div></div></div>
+      <div class="bar now" data-v="119"><span>★119</span><span class="out">сентябрь · ×1,1</span></div></div></div>
   </div>
 
-  <p><code>PanisHandsome/ai-rules-sync</code> — JavaScript, без сторонних зависимостей.
-  Конвертер-синхронизатор: приводит к единому виду <code>AGENTS.md</code>, <code>CLAUDE.md</code>,
-  <code>.cursorrules</code> и форматы Copilot, Windsurf, Cline, Aider и Gemini. Один набор правил
-  раскатывается во все форматы. Популярность отражала фрагментацию рынка: люди пользуются несколькими
-  агентами сразу.</p>
-  <p>Рост за квартал самый скромный в подборке — плюс 13 %. Похоже, боль реальная, но разовая:
-  настроил однажды и забыл, возвращаться к инструменту незачем.</p>
+  <p><code>PanisHandsome/ai-rules-sync</code> — JavaScript, без сторонних зависимостей. Конвертер-синхронизатор: приводит к единому виду <code>AGENTS.md</code>, <code>CLAUDE.md</code>, <code>.cursorrules</code> и форматы Copilot, Windsurf, Cline, Aider и Gemini. Один набор правил раскатывается во все форматы. Популярность отражала фрагментацию рынка: люди пользуются несколькими агентами сразу.</p>
+  <p>Рост за квартал самый скромный в подборке — плюс 13 %. Похоже, боль реальная, но разовая: настроил однажды и забыл, возвращаться к инструменту незачем.</p>
 </section>
 
 <section id="t5">
-  <h2>Тема 5. Обвязка и UX вокруг агентов</h2>
-  <p><b>О чём тема.</b> Утилиты, которые не меняют мозги агента, а улучшают опыт работы с ним:
-  упаковка результата, мониторинг, починка раздражающих сбоев.</p>
+  <p class="section-kicker">Тема 5</p>
+  <h2>Обвязка и UX вокруг агентов <span class="count">2 репозитория</span></h2>
+  <p class="section-intro">Утилиты, которые не меняют мозги агента, а улучшают опыт работы с ним: упаковка результата, мониторинг, починка раздражающих сбоев.</p>
 
-  <div class="bars" data-bars>
-    <div class="row"><div class="name">ntd4996/agentpet</div><div class="pair">
+  <div class="bars">
+    <div class="brow"><div class="bname">ntd4996/agentpet</div><div class="bpair">
       <div class="bar then" data-v="50"><span>★50</span><span class="out">июнь</span></div>
-      <div class="bar now"  data-v="345"><span>★345</span><span class="out">сентябрь · ×6,9</span></div></div></div>
-    <div class="row"><div class="name">YonghaoZhao722/cc-sanitizer</div><div class="pair">
+      <div class="bar now" data-v="345"><span>★345</span><span class="out">сентябрь · ×6,9</span></div></div></div>
+    <div class="brow"><div class="bname">YonghaoZhao722/cc-sanitizer</div><div class="bpair">
       <div class="bar then" data-v="62"><span>★62</span><span class="out">июнь</span></div>
       <div class="bar now fell" data-v="33"><span>★33</span><span class="out">сентябрь · −47 %</span></div></div></div>
   </div>
 
-  <p><code>ntd4996/agentpet</code> — Swift, рост в 6,9 раза, второй по темпу в когорте.
-  Menubar-питомец: иконка в строке меню, мониторящая состояние Claude Code, Codex и Gemini CLI.
-  В июне выглядел игрушкой на дне списка; за квартал оказалось, что наблюдение за фоновыми агентами —
-  массовая потребность, а игровая подача ей не мешает.</p>
+  <p><code>ntd4996/agentpet</code> — Swift, рост в 6,9 раза, второй по темпу в когорте. Menubar-питомец: иконка в строке меню, мониторящая состояние Claude Code, Codex и Gemini CLI. В июне выглядел игрушкой на дне списка; за квартал оказалось, что наблюдение за фоновыми агентами — массовая потребность, а игровая подача ей не мешает.</p>
 
-  <p><code>YonghaoZhao722/cc-sanitizer</code> — TypeScript. Чинит ошибку «Invalid signature in
-  thinking block», возникающую при смене моделей: thinking block — внутренний блок рассуждений Claude
-  со своей криптоподписью, при переключении модели подпись перестаёт сходиться и сессия падает.
-  Проблема была прямым следствием моды на мульти-модельность из первой темы. Счётчик просел почти
-  вдвое: похоже, узкий воркэраунд пережил свою актуальность.</p>
+  <p><code>YonghaoZhao722/cc-sanitizer</code> — TypeScript. Чинит ошибку «Invalid signature in thinking block», возникающую при смене моделей: thinking block — внутренний блок рассуждений Claude со своей криптоподписью, при переключении модели подпись перестаёт сходиться и сессия падает. Проблема была прямым следствием моды на мульти-модельность из первой темы. Счётчик просел почти вдвое: похоже, узкий воркэраунд пережил свою актуальность.</p>
 </section>
 
 <section id="giants">
-  <h2>Зрелые репозитории: база экосистемы</h2>
-  <p>Это не новинки недели, а гиганты по абсолютным звёздам, по которым на той неделе была
-  активность. Июньские числа исходный обзор сам пометил как невыверенные; сентябрьские сняты поштучно
-  через API.</p>
+  <p class="section-kicker">База экосистемы</p>
+  <h2>Зрелые репозитории <span class="count">7 репозиториев</span></h2>
+  <p class="section-intro">Не новинки недели, а гиганты по абсолютным звёздам, по которым на той неделе была активность. Июньские числа исходный обзор сам пометил как невыверенные; сентябрьские сняты поштучно через API.</p>
+
   <div class="tw">
   <table>
     <thead><tr><th>Репозиторий</th><th>Июнь, без верификации</th><th>Сентябрь, проверено</th><th>Что это</th></tr></thead>
     <tbody>
-      <tr><td class="mono">mattpocock/skills</td><td class="num">~117 000</td><td class="num up">249 469</td><td>крупнейшая коллекция готовых навыков</td></tr>
-      <tr><td class="mono">anthropics/claude-code</td><td class="num">~130 000</td><td class="num up">144 048</td><td>сам Claude Code</td></tr>
-      <tr><td class="mono">garrytan/gstack</td><td class="num">~107 000</td><td class="num up">131 283</td><td>экосистема gstack</td></tr>
-      <tr><td class="mono">farion1231/cc-switch</td><td class="num">~91 000</td><td class="num up">131 051</td><td>переключатель конфигураций и моделей</td></tr>
-      <tr><td class="mono">thedotmack/claude-mem</td><td class="num">~80 000</td><td class="num up">93 164</td><td>память для Claude</td></tr>
-      <tr><td class="mono">asgeirtj/system_prompts_leaks</td><td class="num">~41 000</td><td class="num up">64 156</td><td>извлечённые системные промпты моделей</td></tr>
-      <tr><td class="mono">anthropics/claude-cookbooks</td><td class="num">~45 000</td><td class="num up">52 424</td><td>официальные рецепты и примеры</td></tr>
+      <tr><td class="num">mattpocock/skills</td><td class="num">~117 000</td><td class="num up">249 469</td><td>крупнейшая коллекция готовых навыков</td></tr>
+      <tr><td class="num">anthropics/claude-code</td><td class="num">~130 000</td><td class="num up">144 048</td><td>сам Claude Code</td></tr>
+      <tr><td class="num">garrytan/gstack</td><td class="num">~107 000</td><td class="num up">131 283</td><td>экосистема gstack</td></tr>
+      <tr><td class="num">farion1231/cc-switch</td><td class="num">~91 000</td><td class="num up">131 051</td><td>переключатель конфигураций и моделей</td></tr>
+      <tr><td class="num">thedotmack/claude-mem</td><td class="num">~80 000</td><td class="num up">93 164</td><td>память для Claude</td></tr>
+      <tr><td class="num">asgeirtj/system_prompts_leaks</td><td class="num">~41 000</td><td class="num up">64 156</td><td>извлечённые системные промпты моделей</td></tr>
+      <tr><td class="num">anthropics/claude-cookbooks</td><td class="num">~45 000</td><td class="num up">52 424</td><td>официальные рецепты и примеры</td></tr>
     </tbody>
   </table>
   </div>
-  <p>Два наблюдения. Первое: <mark><code>mattpocock/skills</code> вырос более чем вдвое и обогнал сам
-  Claude Code</mark> — коллекция навыков популярнее инструмента, под который навыки написаны. Второе:
-  <code>farion1231/cc-switch</code>, переключатель моделей, прибавил около сорока тысяч звёзд, то
-  есть тема отвязки от вендора за квартал не сдулась, а стала мейнстримом.</p>
+
+  <p>Два наблюдения. Первое: <mark><code>mattpocock/skills</code> вырос более чем вдвое и обогнал сам Claude Code</mark> — коллекция навыков популярнее инструмента, под который навыки написаны. Второе: <code>farion1231/cc-switch</code>, переключатель моделей, прибавил около сорока тысяч звёзд, то есть тема отвязки от вендора за квартал не сдулась, а стала мейнстримом.</p>
 </section>
 
 <section id="gloss">
+  <p class="section-kicker">Справка</p>
   <h2>Глоссарий</h2>
+  <p class="section-intro">Термины, встречающиеся в выпуске, — в одном месте.</p>
   <ul>
-    <li><b>harness (оболочка)</b> — агент, терминальный цикл и инструменты; слой, отдельный от модели.</li>
-    <li><b>proxy / shim</b> — слой подмены модели под капотом, незаметный для агента.</li>
-    <li><b>MCP (Model Context Protocol)</b> — открытый протокол подключения внешних инструментов и моделей к агенту.</li>
-    <li><b>multi-LLM</b> — несколько разных моделей под управлением одного дирижёра.</li>
-    <li><b>one-shot субагент</b> — разовый дочерний агент на одну задачу, без состояния между вызовами.</li>
-    <li><b>персистентная память</b> — состояние агента, переживающее перезапуск сессии.</li>
-    <li><b>Skill / <code>SKILL.md</code></b> — переносимый навык агента и его манифест с описанием и триггерами.</li>
-    <li><b>слэш-команда</b> — способ запуска навыка (<code>/имя</code>).</li>
-    <li><b><code>AGENTS.md</code> / <code>CLAUDE.md</code> / <code>.cursorrules</code></b> — файлы-правила разных агентных инструментов.</li>
-    <li><b>PTES</b> — Penetration Testing Execution Standard, методология пентеста.</li>
-    <li><b>dual-use</b> — двойного назначения: применимо и для защиты, и для атаки.</li>
-    <li><b>ННО / NVC</b> — методика ненасильственного общения Маршалла Розенберга.</li>
-    <li><b>headless Chromium</b> — браузер без интерфейса как движок рендера HTML в PDF.</li>
-    <li><b>Electron</b> — упаковка веб-приложения в десктоп со встроенным Chromium; <code>app-it</code> обходится без него.</li>
-    <li><b>thinking block</b> — подписанный блок рассуждений Claude; ломается при смене моделей.</li>
+    <li><strong>harness (оболочка)</strong> — агент, терминальный цикл и инструменты; слой, отдельный от модели.</li>
+    <li><strong>proxy / shim</strong> — слой подмены модели под капотом, незаметный для агента.</li>
+    <li><strong>MCP (Model Context Protocol)</strong> — открытый протокол подключения внешних инструментов и моделей к агенту.</li>
+    <li><strong>multi-LLM</strong> — несколько разных моделей под управлением одного дирижёра.</li>
+    <li><strong>one-shot субагент</strong> — разовый дочерний агент на одну задачу, без состояния между вызовами.</li>
+    <li><strong>персистентная память</strong> — состояние агента, переживающее перезапуск сессии.</li>
+    <li><strong>Skill / <code>SKILL.md</code></strong> — переносимый навык агента и его манифест с описанием и триггерами.</li>
+    <li><strong>слэш-команда</strong> — способ запуска навыка (<code>/имя</code>).</li>
+    <li><strong><code>AGENTS.md</code> / <code>CLAUDE.md</code> / <code>.cursorrules</code></strong> — файлы-правила разных агентных инструментов.</li>
+    <li><strong>PTES</strong> — Penetration Testing Execution Standard, методология пентеста.</li>
+    <li><strong>dual-use</strong> — двойного назначения: применимо и для защиты, и для атаки.</li>
+    <li><strong>ННО / NVC</strong> — методика ненасильственного общения Маршалла Розенберга.</li>
+    <li><strong>headless Chromium</strong> — браузер без интерфейса как движок рендера HTML в PDF.</li>
+    <li><strong>Electron</strong> — упаковка веб-приложения в десктоп со встроенным Chromium; <code>app-it</code> обходится без него.</li>
+    <li><strong>thinking block</strong> — подписанный блок рассуждений Claude; ломается при смене моделей.</li>
   </ul>
 </section>
 
-<section id="src">
+<section id="periph">
+  <p class="section-kicker">Прозрачность исследования</p>
+  <h2>Метод и оговорки</h2>
+  <p class="section-intro">Как собран исходный срез, как сделан перемер и что в выводах не подтверждено.</p>
+
+  <h4>Метод исходного среза</h4>
+  <p>Через GitHub API брались репозитории, созданные за последние семь дней, отсортированные по звёздам. Для свежего репозитория общее число звёзд примерно равно набранному за неделю — поэтому «новизна ≈ популярность недели». Отдельным блоком шли зрелые гиганты, по которым на неделе была активность.</p>
+
+  <h4>Метод перемера</h4>
+  <p>4 сентября 2026, <code>GET /repos/{owner}/{repo}</code>, поля <code>stargazers_count</code>, <code>language</code>, <code>archived</code>. Проверены все 18 репозиториев когорты недели и все 7 зрелых. Июньские числа взяты из исходных обзоров как есть и отдельно не перепроверялись.</p>
+
+  <h4>Не подтверждено</h4>
+  <p>Объяснение просадки звёзд у трёх репозиториев чисткой накрученных отметок — наиболее вероятная, но непроверяемая со стороны версия: GitHub API отдаёт только текущее число звёзд и не показывает историю удалённых.</p>
+</section>
+
+<section id="sources">
+  <p class="section-kicker">Проверка</p>
   <h2>Источники</h2>
-  <p>Перемер 04.09.2026 — GitHub REST API, <code>GET /repos/{owner}/{repo}</code>, поля
-  <code>stargazers_count</code>, <code>language</code>, <code>archived</code>. Проверены все
-  18 репозиториев когорты недели и все 7 зрелых.</p>
-  <ul class="src-list">
+  <p class="section-intro">Первичные материалы и эндпоинт, по которым сверены все числа выпуска.</p>
+  <ul class="srcs">
     <li><a href="https://docs.github.com/en/rest/repos/repos">docs.github.com/en/rest/repos/repos</a></li>
     <li><a href="https://github.com/zhnt/loushang">github.com/zhnt/loushang</a></li>
     <li><a href="https://github.com/OnlyTerp/UltraCode-Shim">github.com/OnlyTerp/UltraCode-Shim</a></li>
@@ -592,65 +1005,68 @@ footer{border-top:2px solid var(--ink);padding:2.2rem 0 0;color:var(--muted);fon
     <li><a href="https://github.com/asgeirtj/system_prompts_leaks">github.com/asgeirtj/system_prompts_leaks</a></li>
     <li><a href="https://github.com/anthropics/claude-cookbooks">github.com/anthropics/claude-cookbooks</a></li>
   </ul>
-  <div class="card">
-    <h4 style="margin-top:0">Не подтверждено</h4>
-    <p style="margin:0">Объяснение просадки звёзд у трёх репозиториев чисткой накрученных отметок —
-    наиболее вероятная, но непроверяемая со стороны версия: GitHub API отдаёт только текущее число
-    звёзд и не показывает историю удалённых. Июньские числа взяты из исходных обзоров и отдельно не
-    перепроверялись — сверялись только сегодняшние.</p>
-  </div>
 </section>
 
 <footer>
-  <p>Сведено из двух июньских обзоров недели 2026-05-28 → 06-04 и перемерено 4 сентября 2026.
-  Страница самодостаточна: вёрстка, интерактив и все числа — внутри файла.</p>
+  <p>Agent Briefing · спецвыпуск. Сведено из двух июньских обзоров недели 2026-05-28 → 06-04 и перемерено 4 сентября 2026.</p>
 </footer>
 </main>
-
 <script>
 (function(){
-  var root=document.documentElement, LS=window.localStorage;
-  function ls(k,v){ try{ return v===undefined?LS.getItem(k):LS.setItem(k,v);}catch(e){return null;} }
+  var root=document.documentElement;
+  function get(k){ try{return localStorage.getItem(k);}catch(e){return null;} }
+  function set(k,v){ try{localStorage.setItem(k,v);}catch(e){} }
 
-  var t=ls('w23-theme'); if(t) root.setAttribute('data-theme',t);
-  if(ls('w23-contrast')==='on') root.setAttribute('data-contrast','on');
+  // Ключи те же, что у дайджестов Agent Briefing: выбор темы переносится между выпусками.
+  var t=get('ad-theme'); if(t) root.setAttribute('data-theme',t);
+  if(get('ad-contrast')==='on') root.setAttribute('data-contrast','on');
 
-  var themeBtn=document.getElementById('themeBtn'), contrastBtn=document.getElementById('contrastBtn');
-  function isDark(){
-    var a=root.getAttribute('data-theme');
-    return a? a==='dark' : matchMedia('(prefers-color-scheme: dark)').matches;
-  }
+  var themeBtn=document.getElementById('themeBtn'), cBtn=document.getElementById('contrastBtn');
+  function isDark(){ var a=root.getAttribute('data-theme');
+    return a? a==='dark' : matchMedia('(prefers-color-scheme: dark)').matches; }
   function sync(){
-    themeBtn.setAttribute('aria-pressed', String(isDark()));
-    contrastBtn.setAttribute('aria-pressed', String(root.getAttribute('data-contrast')==='on'));
+    themeBtn.setAttribute('aria-pressed',String(isDark()));
+    cBtn.setAttribute('aria-pressed',String(root.getAttribute('data-contrast')==='on'));
   }
-  themeBtn.onclick=function(){ var n=isDark()?'light':'dark'; root.setAttribute('data-theme',n); ls('w23-theme',n); sync(); };
-  contrastBtn.onclick=function(){
-    if(root.getAttribute('data-contrast')==='on'){ root.removeAttribute('data-contrast'); ls('w23-contrast','off'); }
-    else { root.setAttribute('data-contrast','on'); ls('w23-contrast','on'); }
-    sync();
-  };
+  themeBtn.addEventListener('click',function(){
+    var n=isDark()?'light':'dark'; root.setAttribute('data-theme',n); set('ad-theme',n); sync(); });
+  cBtn.addEventListener('click',function(){
+    if(root.getAttribute('data-contrast')==='on'){ root.removeAttribute('data-contrast'); set('ad-contrast','off'); }
+    else { root.setAttribute('data-contrast','on'); set('ad-contrast','on'); }
+    sync(); });
   sync();
 
-  // Полосы дельты. Числа всегда напечатаны текстом — полоса только помогает
-  // сравнить их глазами, поэтому её отсутствие ничего не ломает.
-  // Шкала корневая: линейная сплющила бы всё, кроме loushang, в ноль.
-  var bars=[].slice.call(document.querySelectorAll('.bar[data-v]'));
+  // Полосы сравнения. Шкала корневая: линейная сплющила бы всё, кроме loushang,
+  // у которого звёзд на порядок больше. Числа напечатаны текстом, поэтому без
+  // полос страница остаётся полной.
   var max=Math.sqrt(1345);
-  bars.forEach(function(b){
-    var v=Number(b.getAttribute('data-v'))||0;
-    var i=document.createElement('i');
+  [].forEach.call(document.querySelectorAll('.bar[data-v]'),function(b){
+    var v=Number(b.getAttribute('data-v'))||0, i=document.createElement('i');
     i.style.width=Math.max(6,(Math.sqrt(v)/max)*100).toFixed(1)+'%';
     b.insertBefore(i,b.firstChild);
   });
 
+  // Метод и источники сворачиваются, как в дайджестах: нужны для проверки,
+  // но не должны стоять между читателем и содержанием.
+  function fold(id,label){
+    var s=document.getElementById(id); if(!s) return;
+    var intro=s.querySelector('.section-intro'); if(!intro) return;
+    var d=document.createElement('details'); d.className='method-fold';
+    var sum=document.createElement('summary'); sum.textContent=label;
+    var box=document.createElement('div'); box.className='method-body';
+    while(intro.nextSibling) box.appendChild(intro.nextSibling);
+    d.appendChild(sum); d.appendChild(box); s.appendChild(d);
+  }
+  fold('periph','Открыть описание метода и оговорки');
+  fold('sources','Открыть полный список источников');
+
   var bar=document.getElementById('progress');
-  var links=[].slice.call(document.querySelectorAll('nav.toc a'));
+  var links=[].slice.call(document.querySelectorAll('.toc a'));
   var secs=links.map(function(a){ return document.querySelector(a.getAttribute('href')); });
-  addEventListener('scroll', function(){
+  addEventListener('scroll',function(){
     var h=document.documentElement;
     bar.style.width=((h.scrollTop/((h.scrollHeight-h.clientHeight)||1))*100).toFixed(2)+'%';
-    var y=h.scrollTop+140, cur=-1;
+    var y=h.scrollTop+150, cur=-1;
     secs.forEach(function(s,i){ if(s && s.offsetTop<=y) cur=i; });
     links.forEach(function(a,i){ a.classList.toggle('here', i===cur); });
   },{passive:true});
