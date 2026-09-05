@@ -11,6 +11,8 @@ lexis-dark.webp
 
 # ─── презентации: блок ниже переписывает tools/publish-presentation.mjs ───
 presentations/index.html
+presentations/yingzao-skill.html
+presentations/covers/yingzao-skill.svg
 presentations/agents-weekly-2026-09-04.html
 presentations/covers/agents-weekly-2026-09-04.svg
 presentations/claude-w23-peremer.html
