@@ -11,6 +11,9 @@ lexis-dark.webp
 
 # ─── презентации: блок ниже переписывает tools/publish-presentation.mjs ───
 presentations/index.html
+presentations/rss.xml
+presentations/generator-fich.html
+presentations/covers/generator-fich.svg
 presentations/headcount.html
 presentations/covers/headcount.svg
 presentations/yingzao-skill.html
@@ -19,8 +22,6 @@ presentations/agents-weekly-2026-09-04.html
 presentations/covers/agents-weekly-2026-09-04.svg
 presentations/claude-w23-peremer.html
 presentations/covers/claude-w23-peremer.svg
-presentations/generator-fich.html
-presentations/covers/generator-fich.svg
 presentations/product-lab-karta-processov.html
 presentations/covers/product-lab-karta-processov.svg
 presentations/agents-weekly-2026-08-26.html

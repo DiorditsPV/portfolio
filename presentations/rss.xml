@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Журнал — разборы Павла Диордица</title>
+  <link>https://paveldiordits.site/presentations/</link>
+  <atom:link href="https://paveldiordits.site/presentations/rss.xml" rel="self" type="application/rss+xml"/>
+  <description>Разборы инструментов, агентных практик и продуктовых заходов: что внутри, чего это стоит и что забрать себе.</description>
+  <language>ru</language>
+  <managingEditor>diordic@gmail.com (Павел Диордиц)</managingEditor>
+  <item>
+    <title>Генератор фич: что выяснило исследование и что из него брать</title>
+    <link>https://paveldiordits.site/presentations/generator-fich.html</link>
+    <guid isPermaLink="true">https://paveldiordits.site/presentations/generator-fich.html</guid>
+    <pubDate>Sat, 05 Sep 2026 00:00:00 GMT</pubDate>
+    <description>Разбор исследовательского пакета о генерации фич: 24 источника, что измерено и что назначено, модель из 14 шагов и 9 гейтов и минимальная версия для Product Lab.</description>
+  </item>
+  <item>
+    <title>headcount — «компания из агентов» для Claude Code: разбор</title>
+    <link>https://paveldiordits.site/presentations/headcount.html</link>
+    <guid isPermaLink="true">https://paveldiordits.site/presentations/headcount.html</guid>
+    <pubDate>Sat, 05 Sep 2026 00:00:00 GMT</pubDate>
+    <description>Разбор headcount — маркетплейса из 16 департаментов и 172 скиллов для Claude Code: что реально приезжает при установке, почему бюджет списка скиллов в 1% окна решает больше, чем качество текста, и как ставить по одному департаменту, не сломав то, что уже стоит.</description>
+  </item>
+  <item>
+    <title>Yingzao: скилл-постер Guizang под микроскопом</title>
+    <link>https://paveldiordits.site/presentations/yingzao-skill.html</link>
+    <guid isPermaLink="true">https://paveldiordits.site/presentations/yingzao-skill.html</guid>
+    <pubDate>Sat, 05 Sep 2026 00:00:00 GMT</pubDate>
+    <description>Разбор скилла Guizang, который превращает фото китайской архитектуры в editorial-постер: детерминированный Python как ворота перед единственным вызовом GPT-Image-2, 104 дизайн-токена для поиска, а не для промпта, и семь приёмов, которые стоит забрать в свои скиллы.</description>
+  </item>
+  <item>
+    <title>Неделя агентной экосистемы — 26.08–04.09.2026</title>
+    <link>https://paveldiordits.site/presentations/agents-weekly-2026-09-04.html</link>
+    <guid isPermaLink="true">https://paveldiordits.site/presentations/agents-weekly-2026-09-04.html</guid>
+    <pubDate>Fri, 04 Sep 2026 00:00:00 GMT</pubDate>
+    <description>Неделя релиза Claude Fable 5.1 и десяти репозиториев про учёт квот: экосистема строит приборы для измерения того, сколько агенты съедают.</description>
+  </item>
+  <item>
+    <title>Неделя 23 экосистемы Claude — снимок и перемер</title>
+    <link>https://paveldiordits.site/presentations/claude-w23-peremer.html</link>
+    <guid isPermaLink="true">https://paveldiordits.site/presentations/claude-w23-peremer.html</guid>
+    <pubDate>Fri, 04 Sep 2026 00:00:00 GMT</pubDate>
+    <description>Июньский срез популярных репозиториев и навыков Claude за неделю 28.05–04.06, перемеренный три месяца спустя: недельный рейтинг не пережил квартала, а у трёх позиций счётчик звёзд пошёл вниз.</description>
+  </item>
+  <item>
+    <title>Product Lab — карта процессов и их состояний</title>
+    <link>https://paveldiordits.site/presentations/product-lab-karta-processov.html</link>
+    <guid isPermaLink="true">https://paveldiordits.site/presentations/product-lab-karta-processov.html</guid>
+    <pubDate>Fri, 04 Sep 2026 00:00:00 GMT</pubDate>
+    <description>Слепок агентного рабочего пространства: 17 стадий от гипотезы до релиза — что уже работает, что перенесено донором, что ещё не спроектировано.</description>
+  </item>
+  <item>
+    <title>Неделя агентной экосистемы — 18–26.08.2026</title>
+    <link>https://paveldiordits.site/presentations/agents-weekly-2026-08-26.html</link>
+    <guid isPermaLink="true">https://paveldiordits.site/presentations/agents-weekly-2026-08-26.html</guid>
+    <pubDate>Wed, 26 Aug 2026 00:00:00 GMT</pubDate>
+    <description>Неделя, на которой выяснилось, что каталог прошлых выпусков не был топом по звёздам: gh search repos --sort=stars звёзды не сортирует. 86 позиций каталога.</description>
+  </item>
+  <item>
+    <title>Неделя агентной экосистемы — 11–18.08.2026</title>
+    <link>https://paveldiordits.site/presentations/agents-weekly-2026-08-18.html</link>
+    <guid isPermaLink="true">https://paveldiordits.site/presentations/agents-weekly-2026-08-18.html</guid>
+    <pubDate>Tue, 18 Aug 2026 00:00:00 GMT</pubDate>
+    <description>Самая насыщенная неделя серии: 1348 новых репозиториев, 66 в каталоге, и волна плагинов вокруг стороннего харнесса DeepSeek Harness.</description>
+  </item>
+  <item>
+    <title>Тренды агентной разработки — Claude и Codex, июль 2026</title>
+    <link>https://paveldiordits.site/presentations/trendy-claude-codex.html</link>
+    <guid isPermaLink="true">https://paveldiordits.site/presentations/trendy-claude-codex.html</guid>
+    <pubDate>Tue, 04 Aug 2026 00:00:00 GMT</pubDate>
+    <description>Срез по четырём направлениям за июль 2026 — Claude Code и Agent SDK, OpenAI Codex, MCP, практики комьюнити. Сквозной сюжет: обе экосистемы синхронно сделали мультиагентность штатным режимом.</description>
+  </item>
+</channel>
+</rss>

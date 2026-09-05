@@ -1,783 +1,968 @@
-<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Генератор фич: подход</title>
+<title>Генератор фич: что выяснило исследование и что из него брать</title>
+<meta name="description" content="Разбор исследовательского пакета о генерации фич: 24 источника, что измерено и что назначено, модель из 14 шагов и 9 гейтов, и минимальная версия для Product Lab.">
 <style>
+/* ── токены ─────────────────────────────────────────────────────────── */
 :root{
-  --paper:#faf8f4; --paper-2:#f2eee6; --ink:#1c1a16; --ink-2:#4a4438; --ink-3:#7a7263;
-  --rule:#ddd6c8; --accent:#a04f2a; --accent-soft:#f0e2d8; --cool:#4a6472; --cool-soft:#e4ecf0;
-  --shadow:0 1px 2px rgba(28,26,22,.06);
-  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
-  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
-  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --bg:#f4f1ea; --panel:#fbf9f4; --panel2:#efeae0; --ink:#1f1d1a; --muted:#625d55;
+  --line:#d6cfc2; --line2:#c4bcad; --accent:#b8492d; --accent-bg:rgba(184,73,45,.09);
+  --teal:#24657f; --teal-bg:rgba(36,101,127,.10); --ok:#2f7a4f; --ok-bg:rgba(47,122,79,.10);
+  --warn:#a86a06; --warn-bg:rgba(168,106,6,.12); --code:#ece6da;
+  --ph1:#24657f; --ph2:#2f7a4f; --ph3:#b8492d; --ph4:#7a4fa8; --ph5:#a86a06;
+  --shadow:0 1px 2px rgba(0,0,0,.05),0 8px 24px rgba(0,0,0,.05);
+  --bw:1px; --radius:14px;
+  color-scheme:light;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --paper:#15140f; --paper-2:#1e1c16; --ink:#eae4d8; --ink-2:#bdb5a5; --ink-3:#8c8474;
-  --rule:#332f26; --accent:#e0913f; --accent-soft:#2c2116; --cool:#8fb4c6; --cool-soft:#182228;
-  --shadow:0 1px 2px rgba(0,0,0,.4);
-}}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#131518; --panel:#1b1e23; --panel2:#22262d; --ink:#e8e4dc; --muted:#a49e94;
+    --line:#2f333a; --line2:#3d424b; --accent:#e6795a; --accent-bg:rgba(230,121,90,.14);
+    --teal:#74b6d3; --teal-bg:rgba(116,182,211,.14); --ok:#6fc396; --ok-bg:rgba(111,195,150,.14);
+    --warn:#e0a93c; --warn-bg:rgba(224,169,60,.16); --code:#262a31;
+    --ph1:#74b6d3; --ph2:#6fc396; --ph3:#e6795a; --ph4:#b596e0; --ph5:#e0a93c;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+}
 :root[data-theme="dark"]{
-  --paper:#15140f; --paper-2:#1e1c16; --ink:#eae4d8; --ink-2:#bdb5a5; --ink-3:#8c8474;
-  --rule:#332f26; --accent:#e0913f; --accent-soft:#2c2116; --cool:#8fb4c6; --cool-soft:#182228;
-  --shadow:0 1px 2px rgba(0,0,0,.4);
+  --bg:#131518; --panel:#1b1e23; --panel2:#22262d; --ink:#e8e4dc; --muted:#a49e94;
+  --line:#2f333a; --line2:#3d424b; --accent:#e6795a; --accent-bg:rgba(230,121,90,.14);
+  --teal:#74b6d3; --teal-bg:rgba(116,182,211,.14); --ok:#6fc396; --ok-bg:rgba(111,195,150,.14);
+  --warn:#e0a93c; --warn-bg:rgba(224,169,60,.16); --code:#262a31;
+  --ph1:#74b6d3; --ph2:#6fc396; --ph3:#e6795a; --ph4:#b596e0; --ph5:#e0a93c;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  color-scheme:dark;
 }
+/* контраст: без полупрозрачностей, явные границы */
 :root[data-contrast="high"]{
-  --paper:#fff; --paper-2:#fff; --ink:#000; --ink-2:#000; --ink-3:#1f1f1f;
-  --rule:#000; --accent:#8a2b00; --accent-soft:#fff; --cool:#00354d; --cool-soft:#fff; --shadow:none;
+  --bg:#ffffff; --panel:#ffffff; --panel2:#f2f2f2; --ink:#000000; --muted:#1a1a1a;
+  --line:#000000; --line2:#000000; --accent:#7a1c00; --accent-bg:#fde9e3;
+  --teal:#003a52; --teal-bg:#e2f1f8; --ok:#0b4d26; --ok-bg:#e3f3e9; --warn:#5c3a00; --warn-bg:#fff0d2; --code:#f0f0f0;
+  --ph1:#003a52; --ph2:#0b4d26; --ph3:#7a1c00; --ph4:#3f1a6e; --ph5:#5c3a00;
+  --shadow:none; --bw:2px;
 }
 :root[data-contrast="high"][data-theme="dark"],
-:root[data-contrast="high"]:not([data-theme="light"]) {}
-@media (prefers-color-scheme:dark){:root[data-contrast="high"]:not([data-theme="light"]){
-  --paper:#000; --paper-2:#000; --ink:#fff; --ink-2:#fff; --ink-3:#e0e0e0;
-  --rule:#fff; --accent:#ffb454; --accent-soft:#000; --cool:#8fd0f0; --cool-soft:#000; --shadow:none;
-}}
-:root[data-contrast="high"][data-theme="dark"]{
-  --paper:#000; --paper-2:#000; --ink:#fff; --ink-2:#fff; --ink-3:#e0e0e0;
-  --rule:#fff; --accent:#ffb454; --accent-soft:#000; --cool:#8fd0f0; --cool-soft:#000; --shadow:none;
+:root[data-contrast="high"]:not([data-theme="light"]).sys-dark{
+  --bg:#000000; --panel:#000000; --panel2:#111111; --ink:#ffffff; --muted:#f2f2f2;
+  --line:#ffffff; --line2:#ffffff; --accent:#ffab8f; --accent-bg:#2a120a;
+  --teal:#9fd9f2; --teal-bg:#08222d; --ok:#9fe3bd; --ok-bg:#082a17; --warn:#ffd27a; --warn-bg:#2e2000; --code:#111111;
+  --ph1:#9fd9f2; --ph2:#9fe3bd; --ph3:#ffab8f; --ph4:#d6b8ff; --ph5:#ffd27a;
 }
-*{box-sizing:border-box}
+/* ── база ───────────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);
-  font-size:19px;line-height:1.62;-webkit-text-size-adjust:100%}
-#bar{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0;z-index:60}
-header.top{position:sticky;top:0;z-index:50;background:var(--paper);
-  border-bottom:1px solid var(--rule);padding:10px 0}
-.topin{width:82%;max-width:1440px;margin:0 auto;display:flex;gap:18px;align-items:center;
-  justify-content:space-between;flex-wrap:wrap}
-.brand{font-family:var(--sans);font-size:14px;font-weight:650;letter-spacing:.02em;
-  text-transform:uppercase;color:var(--ink-3)}
-.tools{display:flex;gap:8px}
-button.t{font-family:var(--sans);font-size:13px;padding:6px 12px;border:1px solid var(--rule);
-  background:var(--paper-2);color:var(--ink-2);border-radius:3px;cursor:pointer}
-button.t:hover{border-color:var(--accent);color:var(--accent)}
-.wrap{width:82%;max-width:1440px;margin:0 auto;display:grid;
-  grid-template-columns:250px minmax(0,1fr);gap:56px;padding:44px 0 90px}
-nav.toc{position:sticky;top:78px;align-self:start;font-family:var(--sans);font-size:14px;
-  border-left:2px solid var(--rule);padding-left:16px;max-height:calc(100vh - 120px);overflow:auto}
-nav.toc a{display:block;color:var(--ink-3);text-decoration:none;padding:5px 0;line-height:1.35}
-nav.toc a:hover{color:var(--accent)}
-nav.toc a.on{color:var(--ink);font-weight:600}
-nav.toc .g{margin-top:14px;font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;
-  color:var(--ink-3);opacity:.7}
-main{min-width:0}
-h1{font-family:var(--sans);font-size:clamp(30px,3.6vw,46px);line-height:1.12;margin:0 0 14px;
-  letter-spacing:-.02em;font-weight:700}
-.dek{font-size:21px;color:var(--ink-2);margin:0 0 8px}
-.meta{font-family:var(--sans);font-size:13.5px;color:var(--ink-3);margin:0 0 40px;
-  padding-bottom:24px;border-bottom:1px solid var(--rule)}
-h2{font-family:var(--sans);font-size:clamp(23px,2.3vw,30px);line-height:1.2;font-weight:700;
-  margin:64px 0 6px;letter-spacing:-.01em;scroll-margin-top:80px}
-h2 .num{display:block;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--accent);margin-bottom:8px;font-weight:650}
-h3{font-family:var(--sans);font-size:20px;font-weight:650;margin:38px 0 4px;line-height:1.28;
-  scroll-margin-top:80px}
-h4{font-family:var(--sans);font-size:17px;font-weight:650;margin:26px 0 2px;color:var(--ink)}
-p{margin:14px 0}
-ul,ol{margin:14px 0;padding-left:24px}
-li{margin:7px 0}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.62 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:Georgia,"Iowan Old Style","Times New Roman",serif;line-height:1.18;letter-spacing:-.01em;margin:0 0 .6em;font-weight:600}
+h1{font-size:clamp(2rem,4.2vw,3.4rem)}
+h2{font-size:clamp(1.6rem,2.6vw,2.15rem);margin-top:0}
+h3{font-size:1.32rem;margin-top:2rem}
+h4{font-size:1.08rem;margin-top:1.4rem;font-family:inherit;font-weight:700}
+p,li{max-width:none}
+p{margin:0 0 1rem}
+ul,ol{padding-left:1.35rem;margin:0 0 1rem}
+li{margin:.3rem 0}
+li::marker{color:var(--accent)}
+a{color:var(--teal);text-underline-offset:.15em}
+a:hover{color:var(--accent)}
+code{font:.92em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--code);padding:.08em .38em;border-radius:6px;border:var(--bw) solid transparent}
+:root[data-contrast="high"] code{border-color:var(--line)}
 strong{font-weight:700}
-em{font-style:italic;color:var(--ink-2)}
-a{color:var(--accent)}
-code{font-family:var(--mono);font-size:.86em;background:var(--paper-2);padding:1px 5px;
-  border-radius:3px;border:1px solid var(--rule)}
-.lead{font-size:20.5px;color:var(--ink-2)}
-.rule{border:0;border-top:1px solid var(--rule);margin:56px 0}
-figure{margin:32px 0;padding:0}
-figure svg{display:block;width:100%;height:auto}
-figcaption{font-family:var(--sans);font-size:13.5px;color:var(--ink-3);margin-top:10px}
-table{width:100%;border-collapse:collapse;margin:24px 0;font-family:var(--sans);font-size:15px}
-th{text-align:left;font-weight:650;border-bottom:2px solid var(--rule);padding:10px 12px 8px;
-  vertical-align:bottom}
-td{border-bottom:1px solid var(--rule);padding:10px 12px;vertical-align:top;color:var(--ink-2)}
-td:first-child{color:var(--ink);font-weight:600;white-space:normal}
-.tw{overflow-x:auto}
-.loss{border-left:3px solid var(--cool);background:var(--cool-soft);padding:12px 18px;
-  margin:16px 0;font-size:17px;color:var(--ink-2)}
-.loss b{font-family:var(--sans);font-size:13px;text-transform:uppercase;letter-spacing:.06em;
-  color:var(--cool);display:block;margin-bottom:3px}
-.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:14px 18px;
-  margin:22px 0}
-.note p:first-child{margin-top:0}.note p:last-child{margin-bottom:0}
-.pre{font-family:var(--mono);font-size:14px;line-height:1.55;background:var(--paper-2);
-  border:1px solid var(--rule);border-radius:4px;padding:16px 18px;margin:22px 0;
-  overflow-x:auto;white-space:pre;color:var(--ink-2)}
-.lenses{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:0 18px;
-  font-family:var(--sans);font-size:15px;margin:18px 0}
-.lenses div{padding:7px 0;border-bottom:1px solid var(--rule);color:var(--ink-2)}
-.lenses div b{color:var(--ink);font-weight:600}
-.big{font-family:var(--sans);display:flex;gap:34px;flex-wrap:wrap;margin:26px 0}
-.big div{flex:1 1 150px}
-.big .n{font-size:34px;font-weight:700;color:var(--accent);line-height:1}
-.big .l{font-size:14px;color:var(--ink-3);margin-top:4px}
-.src{font-family:var(--sans);font-size:15px}
-.src li{margin:9px 0;color:var(--ink-2)}
-@media (max-width:980px){
-  .wrap{grid-template-columns:1fr;gap:0;width:90%;padding-top:26px}
-  nav.toc{position:static;max-height:none;border-left:0;border-bottom:1px solid var(--rule);
-    padding:0 0 18px;margin-bottom:26px;
-    display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0 14px}
-  nav.toc .g{grid-column:1/-1}
-  .topin{width:90%}
-  body{font-size:18px}
+hr{border:0;border-top:var(--bw) solid var(--line);margin:2.5rem 0}
+.kicker{display:inline-block;font:700 .72rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:.8rem}
+.muted{color:var(--muted)}
+.small{font-size:.92rem}
+/* ── прогресс и панель ──────────────────────────────────────────────── */
+#progress{position:fixed;left:0;top:0;height:4px;width:0;background:var(--accent);z-index:60;transition:width .08s linear}
+.topbar{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:var(--bw) solid var(--line);}
+.topbar-in{max-width:1500px;margin:0 auto;padding:.6rem 2vw;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.brand{font:700 .8rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.brand b{color:var(--accent)}
+.controls{margin-left:auto;display:flex;gap:.5rem;flex-wrap:wrap}
+.btn{appearance:none;background:var(--panel);color:var(--ink);border:var(--bw) solid var(--line2);border-radius:999px;padding:.42rem .9rem;font:600 .86rem/1 inherit;cursor:pointer;display:inline-flex;align-items:center;gap:.45rem}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn[aria-pressed="true"]{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.btn .ico{font-size:1rem;line-height:1}
+#navToggle{display:none}
+/* ── раскладка ──────────────────────────────────────────────────────── */
+.wrap{max-width:1500px;margin:0 auto;padding:0 2vw 4rem;display:grid;grid-template-columns:minmax(0,1fr);gap:2rem}
+@media (min-width:1080px){.wrap{grid-template-columns:250px minmax(0,1fr);gap:3rem}}
+nav.side{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 80px);overflow:auto;padding:1.2rem 0 1rem;font-size:.92rem}
+nav.side ol{list-style:none;padding:0;margin:0}
+nav.side li{margin:0}
+nav.side a{display:block;padding:.38rem .7rem;border-left:3px solid transparent;color:var(--muted);text-decoration:none;border-radius:0 8px 8px 0}
+nav.side a:hover{color:var(--ink);background:var(--panel)}
+nav.side a.active{color:var(--accent);border-left-color:var(--accent);font-weight:700;background:var(--panel)}
+nav.side .sub a{padding-left:1.4rem;font-size:.86rem}
+@media (max-width:1079px){
+  nav.side{display:none;position:static;max-height:none}
+  nav.side.open{display:block;background:var(--panel);border:var(--bw) solid var(--line);border-radius:var(--radius);padding:1rem}
+  #navToggle{display:inline-flex}
 }
-@media (max-width:560px){.wrap{width:92%}.big{gap:20px}}
+main{min-width:0}
+section.sec{padding:3.2rem 0 1rem;border-top:var(--bw) solid var(--line);scroll-margin-top:70px}
+section.sec:first-of-type{border-top:0}
+/* ── компоненты ─────────────────────────────────────────────────────── */
+.hero{padding:3.5rem 0 2rem}
+.hero .lead{font-size:1.22rem;line-height:1.55;color:var(--ink);margin:1rem 0 1.4rem}
+.meta{display:flex;flex-wrap:wrap;gap:.5rem 1.4rem;color:var(--muted);font-size:.92rem;margin-bottom:1.6rem}
+.card{background:var(--panel);border:var(--bw) solid var(--line);border-radius:var(--radius);padding:1.3rem 1.4rem;box-shadow:var(--shadow)}
+.card h3,.card h4{margin-top:0}
+.grid2,.grid3,.grid4{display:grid;gap:1.1rem;margin:1.2rem 0 1.6rem}
+.grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:900px){.grid3,.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.grid2,.grid3,.grid4{grid-template-columns:minmax(0,1fr)}}
+.callout{border-left:5px solid var(--accent);background:var(--accent-bg);border-radius:0 var(--radius) var(--radius) 0;padding:1rem 1.3rem;margin:1.4rem 0}
+.callout.teal{border-left-color:var(--teal);background:var(--teal-bg)}
+.callout.ok{border-left-color:var(--ok);background:var(--ok-bg)}
+.callout.warn{border-left-color:var(--warn);background:var(--warn-bg)}
+.callout p:last-child{margin-bottom:0}
+:root[data-contrast="high"] .callout{border:var(--bw) solid var(--line);border-left-width:6px}
+.tile{background:var(--panel);border:var(--bw) solid var(--line);border-radius:var(--radius);padding:1rem 1.1rem}
+.tile .n{font-family:Georgia,"Iowan Old Style",serif;font-size:2rem;line-height:1;color:var(--accent);margin-bottom:.35rem}
+.tile .t{font-size:.92rem;color:var(--muted)}
+.tbl{overflow-x:auto;margin:1.2rem 0 1.6rem;border:var(--bw) solid var(--line);border-radius:var(--radius);background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{text-align:left;vertical-align:top;padding:.7rem .85rem;border-bottom:var(--bw) solid var(--line)}
+th{background:var(--panel2);font-weight:700;font-size:.86rem;letter-spacing:.02em}
+tr:last-child td{border-bottom:0}
+td.k{font-weight:700;white-space:nowrap}
+.pill{display:inline-block;padding:.12em .55em;border-radius:999px;font-size:.78rem;font-weight:700;border:var(--bw) solid var(--line2);background:var(--panel2);white-space:nowrap}
+.pill.acc{color:var(--accent);border-color:var(--accent)}
+.pill.teal{color:var(--teal);border-color:var(--teal)}
+.pill.ok{color:var(--ok);border-color:var(--ok)}
+.pill.warn{color:var(--warn);border-color:var(--warn)}
+.tl{list-style:none;padding:0;margin:1.4rem 0;position:relative}
+.tl::before{content:"";position:absolute;left:14px;top:6px;bottom:6px;width:var(--bw);background:var(--line2)}
+:root[data-contrast="high"] .tl::before{width:2px}
+.tl li{position:relative;padding:0 0 1.3rem 3rem}
+.tl li::before{content:"";position:absolute;left:8px;top:.35rem;width:14px;height:14px;border-radius:50%;background:var(--accent);border:3px solid var(--bg)}
+.tl li b.step{display:block;font-family:Georgia,serif;font-size:1.1rem;margin-bottom:.25rem}
+.tl li .model{display:block;margin-top:.45rem;padding:.6rem .9rem;background:var(--teal-bg);border-left:3px solid var(--teal);border-radius:0 10px 10px 0;font-size:.95rem}
+:root[data-contrast="high"] .tl li .model{border:var(--bw) solid var(--line);border-left-width:5px}
+.phases{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin:1.2rem 0}
+.phase{border-top:5px solid var(--phc);background:var(--panel);border:var(--bw) solid var(--line);border-top:5px solid var(--phc);border-radius:var(--radius);padding:1rem 1.05rem;font-size:.95rem}
+.phase b{display:block;font-size:1rem;margin-bottom:.35rem}
+.phase .steps{color:var(--muted);font-size:.84rem;font-family:ui-monospace,Menlo,monospace;margin-bottom:.4rem}
+.fig{margin:1.4rem 0 .6rem}
+.fig svg{width:100%;height:auto;display:block}
+.fig .cap{font-size:.9rem;color:var(--muted);margin-top:.5rem}
+.svgbox{fill:var(--panel);stroke-width:2}
+.svgt{fill:var(--ink);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+.svgt.small{font-size:13px;fill:var(--muted)}
+.svgt.tag{font:700 12px ui-monospace,Menlo,monospace;fill:var(--muted)}
+.svgg{fill:var(--bg);stroke:var(--accent);stroke-width:2}
+.svgg-t{fill:var(--accent);font:700 12px ui-monospace,Menlo,monospace;text-anchor:middle}
+.svgl{stroke:var(--line2);stroke-width:2;fill:none}
+.svgl.back{stroke:var(--ok);stroke-dasharray:6 5}
+:root[data-contrast="high"] .svgbox,:root[data-contrast="high"] .svgg{stroke-width:3}
+:root[data-contrast="high"] .svgl{stroke:var(--ink);stroke-width:3}
+.matrix td,.matrix th{text-align:center;padding:.55rem .5rem;font-size:.86rem}
+.matrix td:first-child,.matrix th:first-child{text-align:left;white-space:nowrap}
+.mx-o{font-weight:700;color:var(--ok)}
+.mx-d{color:var(--muted)}
+.mx-x{font-weight:700;color:var(--accent)}
+.lens td:first-child{font-weight:700;white-space:nowrap}
+.loss{margin-top:.7rem;padding-top:.7rem;border-top:var(--bw) dashed var(--line2);font-size:.94rem}
+.loss b{color:var(--accent)}
+.sources ol{padding-left:1.5rem;font-size:.92rem}
+.sources li{margin:.45rem 0;overflow-wrap:anywhere}
+.stamp{font-size:.86rem;color:var(--muted);border-top:var(--bw) solid var(--line);padding-top:1.2rem;margin-top:3rem}
+.sr{position:absolute;left:-9999px}
+.gate-what{display:grid;gap:.6rem 1.2rem;grid-template-columns:auto minmax(0,1fr);align-items:baseline;margin:1rem 0 1.4rem}
+.gate-what .g{font:700 .9rem ui-monospace,Menlo,monospace;color:var(--accent)}
+@media (max-width:640px){.gate-what{grid-template-columns:minmax(0,1fr)}.gate-what .g{margin-top:.5rem}}
 </style>
-
-
-
 <!--general:head-->
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://paveldiordits.site/presentations/generator-fich.html">
-<meta property="og:site_name" content="General · paveldiordits.site">
-<meta property="og:title" content="Генератор фич: подход">
-<meta property="og:description" content="Разбор исследовательского пакета про генерацию продуктовых фич: какая эталонная модель из него собралась и почему она не ложится на реальную работу как есть.">
+<meta property="og:site_name" content="Журнал · paveldiordits.site">
+<meta property="og:title" content="Генератор фич: что выяснило исследование и что из него брать">
+<meta property="og:description" content="Разбор исследовательского пакета о генерации фич: 24 источника, что измерено и что назначено, модель из 14 шагов и 9 гейтов и минимальная версия для Product Lab.">
 <meta property="og:image" content="https://paveldiordits.site/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Генератор фич: подход">
-<meta name="twitter:description" content="Разбор исследовательского пакета про генерацию продуктовых фич: какая эталонная модель из него собралась и почему она не ложится на реальную работу как есть.">
+<meta name="twitter:title" content="Генератор фич: что выяснило исследование и что из него брать">
+<meta name="twitter:description" content="Разбор исследовательского пакета о генерации фич: 24 источника, что измерено и что назначено, модель из 14 шагов и 9 гейтов и минимальная версия для Product Lab.">
 <meta name="twitter:image" content="https://paveldiordits.site/og.png">
 <link rel="canonical" href="https://paveldiordits.site/presentations/generator-fich.html">
+<link rel="alternate" type="application/rss+xml" title="Журнал — разборы Павла Диордица" href="https://paveldiordits.site/presentations/rss.xml">
+<style>
+#contrastBtn,#btn-contrast,#ct,#hc,#hcBtn,
+button[title*="онтраст"],button[aria-label*="онтраст"]{display:none!important}
+</style>
+<script>
+(function(){
+  var r=document.documentElement;
+  function off(){
+    if(r.hasAttribute('data-contrast')) r.removeAttribute('data-contrast');
+    if(r.classList.contains('hc')) r.classList.remove('hc');
+  }
+  off();
+  // Наблюдатель, а не разовый вызов: собственный скрипт страницы поднимает режим
+  // из localStorage позже, уже после этой вставки, — снимаем сразу же, до отрисовки.
+  new MutationObserver(off).observe(r,{attributes:true,attributeFilter:['data-contrast','class']});
+  // Кнопки будущих разборов с неизвестным id: прячем по подписи, не удаляя узел.
+  addEventListener('DOMContentLoaded',function(){
+    [].forEach.call(document.querySelectorAll('button'),function(b){
+      if(/контраст/i.test(b.textContent||'')) b.style.display='none';
+    });
+  });
+})();
+</script>
 <!--/general:head-->
-</head><body>
-<div id="bar"></div>
-
-<header class="top"><div class="topin">
-  <div class="brand">Генератор фич · подход · 2026-09-04</div>
-  <div class="tools">
-    <button class="t" id="th">Тема</button>
-    <button class="t" id="ct">Контраст</button>
+</head>
+<body>
+<!--general:top-->
+<div class="gnrl-upwrap"><a class="gnrl-up" id="gnrl-up" href="https://paveldiordits.site/presentations/">← Назад</a></div>
+<!--/general:top-->
+<div id="progress" aria-hidden="true"></div>
+<header class="topbar">
+  <div class="topbar-in">
+    <span class="brand"><b>Product Lab</b> · разбор исследования</span>
+    <div class="controls">
+      <button class="btn" id="navToggle" aria-expanded="false" aria-controls="sidenav"><span class="ico">☰</span>Разделы</button>
+      <button class="btn" id="themeBtn" title="Тема: системная / светлая / тёмная"><span class="ico" id="themeIco">◐</span><span id="themeLbl">Тема: системная</span></button>
+      <button class="btn" id="contrastBtn" aria-pressed="false" title="Повышенная контрастность"><span class="ico">◧</span>Контраст</button>
+    </div>
   </div>
-</div></header>
+</header>
 
 <div class="wrap">
-<nav class="toc" id="toc">
-  <div class="g">Части</div>
-  <a href="#chitat">Как читать</a>
-  <a href="#p1">1 · Что искали</a>
-  <a href="#p2">2 · Эталонная модель</a>
-  <a href="#p3">3 · Почему не ложится</a>
-  <a href="#p4">4 · Что берём</a>
-  <a href="#p5">5 · Масштабирование</a>
-  <a href="#p6">6 · Что дальше</a>
-  <div class="g">Справка</div>
-  <a href="#gde">Где что лежит</a>
-  <a href="#ist">Источники</a>
+<nav class="side" id="sidenav" aria-label="Разделы">
+  <ol>
+    <li><a href="#top">Начало</a></li>
+    <li><a href="#s1">1. Проблема и главный ответ</a></li>
+    <li><a href="#s2">2. Что удалось установить</a>
+      <ol class="sub">
+        <li><a href="#s2-1">Как читать силу выводов</a></li>
+        <li><a href="#s2-2">Откуда берутся фичи</a></li>
+        <li><a href="#s2-4">Генерация и разнообразие</a></li>
+        <li><a href="#s2-5">Отбор</a></li>
+        <li><a href="#s2-6">Языковые модели</a></li>
+        <li><a href="#s2-7">Проверка и измерение</a></li>
+        <li><a href="#s2-8">Чего не знает никто</a></li>
+      </ol></li>
+    <li><a href="#s3">3. Как работает подход</a>
+      <ol class="sub">
+        <li><a href="#s3-2">Сквозной пример</a></li>
+        <li><a href="#s3-3">14 шагов и 9 гейтов</a></li>
+        <li><a href="#s3-4">Что может машина</a></li>
+        <li><a href="#s3-5">Движок: две оси</a></li>
+        <li><a href="#s3-6">Семнадцать линз</a></li>
+        <li><a href="#s3-7">Контракт и прослеживаемость</a></li>
+        <li><a href="#s3-8">Оценка генератора</a></li>
+      </ol></li>
+    <li><a href="#s4">4. Почему выбраны эти решения</a></li>
+    <li><a href="#s5">5. Что это значит для Product Lab</a></li>
+    <li><a href="#s6">6. Что остаётся неизвестным</a></li>
+    <li><a href="#s7">7. Источники и подробности</a></li>
+  </ol>
 </nav>
 
-<main>
-<h1>Генератор фич: что выяснили, что берём в работу и почему</h1>
-<p class="dek">Ввод в курс дела вместо чтения пакета на 96 000 слов.</p>
-<p class="meta">2026-09-04 · предмет: исследовательский пакет <code>feature-generator</code>
-и его применимость к <code>product-lab</code> · чтение ≈ 25 минут</p>
-
-<h2 id="chitat"><span class="num">Как читать</span>Что здесь и чего здесь нет</h2>
-<p class="lead">Пакет — 32 файла: около 96 000 слов синтеза плюс 24 карточки внешних
-источников. Читать его целиком не нужно и не надо. Этот документ отвечает на четыре
-вопроса по порядку: что искали и что нашли; как устроена собранная из этого эталонная
-модель; почему она не ложится на твою работу как есть; что из неё берём и как оно
-масштабируется, когда данных станет больше.</p>
-<p>Числа взяты из пакета и проверялись его собственным аудитом: 52 числовых утверждения
-сверены с карточками источников, 44 подтвердились точно, остальные исправлены
-или снабжены оговоркой прямо в тексте. Ссылки на конкретные разделы — в конце.</p>
-
-<div class="big">
-  <div><div class="n">24</div><div class="l">внешних источника</div></div>
-  <div><div class="n">7</div><div class="l">школ разработки сопоставлены</div></div>
-  <div><div class="n">96 000</div><div class="l">слов синтеза в пакете</div></div>
-  <div><div class="n">6</div><div class="l">правил в рабочей версии</div></div>
+<main id="top">
+<!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+<div class="hero">
+  <span class="kicker">Product Lab · серия · 2026-09-05</span>
+  <h1>Генератор фич: что выяснило исследование, как устроен предложенный подход и что из него применимо</h1>
+  <p class="lead">Разбор исследовательского пакета о том, как продуктовые фичи могут системно появляться из накопленного знания о продукте, а не придумываться с нуля. 24 источника, семь школ продуктовой разработки, нормативная модель из четырнадцати шагов и девяти гейтов, аудит пакета и разбор его применимости к Product Lab. Этот разбор заменяет ввод в курс дела от 4 сентября.</p>
+  <div class="meta">
+    <span>Предмет: 38 файлов, около 117 тысяч слов</span>
+    <span>Пакет: <code>~/dev/projects/personal/feature-generator</code></span>
+    <span>Снимок и план приземления: <code>product-lab/donors/feature-pool/</code></span>
+  </div>
+  <div class="callout teal">
+    <p><strong>Как читать.</strong> Ссылки в квадратных скобках указывают файл и раздел пакета; <code>SRC-NNN</code> — карточка источника, <code>CLAIM-NNN-NN</code> — пронумерованное утверждение внутри карточки. Сами внешние статьи и книги не читались: всё, что сказано об источниках, известно через карточки. Новый внешний ресёрч не проводился намеренно: предмет — уже существующий пакет, чьи числа проверены его собственным аудитом.</p>
+  </div>
+  <div class="grid4">
+    <div class="tile"><div class="n">24</div><div class="t">источника: 8 академических, 8 компаний, 6 методологий, 2 мета-анализа</div></div>
+    <div class="tile"><div class="n">7</div><div class="t">школ продуктовой разработки сравнены по двенадцати измерениям</div></div>
+    <div class="tile"><div class="n">14 + 9</div><div class="t">шагов и гейтов в полной модели; 73 поля у кандидата</div></div>
+    <div class="tile"><div class="n">1</div><div class="t">вещь, которую разбор рекомендует взять в Product Lab: слой возможностей</div></div>
+  </div>
 </div>
 
-<h2 id="p1"><span class="num">Часть 1</span>Что искали</h2>
-<p>Исходный вопрос звучал так: как построить воспроизводимый процесс появления фич
-из того, что уже накоплено о продукте, пользователе, рынке и стратегии. Не «сгенерировать
-бэклог языковой моделью», а понять, как это устроено у зрелых продуктовых организаций,
-что из этого формализуется и что допустимо автоматизировать.</p>
-<p>Ресёрч прочёл 24 источника: академические работы с измерениями, инженерные хендбуки
-компаний, методологии, независимые обзоры. Из них выделены семь школ продуктовой
-разработки — непрерывный discovery, продуктовая операционная модель, Working Backwards
-у Amazon, Stage-Gate, Dual Track, Build Trap / Product Kata, GitLab Flow — и сопоставлены
-по двенадцати измерениям: с чего начинается работа, что считается единицей discovery,
-как входят клиентские данные, где живёт стратегия, есть ли слой возможностей, как
-расходятся решения, как валидируют, как приоритизируют, как экспериментируют,
-как передают в разработку, как измеряют, как замыкают петлю обучения.</p>
+<!-- ═══════════════════════════ 1 ═══════════════════════════ -->
+<section class="sec" id="s1">
+  <span class="kicker">Раздел 1</span>
+  <h2>Проблема и главный ответ</h2>
 
-<h3>Что нашли — шесть вещей</h3>
+  <div class="grid2">
+    <div class="card">
+      <h3>Что хотели</h3>
+      <p>У пользователя есть конвейер продуктовой разработки (Product Lab), где идея последовательно превращается в бриф, концепт и продуктовую стратегию. Следующая стадия — появление фич — не спроектирована. Вопрос исследования: как построить воспроизводимый и обоснованный процесс, в котором кандидаты в фичи возникают из накопленного знания о продукте, пользователе, рынке и стратегии, а не придумываются с нуля; какие части такого процесса формализуемы и какие допустимо отдать языковой модели.</p>
+      <p>Явно оговаривалось: это не «генерация бэклога языковой моделью», а часть общего процесса разработки, и если исследование найдёт более сильную модель, чем исходная гипотеза, приоритет у исследования. Исходная гипотеза: между сигналами и решениями нужен отдельный слой формализованных проблем или возможностей. Постановка называла её предметом проверки, а не требованием [<code>source-docs/chatgpt-thread.md</code>].</p>
+    </div>
+    <div class="card">
+      <h3>Что предложено</h3>
+      <p>Из находок собрана нормативная модель конвейера: четырнадцать шагов, девять гейтов, два независимых слоя генерации (что запустило и каким способом ищем), каталог семнадцати линз для расхождения в решения разного устройства, контракт кандидата, машинная прослеживаемость происхождения от источника до результата и методика оценки самого генератора на четырёх несводимых уровнях.</p>
+      <p>Модель написана нарочно обобщённо — для организации с командой, телеметрией и историей релизов [<code>03_reference_model.md</code>].</p>
+    </div>
+  </div>
 
-<h4>1. Прямого пути «запрос клиента → бэклог» не разрешает ни одна школа</h4>
-<p>Все семь вставляют между сигналом и списком фич отдельный именованный артефакт.
-Называется он везде по-разному — opportunity, problem statement, PR/FAQ, obstacle,
-назначенная проблема с целевым исходом, — но содержание одинаковое: кто носитель
-проблемы, в чём разрыв между ожиданием и реальностью, кого это касается и насколько
-серьёзно, какая метрика и какой порог считается успехом. Это самое устойчивое
-наблюдение всего корпуса.</p>
-<p>Честная оговорка, которую ресёрч делает сам: влияния этого слоя на продуктовый
-результат не измерил никто. Шесть из восьми опор — методологии и хендбуки без выборок
-и размеров эффекта. Слой обязателен по согласию всех школ, а не по доказанной пользе.</p>
+  <h3>Что нашли: три результата держат всё остальное</h3>
+  <div class="grid3">
+    <div class="card">
+      <span class="kicker">Первый</span>
+      <p><strong>Ни одна из семи школ не разрешает прямой путь «запрос клиента → бэклог».</strong> Все вставляют между сигналом и списком фич именованный артефакт — возможность, формулировку проблемы, документ-гипотезу — с одинаковым содержанием: кто носитель проблемы, в чём разрыв между ожиданием и реальностью, кого касается и насколько серьёзно, какая метрика и порог считаются успехом.</p>
+      <p>Гипотеза постановки подтвердилась как норма отрасли. Но влияние этого слоя на продуктовый результат не измерил ни один источник: слой обязателен по согласию школ, а не по доказанной пользе [отчёт §1, §6, §16; FINDING-01].</p>
+    </div>
+    <div class="card">
+      <span class="kicker">Второй</span>
+      <p><strong>У языковых моделей измерено сильное и слабое место.</strong> Сильное — при зафиксированной проблеме модель даёт хорошие отдельные идеи, в верхний хвост качества попадает чаще людей. Слабое — набор её идей однороден: варианты пересказывают друг друга, и это устойчивое свойство, которое не лечится настройками сэмплирования.</p>
+      <p>Лечится оно заданием разных условий на входе — персона, функциональное ограничение, «человек фиксирует проблему, модель ищет другое решение». Отсюда центральная инженерная идея: разнообразие решений измеряется на уровне набора и обеспечивается структурой входа, а не просьбой «будь креативнее» [отчёт §8, §14; SRC-002, SRC-007, SRC-023].</p>
+    </div>
+    <div class="card">
+      <span class="kicker">Третий</span>
+      <p><strong>Единственное звено всей цепочки с причинно-следственным подтверждением — дисциплина проверки.</strong> В рандомизированном эксперименте на 116 стартапах группу учили формулировать фальсифицируемые гипотезы, задавать валидные метрики и пороги решения до сбора данных. Обученные чаще меняли направление и охотнее отказывались от идеи, закрывались не реже контрольной группы и показывали более высокую выручку по кросс-секции.</p>
+      <p>Эффект выразился не в выживаемости идей, а в своевременности отказа от них [SRC-003; отчёт §10].</p>
+    </div>
+  </div>
 
-<h4>2. Количество идей само по себе ничего не значит</h4>
-<p>Мета-анализ 43 сравнений: эффект вмешательства на число порождённых идей и эффект
-на их качество коррелируют практически нулём — <b>r = 0,007</b>. Это ставит под вопрос
-базовый постулат брейнсторминга «чем больше идей, тем выше шанс на хорошую». При этом
-разрыв между процессами по качеству лучшей пятёрки втрое больше разрыва по среднему
-качеству: значение имеет верхний хвост, а не середина.</p>
-<p>Ресёрч тут аккуратен: авторы мета-анализа сами оговариваются, что исследований мало
-и мощности может не хватать, а другая работа удерживает число идей одной из четырёх
-переменных, определяющих качество лучшей. Расхождение не снято. Практический вывод
-всё равно однозначен: мерить надо разброс набора, а не его объём.</p>
+  <div class="callout">
+    <p><strong>Что это значит для проекта.</strong> Отдельный разбор соответствия показал: Product Lab исполняет две стадии из семнадцати, телеметрии и истории релизов нет, шесть из девяти гейтов исполнять не на чем. Рекомендация разбора — взять из модели одну вещь, слой возможностей, в минимальной форме: возможность записывается раньше любой фичи, под каждой значимой возможностью три решения разного устройства (одно — без разработки), у кандидата восемь полей вместо семидесяти трёх, фичу нельзя закрыть без записи того, что вышло. Остальное — знание в архиве.</p>
+    <p>Индекс репозитория называет это принятым решением; сам разбор — рекомендацией на момент, когда пользователь даст команду. Подтверждение решения в репозитории Product Lab в рамках этого разбора не проверялось [<code>product-lab-fit-2026-09-04.md</code> «Вердикт»; <code>INDEX.md</code>].</p>
+  </div>
+</section>
 
-<h4>3. Языковая модель схлопывается по разнообразию</h4>
-<p>Средняя попарная близость внутри набора: <b>0,221 у людей против 0,414–0,428
-у одной модели</b> — во всех 32 сравнениях на пяти сторонних наборах данных.
-В 79 % случаев повторные ответы одной модели держат близость выше 0,8, то есть
-являются пересказом друг друга. Совместная работа человека с моделью роняет
-разнообразие сильно (g = −0,863) при умеренном приросте качества (g = 0,273).</p>
-<p>Ломать это температурой и просьбами «будь креативнее» измеренно не работает: весь
-диапазон температуры двигает разнообразие с 0,618 до 0,679, тогда как человеческий
-эталон — 0,773. А работает задание разных осей на входе: случайные персоны дают 0,757,
-схема «человек фиксирует проблему, модель ищет другое решение» — 0,739, функциональные
-ограничения — 0,735. Отсюда правило: разнообразие делается входом, а не настройками
-сэмплирования.</p>
+<!-- ═══════════════════════════ 2 ═══════════════════════════ -->
+<section class="sec" id="s2">
+  <span class="kicker">Раздел 2</span>
+  <h2>Что удалось установить</h2>
 
-<h4>4. Автоматический отбор — фильтр снизу, а не выбор победителей</h4>
-<p>На 21 конкурсе, 4 191 идея: ни одна из четырёх моделей не воспроизводит выбор
-экспертов, потолок точности вне обучающей выборки — <b>AUC 0,69–0,73</b>. Достижимый
-рабочий режим — отсеять 44 % ценой потери 14 % тех, кто попал бы в шортлист;
-в одном случае на отложенном конкурсе один предиктор снял 62 % кандидатов,
-не потеряв ни одного победителя.</p>
-<p>Отдельно: шумный отбор обнуляет преимущество хорошего генератора. Разрыв
-в 0,85–0,90 балла по лучшей пятёрке исчезает после того, как отбор проводит группа.
-То есть улучшать генерацию бессмысленно, если отбор случайный.</p>
+  <h3 id="s2-1">2.1. Как читать силу выводов</h3>
+  <p>Корпус заморожен на 24 источниках: после заморозки ничего не добавлялось, а всё недостающее записано пробелом, а не закрыто новой ссылкой. Это осознанное решение ради воспроизводимости — иначе любой неудобный вывод чинился бы поиском ещё одной статьи [журнал решений REJ-06]. Каждому источнику присвоена сила доказательства от 1 до 5 по устройству, а не по авторитету: 5 — рецензируемое исследование с выборкой и размерами эффекта, 4 — первоисточник компании с собственными измерениями, 3 — методология, описывающая предписанный процесс. Сила не равна полезности: методология силы 3 может быть практичнее статьи силы 5 [отчёт §2].</p>
+  <p>Асимметрия корпуса определяет асимметрию выводов. Измерены свойства генерации и отбора идей — на студентах, краудсорсинговых конкурсах и научных идеях. Нормированы процедуры организаций — без данных о том, соблюдаются ли они и что дают. И почти нигде не измерена связь между первым и вторым [модель §1]. Всё, что ниже помечено как результат исследования, получено в лабораторных или внепродуктовых постановках; перенос на фичи цифрового продукта — допущение, которое пакет признаёт явно (ASM-04) и авторы источников прямо ограничивают.</p>
+  <div class="grid4">
+    <div class="tile"><div class="n">1 день</div><div class="t">корпус собран, карточки написаны и синтез выполнен агентами Claude за один день: дата начала и дата заморозки совпадают</div></div>
+    <div class="tile"><div class="n">7 · 35 · 14</div><div class="t">блокирующих, существенных и мелких дефектов нашёл аудит шести проверяющих; подтверждённые исправлены</div></div>
+    <div class="tile"><div class="n">44 из 52</div><div class="t">числовых утверждений воспроизводят карточку точно; три — верное число не той популяции, три — пометка «подтверждено» на проектном решении</div></div>
+    <div class="tile"><div class="n">14 из 42</div><div class="t">пар «два источника» — второй источник по теме молчал; пустышки убраны</div></div>
+  </div>
+  <div class="callout warn">
+    <p><strong>Главный вывод аудита.</strong> Правило «каждое утверждение опирается минимум на два источника» выполнялось формально. Пустышки убраны, но читать число ссылок под утверждением как меру его силы нельзя [<code>audit-2026-09-04.md</code> Б-02]. В прочитанных редакциях отчёта и модели названные аудитом места исправлены — проверено выборочно.</p>
+  </div>
 
-<h4>5. Генератор не вправе оценивать сам себя</h4>
-<p>Ранговая корреляция самооценки генератора с независимыми судьями — <b>0,162–0,182</b>.
-Автоматические судьи хуже всего согласуются с людьми ровно там, где это нужнее всего:
-на кандидатах сопоставимого качества. Некалиброванный судья хуже отсутствия судьи.</p>
-<p>Про сами модели вывод двойной. Сильная сторона — верхний хвост при зафиксированной
-проблеме: purchase intent 46,4–49,3 % против 40,4 % у студентов MBA, попадание
-в верхний хвост в семь раз чаще. Слабая — перенос оценки замысла на исход: когда
-43 идеи довели до исполнения, машинные потеряли 1,05–1,98 балла из десяти, и значимое
-до исполнения превосходство исчезло полностью при неотличимом качестве самого
-исполнения.</p>
+  <h3 id="s2-2">2.2. Откуда берутся фичи</h3>
+  <p>В зрелых организациях кандидаты входят как сигналы пяти групп каналов: интервью с клиентами, обращения в поддержку и продажи, продуктовая аналитика, внутренние технические обязательства, стратегия и партнёры. Один класс сигналов проходит мимо всякого отбора — безопасность, потеря данных, надёжность — с обязательствами по уровню сервиса; методологические школы такого класса не знают [отчёт §4; SRC-010].</p>
+  <p>Единственные измеренные доли выживания идей получены на открытых площадках, не в бэклоге: около 9 % из 7 тысяч идей на форуме одной компании, 2,2 % и 0,2 % на двух других [SRC-004]. Распределение источников внутри компании и связь канала с судьбой кандидата не измерены никем (GAP-12).</p>
+  <div class="grid2">
+    <div class="card">
+      <h4>Сигнал становится доказательством не по содержанию, а по метаданным</h4>
+      <p>Есть ли разрешимая ссылка на первоисточник, каким механизмом наблюдалось, когда, до какого срока годно. Достаточность задаётся не баллом, а дискретной лестницей из практики GitLab: «задокументировано» (прямая обратная связь), «хорошо понято» (серия интервью или сошлись два независимых механизма наблюдения), «измерено количественно». Численных порогов достаточности не даёт никто (GAP-11) [отчёт §5; SRC-009].</p>
+    </div>
+    <div class="card">
+      <h4>Спрос ведёт себя как порог, а не как объём</h4>
+      <p>На форуме идей вероятность реализации росла до одного голоса в день и дальше не росла; при этом сам сигнал копится годами — среднее время до решения около трёх лет [SRC-004, CLAIM-004-05]. Это расходится с непрерывной шкалой охвата в формуле RICE у GitLab (CONFLICT-13); модель совмещает обе формы.</p>
+    </div>
+  </div>
+  <div class="callout">
+    <p><strong>Самое слабое место конструкции.</strong> Продуктовая документация как источник доказательств не описана ни одним из 24 источников, хотя именно она — половина входа генератора (GAP-01). Журнал решений: генеративная предпосылка системы не имеет в корпусе даже нормативной опоры [журнал DEC-15, GAP-01].</p>
+  </div>
 
-<h4>6. Единственное правило с причинно-следственным подтверждением</h4>
-<p>Порог решения, записанный до сбора данных. Рандомизированный полевой эксперимент
-на 116 стартапах: вмешательство свелось к тому, что около 30 % времени тратилось
-на фальсифицируемые гипотезы, валидные метрики и явно записанные пороги. Результат —
-минимум один пивот у 19 фирм из 59 против 11 из 57 в контроле (p = 0,027), выручка
-выше по кросс-секции на 10 799,5 евро (p = 0,010), готовность отказаться от проекта
-4,4 против 3,2.</p>
-<div class="note"><p>Обрати внимание, в чём именно выразился эффект: в росте числа
-разворотов и готовности бросить, а не в выживаемости идеи. <b>Строгость не делает идею
-живучей — она делает отказ от неё своевременным.</b></p></div>
+  <h3>2.3. Слой возможностей</h3>
+  <p>Содержание слоя совпадает у всех школ. Практический тест, отличающий возможность от замаскированного решения, дан прямо: <strong>«есть ли более одного способа её закрыть?»</strong> Если способ единственный, перед нами фича, записанная задом наперёд. Реакция на провал теста — не удалить, а разрезать многослойную проблему по измерениям [SRC-017, CLAIM-017-02; SRC-016].</p>
+  <p>Экономика слоя нормирована, но не измерена: «треть усилий до начала проектирования» у Intercom — иллюстративная диаграмма, «70 % времени продакт-менеджера на понимание проблемы» у GitLab — предписание [отчёт §6].</p>
 
-<h3>Чего отрасль не знает вовсе</h3>
-<p>Это важнее находок, потому что определяет, чему в модели можно верить.</p>
-<ul>
-<li>Связи между качеством системы, порождающей кандидатов, и продуктовым результатом
-не измерил ни один из 24 источников. Модели скрининга предсказывают экспертный шортлист,
-а не деньги.</li>
-<li>Сквозного размеченного корпуса «сигнал → возможность → выпущенная фича → результат»
-нет ни у одной организации.</li>
-<li>Прослеживаемость происхождения фичи описана везде как организационная дисциплина
-и нигде как схема данных.</li>
-<li>Никто не сообщает, какая доля кандидатов нормально отсеивается и по каким причинам.</li>
-<li>Никто не измерял, сколько альтернативных решений оптимально порождать.</li>
-</ul>
-<p>Сам пакет формулирует это прямо: «Не входит утверждение, что описанная система
-улучшает продуктовый результат».</p>
+  <h3 id="s2-4">2.4. Генерация и разнообразие</h3>
+  <p>Качество лучшей идеи процесса раскладывается на четыре переменные: среднее качество, число идей, разброс качества внутри набора и умение отличить лучшие при отборе. Разрыв между процессами виден на верхнем хвосте — по лучшей пятёрке он втрое больше, чем по среднему [SRC-001, CLAIM-001-01, -03]. Эксперимент лабораторный: 44 студента, полчаса, потребительские товары.</p>
+  <p><strong>Число идей само по себе не признак качества.</strong> В мета-анализе 43 сравнений эффекты вмешательств на количество и на качество коррелируют практически нулём [SRC-024, CLAIM-024-06]. Пакет здесь осторожен, и это стоит сохранить: авторы мета-анализа сами пишут, что исследований мало и мощности может не хватать, а корреляция между исследованиями — не проверка гипотезы «больше идей — лучше лучшая»; другой источник удерживает число идей одной из четырёх переменных. Расхождение не снято (CONFLICT-09), поэтому модель меряет верхний хвост и разброс набора, а не объём.</p>
+  <div class="grid2">
+    <div class="card">
+      <h4>Языковые модели однородны</h4>
+      <p>Набор идей одной модели однороднее человеческого во всех 32 сравнениях на пяти сторонних наборах данных; средняя попарная близость 0,22 у людей против 0,41–0,43 у модели. Совместная работа человека с моделью роняет разнообразие сильно при умеренном приросте качества [SRC-002, CLAIM-002-03; SRC-023, CLAIM-023-03]. Повторные ответы одной модели в 79 % случаев держат близость выше 0,8 — они пересказ друг друга [SRC-007, CLAIM-007-01].</p>
+    </div>
+    <div class="card">
+      <h4>Единственный измеренный рычаг — гетерогенность входа</h4>
+      <p>На шкале, где человеческий набор даёт 0,773, весь диапазон температуры двигает разнообразие лишь с 0,618 до 0,679, а случайные персоны дают 0,757, схема «человек фиксирует проблему — модель ищет другое решение» 0,739, случайные функциональные ограничения 0,735. Приёмы «сделай смелее» и изолированные сессии по одной идее ухудшают показатель до 0,575 и 0,452 [SRC-002, CLAIM-002-05]. Числа получены на одном энкодере и одной задаче; между энкодерами абсолютные значения не переносятся.</p>
+    </div>
+  </div>
+  <p><strong>Примеры на входе одновременно вдохновляют и фиксируют</strong> — это два разных показателя, не два ответа на один вопрос. У людей показ примера повышает новизну и долю связанных с ним идей, но снижает разнообразие категорий; польза убывает с числом примеров и с их обыденностью; показ до начала работы лучше показа в процессе [SRC-024]. На языковых моделях знак по новизне разворачивается: несколько удачных примеров прошлых лет снизили новизну [SRC-002]. Спор не снят (CONFLICT-04); модель подаёт не более одного нетипичного примера до старта.</p>
+  <p>Помогает ли смешивание разных вендоров, корпус решает противоречиво: композит четырёх вендоров дал разнообразие, неотличимое от человеческого, в одной работе, а в другой межмодельная близость 0,71–0,82 и общие приоры обучения (CONFLICT-08) [SRC-002, CLAIM-002-04; SRC-007, CLAIM-007-03].</p>
 
-<h2 id="p2"><span class="num">Часть 2</span>Эталонная модель</h2>
-<p>Из находок собрана нормативная модель. Она намеренно generic — написана
-для организации, а не под конкретную ситуацию. Понимать её нужно не чтобы внедрять
-целиком, а чтобы знать, откуда берутся правила, которые мы возьмём.</p>
+  <h3 id="s2-5">2.5. Отбор</h3>
+  <p><strong>Автоматический отбор — фильтр нижней полосы, а не выбор победителей.</strong> На 21 конкурсе с 4 191 идеей ни одна из четырёх моделей не воспроизвела выбор экспертов; потолок точности вне обучающей выборки — AUC 0,69–0,73. AUC — вероятность, что модель поставит случайную хорошую идею выше случайной плохой: 0,5 — случайный отбор, 1 — безошибочный. Достижимый режим — отсеять 44 % кандидатов ценой 14 % тех, кто попал бы в шортлист; на отложенном конкурсе один текстовый признак снял 62 % идей, не потеряв ни одного победителя, тогда как эксперты потеряли четырёх из пяти [SRC-005, CLAIM-005-01, -02, -04]. Более высокие значения точности (до 0,9) достигаются только с накопленным поведенческим сигналом сообщества, которого у нового кандидата нет (CONFLICT-14) [SRC-004].</p>
+  <div class="grid2">
+    <div class="card">
+      <h4>Шумный отбор обнуляет преимущество генератора</h4>
+      <p>Процессы, различавшиеся по качеству лучшей пятёрки почти на балл, после группового отбора не различались [SRC-001, CLAIM-001-05]. Способность порождать не даёт способности различать: ранговая корреляция самооценки генерирующих групп с независимыми судьями ниже 0,2 [CLAIM-001-04]. Аудит уточнил: это измерено на студентах 2010 года, а не на языковых моделях; отчёт был исправлен. Для моделей есть смежный факт без числа: автоматические судьи хуже всего согласуются с людьми на ответах сопоставимого качества — там, где отбор и решается [SRC-007, CLAIM-007-04].</p>
+    </div>
+    <div class="card">
+      <h4>Нетипичность и судьба кандидата связаны неоднозначно</h4>
+      <p>U-образно на форуме идей (и очень похожие, и очень непохожие реализуются чаще средних) и монотонно у скринера конкурсов, причём тот текстовый признак сильнее всего коррелирует с оценкой «как сформулировано», а не «что предложено» (CONFLICT-07) [SRC-004; SRC-005, CLAIM-005-06].</p>
+    </div>
+  </div>
 
-<h3>Поток</h3>
-<p>Запись проходит четырнадцать шагов, меняя тип на каждом. Ключевое свойство: сигнал —
-это не доказательство, доказательство — не возможность, возможность — не решение,
-решение — не кандидат, кандидат — не фича. Каждое превращение требует, чтобы что-то
-было дописано, и может закончиться отказом.</p>
+  <h3 id="s2-6">2.6. Языковые модели: сильное и слабое</h3>
+  <div class="grid2">
+    <div class="card">
+      <span class="kicker">Сильное</span>
+      <p>При зафиксированной проблеме идеи GPT-4 получили покупательское намерение 46–49 % против 40 % у идей студентов MBA и попадали в лучшие 10 % в семь раз чаще; перефразирование человеческих идей моделью оценок не изменило — выигрыш не в подаче [SRC-002, CLAIM-002-01, -02]. Задача — потребительский товар до 50 долларов.</p>
+    </div>
+    <div class="card">
+      <span class="kicker">Слабое</span>
+      <p><strong>Оценка замысла не переносится на исход.</strong> Когда 43 исследовательские идеи довели до реализации и слепо отрецензировали, идеи модели потеряли 1–2 балла из десяти, человеческие почти не потеряли; преимущество модели, значимое до реализации, исчезло, а по строгости человеческие оказались лучше — при одинаковом качестве исполнения. Механизм — смена критериев: в оценке замысла строгость и эмпирика почти не весят, в оценке исполненного доминируют [SRC-006, CLAIM-006-01…04].</p>
+      <p>Измеренный дефект машинных идей — не выдуманные факты, а неисполнимый план проверки: чаще правились датасеты и метрики, шесть идей закладывали оценку, которую исполнители не смогли провести [CLAIM-006-05]. Область — научные идеи в NLP; перенос на фичи авторы не проверяли.</p>
+    </div>
+  </div>
+  <p>Мета-анализ 28 исследований среднего превосходства модели над человеком не находит и обнаруживает публикационное смещение, разворачивающее оценку; прирост от совместной работы есть, но сосредоточен у непрофессионалов и в задаче генерации продуктовых идей [SRC-023, CLAIM-023-01, -04, -05]. Аудит нашёл в отчёте подмену: прирост от коллаборации был подан под сравнением «модель против человека»; исправлено.</p>
+  <p>Применение моделей в самом discovery не описывает ни один источник компаний или методологий; единственная корпоративная статья о моделях — об оценке их выводов, а не о производстве идей, и её сквозной пример объявлен вымышленным (GAP-09) [SRC-011].</p>
 
-<figure>
-<svg viewBox="0 0 980 470" role="img" aria-label="Эталонный поток из четырнадцати шагов с девятью воротами против облегчённой версии из четырёх шагов с одними воротами">
-<style>
- .lbl{font-family:var(--sans);font-size:13px;fill:var(--ink-2)}
- .lblh{font-family:var(--sans);font-size:13px;fill:var(--ink);font-weight:600}
- .cap{font-family:var(--sans);font-size:12px;fill:var(--ink-3)}
- .hd{font-family:var(--sans);font-size:14px;font-weight:700;fill:var(--ink)}
- .gt{font-family:var(--sans);font-size:11px;font-weight:700;fill:var(--accent)}
- .bx{fill:var(--paper-2);stroke:var(--rule);stroke-width:1}
- .bxa{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.5}
- .ln{stroke:var(--rule);stroke-width:1.5;fill:none}
-</style>
-<text class="hd" x="0" y="16">Эталон — 14 шагов, 9 ворот</text>
-<text class="cap" x="0" y="34">для организации с телеметрией и историей релизов</text>
-<g>
- <rect class="bx" x="0" y="48" width="200" height="30" rx="3"/><text class="lbl" x="12" y="68">документы и ресёрч</text>
- <path class="ln" d="M100 78 V90"/>
- <rect class="bx" x="0" y="90" width="200" height="30" rx="3"/><text class="lbl" x="12" y="110">сигналы извлечены</text>
- <path class="ln" d="M100 120 V132"/>
- <rect class="bxa" x="0" y="132" width="200" height="30" rx="3"/><text class="lbl" x="12" y="152">доказательства</text><text class="gt" x="168" y="152">G0</text>
- <path class="ln" d="M100 162 V174"/>
- <rect class="bx" x="0" y="174" width="200" height="30" rx="3"/><text class="lblh" x="12" y="194">возможность</text>
- <path class="ln" d="M100 204 V216"/>
- <rect class="bxa" x="0" y="216" width="200" height="30" rx="3"/><text class="lbl" x="12" y="236">квалифицирована</text><text class="gt" x="168" y="236">G1</text>
- <path class="ln" d="M100 246 V258"/>
- <rect class="bxa" x="0" y="258" width="200" height="30" rx="3"/><text class="lbl" x="12" y="278">обеспечена ресурсом</text><text class="gt" x="168" y="278">G2</text>
- <path class="ln" d="M100 288 V300"/>
- <rect class="bxa" x="0" y="300" width="200" height="30" rx="3"/><text class="lbl" x="12" y="320">набор решений</text><text class="gt" x="168" y="320">G3</text>
- <path class="ln" d="M100 330 V342"/>
- <rect class="bxa" x="0" y="342" width="200" height="30" rx="3"/><text class="lbl" x="12" y="362">кандидат + скрининг</text><text class="gt" x="168" y="362">G4</text>
- <path class="ln" d="M100 372 V384"/>
- <rect class="bxa" x="0" y="384" width="200" height="30" rx="3"/><text class="lbl" x="12" y="404">валидация</text><text class="gt" x="152" y="404">G5 G6</text>
- <path class="ln" d="M100 414 V426"/>
- <rect class="bxa" x="0" y="426" width="200" height="30" rx="3"/><text class="lbl" x="12" y="446">выпуск, исход</text><text class="gt" x="146" y="446">G7 G8</text>
-</g>
-<path class="ln" d="M215 250 H300" stroke-dasharray="5 5"/>
-<text class="cap" x="228" y="242">берём</text>
-<text class="cap" x="228" y="272">одно</text>
-<g transform="translate(330,0)">
- <text class="hd" x="0" y="16">Рабочая версия — 4 шага, одни ворота</text>
- <text class="cap" x="0" y="34">для одного человека без телеметрии</text>
- <rect class="bx" x="0" y="48" width="230" height="30" rx="3"/><text class="lbl" x="12" y="68">список входов</text>
- <path class="ln" d="M115 78 V132"/>
- <rect class="bx" x="0" y="132" width="230" height="30" rx="3"/><text class="lblh" x="12" y="152">возможность</text>
- <path class="ln" d="M115 162 V216"/>
- <rect class="bx" x="0" y="216" width="230" height="30" rx="3"/><text class="lbl" x="12" y="236">3 решения разных классов</text>
- <path class="ln" d="M115 246 V300"/>
- <rect class="bxa" x="0" y="300" width="230" height="30" rx="3"/><text class="lbl" x="12" y="320">кандидат: 8 полей</text><text class="gt" x="192" y="320">✓</text>
- <path class="ln" d="M115 330 V384"/>
- <rect class="bx" x="0" y="384" width="230" height="30" rx="3"/><text class="lbl" x="12" y="404">результат записан</text>
- <path class="ln" d="M245 399 H290 V60 H240" marker-end=""/>
- <text class="cap" x="252" y="230">перезапуск</text>
-</g>
-<g transform="translate(690,48)">
- <text class="cap" x="0" y="14">Что остаётся в архиве:</text>
- <text class="cap" x="0" y="38">23 объекта данных</text>
- <text class="cap" x="0" y="58">6 режимов × 7 методов</text>
- <text class="cap" x="0" y="78">73 поля кандидата</text>
- <text class="cap" x="0" y="98">15 системных параметров</text>
- <text class="cap" x="0" y="118">протокол оценки</text>
- <text class="cap" x="0" y="138">спецификация на 21 компонент</text>
- <text class="cap" x="0" y="178">Что переезжает целиком:</text>
- <text class="cap" x="0" y="202">17 линз и классов механизма</text>
- <text class="cap" x="0" y="222">правило «сначала проблема»</text>
- <text class="cap" x="0" y="242">правило «три разных класса»</text>
- <text class="cap" x="0" y="262">запрет закрывать без исхода</text>
-</g>
-</svg>
-<figcaption>Слева — эталон: каждый шаг меняет тип записи, ворота стоят на девяти
-из четырнадцати переходов. Справа — то, что реально исполнимо одним человеком сегодня.</figcaption>
-</figure>
+  <h3 id="s2-7">2.7. Проверка, эксперименты, измерение</h3>
+  <p>Проверка проблемы и проверка решения разделены объёмом убиваемого: провал первой закрывает возможность со всеми решениями под ней, провал второй — одно решение при живой возможности. Проверяются не идеи целиком, а допущения пяти типов (нужность, осуществимость, удобство, жизнеспособность, этика), сначала важные при слабых доказательствах, дешёвыми средствами, с критерием успеха, записанным до теста [SRC-017, CLAIM-017-04, -06; SRC-021]. Отказ везде типизирован: пять исходов неодобрения у Amazon, четыре у Stage-Gate с подтверждением ресурсов [SRC-019, SRC-020].</p>
+  <p>Что считать единицей проверки — цельный письменный документ (Amazon) или отдельное допущение на прототипе (Continuous Discovery, Dual Track) — спор не снят: стороны измеряют разное и обе нормативны (CONFLICT-02).</p>
+  <div class="grid3">
+    <div class="card">
+      <h4>Метрика должна быть заранее проверена на чувствительность</h4>
+      <p>Вероятность увидеть эффект равна произведению вероятности того, что метрика вообще двигается от такого вмешательства, на статистическую мощность. В Microsoft Teams метрика времени в приложении пропускала тесты с реальным эффектом и была заменена [SRC-012, CLAIM-012-01, -04]. Единственный источник, без таблиц.</p>
+    </div>
+    <div class="card">
+      <h4>Годный для решения исход, а не победа</h4>
+      <p>Результат эксперимента, годный для решения, — валидная постановка плюс достаточная мощность по каждой метрике; знак не важен. Недобор мощности — «нет обучения», брак измерения, а не поражение идеи. У Spotify доля таких экспериментов 64 % при разбросе 16–76 % по командам, доля побед около 12 % — из одного блога без методики [SRC-013]. Другая позиция — выходом считать только улучшение показателей (GitLab) — не согласована с первой (CONFLICT-11).</p>
+    </div>
+    <div class="card">
+      <h4>Результат не наследуется когортой</h4>
+      <p>У Atlassian вариант, давший почти 30 % прироста у одной аудитории, у другой дал значимое падение и был откачен [SRC-014, CLAIM-014-05]. Один кейс без выборки и интервалов. Единственный измеренный мост от практики к бизнес-результату — наличие инструмента экспериментирования у стартапов; величина эффекта расходится между двумя версиями одной работы (около 10 % против 30–100 %) и не разъяснена авторами, причинность не установлена (CONFLICT-15) [SRC-008].</p>
+    </div>
+  </div>
 
-<h3>Девять ворот</h3>
-<p>Ворота отличаются не строгостью, а тем, что именно они убивают:</p>
-<div class="tw"><table>
-<thead><tr><th>Ворота</th><th>Что проверяют</th><th>Что убивают</th></tr></thead>
-<tbody>
-<tr><td>G0</td><td>допустим ли источник, какова зрелость доказательства</td><td>отдельное доказательство</td></tr>
-<tr><td>G1</td><td>назван ли носитель проблемы, решается ли она более чем одним способом, каков охват</td><td>возможность на входе</td></tr>
-<tr><td>G2</td><td>есть ли целевой исход, лучше ли альтернативы, подтверждён ли ресурс</td><td>возможность без ресурса</td></tr>
-<tr><td>G3</td><td>разнообразие набора решений</td><td><b>весь набор целиком</b></td></tr>
-<tr><td>G4</td><td>полнота контракта кандидата, затем скрининг нижней полосы</td><td>отдельного кандидата</td></tr>
-<tr><td>G5</td><td>подтверждена ли проблема первичными данными</td><td><b>возможность со всеми её решениями</b></td></tr>
-<tr><td>G6</td><td>подтверждено ли решение дешёвым тестом</td><td>одно решение при живой возможности</td></tr>
-<tr><td>G7</td><td>измеримо ли, хватит ли мощности, обратимо ли</td><td>неизмеримую фичу</td></tr>
-<tr><td>G8</td><td>что вышло по факту</td><td>реализацию</td></tr>
-</tbody></table></div>
-<p>Разведение G3, G5 и G6 — существенная часть замысла. Если набор решений схлопнулся
-в семь вариаций одного механизма, отбраковывать надо набор, а не выбирать из него
-лучшее. Если проблема оказалась выдуманной, умирает вся ветка. Если проблема настоящая,
-а решение не сработало, умирает решение, а возможность возвращается за новым.</p>
+  <h3 id="s2-8">2.8. Чего не знает никто</h3>
+  <p>Это определяет, чему в модели можно верить.</p>
+  <ul>
+    <li><strong>Связь качества системы, порождающей кандидатов, с продуктовым результатом не измерена ни одним источником</strong> (GAP-05). Все связи идут через прокси: решение менеджеров, экспертный шортлист, заявленное намерение покупки. Журнал решений формулирует прямо: «главное обоснование системы — лучше кандидаты значит лучше продукт — не подпёрто в корпусе ничем», а спецификация исключает из своих границ утверждение, что система улучшает результат [журнал GAP-05; спецификация §28].</li>
+    <li><strong>Сквозного размеченного корпуса</strong> «сигнал → возможность → фича → результат» нет ни у одной организации (GAP-04); любой офлайн-бенчмарк будет измерять воспроизведение прошлых решений, а не их правильность.</li>
+    <li><strong>Прослеживаемость происхождения</strong> описана только как дисциплина, ни у кого — как схема данных (GAP-06).</li>
+    <li>Никто не сообщает базовых долей отбраковки (GAP-07), не измерял оптимального числа альтернатив (GAP-08), не проверял порогов достаточности на исходах (GAP-11), не даёт правила соответствия тяжести процесса размеру ставки (GAP-10).</li>
+  </ul>
+</section>
 
-<h3>Движок: две оси</h3>
-<p>Это часть, которая прямо отвечает на вопрос о масштабировании входов.</p>
-<p>Генератор разнесён по двум независимым осям. <b>Режим</b> отвечает на вопрос
-«что разбудило генератор»:</p>
-<ul>
-<li>первичная генерация — принят полный входной контекст, пул пуст;</li>
-<li>по разрывам покрытия — пересчёт показал непокрытые пары «возможность × класс механизма»;</li>
-<li>по новым данным — появилась новая запись: интервью, обращение, сдвиг метрики;</li>
-<li>по стратегии — утверждён пересмотр приоритетов;</li>
-<li>по уроку — закрылся цикл валидации с годным исходом;</li>
-<li>по направлению — человек решил проработать активацию, удержание, монетизацию.</li>
-</ul>
-<p><b>Метод</b> отвечает на вопрос «каким способом генератор ищет»:</p>
-<ul>
-<li>разложение стратегии в дерево «исход → драйверы → проблемы»;</li>
-<li>добыча проблем из доказательств;</li>
-<li>разбор работы пользователя по шагам и поиск шагов, которые он делает вне продукта;</li>
-<li>поиск количественных разрывов в телеметрии;</li>
-<li>сопоставление требуемых механизмов с возможностями платформы;</li>
-<li>порождение следующего шага из результата предыдущего;</li>
-<li>разведочная дивергенция при зафиксированной проблеме.</li>
-</ul>
-<p>Связь осей — матрица шесть на семь, где четыре клетки помечены «не применим»:
-у нового продукта нет своей телеметрии и нет истории валидаций, исход эксперимента
-не пересматривает стратегию, режим по новым данным не работает методом, которому
-нужен исход эксперимента.</p>
-<div class="note"><p><b>Почему это устроено именно так.</b> Одно событие обрабатывается
-разными процедурами, а одна процедура применима в разных событиях. Если слить оси
-в один список «поводов что-то сгенерировать», добавление нового типа входа потребует
-переписать процедуру. Разнесение — это и есть механизм расширяемости.</p></div>
-<p>Отдельно про режим «по направлению»: модель прямо называет его самым опасным.
-У остальных пяти триггер внешний, у него триггер — намерение человека, то есть
-генератор запускает сам себя произвольно часто. Это описанная ловушка: идеи рождаются
-на плановых встречах ради метрики, а первые догадки в большинстве ошибочны. Удерживают
-четыре ограничения — направление не считается доказательством, пока не измерено текущее
-состояние; квота на число кандидатов не задаётся, действует лимит открытых
-непроверенных; ворота G1 отсекают готовое решение под видом направления; убийство
-на выходе — штатный исход.</p>
+<!-- ═══════════════════════════ 3 ═══════════════════════════ -->
+<section class="sec" id="s3">
+  <span class="kicker">Раздел 3</span>
+  <h2>Как работает предлагаемый подход</h2>
 
-<h3>Семнадцать линз</h3>
-<p>Чтобы решения различались по устройству, а не по формулировке, дивергенция ведётся
-по каталогу линз. Каждая — вопрос к возможности и класс механизма, который она даёт:</p>
-<div class="lenses">
-<div><b>Убрать</b> — какой шаг упразднить</div>
-<div><b>Автоматизировать</b> — что сделает машина</div>
-<div><b>Передать</b> — кто ещё возьмёт работу</div>
-<div><b>Решить за него</b> — обратимо и по умолчанию</div>
-<div><b>Сжать варианты</b> — выбор остаётся за ним</div>
-<div><b>Посчитать заранее</b> — до просьбы</div>
-<div><b>Сделать невозможным</b> — запрет состояния</div>
-<div><b>Подсказать</b> — в момент действия</div>
-<div><b>Показать</b> — скрытое состояние</div>
-<div><b>Вмешаться</b> — по порогу, самому</div>
-<div><b>Свести</b> — разрозненное в одно</div>
-<div><b>Различить</b> — сегменты ведут себя по-разному</div>
-<div><b>Ввести второго</b> — координация акторов</div>
-<div><b>Дать ручку</b> — точка вариативности</div>
-<div><b>Переехать</b> — в чужое окружение</div>
-<div><b>Без разработки</b> — закрыть руками</div>
-<div><b>Переформулировать</b> — мета-линза</div>
+  <h3>3.1. Главная идея одной фразой</h3>
+  <div class="callout teal">
+    <p>Запись меняет тип на каждом шаге, каждое превращение может закончиться типизированным отказом, и ни одно решение не принимается по самооценке того, кто породил кандидата. <strong>Сигнал — не доказательство, доказательство — не возможность, возможность — не решение, решение — не кандидат, кандидат — не фича, выпуск — не результат.</strong></p>
+  </div>
+
+  <h3 id="s3-2">3.2. Сквозной пример</h3>
+  <p>Единственный сквозной случай в корпусе — эксперимент Atlassian, рассказанный участником [SRC-014]. Он проведён через шаги модели ниже; где модель требует больше, чем было в кейсе, это отмечено. Кейс доказывает существование практики, не её эффективность.</p>
+  <p>Пользователи Trello переходят в Jira через экран, объясняющий ценность Jira; 58 % уходят с него, кнопку жмут около 40 %.</p>
+  <ol class="tl">
+    <li><b class="step">Сигнал</b>Число из аналитики воронки с датой и источником. Само по себе ещё ничего не значит.</li>
+    <li><b class="step">Доказательство</b>Сигнал допущен: источник разрешим, механизм наблюдения — телеметрия, ступень зрелости «измерено количественно».<span class="model">В модели здесь стоит первый гейт: недопустимый источник или ссылка, которая не разрешается, отклоняются.</span></li>
+    <li><b class="step">Возможность</b>Носитель — пользователь Trello, впервые попавший в Jira; разрыв — ждёт понять, зачем ему Jira, а получает экран, с которого уходит; текущее состояние измерено (58 %); целевая метрика — доля начавших пользоваться Jira; прогноз около 10 %. У Atlassian этот «анализ возможности» служил гейтом на инвестицию: только он «дал достаточно сигнала» начинать.<span class="model">Модель добавила бы тест «решается ли более чем одним способом» и требование источника доказательства второго типа — в кейсе качественного слоя нет, и это одна из позиций спора о достаточности данных (CONFLICT-06).</span></li>
+    <li><b class="step">Гипотезы решений</b>У Atlassian после «нескольких итераций дизайна» выбрано одно решение — карусель изображений о ценности Jira.<span class="model">Модель требует иного: не менее трёх решений разных классов механизма — например, убрать экран вовсе, показать ценность в момент первого действия, закрыть проблему без разработки письмом от команды. Набор оценивается целиком: если три варианта оказались вариациями одной карусели, гейт убивает набор, а не выбирает лучший.</span></li>
+    <li><b class="step">Кандидат</b>Убеждение отделено от гипотезы: «мы верим, что подсветка отличий Jira поможет понять пользу» против «мы предполагаем, что обновлённый экран снизит уход и повысит долю начавших».<span class="model">Модель требует дописать численный порог решения до теста, условие опровержения, самое рискованное допущение и его тип, оценку в человеко-днях, и хранить всё это только с добавлением, без переписывания.</span></li>
+    <li><b class="step">Проверка и готовность</b>Метрики разделены на основную, вторичные и сторожевые (удержание, использование обоих продуктов). Раскатка под флагом долями 5 → 15 → 25 → 50 → 100 % с остановкой при нарушении сторожевой.<span class="model">Модель до этого шага требует ещё сертификацию чувствительности метрики на прошлых тестах и расчёт мощности по каждой метрике.</span></li>
+    <li><b class="step">Исход</b>Около 20 % больше кликов и почти 30 % больше начавших — исход «победа». Перенос того же варианта на пользователей Bitbucket: падение целевого действия на 12 % и удержания на 11 % — исход «откат».<span class="model">В модели перенос на другую когорту — новый кандидат, результат не наследуется.</span></li>
+    <li><b class="step">Урок</b>«Наши догадки могут быть неверны, даже если выглядят как верный успех» возвращается в пул доказательств и порождает новые гипотезы под той же возможностью.</li>
+  </ol>
+  <p>Операция «объясни кандидата» в такой системе идёт по ссылкам назад: кандидат → гипотеза → возможность → доказательства → источник, и вперёд: кандидат → эксперимент → исход. При обрыве она возвращает не «неизвестно», а первое недостающее звено и гейт, обязанный был его потребовать [модель §10].</p>
+
+  <h3 id="s3-3">3.3. Четырнадцать шагов и девять гейтов</h3>
+  <div class="fig" role="img" aria-label="Схема конвейера: четырнадцать шагов T0–T13 в пять фаз, девять гейтов G0–G8 между шагами, петля обучения возвращает уроки в доказательства">
+    <svg viewBox="0 0 1400 318" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--line2)"/></marker>
+        <marker id="arrg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ok)"/></marker>
+      </defs>
+      <!-- row 1 -->
+      <g>
+        <rect class="svgbox" x="15" y="40" width="170" height="70" rx="12" stroke="var(--ph1)"/><text class="svgt tag" x="27" y="60">T0</text><text class="svgt" x="27" y="80">Сборка</text><text class="svgt" x="27" y="97">контекста</text>
+        <line class="svgl" x1="185" y1="75" x2="212" y2="75" marker-end="url(#arr)"/>
+        <rect class="svgbox" x="215" y="40" width="170" height="70" rx="12" stroke="var(--ph1)"/><text class="svgt tag" x="227" y="60">T1</text><text class="svgt" x="227" y="80">Извлечение</text><text class="svgt" x="227" y="97">сигналов</text>
+        <line class="svgl" x1="385" y1="75" x2="412" y2="75" marker-end="url(#arr)"/>
+        <rect class="svgbox" x="415" y="40" width="170" height="70" rx="12" stroke="var(--ph1)"/><text class="svgt tag" x="427" y="60">T2</text><text class="svgt" x="427" y="80">Допуск</text><text class="svgt" x="427" y="97">доказательств</text>
+        <polygon class="svgg" points="585,75 600,60 615,75 600,90"/><text class="svgg-t" x="600" y="79">G0</text>
+        <line class="svgl" x1="615" y1="75" x2="612" y2="75"/>
+        <rect class="svgbox" x="615" y="40" width="170" height="70" rx="12" stroke="var(--ph2)"/><text class="svgt tag" x="627" y="60">T3</text><text class="svgt" x="627" y="80">Синтез</text><text class="svgt" x="627" y="97">возможности</text>
+        <line class="svgl" x1="785" y1="75" x2="812" y2="75" marker-end="url(#arr)"/>
+        <rect class="svgbox" x="815" y="40" width="170" height="70" rx="12" stroke="var(--ph2)"/><text class="svgt tag" x="827" y="60">T4</text><text class="svgt" x="827" y="80">Квалификация</text><text class="svgt" x="827" y="97">возможности</text>
+        <polygon class="svgg" points="985,75 1000,60 1015,75 1000,90"/><text class="svgg-t" x="1000" y="79">G1</text>
+        <rect class="svgbox" x="1015" y="40" width="170" height="70" rx="12" stroke="var(--ph2)"/><text class="svgt tag" x="1027" y="60">T5</text><text class="svgt" x="1027" y="80">Портфельный</text><text class="svgt" x="1027" y="97">отбор</text>
+        <polygon class="svgg" points="1185,75 1200,60 1215,75 1200,90"/><text class="svgg-t" x="1200" y="79">G2</text>
+        <rect class="svgbox" x="1215" y="40" width="170" height="70" rx="12" stroke="var(--ph3)"/><text class="svgt tag" x="1227" y="60">T6</text><text class="svgt" x="1227" y="80">Генерация</text><text class="svgt" x="1227" y="97">решений</text>
+      </g>
+      <!-- connector row1 → row2 -->
+      <path class="svgl" d="M1300 110 L1300 140 L100 140 L100 170" marker-end="url(#arr)"/>
+      <polygon class="svgg" points="1285,140 1300,125 1315,140 1300,155"/><text class="svgg-t" x="1300" y="144">G3</text>
+      <!-- row 2 -->
+      <g>
+        <rect class="svgbox" x="15" y="175" width="170" height="70" rx="12" stroke="var(--ph3)"/><text class="svgt tag" x="27" y="195">T7</text><text class="svgt" x="27" y="215">Контракт</text><text class="svgt" x="27" y="232">кандидата</text>
+        <polygon class="svgg" points="185,210 200,195 215,210 200,225"/><text class="svgg-t" x="200" y="214">G4</text>
+        <rect class="svgbox" x="215" y="175" width="170" height="70" rx="12" stroke="var(--ph3)"/><text class="svgt tag" x="227" y="195">T8</text><text class="svgt" x="227" y="215">Скрининг</text><text class="svgt" x="227" y="232">нижней полосы</text>
+        <polygon class="svgg" points="385,210 400,195 415,210 400,225"/><text class="svgg-t" x="400" y="214">G4</text>
+        <rect class="svgbox" x="415" y="175" width="170" height="70" rx="12" stroke="var(--ph4)"/><text class="svgt tag" x="427" y="195">T9</text><text class="svgt" x="427" y="215">Проверка проблемы</text><text class="svgt" x="427" y="232">и решения</text>
+        <polygon class="svgg" points="585,200 597,188 609,200 597,212"/><text class="svgg-t" x="597" y="204">G5</text>
+        <polygon class="svgg" points="585,222 597,210 609,222 597,234"/><text class="svgg-t" x="597" y="226">G6</text>
+        <rect class="svgbox" x="615" y="175" width="170" height="70" rx="12" stroke="var(--ph4)"/><text class="svgt tag" x="627" y="195">T10</text><text class="svgt" x="627" y="215">Готовность</text><text class="svgt" x="627" y="232">к выпуску</text>
+        <polygon class="svgg" points="785,210 800,195 815,210 800,225"/><text class="svgg-t" x="800" y="214">G7</text>
+        <rect class="svgbox" x="815" y="175" width="170" height="70" rx="12" stroke="var(--ph4)"/><text class="svgt tag" x="827" y="195">T11</text><text class="svgt" x="827" y="215">Раскатка</text><text class="svgt" x="827" y="232">и измерение</text>
+        <line class="svgl" x1="985" y1="210" x2="1012" y2="210" marker-end="url(#arr)"/>
+        <rect class="svgbox" x="1015" y="175" width="170" height="70" rx="12" stroke="var(--ph5)"/><text class="svgt tag" x="1027" y="195">T12</text><text class="svgt" x="1027" y="215">Разбор</text><text class="svgt" x="1027" y="232">исхода</text>
+        <polygon class="svgg" points="1185,210 1200,195 1215,210 1200,225"/><text class="svgg-t" x="1200" y="214">G8</text>
+        <rect class="svgbox" x="1215" y="175" width="170" height="70" rx="12" stroke="var(--ph5)"/><text class="svgt tag" x="1227" y="195">T13</text><text class="svgt" x="1227" y="215">Петля</text><text class="svgt" x="1227" y="232">обучения</text>
+      </g>
+      <!-- learning loop back: over the first row, into T3 -->
+      <path class="svgl back" d="M1300 175 L1300 22 L700 22 L700 36" marker-end="url(#arrg)"/>
+      <text class="svgt small" x="712" y="16">урок проходит допуск как новое доказательство и возвращается в возможности</text>
+      <!-- legend -->
+      <text class="svgt small" x="15" y="302">Фазы:</text>
+      <rect x="62" y="292" width="14" height="10" rx="2" fill="var(--ph1)"/><text class="svgt small" x="80" y="302">вход и доказательства</text>
+      <rect x="240" y="292" width="14" height="10" rx="2" fill="var(--ph2)"/><text class="svgt small" x="258" y="302">возможности</text>
+      <rect x="360" y="292" width="14" height="10" rx="2" fill="var(--ph3)"/><text class="svgt small" x="378" y="302">решения и кандидаты</text>
+      <rect x="540" y="292" width="14" height="10" rx="2" fill="var(--ph4)"/><text class="svgt small" x="558" y="302">проверка и выпуск</text>
+      <rect x="700" y="292" width="14" height="10" rx="2" fill="var(--ph5)"/><text class="svgt small" x="718" y="302">исход и обучение</text>
+      <polygon class="svgg" points="860,297 868,289 876,297 868,305"/><text class="svgt small" x="885" y="302">гейт: точка типизированного отказа</text>
+      <line class="svgl back" x1="1150" y1="297" x2="1190" y2="297"/><text class="svgt small" x="1198" y="302">петля обучения</text>
+    </svg>
+    <div class="cap">Шаги T0–T13 модели, сгруппированные в пять фаз; ромбы — девять гейтов. Тот же материал словами — ниже.</div>
+  </div>
+
+  <div class="phases">
+    <div class="phase" style="--phc:var(--ph1)"><b>Вход и доказательства</b><div class="steps">T0 · T1 · T2 · гейт G0</div>Сборка контекста из четырёх документов (идея, бриф, концепт, стратегия) и внешнего исследования по четырём направлениям (пользователь, рынок, продуктовые паттерны, техника). Контекст либо собран целиком, либо неполон — промежуточного состояния и частичного прогона нет. Внутренние документы фиксируют намерение, а не поведение, поэтому дают сигналы, а не доказательства; поданный список готовых фич не отклоняется, а понижается до сигналов. Гейт G0 решает допустимость каждого доказательства и ступень его зрелости.</div>
+    <div class="phase" style="--phc:var(--ph2)"><b>Возможности</b><div class="steps">T3 · T4 · T5 · гейты G1, G2</div>Синтез возможности как разрыва «ожидание — реальность» с носителем, измеренным состоянием и целевым; квалификация на гейте G1 (более одного способа закрыть, назван эпизод, а не категория пользователей, охват не ниже порога); портфельный отбор на гейте G2 — соответствие стратегии, превосходство над альтернативами и подтверждённые ресурсы: намерение без бюджета и людей решением не считается.</div>
+    <div class="phase" style="--phc:var(--ph3)"><b>Решения и кандидаты</b><div class="steps">T6 · T7 · T8 · гейты G3, G4</div>Генерация решений разных классов механизма по линзам; гейт G3 судит набор целиком по разнообразию. Контракт кандидата — первая половина гейта G4; скрининг нижней полосы — вторая. Скринер отсекает заведомо слабых по точке, выбранной на кривой отсева по собственной истории, а выше пола кандидатов не ранжирует: неразличимые в пределах шума равны.</div>
+    <div class="phase" style="--phc:var(--ph4)"><b>Проверка и выпуск</b><div class="steps">T9 · T10 · T11 · гейты G5, G6, G7</div>Сначала проблема (G5, первичные данные о носителях, критерий записан заранее), затем решение (G6, дешёвый тест самого рискованного допущения, сравнить не менее двух решений). Готовность к выпуску (G7): метрика сертифицирована, мощность достижима, план раскатки и остановки есть, назначен ревьюер; неизмеримое не выпускается «на веру». Раскатка долями с измерением.</div>
+    <div class="phase" style="--phc:var(--ph5)"><b>Исход и обучение</b><div class="steps">T12 · T13 · гейт G8</div>Разбор исхода: постановка валидна, мощность достигнута — тогда любой знак есть обучение; исходы «победа», «отказ» (подтверждённое отсутствие эффекта — фича выключается), «откат», «данных недостаточно». Пара «оценка до реализации — исход после» записывается для перекалибровки скринера. Урок проходит гейт G0 как новое доказательство.</div>
+  </div>
+
+  <h4>Гейты различаются не строгостью, а объектом убийства</h4>
+  <p>«Убить» в пакете — перевод исхода Kill из модели Stage-Gate: решение прекратить работу над сущностью. Убитое не удаляется: хранится с типизированной причиной и пополняет размеченный негативный корпус — без него офлайн-калибровка отбора невозможна [модель §6.0; DEC-07, DEC-23].</p>
+  <div class="gate-what">
+    <span class="g">G0</span><span>отдельное доказательство: источник недопустим, ссылка не разрешается, основанием служит самооценка генератора</span>
+    <span class="g">G1 · G2</span><span>возможность на входе (один способ решения, обобщённый носитель, мал охват) и возможность без ресурса</span>
+    <span class="g">G3</span><span><strong>набор решений целиком</strong>, если он схлопнулся в вариации одного механизма</span>
+    <span class="g">G4</span><span>одного кандидата: нет гипотезы, метрики или порога; измерение неисполнимо; скор ниже точки отсечения</span>
+    <span class="g">G5</span><span><strong>возможность вместе со всем поддеревом решений</strong>, если проблема не подтвердилась</span>
+    <span class="g">G6</span><span>одно решение при живой возможности, если опровергнуто его рискованное допущение</span>
+    <span class="g">G7</span><span>неизмеримую фичу: трафика не хватает даже после замены метрики и приёмов повышения чувствительности</span>
+    <span class="g">G8</span><span>реализацию: подтверждённое отсутствие эффекта или откат по сторожевой метрике</span>
+  </div>
+  <div class="callout ok">
+    <p><strong>Отдельный исход на любом гейте — «данных недостаточно».</strong> Сущность в порядке, отсутствует аппарат измерения. Корпус называет этот образец на одном гейте (недобор мощности — «нет обучения»); модель поднимает его до сквозного класса всех девяти гейтов. Чтобы класс не стал свалкой, у записи обязательны недостающий вход, ответственный, дата пересмотра и лимит открытых записей; дефицит, специфичный для сущности, после двух циклов добора становится убийством, а структурный дефицит платформы (нет корпуса, мал трафик) в убийство не эскалирует — иначе холодный старт уничтожил бы первую когорту кандидатов по причине, к их качеству не относящейся [модель §6.11].</p>
+  </div>
+
+  <h3 id="s3-4">3.4. Что может делать машина</h3>
+  <p>Этот раздел отвечает на вопрос, какие решения в конвейере можно доверить машине, а какие обязан выносить человек, и почему граница проходит именно там [модель §6.0 И-3; DEC-18].</p>
+  <div class="grid4">
+    <div class="tile"><div class="n">A0</div><div class="t">машина не участвует</div></div>
+    <div class="tile"><div class="n">A1</div><div class="t">машина считает и показывает числа, все решения выносит человек</div></div>
+    <div class="tile"><div class="n">A2</div><div class="t">машина сама выносит решения по формальным признакам: дубликат, недопустимый источник, кандидат ниже точки отсечения. Сказать «эта идея плохая» не вправе</div></div>
+    <div class="tile"><div class="n">A3</div><div class="t">машина выносит все решения, включая убийство. Присвоен двум местам: гейту разнообразия набора и механике раскатки</div></div>
+  </div>
+  <p><strong>Где какой уровень.</strong> Допуск доказательств (G0), квалификация возможности (G1), скрининг (G4) и готовность к выпуску (G7) на A2; портфельный отбор (G2), проверка проблемы (G5), проверка решения (G6) и разбор исхода (G8) на A1. Полная раскладка — в таблице гейтов поддерживающих материалов.</p>
+  <p><strong>Почему граница именно такая.</strong> Она проведена не по удобству, а по двум измерениям из корпуса. Первое: у тех, кто порождает идеи, самооценка почти не совпадает с оценкой независимых судей, ранговая корреляция ниже 0,2 [SRC-001, CLAIM-001-04]. Второе: потолок точности автоматического отбора около 0,7 по AUC, то есть машина не воспроизводит выбор лучших идей экспертами, но хорошо отсекает заведомо слабые [SRC-005, CLAIM-005-01]. Отсюда правило: автоматический балл годится как единственное основание там, где решается судьба набора целиком, дубля или нижней отсекаемой полосы, и не годится там, где выбирается победитель. Ошибка в сторону большей автоматизации означала бы, что выбор победителей молча передан машине. Ошибка в сторону меньшей означала бы, что человек вручную смотрит каждый дубль, и стоимость растёт вместе с объёмом генерации.</p>
+  <div class="grid2">
+    <div class="card">
+      <h4>Что делает языковая модель</h4>
+      <p>Работает как предлагающий контур: делит документы на утверждения, набрасывает черновики возможностей, порождает решения и кандидатов, предлагает направление, суммирует трейсы. Общее правило: её выход — предложение, а решение выносит другой контур [спецификация §24].</p>
+    </div>
+    <div class="card">
+      <h4>Где модель запрещена</h4>
+      <ul>
+        <li>как единственное основание вердикта на гейтах, где решается ценность: квалификация возможности, портфельный отбор, скрининг выше точки отсечения, обе проверки, готовность к выпуску, разбор исхода;</li>
+        <li>как источник допустимости доказательства: если основанием служит самооценка генератора, это отдельный класс отказа на первом гейте;</li>
+        <li>как автономный перезапуск после того, как набор решений схлопнулся: новые условия задаёт человек, иначе система исполняет измеренный антипаттерн самоусиления;</li>
+        <li>как оценщик собственного выхода в любой точке [DEC-05].</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout warn">
+    <p><strong>Следствие для одиночной работы.</strong> Если агент, породивший кандидата, сам же заполняет числовые оценки эффекта и порога, это и есть самооценка генератора, которую первый гейт существует ловить. Поэтому в восьми полях кандидата минимальной версии нет ни одного измеряемого, а пометку «гипотеза» предлагают распространить на все числовые поля [разбор соответствия «Чем модель может испортить»].</p>
+  </div>
+
+  <h3 id="s3-5">3.5. Движок: что запустило и каким способом ищем</h3>
+  <p>У генерации есть два независимых вопроса, и модель нарочно не смешивает их [модель §7].</p>
+  <div class="grid2">
+    <div class="card">
+      <h4>Первый вопрос: что запустило генерацию</h4>
+      <p>В модели это называется режимом, их шесть. Генератор не работает постоянно, его что-то будит:</p>
+      <ul>
+        <li>принят полный входной контекст, пул пуст, это первый прогон;</li>
+        <li>пересчёт показал дыры в покрытии: у какой-то возможности нет решений некоторых классов;</li>
+        <li>появилось новое доказательство, например интервью или сдвиг метрики;</li>
+        <li>пересмотрена стратегия;</li>
+        <li>закрылся цикл проверки с исходом, годным для решения;</li>
+        <li>человек решил проработать направление, например удержание.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Второй вопрос: каким способом ищем</h4>
+      <p>Это методы, их семь:</p>
+      <ul>
+        <li>разложить стратегию в дерево «результат → драйверы → проблемы»;</li>
+        <li>извлечь проблемы из накопленных доказательств;</li>
+        <li>разобрать работу пользователя по шагам и найти шаги, которые он делает вне продукта;</li>
+        <li>найти количественные разрывы в телеметрии;</li>
+        <li>сопоставить нужные механизмы с возможностями платформы;</li>
+        <li>породить следующий шаг из результата предыдущего;</li>
+        <li>развести решения при уже зафиксированной проблеме.</li>
+      </ul>
+      <p>Из семи методов только последний даёт решения, остальные шесть ищут возможности.</p>
+    </div>
+  </div>
+  <p><strong>Зачем разделять.</strong> Одно и то же событие можно обрабатывать разными способами, а один способ подходит для разных событий. Если бы всё это слили в один список «поводов что-то сгенерировать», каждый новый тип входа требовал бы переписать процедуру. При разделении новый источник данных просто становится ещё одним поводом, а способы поиска не меняются. Это и есть ответ модели на требование о масштабировании входов [DEC-08].</p>
+  <div class="tbl">
+    <table class="matrix">
+      <thead><tr><th>Режим ↓ / метод →</th><th>Разложение стратегии</th><th>Проблемы из доказательств</th><th>Работа пользователя по шагам</th><th>Разрывы в телеметрии</th><th>Возможности платформы</th><th>Следующий шаг из результата</th><th>Дивергенция решений</th></tr></thead>
+      <tbody>
+        <tr><td>Первый прогон</td><td class="mx-o">основной</td><td class="mx-o">основной</td><td class="mx-o">основной</td><td class="mx-x">нет: своей телеметрии до запуска нет</td><td class="mx-d">дополняющий</td><td class="mx-x">нет: истории проверок нет</td><td class="mx-o">основной</td></tr>
+        <tr><td>По разрывам покрытия</td><td class="mx-d">дополняющий</td><td class="mx-d">дополняющий</td><td class="mx-o">основной</td><td class="mx-d">дополняющий</td><td class="mx-d">дополняющий</td><td class="mx-d">дополняющий</td><td class="mx-o">основной</td></tr>
+        <tr><td>По новому доказательству</td><td class="mx-d">дополняющий</td><td class="mx-o">основной</td><td class="mx-d">дополняющий</td><td class="mx-o">основной при количественном сигнале</td><td class="mx-d">дополняющий</td><td class="mx-x">нет: вход — сигнал, не исход</td><td class="mx-d">дополняющий, после G1</td></tr>
+        <tr><td>По пересмотру стратегии</td><td class="mx-o">основной</td><td class="mx-d">дополняющий</td><td class="mx-d">дополняющий</td><td class="mx-d">дополняющий</td><td class="mx-o">основной при новой технологии</td><td class="mx-d">дополняющий</td><td class="mx-d">дополняющий</td></tr>
+        <tr><td>По уроку</td><td class="mx-x">нет: исход эксперимента не меняет стратегию</td><td class="mx-d">дополняющий</td><td class="mx-d">дополняющий</td><td class="mx-o">основной</td><td class="mx-d">дополняющий</td><td class="mx-o">основной</td><td class="mx-o">основной</td></tr>
+        <tr><td>По направлению</td><td class="mx-o">основной</td><td class="mx-d">дополняющий</td><td class="mx-o">основной для цикла и активации</td><td class="mx-o">основной</td><td class="mx-d">дополняющий</td><td class="mx-d">дополняющий</td><td class="mx-d">дополняющий, под лимитом, после G1 и G2</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="small muted">Матрица шесть на семь по разделу 7.3 модели. «Основной» — метод несёт нагрузку прогона, «дополняющий» — служит проверкой. Четыре ячейки «нет» — часть спецификации: они запрещают методу читать вход, которого в данном режиме не существует.</p>
+  <div class="callout">
+    <p><strong>Почему режим «по направлению» опасен.</strong> У пяти режимов повод внешний: пришли данные, изменилась стратегия, закрылся эксперимент. У шестого повод внутренний, это желание человека. Значит генератор может запускать сам себя сколько угодно раз, и идеи начинают рождаться ради метрики направления, а не из проблемы пользователя. Это та самая ловушка, когда фичи штампуют под график. Модель ставит четыре ограничителя: направление не считается основанием, пока для него не измерено текущее значение метрики и не названо целевое; нет квоты «сгенерировать столько-то», зато есть лимит на число непроверенных кандидатов в работе; гейт квалификации отсекает готовое решение, поданное под видом направления; убить такого кандидата на выходе считается нормальным исходом [модель §7.1].</p>
+    <p>Для Product Lab всё это сжимается: пять из шести режимов становятся просто поводами перезапустить одну и ту же процедуру с другим входом, а режим «по разрывам покрытия» откладывается, потому что карты покрытия пока нет.</p>
+  </div>
+
+  <h3 id="s3-6">3.6. Семнадцать линз</h3>
+  <p>Линзы заставляют решения различаться по устройству, а не по формулировке [модель §8].</p>
+  <p><strong>Что такое линза.</strong> Это вопрос, который задают возможности, чтобы получить один конкретный способ её закрыть. Например, для экрана Atlassian, с которого уходят 58 % пользователей (пять ответов ниже придуманы здесь как иллюстрация, в кейсе их не было):</p>
+  <ul>
+    <li>«убрать шаг»: можно ли вообще не показывать экран и сразу пускать в Jira;</li>
+    <li>«подсказать в момент действия»: объяснять пользу Jira не отдельным экраном, а по ходу первого действия внутри неё;</li>
+    <li>«посчитать заранее»: показать пользователю его собственные доски Trello уже перенесёнными в Jira, до того как он спросит;</li>
+    <li>«закрыть без разработки»: письмо или звонок от команды тем, кто ушёл с экрана;</li>
+    <li>«переформулировать проблему»: а точно ли проблема в экране, а не в том, зачем людей вообще ведут из Trello в Jira.</li>
+  </ul>
+  <p><strong>Что такое класс механизма.</strong> Каждой линзе соответствует метка, по которой устроено решение. Класс нужен для счёта. Три варианта карусели на одном экране остаются одним классом, потому что устроены одинаково. Убрать экран, объяснить по ходу и написать письмо будут тремя классами, потому что это три разных механизма.</p>
+  <div class="tbl">
+    <table class="lens">
+      <thead><tr><th>Линза</th><th>Вопрос к возможности</th><th>Класс механизма</th></tr></thead>
+      <tbody>
+        <tr><td>Убрать шаг</td><td>Какой шаг упразднить, чтобы возможность не возникала?</td><td>step-elimination</td></tr>
+        <tr><td>Автоматизировать</td><td>Какую работу человека выполнит машина, оставив шаг?</td><td>agent-transfer-to-machine</td></tr>
+        <tr><td>Передать другому</td><td>Кто ещё — роль, партнёр, служба — возьмёт работу?</td><td>agent-transfer-to-another-actor</td></tr>
+        <tr><td>Выбрать за пользователя</td><td>Какое решение система примет сама и обратимо?</td><td>decision-preselection</td></tr>
+        <tr><td>Сжать варианты</td><td>Как сжать варианты, оставив выбор пользователю?</td><td>option-set-ranking</td></tr>
+        <tr><td>Посчитать заранее</td><td>Что посчитать заранее, до просьбы или ошибки?</td><td>temporal-shift</td></tr>
+        <tr><td>Сделать невозможным</td><td>Какое нежелательное состояние сделать невозможным?</td><td>state-constraint</td></tr>
+        <tr><td>Подсказать в момент действия</td><td>Чего пользователь не знает в момент действия?</td><td>in-context-competence</td></tr>
+        <tr><td>Показать скрытое</td><td>Какое состояние невидимо, хотя решение на него опирается?</td><td>state-surfacing</td></tr>
+        <tr><td>Вмешаться самому</td><td>Когда система должна сама вмешаться и по какому порогу?</td><td>attention-routing</td></tr>
+        <tr><td>Свести разрозненное</td><td>Что разбросано и сводится в одну единицу или операцию?</td><td>consolidation</td></tr>
+        <tr><td>Различить сегменты</td><td>Для какого сегмента поведение должно отличаться?</td><td>context-adaptation</td></tr>
+        <tr><td>Ввести второго актора</td><td>Какого второго актора ввести и что меняется при этом?</td><td>multi-actor-coordination</td></tr>
+        <tr><td>Дать точку вариативности</td><td>Какую точку вариативности дать пользователю?</td><td>variation-point</td></tr>
+        <tr><td>Переехать в чужое окружение</td><td>В каком чужом окружении пользователь уже находится?</td><td>surface-relocation</td></tr>
+        <tr><td>Закрыть без разработки</td><td>Как закрыть возможность вообще без разработки?</td><td>out-of-product-operation</td></tr>
+        <tr><td>Переформулировать проблему</td><td>Верна ли формулировка и как её разрезать?</td><td>problem-restatement (мета-линза)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <h4>Правило применения и как считает гейт</h4>
+      <p>На каждую значимую возможность нужно не меньше трёх решений разных классов. Если решение несёт большой риск или должно отличать продукт от конкурентов, нужно шесть линз из разных семейств: снятие работы, передача работы другому, сдвиг момента, добавление информации, подстройка под контекст, выход за границу продукта.</p>
+      <p>Гейт разнообразия смотрит не на то, сколько линз заполнено, а на то, сколько разных классов осталось среди кандидатов после того, как схлопнули дубликаты. Семь ответов на семь линз, которые по сути описывают одну автоматизацию, дадут один класс и гейт не пройдут. Плюс требуется хотя бы два независимых источника генерации; несколько моделей одного семейства за независимые не считаются.</p>
+    </div>
+    <div class="card">
+      <h4>Пустая линза и четыре понятия, которые легко спутать</h4>
+      <p>Если на вопрос ответа нет, это записывается как «неприменима» с причиной и считается данными, а не провалом. Если пустыми оказались целые семейства линз, это признак того, что возможность сформулирована как готовое решение, и запись отправляется на переформулирование.</p>
+      <p>Линза — это вопрос. Класс механизма — метка устройства ответа, по ней считают разнообразие. Гипотеза решения — утверждение «решение такого класса закроет эту возможность», на ней хранятся линза и класс. Кандидат — оформленное предложение под гипотезой со всеми полями контракта. У одной гипотезы может быть несколько кандидатов, если их проверяют разными метриками [модель §10].</p>
+    </div>
+  </div>
+  <div class="callout warn">
+    <p><strong>Статус набора.</strong> Сам список из семнадцати линз и деление на классы в корпусе источников отсутствуют (GAP-15, ASM-05). Это конструкция авторов модели, обоснованная аналогией: измерено, что функциональное ограничение в отдельном вызове модели поднимает разнообразие почти до человеческого уровня [SRC-002, CLAIM-002-05], и линза трактуется как такое ограничение. Критерий гейта от состава линз не зависит, поэтому набор можно заменить, не трогая гейт. Для Product Lab это единственная часть модели, которую разбор соответствия называет исполнимой одним агентом сегодня, без эмбеддингов и базовых линий.</p>
+  </div>
+
+  <h3 id="s3-7">3.7. Контракт кандидата и прослеживаемость</h3>
+  <div class="grid2">
+    <div class="card">
+      <h4>Контракт кандидата</h4>
+      <p>Кандидат не выходит из генератора без разведения убеждения и проверяемой гипотезы; метрики с направлением, предсказанным размером эффекта и численным порогом решения, записанным с отметкой времени до теста; условия опровержения; самого рискованного допущения и его типа из пяти; оценки в человеко-днях с диапазоном; охвата когорты. Журнал полей ведётся только добавлением; отметка времени порога после старта теста неизменяема [модель §5 T7; DEC-20]. В полной схеме у кандидата 73 поля; по подсчёту аудита все 29 требуемых техническим заданием на месте.</p>
+    </div>
+    <div class="card">
+      <h4>Прослеживаемость как поле схемы</h4>
+      <p>Цепочка источник → доказательство → возможность → гипотеза → кандидат → эксперимент → исход, ссылка хранится на дочерней записи, восемь инвариантов блокируют гейт при разрыве, отозванном источнике или истёкшем сроке годности доказательства. Пулы возможностей и фич — живые слои: записи переоцениваются, а не переписываются, старые вердикты сохраняются, у слоя есть версия, сущности стареют по сроку, а вход нового кандидата при исчерпанной ёмкости поставки требует убить или задержать другого [модель §9–§10].</p>
+    </div>
+  </div>
+
+  <h3 id="s3-8">3.8. Как оценивается сам генератор</h3>
+  <p>Четыре несводимых уровня, потому что оси измеренно движутся врозь: генерация моделью одновременно поднимает средний балл идеи и роняет разнообразие набора, а порядок вариантов меняется между стадией замысла и реализацией [протокол оценки §1–5; DEC-11].</p>
+  <div class="grid4">
+    <div class="card"><span class="kicker">A · обоснованность</span><p>Разрешаются ли ссылки, входит ли процитированное в извлечённое, цела ли цепочка, не копирует ли выход вход. Почти целиком проектный уровень; <strong>блокирующий</strong>.</p></div>
+    <div class="card"><span class="kicker">B · качество кандидата</span><p>Шесть измерений в слепом ревью; новизна описательна и ни в один порог не входит. Слабейший уровень, частично опровергнут собственным корпусом; не основание решений выше пола.</p></div>
+    <div class="card"><span class="kicker">C · качество набора</span><p>Доля дублей, семантическое разнообразие, покрытие возможностей и пространства решений. Обеспечен лучше всех; <strong>блокирующий</strong>: регресс останавливает версию даже при росте B.</p></div>
+    <div class="card"><span class="kicker">D · судьба после генератора</span><p>Главная метрика — доля кандидатов, доведённых до исхода, годного для решения, независимо от знака; доля побед вторична и между версиями отдельно не сравнивается. Горизонт не короче года.</p></div>
+  </div>
+  <p>Единого сводного балла нет по построению. Семь сторожевых величин, ухудшение любой из которых блокирует версию, включая инвертированную: доля опровержений и убитых сущностей не должна падать к нулю — правильный discovery убивает много идей [протокол §6]. Сам протокол обеспечен доказательствами неравномерно, и это объявлено.</p>
+</section>
+
+<!-- ═══════════════════════════ 4 ═══════════════════════════ -->
+<section class="sec" id="s4">
+  <span class="kicker">Раздел 4</span>
+  <h2>Почему выбраны эти решения</h2>
+
+  <h3>4.1. Что измерено, а что назначено</h3>
+  <p>Каждое утверждение модели несёт одну из трёх пометок. «Подтверждено» — прямо следует из названных источников. «Выведено» — из сопоставления нескольких. «Проектное решение» — корпус в этой точке молчит, и решение подлежит проверке на собственных данных, а не переносу как нормы. Пометка не означает произвола, но и не означает доказанности [модель §1]. Таблица численных ориентиров модели предваряется фразой: «ни один не является отраслевой нормой» [модель §12].</p>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Узел модели</th><th>Основание</th><th>Прочность</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Разнообразие меряется на наборе; сэмплирование не лечит; вход — лечит</td><td>три независимые измеренные работы (SRC-002, 007, 023)</td><td><span class="pill ok">самый прочный узел</span> величины непереносимы между энкодерами</td></tr>
+        <tr><td class="k">Автоотбор — фильтр снизу с потолком около 0,7</td><td>две измеренные работы на конкурсах и форуме (SRC-005, 004)</td><td><span class="pill ok">прочный</span> ground truth — шортлист или решение фирмы, не рынок</td></tr>
+        <tr><td class="k">Оценка замысла не предсказывает исход</td><td>один рандомизированный эксперимент на научных идеях (SRC-006)</td><td><span class="pill ok">прочный в своей области</span> перенос на фичи не проверен</td></tr>
+        <tr><td class="k">Дисциплина проверки повышает частоту отказа, не выживаемость</td><td>один RCT на стартапах (SRC-003)</td><td><span class="pill teal">единственная причинная опора</span> см. 4.3</td></tr>
+        <tr><td class="k">Слой возможностей обязателен</td><td>норма семи школ</td><td><span class="pill teal">устойчиво по согласию</span> эффект не измерен</td></tr>
+        <tr><td class="k">Три решения разных классов</td><td>рекомендация одного практика (SRC-017)</td><td><span class="pill warn">норма, не оптимум</span> GAP-08</td></tr>
+        <tr><td class="k">Порог дублирования 0,8; разнообразие 0,9 от человеческого; охват ≥ 1,5; 60 % из 50 интервью; доли раскатки; согласие судьи 80 %</td><td>перенос по аналогии из чужих постановок (ASM-03, 06, 07)</td><td><span class="pill warn">перекалибровать</span> правила гейтов ссылаются на имя параметра, не на значение</td></tr>
+        <tr><td class="k">Провенанс как схема данных; операция «объясни»</td><td>два нормативных источника, ни одного измерения (GAP-06, GAP-13)</td><td><span class="pill acc">целиком проектное</span> обосновано нуждой офлайн-калибровки</td></tr>
+        <tr><td class="k">Семнадцать линз и классы механизма</td><td>в корпусе нет ни списка, ни таксономии (GAP-15)</td><td><span class="pill acc">проектное</span> развязано от критерия гейта</td></tr>
+        <tr><td class="k">Направления классификации</td><td>обещанная спецификация не поступила (ASM-01, GAP-03)</td><td><span class="pill acc">допущение</span> направление группирует, не отсеивает</td></tr>
+        <tr><td class="k">Сквозной исход «данных недостаточно»</td><td>образец на одном гейте у Spotify, поднят до всех девяти</td><td><span class="pill acc">проектное</span> несёт риск свалки</td></tr>
+        <tr><td class="k">Главная метрика — доля исходов, годных для решения</td><td>один блог без методики (SRC-013)</td><td><span class="pill warn">прокси</span> риск, что не коррелирует с результатом (GAP-05)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>4.2. Принципы и их обоснование</h3>
+  <p>Одиннадцать принципов модели [§2] — это компактная форма ответа «почему так».</p>
+  <ul>
+    <li><strong>Обязательный слой возможностей</strong> — иначе генератор становится фабрикой фич под график.</li>
+    <li><strong>Дивергенция на уровне набора</strong> — иначе гейт пропустит семь вариаций одного механизма.</li>
+    <li><strong>Разнообразие входом, не сэмплированием</strong> — температура измеренно не работает.</li>
+    <li><strong>Генерация отделена от оценки</strong> — способность различать не наследуется от способности порождать.</li>
+    <li><strong>Недоверие к самооценке и калибровка судей</strong> — некалиброванный судья хуже отсутствия судьи.</li>
+    <li><strong>Провенанс как поле схемы</strong> — без него теряется разметка «принято/отклонено», задним числом невосстановимая.</li>
+    <li><strong>Право убивать с типизированной причиной</strong> — высокий отсев есть нормальная работа.</li>
+    <li><strong>Калибровка порогов вместо ложной точности</strong> — грубые шкалы не должны печататься с двумя знаками.</li>
+    <li><strong>Порог до данных</strong> — единственное правило с причинным основанием.</li>
+    <li><strong>Сертифицированный план измерения как условие допуска</strong> — измерительная часть и есть то, что ломается у машинных кандидатов.</li>
+    <li><strong>Здоровье — доля исходов, годных для решения, а не доля побед</strong> — при базовой доле побед около 12 % победа есть шумная метка.</li>
+  </ul>
+
+  <h3>4.3. Одна оговорка к «единственному каузальному правилу»</h3>
+  <div class="callout">
+    <p>Модель и журнал решений называют записанный до данных порог «единственным правилом системы с каузальным подтверждением» [PRINCIPLE-09; DEC-20]. Карточка источника говорит осторожнее: различие между группами «свелось к 30 % времени на научный подход — фальсифицируемые гипотезы, валидные метрики, явные пороги решения» [CLAIM-003-01], а запись о пробелах признаёт, что эксперимент «не различает ни тип доказательства, ни конкретный порог» [GAP-11]. То есть причинно подтверждён пакет практик, а не отдельно взятый порог. Журнал это частично признаёт («переносима именно форма, а не числовое значение»).</p>
+    <p>Следствие: обоснованно требовать всю связку — гипотеза, метрика, критерий до теста, — а не выделять из неё одно поле как доказанное. Прежний ввод в курс дела воспроизводил формулировку модели без этой оговорки.</p>
+  </div>
+
+  <h3>4.4. Что рассмотрели и отвергли</h3>
+  <p>Одиннадцать отвергнутых подходов записаны с причинами [журнал REJ-01…11]. Существенные для понимания:</p>
+  <ul>
+    <li><strong>Прямая генерация фич из документов, минуя слой возможностей</strong> — отвергнута как нарушающая первый принцип, но сохранена как вариант сравнения в методике оценки именно потому, что эффект слоя не измерен: её выигрыш на собственном бенчмарке доказал бы избыточность слоя.</li>
+    <li><strong>Счётчик идей как критерий</strong> — количество и качество разъезжаются систематически.</li>
+    <li><strong>Температура и «будь смелее»</strong> — измеренно ухудшают разнообразие; возврат на гейт разнообразия разрешён только при изменённой конфигурации входа.</li>
+    <li><strong>Единый агрегированный балл кандидата</strong> — замаскировал бы ровно ту регрессию, которую корпус измерил.</li>
+    <li><strong>Доля побед как главная метрика</strong> — при 12 % побед обнаружение прироста в 5 пунктов требует около 675 кандидатов на вариант; для доли исходов, годных для решения, при 64 % — около 370.</li>
+    <li><strong>Расширение корпуса под каждый пробел</strong> — превратило бы доказательную базу в подогнанную под конструкцию; закрыть пробелы источниками — новое исследование с новым корпусом.</li>
+    <li><strong>Подача собственного пула как контекста догенерации</strong> — запрет по аналогии с измеренными компонентами самоусиления; сам замкнутый контур никто не тестировал.</li>
+  </ul>
+
+  <h3>4.5. Как встроены неснятые споры</h3>
+  <p>Пятнадцать конфликтов источников записаны с обеими позициями. Десять встроены в модель как решения: спор «гейты или поток» — режим исполнения есть свойство размера ставки, а не гейта; «идеи модели лучше или нет» — запрет опираться на предреализационный рейтинг; «примеры вдохновляют или фиксируют» — один нетипичный пример до старта; «достаточно ли количественного сигнала» — строгая ветвь без запрета количественного входа; «штрафовать ли нетипичность» — отказ от априорной формы штрафа; «помогает ли смешение вендоров» — требование независимых источников с измерением вклада; «можно ли доверять автосудье» — калибровка и запрет решать на кандидатах сопоставимого качества; «что считать результатом» — двухуровневая метка; «спрос порогом или объёмом» — обе формы рядом; «какая точность отбора достижима» — нижняя оценка.</p>
+  <p>Один конфликт не снят и назван неснятым: кто принимает решение на портфельном гейте — продуктовое лидерство или распределённые владельцы ресурсов; решающая роль стала полем записи. Четыре на конструкцию не влияют и оставлены открытыми: единица проверки, формула против голосования, объём против качества, величина эффекта экспериментирования [модель §13].</p>
+
+  <h3>4.6. Порядок внедрения</h3>
+  <div class="grid3">
+    <div class="card"><span class="kicker">Шаг 1</span><p>Путь от контекста до квалифицированного пула фич с хранилищем провенанса и блокирующими инвариантами, только первичный режим, скринер на переходной точке отсечения. Провенанс входит сюда, хотя видимого результата не даёт: разметка создаётся только в момент решения и задним числом невосстановима.</p></div>
+    <div class="card"><span class="kicker">Шаг 2</span><p>Проверка, поставка, измерение, режимы по новым данным, стратегии и направлению.</p></div>
+    <div class="card"><span class="kicker">Шаг 3</span><p>Петля обучения, перекалибровка скринера по собственной кривой, стенд оценки с калибровкой судей, режимы по разрывам покрытия и по уроку. Читает то, что пишет шаг 2, а корпус копится годами [спецификация §27; DEC-25].</p></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 5 ═══════════════════════════ -->
+<section class="sec" id="s5">
+  <span class="kicker">Раздел 5</span>
+  <h2>Что это означает для Product Lab</h2>
+
+  <h3>5.1. Состояние Product Lab на 4 сентября 2026</h3>
+  <p>Product Lab — документо-ориентированная спецификация конвейера из семнадцати стадий, а не работающий конвейер. Исполняется одна связка скиллов, ведущая две стадии — концепт и продуктовую стратегию. Одиннадцать шаблонов из семнадцати содержат буквально «стадия не спроектирована», восемь файлов скиллов пусты. Стадии не сцепляются автоматически: человек запускает следующую командой. Бриф не производит никто, хотя донорский контракт стадии фич требует его на входе; донор требует файл продуктовой стратегии под одним именем, репозиторий производит под другим. Стадии наблюдения и итерации, которые замкнули бы петлю, не спроектированы [разбор соответствия «Что есть на самом деле»].</p>
+  <div class="grid2">
+    <div class="card">
+      <h4>Шаблон стадии фич и правила репозитория</h4>
+      <p>Шаблон — 429 байт: один markdown-файл в корне проекта, имя выходного файла не назначено. Два правила ограничивают перенос: в каталоге шаблонов лежат только семнадцать номерных, и шаблон не содержит промпта — линзы, гейты и процедура могут жить только в скилле.</p>
+    </div>
+    <div class="card">
+      <h4>Самое нагруженное перекрытие</h4>
+      <p>Концепт уже содержит четыре корзины фич (базовые, удерживающие, расширяющие, продающие) и таблицу экранов. По букве модели это заранее сформированный перечень решений, который понижается до сигналов и проходит слой возможностей заново. Чем стадия фич отличается от стадии концепта — в репозитории не сказано нигде, и это решение придётся записать явно: расширять, дедуплицировать или оспаривать.</p>
+    </div>
+  </div>
+  <p><strong>Что концепт гарантирует на вход генератора:</strong> один первичный сегмент по девяти осям, одну формулу задачи пользователя с описанием проблемы, обещание продукта, основной цикл с тремя строками возврата, четыре корзины фич, метрику Северной звезды и пять поддерживающих, позиционирование, монетизацию. <strong>Что не гарантировано вообще:</strong> числовые цели метрик, второй сегмент, технические, ресурсные и правовые ограничения (раздела нет ни в одном шаблоне), приоритеты и трудоёмкость, внешняя валидация (методология не требует ни интервью, ни данных), идентификаторы разделов.</p>
+
+  <h3>5.2. Почему модель не ложится как есть</h3>
+  <ul>
+    <li><strong>Входной контракт даёт вечную блокировку.</strong> Четыре документа и четыре направления внешнего исследования, иначе старта нет и частичного прогона нет. Брифа нет, внешнего исследования нет. «Стадия, которая формально существует и никогда не запускается, хуже честного „не спроектирована“».</li>
+    <li><strong>Шесть из девяти гейтов исполнять не на чем структурно.</strong> Внешние источники и калиброванный судья, шкала охвата, бюджет и владелец ресурса, 60 % из 50 опрошенных, трафик и сертификация метрики, проверки мощности — ни одного из этих входов нет и не появится от решения их завести.</li>
+    <li><strong>Гейт разнообразия в полной форме не работает:</strong> один вендор, ноль исторических наборов для базовой линии. Скринер без корпуса — «генератор, оценивающий сам себя», прямое нарушение принципа разделения.</li>
+    <li><strong>Из 73 полей кандидата заполнимо порядка двадцати.</strong> Заполнять остальные «приблизительно» хуже, чем не заполнять: число с двумя знаками в таблице через месяц читается как факт.</li>
+    <li><strong>Генерация при нулевой ёмкости проверки — уже наблюдавшийся отказ.</strong> Банк идей: восемь записей, доведена до конца одна. Три кандидата на возможность при десятке возможностей — тридцать открытых записей на одного человека.</li>
+    <li><strong>Уровень оценки качества кандидата недоступен целиком</strong>, а автосудья запрещён собственным правилом модели. Уровень результатов требует года и сотен наборов.</li>
+    <li><strong>Девять гейтов и 23 объекта сделают самый лёгкий конвейер самым тяжёлым:</strong> между утверждённой стратегией и первой веткой встанет процедура, шесть проверок которой не дают ответа при имеющихся данных.</li>
+  </ul>
+  <p>Модель сама не обещает улучшения продуктового результата; по словам разбора, «окупается одна её страница — контракт кандидата».</p>
+
+  <h3>5.3. Что рекомендовано взять и что при этом теряется</h3>
+  <p>Вердикт разбора: одну вещь — слой возможностей. Стадия фич проектируется как «возможность → не менее трёх решений разных классов механизма → кандидат с рискованным допущением», выходной файл — один документ в корне проекта, исполнитель — один новый скилл по образцу скилла концепта: маршрутизация, процедура, каталог линз отдельным файлом. Остальное — схемы, протокол оценки, спецификация, гейты G0/G2/G5/G7/G8 — остаётся знанием в архиве [разбор соответствия «Вердикт»].</p>
+  <div class="grid3">
+    <div class="card"><span class="kicker">1 · один файл пула</span><p>Возможность — носитель из первичного сегмента концепта, шаг задачи или основного цикла, разрыв, ссылка на раздел концепта или стратегии, серьёзность прозой — и под ней три–шесть кандидатов, у каждого свой класс механизма.</p><div class="loss"><b>Потеря:</b> без гейта допуска доказательств обоснованием служит собственное намерение автора; результат нельзя называть основанным на доказательствах, честное имя — «выведенный из принятых артефактов».</div></div>
+    <div class="card"><span class="kicker">2 · восемь полей вместо 73</span><p>Ссылка на возможность; кому; класс механизма и линза; формулировка решения; самое рискованное допущение с типом из пяти; как проверю дёшево, с ограничением по времени; что увижу, чтобы признать неудачу; оценка в днях. Всё формулируемое, ничего измеряемого.</p><div class="loss"><b>Потеря:</b> численный порог до теста — та связка практик, что имеет причинное основание. Качественный признак неудачи слабее численного, но отличим от его отсутствия: не даёт задним числом объявить любой исход подтверждением.</div></div>
+    <div class="card"><span class="kicker">3 · один ручной гейт</span><p>Перед показом: у каждой значимой возможности не менее трёх кандидатов разных классов, ни один не пересказывает другой, среди классов обязателен «без разработки», ссылка каждого кандидата на возможность разрешается.</p><div class="loss"><b>Потеря:</b> эмбеддинги, базовая линия, порог близости, независимые источники. Разбор добавляет: «три варианта одной автоматизации пройдут» — это внутренне противоречиво при требовании трёх разных классов; осмысленное чтение: без машинной проверки счёт классов опирается на честность разметки самим агентом.</div></div>
+    <div class="card"><span class="kicker">4 · обратная связь</span><p>Два поля в файле фичи — чего ожидал (копируется из кандидата) и что вышло (заполняется при выпуске) — и запрет ставить статус «выпущено» при пустом результате, по образцу уже работающего запрета закрывать идею без исхода.</p><div class="loss"><b>Потеря:</b> это суждение, а не измерение.</div></div>
+    <div class="card"><span class="kicker">5 · без хранилищ и оценки версий</span><p>Вместо пулов-хранилищ, лимитов и оценки версий — одна строка правила о числе непроверенных кандидатов в работе.</p><div class="loss"><b>Потеря:</b> нет истории пересмотров; нерелевантна, пока калибровать не на чем.</div></div>
+    <div class="card"><span class="kicker">6 · порядок работ</span><p>Сначала один прогон на реальной идее, потом правка шаблонов до статуса «проверен».</p><div class="loss"><b>Цена:</b> якоря для машинных ссылок в концепте означают новую черновую версию проверенного шаблона.</div></div>
+  </div>
+  <p>Прежний ввод в курс дела формулирует то же как «шесть правил» и ставит первым «единый список входов» — генератор читает один список источников с пометкой «наблюдение или мнение», а не документы по именам. В тексте разбора соответствия этого правила нет; оно исходит из требования пользователя о масштабировании входов и является уменьшенной копией разнесения осей модели. Это решение пользователя, зафиксированное поверх пакета, а не вывод из него.</p>
+
+  <h3>5.4. Статус решения</h3>
+  <div class="callout warn">
+    <p>Разбор соответствия описывает состояние на 2026-09-04 и сам оговаривает: «это рекомендация на момент, когда он даст команду, а не сама команда»; разрешение даёт колонка состояния в дорожной карте Product Lab, где стадия фич помечена «не спроектирована». Индекс репозитория называет разделы разбора «принятым решением». В сегодняшнем состоянии проекта следует убедиться отдельно, прежде чем считать что-либо из раздела 5.3 сделанным. План приземления с восемью развилками для владельца лежит рядом со снимком пакета в <code>product-lab/donors/feature-pool/landing-plan.md</code>.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 6 ═══════════════════════════ -->
+<section class="sec" id="s6">
+  <span class="kicker">Раздел 6</span>
+  <h2>Что остаётся неизвестным</h2>
+
+  <h3>6.1. Пробелы, меняющие вес выводов</h3>
+  <ul>
+    <li><strong>Связь качества генератора с результатом продукта</strong> (GAP-05, GAP-14). Цепочка «лучше кандидаты → лучше продукт» из трёх звеньев, и первое рвётся. Если дисциплина проверки не воспроизведётся, «у системы не останется ни одного эмпирически обоснованного основания предпочесть её ручному процессу».</li>
+    <li><strong>Документация как источник</strong> (GAP-01, ASM-10). Вся входная половина конструкции стоит на предпосылке, которую корпус не поддерживает даже нормативно. Если документация окажется источником самоподтверждения, обнаружить это можно только по росту копирования классов механизма из входных документов.</li>
+    <li><strong>Перенос лабораторных величин на продуктовые фичи</strong> (ASM-04). Все измеренные ориентиры получены на студентах, потребительских товарах, научных идеях и открытых чат-запросах. Из них взяты направления эффектов; пороги сделаны относительными на случай неверности.</li>
+    <li><strong>Оптимальное число альтернатив</strong> (GAP-08). Тройка — норма практика; сам практик привязывает её к рискованным и дифференцирующим решениям, а не ко всем.</li>
+    <li><strong>Провенанс</strong> (GAP-06, GAP-13). Самый нагруженный узел стоит на двух нормативных источниках без единого измерения; стоимость поддержания и точка разрыва на масштабе неизвестны.</li>
+  </ul>
+
+  <h3>6.2. Споры без разрешения</h3>
+  <p>Кто выбирает проблемы — продуктовое лидерство или распределённые функции (CONFLICT-12). Единица проверки — документ или допущение (CONFLICT-02). Формула или коллективное суждение при приоритизации, и что делать при их расхождении (CONFLICT-05). Повышает ли объём генерации шанс на хорошую идею (CONFLICT-09). Величина эффекта экспериментирования на бизнес (CONFLICT-15). Ни один не блокирует понимание подхода, но каждый ограничивает соответствующий вывод: например, доверять любому предреализационному рейтингу как прогнозу результата оснований нет.</p>
+
+  <h3>6.3. Что решается только наблюдением за собственной работой</h3>
+  <p>Двенадцать открытых вопросов журнала [OPQ-01…12]: собственные доли отбраковки на каждом гейте; число решений, после которого следующее перестаёт окупаться; граница между потоковым и заседательным режимом гейта; вклад каждой оси гетерогенности; какая метка бенчмарка ближе к правильности, а не к конформности; частота фабрикации фактов о продукте; точность автоклассификации по направлениям; кто решает на портфельном гейте; стоимость провенанса; коррелирует ли главная метрика здоровья с результатом; какие пороги верны для конкретной организации. Для одиночной работы без телеметрии большинство не встанет; встанут первые два и предпоследний в упрощённом виде.</p>
+
+  <h3>6.4. Границы этого разбора</h3>
+  <p>Первоисточники не читались — только карточки. Спецификация прочитана по структуре и ключевым разделам, компоненты построчно — нет. Схемы прочитаны в части инвариантов и объекта метрики; число полей кандидата (73) взято из аудита и не перепроверено. Из исправлений аудита проверены по тексту те, что касаются модели, отчёта, метрики и правила допуска версии; исправление петли обучения в схеме не проверялось. Состояние Product Lab известно на 2026-09-04 из разбора соответствия; сегодняшнее не проверялось. Все внутренние нестыковки, найденные при разборе, перечислены в журнале расхождений в <code>registry.md</code>.</p>
+</section>
+
+<!-- ═══════════════════════════ 7 ═══════════════════════════ -->
+<section class="sec sources" id="s7">
+  <span class="kicker">Раздел 7</span>
+  <h2>Источники и подробности</h2>
+
+  <h3>Куда идти по вопросу</h3>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Вопрос</th><th>Где (относительно репозитория пакета)</th></tr></thead>
+      <tbody>
+        <tr><td>Исходная постановка и её оговорки</td><td><code>source-docs/chatgpt-thread.md</code></td></tr>
+        <tr><td>Находки с числами и оценкой прочности</td><td><code>synthesis/02_research_report.md</code> §1, §17</td></tr>
+        <tr><td>Весь конвейер на одном экране</td><td><code>synthesis/03_reference_model.md</code> §4</td></tr>
+        <tr><td>Гейты: что проверяют, что убивают</td><td>там же, §6</td></tr>
+        <tr><td>Линзы и правило их применения</td><td>там же, §8</td></tr>
+        <tr><td>Пороги и откуда каждый взят</td><td>там же, §12</td></tr>
+        <tr><td>Почему решено именно так, что отвергнуто, что спорно</td><td><code>synthesis/07_decision_log.md</code>: 26 решений, 11 допущений, 15 конфликтов, 16 пробелов, 11 отвергнутых, 12 открытых</td></tr>
+        <tr><td>Как оценивать генератор</td><td><code>synthesis/05_evaluation_protocol.md</code></td></tr>
+        <tr><td>Что не входит в спецификацию</td><td><code>synthesis/06_implementation_spec.md</code> §28</td></tr>
+        <tr><td>Насколько верить числам</td><td><code>audit-2026-09-04.md</code> «Обоснованность», Б-02</td></tr>
+        <tr><td>Что делать в Product Lab</td><td><code>product-lab-fit-2026-09-04.md</code> «Вердикт», «Минимальная работающая версия», «Чем модель может испортить»; план приземления — <code>product-lab/donors/feature-pool/landing-plan.md</code></td></tr>
+        <tr><td>Конкретное число и его оговорки</td><td>карточка <code>corpus/sources/SRC-NNN.md</code>, разделы Supported Claims и Limitations</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Поддерживающие материалы разбора</h3>
+  <p><code>supporting-materials.md</code> — карта обработки со статусами файлов, тематические заметки, таблица линз, таблица гейтов, конфликты и пробелы в одном месте, словарь терминов, сводка аудита. <code>registry.md</code> — реестр атомарных записей (около 260) с типом, происхождением знания, статусом решения, источником и оговорками; журнал расхождений, найденных при разборе. Оба лежат в <code>feature-generator/docs/claude-research-summary-2026-09-05/</code> и в копии донора <code>product-lab/donors/feature-pool/summary/</code>.</p>
+  <p><strong>Прежний ввод в курс дела</strong> от 2026-09-04 сверен после разбора; композиция и главные выводы совпадают. Этот разбор добавляет: оговорку о причинном основании (4.3); происхождение пакета и итоги аудита как условие чтения чисел (2.1); различие исходов «выпущено», «результат измерен» и «эффект наблюдён»; статус решения как рекомендации (5.4); противоречие в описании ручного гейта (5.3, п. 3); происхождение правила «единый список входов» вне пакета; неснятые споры и открытые вопросы целиком.</p>
+
+  <h3>Источники</h3>
+  <p><strong>Локальные материалы (предмет разбора).</strong> Репозиторий <code>~/dev/projects/personal/feature-generator</code>: постановка, корпус из манифеста, матрицы и 24 карточек, шесть файлов синтеза, аудит, разбор соответствия, индекс. Снимок — <code>~/dev/projects/personal/product-lab/donors/feature-pool/research/</code>. Новый внешний ресёрч не проводился намеренно: предмет — существующий пакет, чьи числа проверены его аудитом (52 числовых утверждения сверены с карточками, 44 подтвердились точно).</p>
+  <p><strong>Внешние источники корпуса</strong> — 24 работы, известные через карточки; ссылки из манифеста корпуса. В скобках — категория и сила доказательства по шкале пакета.</p>
+  <ol>
+    <li>Girotra, Terwiesch, Ulrich. Idea Generation and the Quality of the Best Idea. Management Science, 2010 (академ., 5). <a href="https://doi.org/10.1287/mnsc.1090.1144">https://doi.org/10.1287/mnsc.1090.1144</a></li>
+    <li>Terwiesch, Meincke, Girotra, Mollick, Nave, Ulrich. Artificial intelligence and its impact on creativity and diversity. Production and Operations Management, 2026 (академ., 5). <a href="https://doi.org/10.1177/10591478261474243">https://doi.org/10.1177/10591478261474243</a></li>
+    <li>Camuffo, Cordova, Gambardella, Spina. A Scientific Approach to Entrepreneurial Decision Making: Evidence from a RCT. Management Science, 2020 (академ., 5). <a href="https://doi.org/10.1287/mnsc.2018.3249">https://doi.org/10.1287/mnsc.2018.3249</a></li>
+    <li>Hoornaert, Ballings, Malthouse, Van den Poel. Identifying New Product Ideas: Waiting for the Wisdom of the Crowd or Screening Ideas in Real Time. JPIM, 2017 (академ., 5). <a href="https://doi.org/10.1111/jpim.12396">https://doi.org/10.1111/jpim.12396</a></li>
+    <li>Bell, Pescher, Tellis, Füller. Can AI Help in Ideation? A Theory-Based Model for Idea Screening in Crowdsourcing Contests. Marketing Science, 2024 (академ., 5). <a href="https://doi.org/10.1287/mksc.2023.1434">https://doi.org/10.1287/mksc.2023.1434</a></li>
+    <li>Si, Hashimoto, Yang. The Ideation-Execution Gap: Execution Outcomes of LLM-Generated versus Human Research Ideas. ICLR, 2026 (академ., 5). <a href="https://iclr.cc/virtual/2026/poster/10010564">https://iclr.cc/virtual/2026/poster/10010564</a></li>
+    <li>Jiang et al. Artificial Hivemind: The Open-Ended Homogeneity of Language Models (and Beyond). NeurIPS, 2025 (академ., 5). <a href="https://proceedings.neurips.cc/paper_files/paper/2025/hash/754d5a526a5ee5a47220664a0eb92751-Abstract-Datasets_and_Benchmarks_Track.html">proceedings.neurips.cc — Artificial Hivemind</a></li>
+    <li>Koning, Hasan, Chatterji. Experimentation and Start-up Performance: Evidence from A/B Testing. Management Science, 2022 (академ., 5). <a href="https://doi.org/10.1287/mnsc.2021.4209">https://doi.org/10.1287/mnsc.2021.4209</a></li>
+    <li>GitLab Handbook. Product Development Flow, правки до 2026-08-27 (компания, 4). <a href="https://handbook.gitlab.com/handbook/product-development/how-we-work/product-development-flow/">handbook.gitlab.com — Product Development Flow</a></li>
+    <li>GitLab Handbook. Product Processes, правки до 2026-08-27 (компания, 4). <a href="https://handbook.gitlab.com/handbook/product/product-processes/">handbook.gitlab.com — Product Processes</a></li>
+    <li>Airbnb Tech Blog. Eval-driven development: Lessons from evaluating GenAI at scale, 2026 (компания, 3). <a href="https://medium.com/airbnb-engineering/eval-driven-development-lessons-from-evaluating-genai-at-scale-e817e5ae5788">medium.com/airbnb-engineering — Eval-driven development</a></li>
+    <li>Microsoft ExP. Beyond Power Analysis: Metric Sensitivity Analysis in A/B Tests, 2021 (компания, 3). <a href="https://www.microsoft.com/en-us/research/group/experimentation-platform-exp/articles/beyond-power-analysis-metric-sensitivity-in-a-b-tests/">microsoft.com/research — Beyond Power Analysis</a></li>
+    <li>Spotify Engineering. Beyond Winning: Spotify's Experiments with Learning Framework, 2025 (компания, 4). <a href="https://engineering.atspotify.com/2025/9/spotifys-experiments-with-learning-framework">engineering.atspotify.com — Experiments with Learning</a></li>
+    <li>Atlassian. Life of a Growth experiment, 2021 (компания, 4). <a href="https://www.atlassian.com/blog/how-we-build/life-of-a-growth-experiment">atlassian.com — Life of a Growth experiment</a></li>
+    <li>Amazon. An insider look at Amazon's culture and processes, 2021 (компания, 4). <a href="https://www.aboutamazon.com/news/workplace/an-insider-look-at-amazons-culture-and-processes">aboutamazon.com — insider look</a></li>
+    <li>Intercom. Product principles: Start with the problem to achieve better solutions, 2022 (компания, 3). <a href="https://www.intercom.com/blog/intercom-product-principles-start-with-the-problem/">intercom.com — Start with the problem</a></li>
+    <li>Torres. Continuous Discovery Habits, Product Talk, 2021 (методол., 3). <a href="https://www.producttalk.org/continuous-discovery-habits/">producttalk.org — Continuous Discovery Habits</a></li>
+    <li>SVPG. The Product Operating Model: An Introduction, 2023 (методол., 3). <a href="https://www.svpg.com/the-product-operating-model-an-introduction/">svpg.com — Product Operating Model</a></li>
+    <li>Bryar, Carr. Working Backwards: Insights, Stories and Secrets from Inside Amazon, 2021 (методол., 3). <a href="https://workingbackwards.com/buy-working-backwards-the-book/">workingbackwards.com</a></li>
+    <li>Cooper, Stage-Gate International. The Stage-Gate Model: An Overview, 2026 (методол., 3). <a href="https://www.stage-gate.com/blog/the-stage-gate-model-an-overview/">stage-gate.com — The Stage-Gate Model</a></li>
+    <li>Patton. Dual Track Development is not Duel Track, 2017 (методол., 3). <a href="https://jpattonassociates.com/dual-track-development/">jpattonassociates.com — Dual Track Development</a></li>
+    <li>Perri. Escaping the Build Trap, 2018 (методол., 3). <a href="https://melissaperri.com/book">melissaperri.com/book</a></li>
+    <li>Holzner, Maier, Feuerriegel. Generative AI and Creativity: A Systematic Literature Review and Meta-Analysis, arXiv 2505.17241, 2025 (обзор, 5). <a href="https://arxiv.org/abs/2505.17241">https://arxiv.org/abs/2505.17241</a></li>
+    <li>Sio, Kotovsky, Cagan. Fixation or inspiration? A meta-analytic review of the role of examples on design processes. Design Studies, 2015 (обзор, 5). <a href="https://doi.org/10.1016/j.destud.2015.04.004">https://doi.org/10.1016/j.destud.2015.04.004</a></li>
+  </ol>
+  <p class="stamp">Разбор выполнен 2026-09-05 по промпту саммаризатора исследовательского пакета (ред. v0.2). Автор публикации — Павел Диордиц; текст подготовлен агентом Claude и сверен с карточками источников выборочно. Текстовая версия — <code>generator-fich-podhod-2026-09-05.md</code> рядом с этим файлом.</p>
+</section>
+</main>
 </div>
-<p>Правило: минимум три линзы разных классов механизма на значимую возможность,
-при высоком риске — шесть из разных семейств. Пустая линза — это данные, а не провал:
-записывается «неприменима» с причиной. Если пустыми оказались целые семейства,
-это признак того, что возможность сформулирована как замаскированное решение,
-и запись уходит на переформулирование.</p>
-<p>Статус самого каталога честно помечен: списка линз в корпусе нет, это проектное
-решение по аналогии с проверенным рычагом «функциональное ограничение в отдельном
-вызове».</p>
-
-<h3>Контракт кандидата и прослеживаемость</h3>
-<p>Кандидат не выходит из генератора, пока не заполнены поля: во что мы верим против
-того, что проверяем; метрика, направление её движения, предсказанный размер эффекта
-и численный порог решения с отметкой времени записи; условие, при котором гипотеза
-считается опровергнутой; самое рискованное допущение и его тип из пяти (нужность,
-осуществимость, удобство, экономика, этика); оценка в человеко-днях с диапазоном;
-охват когорты.</p>
-<p>Прослеживаемость сделана полем схемы, а не дисциплиной: каждая запись хранит
-разрешимую ссылку на родителя, разрыв цепочки блокирует ворота, а операция
-«объясни кандидата» возвращает всю цепочку до источника либо первое недостающее звено.</p>
-
-<h2 id="p3"><span class="num">Часть 3</span>Почему эталон не ложится как есть</h2>
-<p>Разбор соответствия делался отдельно и уже проведён. Вывод короткий: модель написана
-для организации, которой у тебя нет, и целиком не окупается.</p>
-
-<h3>Что есть на самом деле</h3>
-<p>Product Lab — это спецификация конвейера, а не работающий конвейер. Семнадцать стадий
-описаны, исполняются две (концепт и стратегия — одним скиллом). Восемь файлов скиллов
-лежат нулевого размера. Одиннадцать шаблонов из семнадцати содержат буквально
-«TBD — стадия не спроектирована». Стадия 05, куда как раз и метит генератор фич,
-помечена как не спроектированная, и выполнять её нечем.</p>
-
-<h3>Шесть мест, где эталон ломает работу</h3>
-<h4>Входной контракт даёт вечную блокировку</h4>
-<p>Модель пускает discovery в работу только при четырёх утверждённых документах
-и четырёх покрытых направлениях внешнего ресёрча, и прямо запрещает деградировать
-к частичному прогону. У тебя BRIEF.md не производит никто — стадия не спроектирована;
-внешнего ресёрча с прослеживаемым происхождением нет ни по одному направлению.
-Принятое буквально правило означает, что стадия 05 формально существует и не
-запускается никогда. Честное «не спроектирована» лучше.</p>
-<h4>Пороги калибруются на истории, которой нет</h4>
-<p>Точка отсечения при скрининге строится по кривой отсева на собственном корпусе
-прошлых циклов. Корпуса нет и не будет ещё долго. Модель это учитывает и вводит
-специальный исход «недостаточно данных» — но в холодном старте его получают
-все кандидаты подряд.</p>
-<h4>Девять ворот и 23 объекта сделают самый лёгкий участок самым тяжёлым</h4>
-<p>Сейчас концепт производится одной сессией с двумя остановками. Между утверждённой
-стратегией и первой веткой встанет процедура на девять проверок, шесть из которых
-при твоих входных данных не дают ответа.</p>
-<h4>Генерация при нулевой ёмкости проверки — уже наблюдавшийся отказ</h4>
-<p>В твоём банке идей восемь записей: три висят без класса с начала августа,
-три добавлены в сентябре, одна не сдвинулась из готовности, доведена до конца ровно
-одна. Это и есть пул без ёмкости валидации на живых данных. Модель требует минимум
-трёх кандидатов на возможность; при десятке возможностей — тридцать открытых записей
-при пропускной способности одного человека. Она удерживает это лимитом открытых
-кандидатов и квотой ёмкости, и оба параметра калибруются по фактической пропускной
-способности за два квартала, которой нет.</p>
-<h4>Заполненные числовые оценки дадут ложную уверенность</h4>
-<p>Предсказанный размер эффекта и порог решения, написанные тем же агентом, который
-породил кандидата, при отсутствии телеметрии — это самооценка генератора, ровно то,
-что ворота G0 существуют ловить. Опасность усиливается формой: число с двумя знаками
-в таблице через месяц неотличимо от измерения.</p>
-<h4>Слой возможностей частично обесценивает утверждённый концепт</h4>
-<p>В шаблоне концепта уже есть четыре корзины фич — базовые, удерживающие, расширяющие,
-продающие. По букве модели это заранее сформированный перечень решений, который надо
-понизить до сигналов и прогнать через слой возможностей заново. Шаблон концепта
-при этом — один из двух, имеющих статус «проверен».</p>
-
-<div class="note"><p><b>Вывод разбора.</b> Брать одну вещь: слой возможностей.
-Остальное — объекты данных, протокол оценки, спецификацию реализации, ворота
-G0/G2/G5/G7/G8 — оставить знанием в архиве. Оно понадобится целиком только если
-появятся телеметрия и история релизов.</p></div>
-
-<h2 id="p4"><span class="num">Часть 4</span>Что берём: рабочая версия на шесть правил</h2>
-<p>Это содержание будущего скилла стадии 05. Каждое правило приводится вместе с тем,
-что теряется по сравнению с эталоном — потерю надо называть вслух, иначе лёгкая версия
-через полгода начнёт выдавать себя за полную.</p>
-
-<h3>Правило 1. Единый список входов</h3>
-<p>Генератор не читает документы по именам. Он читает один список: строка на источник —
-что это, откуда взялось, когда получено, где лежит файл. Сегодня в списке четыре строки
-(идея, бриф, концепт, стратегия). Появились опросы — добавилась строка и файл.
-Процедура не меняется.</p>
-<p>Это самое важное правило и оно идёт первым, потому что определяет, переживёт ли
-конструкция рост. Подробнее — в части 5.</p>
-<div class="loss"><b>Что теряем</b>Оценку зрелости каждого источника и требование двух
-независимых подтверждений. Источник входит как есть, с пометкой, наблюдение это
-или мнение.</div>
-
-<h3>Правило 2. Сначала проблема, потом решения</h3>
-<p>Возможность записывается раньше любой фичи. Возможность — это: кто носитель
-(конкретный пользователь из концепта, шаг его работы или шаг основного цикла),
-в чём разрыв между тем, чего он ждёт, и тем, что получает, ссылка на раздел концепта
-или стратегии, откуда это взято, и насколько это серьёзно — прозой, без баллов.
-Фича без разрешимой ссылки на возможность не создаётся.</p>
-<p>Проверка, отсекающая замаскированное решение: если возможность решается ровно одним
-способом — это не возможность, а фича, которую записали в обратном порядке.</p>
-<div class="loss"><b>Что теряем</b>Без ворот G0 обоснованием служит твоё собственное
-намерение, а не внешнее доказательство. Прямое следствие — результат нельзя называть
-основанным на доказательствах. Честное имя — «выведено из принятых артефактов».</div>
-
-<h3>Правило 3. Три решения разных классов, одно — без разработки</h3>
-<p>На каждую значимую возможность — от трёх до шести кандидатов, у каждого свой класс
-механизма. Среди классов обязателен «закрыть без разработки»: для одиночки это законный
-и часто лучший исход.</p>
-<div class="loss"><b>Что теряем</b>Автоматическое измерение разнообразия — эмбеддинги,
-базовую линию по человеческому набору, порог близости 0,8, требование двух независимых
-источников генерации. Ручной счёт классов не ловит схлопывание внутри одного класса:
-три варианта одной автоматизации пройдут. Частичная компенсация — требование, чтобы
-среди трёх был класс из другого семейства, и мета-линза переформулирования.</div>
-
-<h3>Правило 4. Каталог линз</h3>
-<p>Семнадцать линз переезжают почти как есть — это единственная часть модели,
-исполнимая одним агентом сегодня, без эмбеддингов и базовых линий. Линза даёт и вопрос
-к возможности, и имя класса механизма, по которому потом считается тройка.</p>
-<div class="loss"><b>Что теряем</b>Ничего существенного. Статус каталога и так помечен
-как проектное решение.</div>
-
-<h3>Правило 5. Восемь полей на кандидата вместо семидесяти трёх</h3>
-<p>Ссылка на возможность · кому · класс механизма и линза · формулировка решения ·
-самое рискованное допущение с типом из пяти · как проверю дёшево, с ограничением
-по времени · что я увижу, чтобы признать неудачу · оценка в днях.</p>
-<p>Всё формулируемое, ничего измеряемого.</p>
-<div class="loss"><b>Что теряем</b>Численный порог решения, записанный до теста, — то
-самое единственное правило с причинно-следственным подтверждением. Качественный признак
-неудачи слабее численного порога, но принципиально отличим от его отсутствия: он не даёт
-задним числом объявить любой исход подтверждением. Это осознанная и названная потеря.</div>
-
-<h3>Правило 6. Нельзя закрыть фичу, не записав, что вышло</h3>
-<p>Два поля в описании фичи: чего ожидал (копируется из кандидата при запуске в работу)
-и что получилось (заполняется при выпуске). Запрет: пометить фичу выпущенной при пустом
-результате нельзя. Тот же механизм, что уже работает в банке идей, где закрытие
-без результата отклоняется.</p>
-<div class="loss"><b>Что теряем</b>Это суждение, а не измерение — ни мощности,
-ни когорт, ни порогов. Но сегодня после выпуска состояния нет вовсе и вывод записать
-некуда.</div>
-
-<h3>Единственные ворота</h3>
-<p>Одна проверка перед показом результата, ручная, в том же жанре, что уже используется
-в скилле концепта:</p>
-<ul>
-<li>у каждой значимой возможности не менее трёх кандидатов разных классов механизма;</li>
-<li>ни один кандидат не пересказывает другой;</li>
-<li>среди классов есть «без разработки»;</li>
-<li>у каждого кандидата ссылка на возможность разрешается.</li>
-</ul>
-
-<h2 id="p5"><span class="num">Часть 5</span>Как это масштабируется</h2>
-<p class="lead">Требование звучит так: сегодня четыре входных файла, завтра появятся
-метрики, опросы, результаты из других процессов — и подать их в генератор надо,
-не ломая конвейер.</p>
-
-<h3>Механизм</h3>
-<p>Между источниками и генератором стоит <b>список входов</b>. Генератор знает только его.</p>
-
-<figure>
-<svg viewBox="0 0 956 300" role="img" aria-label="Схема: шесть разных источников сходятся в единый список входов, из которого генератор строит возможности, решения и кандидатов">
-<style>
- .s{fill:var(--paper-2);stroke:var(--rule);stroke-width:1}
- .sn{fill:var(--paper-2);stroke:var(--rule);stroke-width:1;stroke-dasharray:4 3}
- .reg{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2}
- .t1{font-family:var(--sans);font-size:13px;fill:var(--ink-2)}
- .t2{font-family:var(--sans);font-size:13px;fill:var(--ink);font-weight:650}
- .t3{font-family:var(--sans);font-size:11.5px;fill:var(--ink-3)}
- .a{stroke:var(--rule);stroke-width:1.5;fill:none}
- .aa{stroke:var(--accent);stroke-width:2;fill:none}
-</style>
-<rect class="s" x="0" y="14" width="130" height="26" rx="3"/><text class="t1" x="10" y="32">идея</text>
-<rect class="s" x="0" y="48" width="130" height="26" rx="3"/><text class="t1" x="10" y="66">бриф</text>
-<rect class="s" x="0" y="82" width="130" height="26" rx="3"/><text class="t1" x="10" y="100">концепт</text>
-<rect class="s" x="0" y="116" width="130" height="26" rx="3"/><text class="t1" x="10" y="134">стратегия</text>
-<rect class="sn" x="0" y="158" width="130" height="26" rx="3"/><text class="t1" x="10" y="176">опросы</text>
-<rect class="sn" x="0" y="192" width="130" height="26" rx="3"/><text class="t1" x="10" y="210">метрики</text>
-<rect class="sn" x="0" y="226" width="130" height="26" rx="3"/><text class="t1" x="10" y="244">что угодно ещё</text>
-<text class="t3" x="0" y="272">сплошные — есть сегодня; пунктир — появится потом</text>
-<path class="a" d="M130 27 H180 V120"/><path class="a" d="M130 61 H180"/>
-<path class="a" d="M130 95 H180"/><path class="a" d="M130 129 H180"/>
-<path class="a" d="M130 171 H180 V140"/><path class="a" d="M130 205 H180"/><path class="a" d="M130 239 H180"/>
-<path class="aa" d="M180 133 H250"/>
-<rect class="reg" x="250" y="90" width="190" height="86" rx="4"/>
-<text class="t2" x="264" y="114">СПИСОК ВХОДОВ</text>
-<text class="t3" x="264" y="134">что · откуда</text>
-<text class="t3" x="264" y="152">когда · где лежит</text>
-<path class="aa" d="M440 133 H510"/>
-<rect class="s" x="510" y="112" width="150" height="42" rx="3"/><text class="t2" x="524" y="138">возможности</text>
-<path class="a" d="M660 133 H700"/>
-<rect class="s" x="700" y="112" width="110" height="42" rx="3"/><text class="t1" x="714" y="138">решения</text>
-<path class="a" d="M810 133 H845"/>
-<rect class="s" x="845" y="112" width="95" height="42" rx="3"/><text class="t1" x="859" y="138">кандидаты</text>
-<path class="a" d="M892 154 V220 H345 V176" stroke-dasharray="5 4"/>
-<text class="t3" x="360" y="238">перезапуск при новом входе — та же процедура</text>
-</svg>
-<figcaption>Добавить источник — значит добавить строку и файл. Процедура генератора
-не меняется, потому что написана над списком, а не над именами документов.</figcaption>
-</figure>
-
-<p>Это уменьшенная копия того самого разнесения осей из эталона: «что разбудило»
-отделено от «как ищем».</p>
-
-<h3>Три правила, которые держат конструкцию при росте</h3>
-<h4>Ссылка на строку списка обязательна</h4>
-<p>Любое утверждение внутри возможности несёт ссылку на источник. Тогда видно,
-на чём возможность держится, и что повиснет, когда источник устареет
-или окажется неверным.</p>
-<h4>Новый источник обязан ответить на два вопроса: что наблюдалось и когда</h4>
-<p>Не может ответить — входит как мнение и помечается. Не запрещено: твоё намерение
-и твои догадки законный вход. Но отличимо от наблюдения, и это отличие сохраняется
-в записи.</p>
-<h4>Стадия перезапускаемая</h4>
-<p>Пришли новые данные — не переписываешь список фич, а прогоняешь ту же процедуру
-заново. Она либо добавляет новые возможности, либо усиливает существующие новыми
-ссылками. Кандидаты, которых больше не держит ни одна возможность, всплывают сами.</p>
-
-<h3>Как это соотносится с режимами эталона</h3>
-<p>Шесть режимов эталона в лёгкой версии не исчезают, а становятся поводами
-для перезапуска одной и той же процедуры:</p>
-<div class="tw"><table>
-<thead><tr><th>Режим эталона</th><th>Как выглядит у тебя</th></tr></thead>
-<tbody>
-<tr><td>первичная генерация</td><td>первый прогон после утверждения стратегии</td></tr>
-<tr><td>по новым данным</td><td>добавилась строка в список входов — перезапуск</td></tr>
-<tr><td>по стратегии</td><td>стратегия пересмотрена — перезапуск, старое не удаляется</td></tr>
-<tr><td>по уроку</td><td>фича выпущена, результат записан — перезапуск</td></tr>
-<tr><td>по направлению</td><td>ты решил проработать удержание — перезапуск по срезу</td></tr>
-<tr><td>по разрывам покрытия</td><td>откладывается: нужна карта покрытия, которой пока нет</td></tr>
-</tbody></table></div>
-<p>Пять из шести — это одна процедура с разным входом. Отдельного кода под каждый
-не требуется, требуется только запись, каким поводом вызван прогон.</p>
-
-<h3>Что откладывается сознательно</h3>
-<p>Не заводить возможности и доказательства отдельными хранилищами с версиями,
-сроками годности и корпусом отклонённого. Вместо лимита открытых кандидатов —
-одна строка правила: не больше N непроверенных в работе. Всё это окупается только
-при существующем следующем шаге, которого пока нет.</p>
-
-<h2 id="p6"><span class="num">Часть 6</span>Что делать дальше</h2>
-<p><b>Порядок работ</b> задан твоим же правилом «черновик → скилл и правила генерации →
-прогон на реальных идеях → правка шаблона и скилла → проверено». Нарушение этого
-порядка уже дало одиннадцать шаблонов с текстом «не спроектирована» и восемь пустых
-скиллов.</p>
-<ol>
-<li>Скилл стадии 05 в мастерской — здесь, в <code>feature-generator</code>, по образцу
-скилла концепта: маршрутизация, процедура, каталог линз отдельным файлом.</li>
-<li>Один прогон на реальной идее. Первый кандидат — сам <code>feature-generator</code>
-как продукт: идея есть, концепт для неё производится существующим скиллом.</li>
-<li>Только после прогона — перенос в <code>product-lab</code> и правка шаблона
-стадии 05.</li>
-<li>Пакет ресёрча — в архив целиком, как есть. Каждое правило скилла несёт короткую
-сноску, где в архиве лежит его обоснование.</li>
-</ol>
-<p><b>Цена, которую надо принять заранее.</b> Чтобы на разделы концепта можно было
-ссылаться машинно, в шаблон концепта придётся добавить якоря — а он сегодня имеет
-статус «проверен», и правка означает новую черновую версию и повторный прогон.</p>
-<div class="note"><p><b>Решение, которое я принял сам</b> — скажи, если не так.
-Четыре корзины фич в существующем концепте не выбрасываются и концепт не переписывается:
-каждая фича обязана получить ссылку на возможность, которую закрывает. Не получившая
-помечается «без возможности» — это сам по себе полезный сигнал, а не повод удалять.</p></div>
-<p><b>Что осталось открытым в самом ресёрче</b> и решается только наблюдением за твоей
-собственной работой: какая доля кандидатов нормально отсеивается; сколько альтернатив
-на возможность действительно оптимально (тройка — норма практика, а не измеренный
-оптимум); при какой стоимости шага останавливать поток на ревью.</p>
-
-<h2 id="gde"><span class="num">Справка</span>Где что лежит</h2>
-<p><b>Рабочее</b> — скилл стадии 05 в <code>product-lab/skills/feature-pool/</code>,
-проектируется и обкатывается в <code>feature-generator</code>.</p>
-<p><b>Справочное</b> — исследовательский пакет
-<code>feature-generator/feature-discovery-research/</code>, 32 файла. Открывается
-по конкретному вопросу, а не для чтения.</p>
-<p><b>Журналы</b> — <code>audit-2026-09-04.md</code> (протокол аудита: подтверждённые
-дефекты исправлены по журналу, спорные ссылки снабжены оговорками) и <code>product-lab-fit-2026-09-04.md</code> (разбор соответствия).
-Оба — история, не задачи.</p>
-
-<h2 id="ist"><span class="num">Источники</span>На чём стоит документ</h2>
-<p>Всё, на что опирается документ, лежит локально; внешний ресёрч не проводился
-намеренно — предмет документа — уже существующий пакет, а его 24 внешних источника
-проверены собственным аудитом: 52 числовых утверждения сверены с карточками,
-44 подтвердились точно, остальные исправлены либо оставлены с оговоркой
-о слабости опоры.</p>
-<ul class="src">
-<li><code>feature-generator/source-docs/chatgpt-thread.md</code> — исходная постановка задачи</li>
-<li><code>feature-discovery-research/synthesis/02_research_report.md</code> — отчёт, разделы 1 и 18</li>
-<li><code>feature-discovery-research/synthesis/03_reference_model.md</code> — модель, разделы 2, 4, 5, 7, 8</li>
-<li><code>feature-discovery-research/synthesis/07_decision_log.md</code> — журнал решений:
-26 решений, 15 конфликтов источников, 16 пробелов, 12 открытых вопросов</li>
-<li><code>feature-generator/audit-2026-09-04.md</code> — протокол аудита пакета</li>
-<li><code>feature-generator/product-lab-fit-2026-09-04.md</code> — разбор соответствия Product Lab</li>
-<li><code>feature-discovery-research/corpus/sources/SRC-001…024</code> — карточки внешних источников</li>
-</ul>
-<p class="meta" style="margin-top:34px;border:0;padding:0">Текстовая версия того же
-материала — <code>generator-fich-podhod-2026-09-04.md</code> в этой же папке.</p>
-</main></div>
 
 <script>
 (function(){
-  var R=document.documentElement;
-  function get(k){try{return localStorage.getItem(k)}catch(e){return null}}
-  function set(k,v){try{localStorage.setItem(k,v)}catch(e){}}
-  var t=get('fg-theme'); if(t) R.setAttribute('data-theme',t);
-  var c=get('fg-contrast'); if(c==='high') R.setAttribute('data-contrast','high');
-  document.getElementById('th').onclick=function(){
-    var cur=R.getAttribute('data-theme');
-    if(!cur){cur=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}
-    var nx=cur==='dark'?'light':'dark';
-    R.setAttribute('data-theme',nx); set('fg-theme',nx);
-  };
-  document.getElementById('ct').onclick=function(){
-    var on=R.getAttribute('data-contrast')==='high';
-    if(on){R.removeAttribute('data-contrast'); set('fg-contrast','normal')}
-    else{R.setAttribute('data-contrast','high'); set('fg-contrast','high')}
-  };
-  var bar=document.getElementById('bar');
-  function prog(){
-    var h=document.documentElement.scrollHeight-innerHeight;
-    bar.style.width=(h>0?(scrollY/h*100):0)+'%';
+  var root=document.documentElement;
+  var KEY_T='gf-theme', KEY_C='gf-contrast';
+  var themeBtn=document.getElementById('themeBtn'), themeIco=document.getElementById('themeIco'), themeLbl=document.getElementById('themeLbl');
+  var contrastBtn=document.getElementById('contrastBtn');
+  var mq=window.matchMedia('(prefers-color-scheme: dark)');
+  function safeGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+  function safeSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+  function safeDel(k){try{localStorage.removeItem(k)}catch(e){}}
+  function syncSys(){ if(!root.getAttribute('data-theme')){ root.classList.toggle('sys-dark', mq.matches);} else {root.classList.remove('sys-dark');} }
+  function applyTheme(t){
+    if(t==='light'||t==='dark'){root.setAttribute('data-theme',t);}else{root.removeAttribute('data-theme');t='auto';}
+    var map={auto:['◐','Тема: системная'],light:['○','Тема: светлая'],dark:['●','Тема: тёмная']};
+    themeIco.textContent=map[t][0]; themeLbl.textContent=map[t][1];
+    syncSys();
   }
-  addEventListener('scroll',prog,{passive:true}); addEventListener('resize',prog); prog();
-  var links=[].slice.call(document.querySelectorAll('#toc a'));
-  var secs=links.map(function(a){return document.getElementById(a.getAttribute('href').slice(1))});
-  function spy(){
-    var i,best=0;
-    for(i=0;i<secs.length;i++){ if(secs[i] && secs[i].getBoundingClientRect().top<130) best=i; }
-    links.forEach(function(a,j){a.classList.toggle('on',j===best)});
+  function applyContrast(on){
+    if(on){root.setAttribute('data-contrast','high');}else{root.removeAttribute('data-contrast');}
+    contrastBtn.setAttribute('aria-pressed', on?'true':'false');
   }
-  addEventListener('scroll',spy,{passive:true}); spy();
+  var t=safeGet(KEY_T); applyTheme(t||'auto');
+  applyContrast(safeGet(KEY_C)==='1');
+  mq.addEventListener && mq.addEventListener('change', syncSys);
+  themeBtn.addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme')||'auto';
+    var next=cur==='auto'?'light':cur==='light'?'dark':'auto';
+    if(next==='auto') safeDel(KEY_T); else safeSet(KEY_T,next);
+    applyTheme(next);
+  });
+  contrastBtn.addEventListener('click',function(){
+    var on=root.getAttribute('data-contrast')!=='high';
+    if(on) safeSet(KEY_C,'1'); else safeDel(KEY_C);
+    applyContrast(on);
+  });
+  // progress
+  var bar=document.getElementById('progress');
+  function prog(){var h=document.documentElement;var max=h.scrollHeight-h.clientHeight;bar.style.width=(max>0?(h.scrollTop/max*100):0)+'%';}
+  window.addEventListener('scroll',prog,{passive:true}); prog();
+  // nav toggle (mobile)
+  var nt=document.getElementById('navToggle'), nav=document.getElementById('sidenav');
+  nt.addEventListener('click',function(){var o=nav.classList.toggle('open');nt.setAttribute('aria-expanded',o?'true':'false');});
+  nav.addEventListener('click',function(e){if(e.target.tagName==='A'&&nav.classList.contains('open')){nav.classList.remove('open');nt.setAttribute('aria-expanded','false');}});
+  // active section
+  var links=[].slice.call(nav.querySelectorAll('a[href^="#"]'));
+  var targets=links.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));}).filter(Boolean);
+  function setActive(id){links.forEach(function(a){a.classList.toggle('active',a.getAttribute('href')==='#'+id);});}
+  function track(){var line=130,cur=targets[0];for(var i=0;i<targets.length;i++){if(targets[i].getBoundingClientRect().top<=line) cur=targets[i]; else break;} if(cur) setActive(cur.id);}
+  window.addEventListener('scroll',track,{passive:true}); window.addEventListener('resize',track); track();
 })();
 </script>
-
-
-
-
 <!--general:foot-->
 <style>
 .gnrl{margin:4rem auto 0;padding:2rem 1.25rem 2.5rem;max-width:1100px;border-top:1px solid rgba(128,128,128,.28);
@@ -794,10 +979,32 @@ G0/G2/G5/G7/G8 — оставить знанием в архиве. Оно по�
 .gnrl-card img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
 .gnrl-card b{display:block;padding:.8rem .9rem .2rem;font-size:.9375rem;font-weight:600}
 .gnrl-card span{display:block;padding:0 .9rem .9rem;font-size:.8125rem;opacity:.6}
+/* Стили кнопки возврата. Сама кнопка стоит не здесь, а в начале <body>: она в
+   потоке, поэтому резервирует своё место и не накрывает то, что разбор нарисовал
+   у себя вверху (у четырёх выпусков там собственный переключатель темы). Sticky
+   держит её на виду при прокрутке — до подвала на длинном разборе крутить долго. */
+.gnrl-upwrap{
+  position:sticky;top:0;z-index:70;padding:.7rem 0 .1rem .75rem;
+  /* Полоса тянется во всю ширину, но кликам не мешает — ловит их только кнопка. */
+  pointer-events:none;
+}
+.gnrl-up{
+  pointer-events:auto;display:inline-flex;align-items:center;
+  padding:.4rem .8rem;border-radius:999px;font-size:.8125rem;font-weight:600;
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color:inherit;text-decoration:none;border:1px solid rgba(128,128,128,.35);
+  /* Серый в полупрозрачности и цвет текста по наследству: подложка одинаково
+     ложится и на светлую, и на тёмную страницу, а системный Canvas — нет, он не
+     знает про тему разбора и на тёмной странице стал бы белым пятном. */
+  background:rgba(127,127,127,.2);
+  backdrop-filter:blur(10px) saturate(1.4);-webkit-backdrop-filter:blur(10px) saturate(1.4);
+}
+.gnrl-up:hover{border-color:rgba(128,128,128,.75)}
+@media print{.gnrl-upwrap{display:none}}
 </style>
 <nav class="gnrl">
   <div class="gnrl-top">
-    <a class="gnrl-back" href="https://paveldiordits.site/presentations/">← General · библиотека разборов</a>
+    <a class="gnrl-back" href="https://paveldiordits.site/presentations/">← Журнал</a>
     <span class="gnrl-h">Ещё по теме</span>
   </div>
   <div class="gnrl-grid">
@@ -815,5 +1022,19 @@ G0/G2/G5/G7/G8 — оставить знанием в архиве. Оно по�
     </a>
   </div>
 </nav>
+<script>
+// Кнопка вверху — настоящая ссылка на журнал: без скриптов и на прямом заходе
+// она ведёт хотя бы туда. Если посетитель пришёл по ссылке с сайта, она вместо
+// этого возвращает на ту же страницу и в ту же точку прокрутки, откуда он ушёл, —
+// это и есть «назад», а не «в начало журнала».
+(function(){
+  var a=document.getElementById('gnrl-up');
+  if(!a||history.length<2) return;
+  var from=document.referrer||'';
+  if(from.indexOf(location.origin+'/')!==0||from===location.href) return;
+  a.addEventListener('click',function(e){ e.preventDefault(); history.back(); });
+})();
+</script>
 <!--/general:foot-->
-</body></html>
+</body>
+</html>

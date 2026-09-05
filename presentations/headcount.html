@@ -181,7 +181,7 @@ footer .inner{width:min(84%,1500px);margin:0 auto}
 <!--general:head-->
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://paveldiordits.site/presentations/headcount.html">
-<meta property="og:site_name" content="General · paveldiordits.site">
+<meta property="og:site_name" content="Журнал · paveldiordits.site">
 <meta property="og:title" content="headcount — «компания из агентов» для Claude Code: разбор">
 <meta property="og:description" content="Разбор headcount — маркетплейса из 16 департаментов и 172 скиллов для Claude Code: что реально приезжает при установке, почему бюджет списка скиллов в 1% окна решает больше, чем качество текста, и как ставить по одному департаменту, не сломав то, что уже стоит.">
 <meta property="og:image" content="https://paveldiordits.site/og.png">
@@ -190,9 +190,36 @@ footer .inner{width:min(84%,1500px);margin:0 auto}
 <meta name="twitter:description" content="Разбор headcount — маркетплейса из 16 департаментов и 172 скиллов для Claude Code: что реально приезжает при установке, почему бюджет списка скиллов в 1% окна решает больше, чем качество текста, и как ставить по одному департаменту, не сломав то, что уже стоит.">
 <meta name="twitter:image" content="https://paveldiordits.site/og.png">
 <link rel="canonical" href="https://paveldiordits.site/presentations/headcount.html">
+<link rel="alternate" type="application/rss+xml" title="Журнал — разборы Павла Диордица" href="https://paveldiordits.site/presentations/rss.xml">
+<style>
+#contrastBtn,#btn-contrast,#ct,#hc,#hcBtn,
+button[title*="онтраст"],button[aria-label*="онтраст"]{display:none!important}
+</style>
+<script>
+(function(){
+  var r=document.documentElement;
+  function off(){
+    if(r.hasAttribute('data-contrast')) r.removeAttribute('data-contrast');
+    if(r.classList.contains('hc')) r.classList.remove('hc');
+  }
+  off();
+  // Наблюдатель, а не разовый вызов: собственный скрипт страницы поднимает режим
+  // из localStorage позже, уже после этой вставки, — снимаем сразу же, до отрисовки.
+  new MutationObserver(off).observe(r,{attributes:true,attributeFilter:['data-contrast','class']});
+  // Кнопки будущих разборов с неизвестным id: прячем по подписи, не удаляя узел.
+  addEventListener('DOMContentLoaded',function(){
+    [].forEach.call(document.querySelectorAll('button'),function(b){
+      if(/контраст/i.test(b.textContent||'')) b.style.display='none';
+    });
+  });
+})();
+</script>
 <!--/general:head-->
 </head>
 <body>
+<!--general:top-->
+<div class="gnrl-upwrap"><a class="gnrl-up" id="gnrl-up" href="https://paveldiordits.site/presentations/">← Назад</a></div>
+<!--/general:top-->
 <div id="progress" aria-hidden="true"></div>
 
 <header class="top">
@@ -610,10 +637,32 @@ footer .inner{width:min(84%,1500px);margin:0 auto}
 .gnrl-card img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
 .gnrl-card b{display:block;padding:.8rem .9rem .2rem;font-size:.9375rem;font-weight:600}
 .gnrl-card span{display:block;padding:0 .9rem .9rem;font-size:.8125rem;opacity:.6}
+/* Стили кнопки возврата. Сама кнопка стоит не здесь, а в начале <body>: она в
+   потоке, поэтому резервирует своё место и не накрывает то, что разбор нарисовал
+   у себя вверху (у четырёх выпусков там собственный переключатель темы). Sticky
+   держит её на виду при прокрутке — до подвала на длинном разборе крутить долго. */
+.gnrl-upwrap{
+  position:sticky;top:0;z-index:70;padding:.7rem 0 .1rem .75rem;
+  /* Полоса тянется во всю ширину, но кликам не мешает — ловит их только кнопка. */
+  pointer-events:none;
+}
+.gnrl-up{
+  pointer-events:auto;display:inline-flex;align-items:center;
+  padding:.4rem .8rem;border-radius:999px;font-size:.8125rem;font-weight:600;
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color:inherit;text-decoration:none;border:1px solid rgba(128,128,128,.35);
+  /* Серый в полупрозрачности и цвет текста по наследству: подложка одинаково
+     ложится и на светлую, и на тёмную страницу, а системный Canvas — нет, он не
+     знает про тему разбора и на тёмной странице стал бы белым пятном. */
+  background:rgba(127,127,127,.2);
+  backdrop-filter:blur(10px) saturate(1.4);-webkit-backdrop-filter:blur(10px) saturate(1.4);
+}
+.gnrl-up:hover{border-color:rgba(128,128,128,.75)}
+@media print{.gnrl-upwrap{display:none}}
 </style>
 <nav class="gnrl">
   <div class="gnrl-top">
-    <a class="gnrl-back" href="https://paveldiordits.site/presentations/">← General · библиотека разборов</a>
+    <a class="gnrl-back" href="https://paveldiordits.site/presentations/">← Журнал</a>
     <span class="gnrl-h">Ещё по теме</span>
   </div>
   <div class="gnrl-grid">
@@ -621,9 +670,9 @@ footer .inner{width:min(84%,1500px);margin:0 auto}
       <img src="covers/yingzao-skill.svg" alt="" loading="lazy">
       <b>Yingzao: скилл-постер Guizang под микроскопом</b><span>40 мин · 2026-09-05</span>
     </a>
-    <a class="gnrl-card" href="claude-w23-peremer.html">
-      <img src="covers/claude-w23-peremer.svg" alt="" loading="lazy">
-      <b>Неделя 23 экосистемы Claude — снимок и перемер</b><span>13 мин · 2026-09-04</span>
+    <a class="gnrl-card" href="generator-fich.html">
+      <img src="covers/generator-fich.svg" alt="" loading="lazy">
+      <b>Генератор фич: что выяснило исследование и что из него брать</b><span>57 мин · 2026-09-05</span>
     </a>
     <a class="gnrl-card" href="agents-weekly-2026-09-04.html">
       <img src="covers/agents-weekly-2026-09-04.svg" alt="" loading="lazy">
@@ -631,6 +680,19 @@ footer .inner{width:min(84%,1500px);margin:0 auto}
     </a>
   </div>
 </nav>
+<script>
+// Кнопка вверху — настоящая ссылка на журнал: без скриптов и на прямом заходе
+// она ведёт хотя бы туда. Если посетитель пришёл по ссылке с сайта, она вместо
+// этого возвращает на ту же страницу и в ту же точку прокрутки, откуда он ушёл, —
+// это и есть «назад», а не «в начало журнала».
+(function(){
+  var a=document.getElementById('gnrl-up');
+  if(!a||history.length<2) return;
+  var from=document.referrer||'';
+  if(from.indexOf(location.origin+'/')!==0||from===location.href) return;
+  a.addEventListener('click',function(e){ e.preventDefault(); history.back(); });
+})();
+</script>
 <!--/general:foot-->
 </body>
 </html>
