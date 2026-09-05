@@ -50,7 +50,7 @@
       "slug": "yingzao-skill",
       "title": "Yingzao: скилл-постер Guizang под микроскопом",
       "topic": "ai",
-      "series": "Разборы репозиториев",
+      "series": null,
       "date": "2026-09-05",
       "lang": "ru",
       "desc": "Разбор скилла Guizang, который превращает фото китайской архитектуры в editorial-постер: детерминированный Python как ворота перед единственным вызовом GPT-Image-2, 104 дизайн-токена для поиска, а не для промпта, и семь приёмов, которые стоит забрать в свои скиллы.",
@@ -59,7 +59,7 @@
         "скиллы",
         "github"
       ],
-      "minutes": 39,
+      "minutes": 40,
       "keywords": [
         "Коротко",
         "Что скилл делает — глазами пользователя",
@@ -106,7 +106,7 @@
       "pick": false,
       "status": "public",
       "source": "~/dev/docs/lichnoe/research/yingzao-skill-razbor-2026-09-05.html",
-      "bytes": 123633
+      "bytes": 124381
     },
     {
       "slug": "agents-weekly-2026-09-04",
