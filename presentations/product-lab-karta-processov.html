@@ -8,6 +8,7 @@
   --c-partial:#1f7a4d; --c-inwork:#1d5fb0; --c-imported:#6d4bb0; --c-donor:#9a6a08;
   --c-none:#6b7480; --c-manual:#4a5a6e;
   --tint:.10;
+  --dossier:#e0dac9;
   --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
   --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
 }
@@ -16,19 +17,20 @@
   --rule:#2a3038; --rule-strong:#3d4650; --accent:#4fd1c5; --grid:rgba(255,255,255,.045);
   --c-partial:#4ade80; --c-inwork:#7cb0ff; --c-imported:#b79cff; --c-donor:#f2c14e;
   --c-none:#98a2af; --c-manual:#93a7bd;
+  --dossier:#070a0d;
   --tint:.16;
 }
 :root[data-contrast="on"]{
   --paper:#ffffff; --panel:#ffffff; --ink:#000000; --ink-soft:#101010; --ink-faint:#202020;
   --rule:#000000; --rule-strong:#000000; --accent:#004a4a; --grid:transparent;
   --c-partial:#0a5c32; --c-inwork:#0b3f86; --c-imported:#4a2a8a; --c-donor:#6b4600;
-  --c-none:#2b2b2b; --c-manual:#20303f; --tint:0;
+  --c-none:#2b2b2b; --c-manual:#20303f; --dossier:#e6e2d6; --tint:0;
 }
 :root[data-theme="dark"][data-contrast="on"]{
   --paper:#000000; --panel:#000000; --ink:#ffffff; --ink-soft:#f0f0f0; --ink-faint:#e0e0e0;
   --rule:#ffffff; --rule-strong:#ffffff; --accent:#5ff0e2; --grid:transparent;
   --c-partial:#7dfaa8; --c-inwork:#9ec8ff; --c-imported:#d3bfff; --c-donor:#ffd968;
-  --c-none:#dcdcdc; --c-manual:#cfe0f0; --tint:0;
+  --c-none:#dcdcdc; --c-manual:#cfe0f0; --dossier:#121212; --tint:0;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -188,6 +190,53 @@ ul.src{list-style:none; padding:0; margin:14px 0 0}
 ul.src li{padding:7px 0; border-top:1px solid var(--rule); font-size:14.2px; color:var(--ink-soft)}
 ul.src li b{color:var(--ink); font-family:var(--mono); font-size:13px; font-weight:700}
 
+/* ---- досье внешнего инструмента ---- */
+.dossier{width:100vw; margin-left:calc(50% - 50vw); background:var(--dossier);
+  border-top:4px solid var(--accent); border-bottom:4px solid var(--accent); padding:0; scroll-margin-top:62px}
+.dsin{width:min(1480px,93vw); margin:0 auto; padding:44px 0 52px}
+.ds-kicker{font-family:var(--mono); font-size:12px; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--accent); font-weight:700; margin-bottom:12px}
+.ds-title{display:flex; gap:10px 24px; align-items:baseline; flex-wrap:wrap; margin-bottom:8px}
+.ds-title h2{margin:0}
+.ds-title .src{font-family:var(--mono); font-size:13px; color:var(--ink-faint)}
+.ds-frame{border-left:3px solid var(--rule-strong); padding-left:18px; margin:18px 0 24px;
+  font-size:14.6px; color:var(--ink-soft); max-width:none}
+.ds-frame b{color:var(--ink)}
+.ds-verdict{border:2px solid var(--accent); border-radius:3px; padding:16px 20px; margin:0 0 26px;
+  font-size:17px; line-height:1.5}
+.ds-verdict b{color:var(--accent)}
+.dossier h3{margin:34px 0 10px; font-size:20px}
+.dossier h3:first-of-type{margin-top:26px}
+.dossier p{font-size:15.4px}
+.fitlegend{display:flex; flex-wrap:wrap; gap:10px; margin:16px 0 14px}
+.fl{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink-soft);
+  font-family:var(--mono)}
+.fl i{width:20px; height:14px; border:1.5px solid var(--accent); border-radius:2px; display:block}
+.fl.cand i{background:var(--accent)}
+.fl.none i{border-color:var(--ink-faint)}
+.fl.na i{border-color:var(--ink-faint); border-style:dashed; opacity:.6}
+.strip{display:grid; grid-template-columns:repeat(auto-fill,minmax(168px,1fr)); gap:8px; margin:6px 0 10px}
+.cell{border:1px solid var(--ink-faint); border-radius:3px; padding:9px 11px; opacity:.86}
+.cell b{font-family:var(--mono); font-size:15px; font-weight:700; display:block; line-height:1.2}
+.cell span{font-size:12.6px; display:block; color:var(--ink-soft); margin-top:2px}
+.cell.cand{background:var(--accent); border:2px solid var(--accent); opacity:1}
+.cell.cand b,.cell.cand span{color:var(--dossier)}
+.cell.part{border:2px solid var(--accent); opacity:1}
+.cell.na{border-style:dashed; opacity:.55}
+.ds-cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); gap:16px; margin-top:18px}
+.dc{border:1px solid var(--rule-strong); border-top:3px solid var(--accent); border-radius:3px; padding:16px 18px}
+.dc h4{margin:0 0 4px; font-size:16.5px}
+.dc .st{font-family:var(--mono); font-size:12px; color:var(--ink-faint); display:block; margin-bottom:8px}
+.dc p{font-size:14.2px; color:var(--ink-soft); margin:0 0 8px}
+.dc p:last-child{margin:0}
+ul.ds-list{list-style:none; padding:0; margin:14px 0 0}
+ul.ds-list li{padding:9px 0; border-top:1px solid var(--rule); font-size:14.6px; color:var(--ink-soft)}
+ul.ds-list li b{color:var(--ink)}
+ol.ds-cond{margin:14px 0 0; padding-left:22px}
+ol.ds-cond li{font-size:14.8px; color:var(--ink-soft); margin-bottom:10px}
+ol.ds-cond li b{color:var(--ink)}
+@media (max-width:760px){ .dsin{padding:32px 0 38px} .dossier h3{font-size:18px} }
+
 @media (max-width:1080px){
   .stage{grid-template-columns:46px 1fr; row-gap:10px}
   .stage .st-badge{grid-column:1/-1}
@@ -203,19 +252,16 @@ ul.src li b{color:var(--ink); font-family:var(--mono); font-size:13px; font-weig
   .hero{padding:32px 0 22px}
 }
 </style>
-
-
-
 <!--general:head-->
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://paveldiordits.site/presentations/product-lab-karta-processov.html">
 <meta property="og:site_name" content="Журнал · paveldiordits.site">
 <meta property="og:title" content="Product Lab — карта процессов и их состояний">
-<meta property="og:description" content="Слепок агентного рабочего пространства: 17 стадий от гипотезы до релиза — что уже работает, что перенесено донором, что ещё не спроектировано.">
+<meta property="og:description" content="Слепок агентного рабочего пространства: 17 стадий от гипотезы до релиза — что уже работает, что перенесено донором, что ещё не спроектировано. В приложении — досье на headcount: как плагин ставить нечего, как донора он закрывает пять стадий.">
 <meta property="og:image" content="https://paveldiordits.site/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Product Lab — карта процессов и их состояний">
-<meta name="twitter:description" content="Слепок агентного рабочего пространства: 17 стадий от гипотезы до релиза — что уже работает, что перенесено донором, что ещё не спроектировано.">
+<meta name="twitter:description" content="Слепок агентного рабочего пространства: 17 стадий от гипотезы до релиза — что уже работает, что перенесено донором, что ещё не спроектировано. В приложении — досье на headcount: как плагин ставить нечего, как донора он закрывает пять стадий.">
 <meta name="twitter:image" content="https://paveldiordits.site/og.png">
 <link rel="canonical" href="https://paveldiordits.site/presentations/product-lab-karta-processov.html">
 <link rel="alternate" type="application/rss+xml" title="Журнал — разборы Павла Диордица" href="https://paveldiordits.site/presentations/rss.xml">
@@ -253,7 +299,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
     <div class="brand">Product&nbsp;Lab · слепок 2026-09-04</div>
     <nav class="jump">
       <a href="#legend">Легенда</a><a href="#life">Стадии</a><a href="#layers">Слои</a>
-      <a href="#phases">Фазы</a><a href="#find">Выводы</a><a href="#src">Источники</a>
+      <a href="#phases">Фазы</a><a href="#find">Выводы</a><a href="#dossier-01">Досье 01</a><a href="#src">Источники</a>
     </nav>
     <div class="ctl">
       <button class="t" id="th" type="button">Тема: системная</button>
@@ -709,13 +755,191 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
   </div>
 </section>
 
+<section class="dossier" id="dossier-01">
+ <div class="dsin">
+  <div class="ds-kicker">Досье · внешний инструмент · 01</div>
+  <div class="ds-title">
+    <h2>headcount — 172 скилла «компанией из департаментов»</h2>
+    <span class="src">github.com/cbrock84/headcount · v1.0.0 · MIT · слепок 2026-09-05</span>
+  </div>
+
+  <div class="ds-frame">Это <b>приложение к карте, а не её продолжение</b>. Формат повторяется
+  для каждого следующего плагина или скилла, который мы оцениваем на пригодность для Product Lab,
+  и скелет у него фиксированный: что это → карта по 17 стадиям → что закрывает → что не закрывает
+  → вердикт → условия переноса → чего не проверяли. Оценивается не инструмент вообще, а ровно
+  один вопрос: какие стадии Product Lab он способен закрыть.</div>
+
+  <div class="ds-verdict"><b>Вердикт.</b> Как плагин — ставить ради Product Lab нечего: ни одной
+  стадии он не исполняет, а на тех, где у нас уже есть скилл, только конкурирует за автозагрузку.
+  Как <b>донор</b> — пять стадий-кандидатов, и у четырёх из них донора нет вообще.</div>
+
+  <h3>Что это и что приезжает</h3>
+  <p>Маркетплейс из 16 плагинов-«департаментов», 172 файла <code>SKILL.md</code>. Приезжает только
+  текст: ни агентов, ни команд, ни хуков, ни MCP-серверов. Установка ничего не запускает и в
+  репозиторий ничего не пишет — цена чисто контекстная: описания всех установленных скиллов висят
+  в контексте постоянно (весь headcount ≈17 400 токенов, один средний департамент — 650–1 900).</p>
+  <p>Разница, вокруг которой держится весь разбор: <b>установить плагин и перенести донора — не одно
+  и то же.</b> Установленный плагин конкурирует описаниями за автозагрузку и платит контекстом
+  в каждой сессии. Донор — текст под MIT, который копируется в <code>donors/&lt;process&gt;/</code>,
+  адаптируется отдельной задачей и в рантайме не читается вообще. Product Lab интересует второй
+  режим, поэтому вопрос здесь не «стоит ли ставить», а «есть ли материал для стадий, у которых
+  донора нет».</p>
+
+  <h3>Карта по 17 стадиям</h3>
+  <p>Четыре группы. <b>Это суждение, а не поле из файла</b> — в отличие от State,
+  <code>template_status</code> и остальных колонок основной карты, которые прочитаны из репозитория.
+  Правило вывода: <b>донор-кандидат</b> — у стадии нет донора и headcount даёт материал ровно на её
+  предмет; <b>частично</b> — донор уже есть либо материал перекрывается с установленным;
+  <b>не даёт</b> — у стадии есть донор или исполняемый скилл, и headcount там лишь второй голос;
+  <b>не нужно</b> — стадию выполняет человек по замыслу.</p>
+
+  <div class="fitlegend">
+    <span class="fl cand"><i></i>донор-кандидат · 5</span>
+    <span class="fl part"><i></i>частично · 6</span>
+    <span class="fl none"><i></i>не даёт · 4</span>
+    <span class="fl na"><i></i>не нужно · 2</span>
+  </div>
+
+  <div class="strip">
+    <div class="cell na"><b>01</b><span>Idea</span></div>
+    <div class="cell na"><b>02</b><span>Brief</span></div>
+    <div class="cell"><b>03</b><span>Concept</span></div>
+    <div class="cell cand"><b>04</b><span>Product Strategy</span></div>
+    <div class="cell cand"><b>05</b><span>Feature Pool</span></div>
+    <div class="cell cand"><b>06</b><span>Scope</span></div>
+    <div class="cell part"><b>07</b><span>Product Definition</span></div>
+    <div class="cell part"><b>08</b><span>Architecture</span></div>
+    <div class="cell part"><b>09</b><span>Specification</span></div>
+    <div class="cell part"><b>10</b><span>Tasks</span></div>
+    <div class="cell"><b>11</b><span>Development</span></div>
+    <div class="cell part"><b>12</b><span>Validation</span></div>
+    <div class="cell"><b>13</b><span>Delivery</span></div>
+    <div class="cell"><b>14</b><span>Documentation</span></div>
+    <div class="cell part"><b>15</b><span>Release</span></div>
+    <div class="cell cand"><b>16</b><span>Observation</span></div>
+    <div class="cell cand"><b>17</b><span>Iteration</span></div>
+  </div>
+
+  <h3>Что закрывает</h3>
+  <div class="ds-cards">
+    <div class="dc">
+      <h4>04 · Product Strategy</h4>
+      <span class="st">State: Design · донора нет · шаблон draft</span>
+      <p>Единственная стадия, где headcount закрывает не кусок, а весь контур. Четыре блока
+      шаблона ложатся один в один: позиционирование — <code>marketing:positioning-and-messaging</code>;
+      монетизация — <code>revenue:pricing-and-packaging</code> и <code>finance:unit-economics</code>;
+      distribution и GTM — департамент <code>demand-generation</code> целиком (12 скиллов:
+      <code>seo-strategy</code>, <code>paid-advertising</code>, <code>lifecycle-messaging</code>,
+      <code>landing-page-cro-expert</code>, <code>marketing-analytics</code>…) плюс
+      <code>marketing:marketing-planning</code> и <code>product-launch</code>; рыночная рамка —
+      <code>corporate-strategy:market-entry</code> и <code>scenario-planning</code>.</p>
+    </div>
+    <div class="dc">
+      <h4>05 · Feature Pool</h4>
+      <span class="st">State: Not designed · донор — только входной контракт</span>
+      <p>Существующий донор описывает лишь вход: какие четыре артефакта стадия принимает и запрет
+      придумывать продукт заново. Как порождаются возможности — не покрыто. На этой дыре сидят
+      <code>customer-experience:voice-of-customer</code>, <code>marketing:customer-research</code>,
+      <code>demand-generation:experimentation</code>, <code>product:product-discovery</code>.</p>
+      <p>Оговорка существенная: донор требует <b>выводить</b> возможности из принятых артефактов,
+      а эти скиллы устроены как поход в поле за инсайтами — материал придётся адаптировать под
+      ограничение, а не переносить методом.</p>
+    </div>
+    <div class="dc">
+      <h4>06 · Scope</h4>
+      <span class="st">State: Not designed · ни донора, ни скилла</span>
+      <p>Выбор состава версии — это приоритизация при ограниченном ресурсе, то есть предмет PMO
+      и финансов: <code>pmo:estimating-and-contingency</code>,
+      <code>dependency-and-risk-management</code>, <code>portfolio-governance</code>,
+      <code>benefits-realization</code>, <code>finance:capital-allocation</code>,
+      <code>corporate-strategy:portfolio-strategy</code>.</p>
+    </div>
+    <div class="dc">
+      <h4>16 · Observation</h4>
+      <span class="st">State: Not designed · вне фаз · пусто полностью</span>
+      <p>Самая пустая стадия Product Lab встречается с самой плотной областью headcount:
+      <code>data-analytics:business-intelligence</code> и <code>quantitative-analysis</code>,
+      <code>demand-generation:marketing-analytics</code>,
+      <code>customer-experience:voice-of-customer</code>, <code>revenue:activation</code> и
+      <code>retention</code>, <code>technology:observability-and-reliability</code>.</p>
+    </div>
+    <div class="dc">
+      <h4>17 · Iteration</h4>
+      <span class="st">State: Not designed · вне фаз · пусто полностью</span>
+      <p><code>pmo:benefits-realization</code> отвечает ровно на вопрос стадии — получили ли
+      обещанную ценность и что с этим делать дальше. Рядом
+      <code>demand-generation:experimentation</code> и
+      <code>corporate-strategy:scenario-planning</code>.</p>
+    </div>
+  </div>
+
+  <h3>Что не закрывает и почему</h3>
+  <p><b>Частично — шесть стадий.</b> Материал есть, но либо донор уже свой, либо он спорит
+  с тем, что установлено:</p>
+  <ul class="ds-list">
+    <li><b>07 Product Definition</b> — <code>product:product-requirements</code> и
+    <code>ux-product-auditor</code> на предмет, но <code>product-requirements</code> спорит
+    с уже исполняемым скиллом <code>concept</code>.</li>
+    <li><b>08 Architecture</b> — имена ложатся точно:
+    <code>technology:solution-architecture</code>, <code>api-design</code>,
+    <code>cloud-infrastructure</code>, <code>data-migration</code>,
+    <code>security:security-architecture-review</code>, <code>threat-modeling</code>,
+    <code>data-analytics:data-modeling</code>. Но тела этих файлов не читаны: форму гарантируют
+    только проверки CI репозитория headcount.</li>
+    <li><b>09 Specification</b> — <code>technology:implementation-planning</code> (спорит
+    с <code>superpowers:writing-plans</code>), <code>api-design</code>,
+    <code>pmo:schedule-development-and-analysis</code>.</li>
+    <li><b>10 Tasks</b> — донор уже есть (обвязка корпоративного development); headcount
+    добавляет метод оценки и зависимостей, а не саму стадию.</li>
+    <li><b>12 Validation</b> — <code>operations:quality-management</code> и
+    <code>security:vulnerability-management</code> на предмет, но
+    <code>technology:completion-verification</code> дублирует установленный
+    <code>superpowers:verification-before-completion</code>.</li>
+    <li><b>15 Release</b> — донор технический, «прод из тега». Рыночную половину «выпускаем
+    пользователю» закрывают <code>marketing:product-launch</code> и
+    <code>pmo:change-and-adoption</code>.</li>
+  </ul>
+  <p style="margin-top:18px"><b>Не даёт — четыре стадии.</b> У Concept, Development, Delivery
+  и Documentation уже есть донор либо исполняемый скилл. headcount там второй голос на той же
+  земле — а по его же критерию (<code>technology:skill-authoring</code>) два подходящих под запрос
+  описания означают, что надёжно не выигрывает ни одно.</p>
+  <p><b>Не нужно — две стадии.</b> Idea и Brief пишет человек по замыслу.</p>
+
+  <h3>Условия переноса</h3>
+  <ol class="ds-cond">
+    <li><b>Донор разрешением не является.</b> Единственное разрешение на работу — колонка State
+    в <code>docs/ROADMAP.md</code>, изменённая явной командой. Это досье — список кандидатов,
+    а не наряд на работу; таблица состояний им не меняется.</li>
+    <li><b>MIT нужно унести вместе с текстом.</b> Перенос требует сохранить уведомление
+    о лицензии: в <code>donors/&lt;process&gt;/SOURCE.md</code> — файл, коммит-слепок, лицензия
+    и автор. Автор headcount на этом обжёгся сам: 77 заимствованных скиллов пришлось удалить
+    и переписать после лицензионного аудита.</li>
+    <li><b>Правило «не ставить департамент, где гасить половину» — про установку, не про донора.</b>
+    Донор берёт отдельные файлы и остальных не касается. Поэтому Architecture-кандидат внутри
+    <code>technology</code> не противоречит выводу «<code>technology</code> не ставить»: конфликтны
+    там девять процессных скиллов, а архитектурные — нет.</li>
+    <li><b>Донор переносится как есть</b>, без содержательной переработки; адаптация — отдельная
+    задача и отдельный коммит.</li>
+    <li><b>Перед переносом конкретный файл нужно прочитать.</b> Из 172 тел прочитано шесть.</li>
+  </ol>
+
+  <h3>Чего не проверяли в этом досье</h3>
+  <ul class="ds-list">
+    <li>Тела 166 скиллов из 172 — форму гарантируют только проверки CI репозитория headcount.</li>
+    <li>Срабатывание английских описаний на русских запросах: не проверено ни автором, ни здесь.</li>
+    <li>Полезность материала в живой сессии — вывод сделан по названиям и прочитанной выборке.</li>
+  </ul>
+ </div>
+</section>
+
 <section id="src">
   <div class="sec-kicker">Источники</div>
   <h2>Откуда взят каждый факт</h2>
-  <p>Веб-ресёрч не проводился и был бы бессмысленным: предмет страницы — локальный приватный
-  репозиторий, внешних источников по нему не существует. Все факты выведены из файлов
-  на 2026-09-04, коммит <code>63142f5</code>, рабочее дерево чистое. Ничего не помечено
-  как непроверенное: каждое утверждение прочитано из перечисленных файлов.</p>
+  <p><b>Основная карта</b> выведена только из файлов репозитория: веб-ресёрч по приватному
+  репозиторию бессмысленен, внешних источников по нему не существует. Все её факты прочитаны
+  на 2026-09-04, коммит <code>63142f5</code>, рабочее дерево чистое, и ничего не помечено как
+  непроверенное. <b>Досье №01</b> — единственная часть страницы, опирающаяся на источники
+  за пределами репозитория; что в нём не проверялось, перечислено внутри самого досье.</p>
   <ul class="src">
     <li><b>PRODUCT-LAB.md</b> — состав, порядок и классы 17 стадий, что на каждой происходит, принципы системы</li>
     <li><b>docs/ROADMAP.md</b> — таблица состояний процессов (колонка State и Skill), легенда состояний, четыре фазы с чекбоксами</li>
@@ -724,7 +948,14 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
     <li><b>templates/01-idea.md … templates/17-iteration.md</b> — frontmatter каждого шаблона: <code>template_status</code>, <code>output</code>, <code>cardinality</code></li>
     <li><b>skills/concept/SKILL.md</b> (56 строк + <code>stages/</code> + <code>reference/methodology.md</code> на 425 строк) — единственный исполняемый скилл</li>
     <li><b>skills/development/SKILL.md, skills/release/SKILL.md, skills/scope/SKILL.md</b> — заготовки по 8–9 строк с <code>status: stub</code></li>
-    <li><b>donors/concept/SOURCE.md, donors/development/SOURCE.md, donors/feature-pool/SOURCE.md</b> — происхождение и состав каждого донора</li>
+    <li><b>donors/concept/SOURCE.md, donors/development/SOURCE.md, donors/feature-pool/SOURCE.md</b> — происхождение и состав каждого донора; <code>donors/feature-pool/inputs.md</code> — входной контракт стадии</li>
+  </ul>
+  <p style="margin-top:20px">Досье №01 опирается на источники за пределами репозитория:
+  на этой странице:</p>
+  <ul class="src">
+    <li><b>~/dev/docs/lichnoe/research/headcount-razbor-2026-09-05.md</b> — разбор плагина: состав, цена в контексте, что приезжает при установке, инженерный процесс репозитория</li>
+    <li><b>~/dev/docs/lichnoe/research/headcount-konflikty-2026-09-05.md</b> — конфликты с текущим набором скиллов, доктринальные расхождения, протокол пробы</li>
+    <li><b><a href="https://github.com/cbrock84/headcount">github.com/cbrock84/headcount</a></b> — README (сгенерирован из дерева репозитория): полный каталог 16 департаментов и 172 скиллов, по которому построена карта соответствия</li>
   </ul>
   <p style="margin-top:18px; color:var(--ink-faint); font-size:14px">Текстовая версия того же
   разбора — <code>karta-processov-2026-09-04.md</code> в этой же папке.</p>
@@ -757,9 +988,6 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
   window.addEventListener('scroll',prog,{passive:true}); window.addEventListener('resize',prog); prog();
 })();
 </script>
-
-
-
 <!--general:foot-->
 <style>
 .gnrl{margin:4rem auto 0;padding:2rem 1.25rem 2.5rem;max-width:1100px;border-top:1px solid rgba(128,128,128,.28);
