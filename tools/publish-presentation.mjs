@@ -295,14 +295,20 @@ function publish(a) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) die(`дата «${date}» не в формате YYYY-MM-DD`);
 
   const reg = loadRegistry();
+  const prev = reg.presentations.find(p => p.slug === a.slug);
+  // Переопубликация того же слага без --series/--pick/--feature не меняет полку и метки:
+  // иначе правка одного факта в тексте молча сбрасывает разбор с его полки в общую.
+  const series = a.series ?? prev?.series ?? null;
+  const feature = a.feature ?? prev?.feature ?? false;
+  const pick = a.pick ?? prev?.pick ?? false;
   // Рекомендуемая на первом экране ровно одна: новая снимает флаг с прежней.
-  if (a.feature) reg.presentations.forEach(p => { p.feature = false; });
+  if (feature) reg.presentations.forEach(p => { p.feature = false; });
 
   const entry = {
     slug: a.slug,
     title,
     topic: a.topic,
-    series: a.series || null,
+    series,
     date,
     lang: a.lang || 'ru',
     desc: a.desc,
@@ -310,8 +316,8 @@ function publish(a) {
     tags: a.tags,
     minutes: readMinutes(html),
     keywords: headings(html),
-    feature: !!a.feature,
-    pick: !!(a.pick || a.feature),          // рекомендуемая всегда и в «Лучшем»
+    feature: !!feature,
+    pick: !!(pick || feature),              // рекомендуемая всегда и в «Лучшем»
     status: a.unlisted ? 'unlisted' : 'public',
     source: src.replace(process.env.HOME, '~'),
     bytes: Buffer.byteLength(html),
