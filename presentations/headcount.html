@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>headcount — «компания из агентов» для Claude Code: разбор</title>
+<style>
+/* ---------- палитра: «штатное расписание» — бумага, чернила, печать ---------- */
+:root{
+  --bg:#f4efe6; --fg:#1c1a17; --muted:#5c574d; --card:#fffdf8; --line:#d8d0c2;
+  --accent:#1f6b4f; --accent-fg:#ffffff; --accent-soft:#e2eee7;
+  --warn:#a8323e; --warn-soft:#f6e3e5;
+  --code-bg:#ebe4d6; --shadow:0 1px 2px rgba(0,0,0,.06);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --bar-ok:var(--accent); --bar-mid:#8a8273; --bar-over:var(--warn);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#14161a; --fg:#e8e2d6; --muted:#a39c8f; --card:#1c1f25; --line:#2f333b;
+    --accent:#5fbf94; --accent-fg:#0d1a14; --accent-soft:#1c2b25;
+    --warn:#e0707a; --warn-soft:#2c1c1f;
+    --code-bg:#22262e; --shadow:none; --bar-mid:#6b6a66; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14161a; --fg:#e8e2d6; --muted:#a39c8f; --card:#1c1f25; --line:#2f333b;
+  --accent:#5fbf94; --accent-fg:#0d1a14; --accent-soft:#1c2b25;
+  --warn:#e0707a; --warn-soft:#2c1c1f;
+  --code-bg:#22262e; --shadow:none; --bar-mid:#6b6a66; color-scheme:dark;
+}
+/* ---------- режим повышенной контрастности: уважает текущую тему ---------- */
+:root.hc{
+  --bg:#ffffff; --fg:#000000; --muted:#000000; --card:#ffffff; --line:#000000;
+  --accent:#004d33; --accent-fg:#ffffff; --accent-soft:#ffffff;
+  --warn:#8a0000; --warn-soft:#ffffff; --code-bg:#f2f2f2; --shadow:none; --bar-mid:#444444;
+}
+@media (prefers-color-scheme:dark){
+  :root.hc:not([data-theme="light"]){
+    --bg:#000000; --fg:#ffffff; --muted:#ffffff; --card:#000000; --line:#ffffff;
+    --accent:#7dffc4; --accent-fg:#000000; --accent-soft:#000000;
+    --warn:#ff9a9a; --warn-soft:#000000; --code-bg:#151515; --bar-mid:#bbbbbb;
+  }
+}
+:root.hc[data-theme="dark"]{
+  --bg:#000000; --fg:#ffffff; --muted:#ffffff; --card:#000000; --line:#ffffff;
+  --accent:#7dffc4; --accent-fg:#000000; --accent-soft:#000000;
+  --warn:#ff9a9a; --warn-soft:#000000; --code-bg:#151515; --bar-mid:#bbbbbb;
+}
+:root.hc .card, :root.hc table, :root.hc th, :root.hc td, :root.hc .badge, :root.hc blockquote,
+:root.hc pre, :root.hc .chip, :root.hc header, :root.hc .toggle, :root.hc .note, :root.hc details{ border-width:2px; }
+:root.hc .badge.rev{ outline:2px dashed var(--warn); outline-offset:2px; }
+
+/* ---------- базовая типографика (компактная) ---------- */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:16px;line-height:1.55}
+h1,h2,h3{font-family:var(--serif);line-height:1.2;margin:0 0 .45em;letter-spacing:-.01em}
+h1{font-size:clamp(1.7rem,3.2vw,2.5rem);font-weight:600}
+h2{font-size:clamp(1.3rem,2vw,1.65rem);font-weight:600;margin-top:0}
+h3{font-size:1.08rem;font-weight:600;margin-top:1.3em}
+p{margin:.6em 0}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+code,pre{font-family:var(--mono);font-size:.9em}
+code{background:var(--code-bg);padding:.08em .35em;border-radius:4px}
+pre{background:var(--code-bg);padding:.75rem 1rem;border-radius:8px;overflow-x:auto;border:1px solid var(--line);line-height:1.45;margin:.7rem 0}
+pre code{background:none;padding:0}
+strong{font-weight:650}
+blockquote{margin:.9rem 0;padding:.75rem 1rem;border-left:4px solid var(--accent);background:var(--card);border-radius:0 8px 8px 0;border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line);font-size:.96rem}
+blockquote p{margin:.25em 0}
+blockquote cite{display:block;margin-top:.35rem;color:var(--muted);font-style:normal;font-size:.9em}
+ul,ol{padding-left:1.3rem;margin:.5rem 0}
+li{margin:.25em 0}
+
+/* ---------- каркас ---------- */
+#progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear}
+header.top{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--line)}
+.top-inner{width:min(84%,1500px);margin:0 auto;display:flex;align-items:center;gap:.9rem;padding:.45rem 0;flex-wrap:wrap}
+.brand{font-family:var(--serif);font-weight:600;font-size:1rem;white-space:nowrap}
+.brand small{color:var(--muted);font-weight:400;font-family:var(--sans);font-size:.8rem;margin-left:.5rem}
+nav.toc{display:flex;gap:.2rem .8rem;overflow-x:auto;flex:1;scrollbar-width:thin;font-size:.86rem}
+nav.toc a{white-space:nowrap;color:var(--muted);text-decoration:none;padding:.2rem 0;border-bottom:2px solid transparent}
+nav.toc a:hover,nav.toc a.on{color:var(--fg);border-bottom-color:var(--accent)}
+.toggles{display:flex;gap:.4rem;margin-left:auto}
+.toggle{border:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit;font-size:.8rem;padding:.28rem .65rem;border-radius:999px;cursor:pointer}
+.toggle[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+main{width:min(84%,1500px);margin:0 auto;padding:1.6rem 0 3.5rem}
+section{margin:0 0 2.6rem;scroll-margin-top:4.5rem}
+.kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem}
+.muted{color:var(--muted)}
+.small{font-size:.9rem}
+
+/* ---------- шапка документа ---------- */
+.hero{padding:.4rem 0 1.4rem;border-bottom:1px solid var(--line);margin-bottom:2rem}
+.hero .sub{font-size:1.1rem;color:var(--muted);margin:.3rem 0 1rem;font-family:var(--serif)}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:.35rem .7rem;font-size:.86rem;box-shadow:var(--shadow)}
+.chip b{font-family:var(--serif);font-size:1.12em;margin-right:.3em}
+
+/* ---------- карточки, сетки ---------- */
+.grid{display:grid;gap:.8rem}
+.g5{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.9rem 1rem;box-shadow:var(--shadow)}
+.card h3{margin-top:0;font-size:1.02rem}
+.card .num{font-family:var(--serif);font-size:1.6rem;color:var(--accent);line-height:1;margin-bottom:.3rem}
+.card p{margin:.3em 0;font-size:.95rem}
+.note{border:1px solid var(--line);border-left:4px solid var(--warn);background:var(--warn-soft);padding:.7rem 1rem;border-radius:0 8px 8px 0;margin:1rem 0}
+.note.ok{border-left-color:var(--accent);background:var(--accent-soft)}
+.note p{margin:.25em 0}
+
+/* ---------- спойлеры для второстепенного ---------- */
+details{border:1px solid var(--line);border-radius:8px;background:var(--card);padding:0 1rem;margin:.8rem 0}
+details summary{cursor:pointer;padding:.6rem 0;font-weight:600;list-style:none;display:flex;align-items:center;gap:.5rem}
+details summary::before{content:"▸";color:var(--accent);font-size:.9em;transition:transform .15s}
+details[open] summary::before{transform:rotate(90deg)}
+details summary::-webkit-details-marker{display:none}
+details > :not(summary){margin-bottom:.9rem}
+
+/* ---------- оргчарт ---------- */
+.org{display:grid;gap:.6rem}
+/* 13 карточек: 7+6 на широком, 5+5+3 на среднем; на узком — 2 колонки, последняя карточка во всю ширину, чтобы не висела одна */
+.org .row{display:grid;grid-template-columns:repeat(7,1fr);gap:.6rem}
+@media (max-width:1279px){.org .row{grid-template-columns:repeat(5,1fr)}}
+@media (max-width:799px){.org .row{grid-template-columns:repeat(2,1fr)} .org .row .badge:last-child:nth-child(odd){grid-column:1/-1}}
+.badge{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:.55rem .7rem;box-shadow:var(--shadow)}
+.badge .role{font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+.badge .id{font-family:var(--serif);font-size:1rem;font-weight:600;margin:.1rem 0;overflow-wrap:anywhere}
+.badge .cnt{font-size:.82rem;color:var(--muted)}
+.badge.ceo{border-color:var(--accent);background:var(--accent-soft)}
+.badge.ceo .id{font-size:1.15rem}
+.badge.rev{border-color:var(--warn)}
+.badge.rev .role{color:var(--warn)}
+.band{border:1px dashed var(--warn);border-radius:10px;padding:.6rem;display:grid;gap:.6rem;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.band .cap{grid-column:1/-1;font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--warn)}
+.connector{height:.9rem;border-left:2px solid var(--line);margin-left:1.6rem}
+
+/* ---------- таблицы ---------- */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card);box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{padding:.45rem .7rem;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.total td{font-weight:650;border-top:2px solid var(--line)}
+.yes{color:var(--accent);font-weight:650}
+.no{color:var(--warn);font-weight:650}
+
+/* ---------- диаграмма ---------- */
+.chart{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.8rem 1rem;box-shadow:var(--shadow);overflow-x:auto}
+/* на узком экране диаграмма не ужимается до нечитаемых подписей, а прокручивается внутри своей карточки */
+.chart svg{width:100%;min-width:720px;height:auto;display:block;font-family:var(--sans)}
+.chart .legend{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;font-size:.86rem;color:var(--muted);margin-top:.4rem}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:.35rem}
+
+/* ---------- шаги, списки ---------- */
+ol.steps{counter-reset:s;list-style:none;padding:0;margin:.6rem 0}
+ol.steps li{counter-increment:s;position:relative;padding:.45rem 0 .45rem 2.6rem;border-bottom:1px solid var(--line)}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:.5rem;width:1.8rem;height:1.8rem;border-radius:50%;background:var(--accent);color:var(--accent-fg);font-family:var(--serif);font-weight:600;font-size:.95rem;display:grid;place-items:center}
+ol.steps li:last-child{border-bottom:0}
+dl.two{display:grid;grid-template-columns:max-content 1fr;gap:.35rem 1.2rem;margin:.6rem 0}
+dl.two dt{font-family:var(--mono);font-size:.88rem;color:var(--accent);white-space:nowrap}
+dl.two dd{margin:0}
+math{font-size:1.05em}
+
+footer{border-top:1px solid var(--line);color:var(--muted);font-size:.85rem;padding:1rem 0}
+footer .inner{width:min(84%,1500px);margin:0 auto}
+
+/* ---------- узкий экран ---------- */
+@media (max-width:900px){
+  main,.top-inner,footer .inner{width:94%}
+  .toggles{margin-left:0;width:100%;justify-content:flex-start}
+  .brand small{display:none}
+  dl.two{grid-template-columns:1fr}
+  dl.two dt{margin-top:.5rem}
+}
+</style>
+<!--general:head-->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://paveldiordits.site/presentations/headcount.html">
+<meta property="og:site_name" content="General · paveldiordits.site">
+<meta property="og:title" content="headcount — «компания из агентов» для Claude Code: разбор">
+<meta property="og:description" content="Разбор headcount — маркетплейса из 16 департаментов и 172 скиллов для Claude Code: что реально приезжает при установке, почему бюджет списка скиллов в 1% окна решает больше, чем качество текста, и как ставить по одному департаменту, не сломав то, что уже стоит.">
+<meta property="og:image" content="https://paveldiordits.site/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="headcount — «компания из агентов» для Claude Code: разбор">
+<meta name="twitter:description" content="Разбор headcount — маркетплейса из 16 департаментов и 172 скиллов для Claude Code: что реально приезжает при установке, почему бюджет списка скиллов в 1% окна решает больше, чем качество текста, и как ставить по одному департаменту, не сломав то, что уже стоит.">
+<meta name="twitter:image" content="https://paveldiordits.site/og.png">
+<link rel="canonical" href="https://paveldiordits.site/presentations/headcount.html">
+<!--/general:head-->
+</head>
+<body>
+<div id="progress" aria-hidden="true"></div>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">headcount <small>разбор · 2026-09-05</small></div>
+    <nav class="toc" aria-label="Разделы">
+      <a href="#sut">Суть</a>
+      <a href="#s1">§1 Что это</a>
+      <a href="#s2">§2 Скилл</a>
+      <a href="#s3">§3 Цена</a>
+      <a href="#s4">§4 Пересечения</a>
+      <a href="#s5">§5 Поставка</a>
+      <a href="#s6">§6 Обещания</a>
+      <a href="#s7">§7 Процесс</a>
+      <a href="#s8">§8 Как ставить</a>
+      <a href="#limits">Границы</a>
+      <a href="#src">Источники</a>
+    </nav>
+    <div class="toggles">
+      <button class="toggle" id="themeBtn" type="button" aria-pressed="false" title="Переключить светлую/тёмную тему">Тема: система</button>
+      <button class="toggle" id="hcBtn" type="button" aria-pressed="false" title="Повышенная контрастность">Контраст</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ============================ ШАПКА ============================ -->
+<div class="hero">
+  <div class="kicker">Разбор инструмента · Claude Code · плагины и скиллы</div>
+  <h1>headcount: «компания из агентов» для Claude Code</h1>
+  <p class="sub">Что это на самом деле, сколько оно стоит в контексте модели, и как ставить, чтобы не сломать то, что уже работает.</p>
+  <div class="chips">
+    <div class="chip"><b>16</b> департаментов-плагинов</div>
+    <div class="chip"><b>172</b> скилла</div>
+    <div class="chip"><b>66 180</b> символов описаний — постоянно в контексте</div>
+    <div class="chip"><b>1 263</b> ★ за 8 дней с публикации</div>
+    <div class="chip"><b>0</b> агентов, команд, хуков и MCP в поставке</div>
+    <div class="chip">MIT · Chris Brock</div>
+  </div>
+  <p class="muted small" style="margin-top:.8rem">Слепок на 2026-09-05: репозиторий <code>cbrock84/headcount</code> (плагины 1.0.0) и документация Claude Code на ту же дату. Числа посчитаны по файлам репозитория, а не взяты из README.</p>
+</div>
+
+<!-- ============================ СУТЬ ============================ -->
+<section id="sut">
+  <div class="kicker">Суть</div>
+  <h2>Пять пунктов, если читать только один экран</h2>
+  <div class="grid g5">
+    <div class="card">
+      <div class="num">1</div>
+      <h3>Что это</h3>
+      <p>172 скилла для Claude Code в 16 «департаментах»: финансы, продажи, маркетинг, безопасность, юристы, HR. Каждый департамент — отдельный плагин. Метафора автора: «добавь департамент, а не промпт».</p>
+    </div>
+    <div class="card">
+      <div class="num">2</div>
+      <h3>Что реально приезжает</h3>
+      <p>Только текст: 172 файла <code>SKILL.md</code> с именем и описанием. Ни агентов (хотя README обещает), ни команд, ни хуков, ни MCP. Установка ничего не запускает; вся цена — контекст.</p>
+    </div>
+    <div class="card">
+      <div class="num">3</div>
+      <h3>Цена не абстрактная</h3>
+      <p>Список описаний всех скиллов сидит в контексте постоянно, и на него выделен бюджет — <strong>1% окна, в символах</strong>. headcount целиком — 66 180 символов. Два-три департамента на стандартном окне переполняют бюджет, и Claude Code начинает резать описания — то, по чему скилл срабатывает.</p>
+    </div>
+    <div class="card">
+      <div class="num">4</div>
+      <h3>Качество текста хорошее</h3>
+      <p>Скиллы написаны как метод: порядок шагов, за каждым правилом — ошибка, которую оно ловит, в конце блок «Никогда». Контент переписан с нуля после лицензионного аудита; история — в журнале из 35 решений.</p>
+    </div>
+    <div class="card">
+      <div class="num">5</div>
+      <h3>Как ставить</h3>
+      <p>По одному департаменту, там, где нет своих скиллов, с <code>/doctor</code> после установки. <code>technology</code> дублирует стандартный инженерный набор (TDD, отладка, планирование, ревью) — ставить последним, если вообще.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ §1 ============================ -->
+<section id="s1">
+  <div class="kicker">§1</div>
+  <h2>Что это и откуда взялось</h2>
+  <p><em>Скилл</em> в Claude Code — файл <code>SKILL.md</code>: короткое <em>описание</em> в шапке (по нему модель решает, когда скилл нужен) и <em>тело</em> (что делать, когда он сработал). <em>Плагин</em> — пакет скиллов, ставится одной командой; <em>маркетплейс</em> — каталог плагинов. headcount — маркетплейс из 16 плагинов, и установочная строка читается как корпоративный адрес — имя выбрано ровно под этот эффект (журнал решений, D22):</p>
+<pre><code>/plugin marketplace add cbrock84/headcount
+/plugin install security@headcount</code></pre>
+
+  <p>Над департаментами стоит <code>executive</code> (офис CEO); у каждого департамента есть скилл-«руководитель» (<code>chief-financial-officer</code>, <code>head-of-pmo</code>…), который держит зону ответственности и решает, когда специалисты расходятся. <code>security</code> и <code>legal-risk</code> объявлены <em>reviewer-class</em>: «стоят поперёк всех функций», их блокирующие выводы «не могут быть отменены департаментом, который они проверяют» — что это значит на практике, в §6.</p>
+
+  <div class="org" aria-label="Оргчарт headcount">
+    <div class="row" style="grid-template-columns:1fr">
+      <div class="badge ceo"><div class="role">Офис CEO</div><div class="id">executive</div><div class="cnt">7 скиллов · направление, капитал, арбитраж между функциями, метод построения самой организации</div></div>
+    </div>
+    <div class="connector" aria-hidden="true"></div>
+    <div class="row">
+      <div class="badge"><div class="role">CTO</div><div class="id">technology</div><div class="cnt">19 скиллов</div></div>
+      <div class="badge"><div class="role">CIO</div><div class="id">it-operations</div><div class="cnt">12 скиллов</div></div>
+      <div class="badge"><div class="role">CPO</div><div class="id">product</div><div class="cnt">11 скиллов</div></div>
+      <div class="badge"><div class="role">CMO</div><div class="id">marketing</div><div class="cnt">19 скиллов</div></div>
+      <div class="badge"><div class="role">CMO · второй</div><div class="id">demand-generation</div><div class="cnt">12 скиллов</div></div>
+      <div class="badge"><div class="role">CRO</div><div class="id">revenue</div><div class="cnt">10 скиллов</div></div>
+      <div class="badge"><div class="role">CFO</div><div class="id">finance</div><div class="cnt">13 скиллов</div></div>
+      <div class="badge"><div class="role">COO</div><div class="id">operations</div><div class="cnt">12 скиллов</div></div>
+      <div class="badge"><div class="role">EPMO</div><div class="id">pmo</div><div class="cnt">9 скиллов</div></div>
+      <div class="badge"><div class="role">CCO</div><div class="id">customer-experience</div><div class="cnt">7 скиллов</div></div>
+      <div class="badge"><div class="role">CDO</div><div class="id">data-analytics</div><div class="cnt">7 скиллов</div></div>
+      <div class="badge"><div class="role">CSO</div><div class="id">corporate-strategy</div><div class="cnt">6 скиллов</div></div>
+      <div class="badge"><div class="role">CHRO</div><div class="id">people</div><div class="cnt">12 скиллов</div></div>
+    </div>
+    <div class="connector" aria-hidden="true"></div>
+    <div class="band">
+      <div class="cap">reviewer-class · поперёк всех функций · подчиняются CEO, а не проверяемому департаменту</div>
+      <div class="badge rev"><div class="role">CISO</div><div class="id">security</div><div class="cnt">8 скиллов · угрозы, архитектурное ревью, инциденты, доступы</div></div>
+      <div class="badge rev"><div class="role">CLO</div><div class="id">legal-risk</div><div class="cnt">8 скиллов · договоры, комплаенс, приватность, управление</div></div>
+    </div>
+  </div>
+
+  <h3>Откуда контент и как рос</h3>
+  <p>По журналу решений <code>docs/DECISION-LOG.md</code>: репозиторий начался как сборка из пяти чужих MIT-коллекций (106 скиллов) плюс 12 скиллов из общей папки Google Drive без лицензии. Осознав, что маркетплейс — это распространение, автор <strong>переписал всё с нуля</strong> (D3, D6): 77 заимствованных скиллов удалены, возможности написаны заново. Записана и собственная ошибка — оригиналы удалили до сверки с заменой, шесть скиллов потеряли содержание, восстановлены из истории (D4). Полнота каталога проверена не на глаз, а по классификатору профессий BLS SOC: найдено и закрыто восемь дыр — закупки, налоги, льготы, комплаенс, офис, ивенты (D30). Репозиторий создан 28 августа 2026; 30-го о нём написал The Daily Commit (тогда «125+ скиллов»), к 5 сентября — 172, поле About на GitHub так и осталось со старыми цифрами.</p>
+</section>
+
+<!-- ============================ §2 ============================ -->
+<section id="s2">
+  <div class="kicker">§2</div>
+  <h2>Как устроен один скилл</h2>
+  <p>Скилл судят дважды: <strong>загрузился ли в нужный момент</strong> и <strong>помог ли, когда загрузился</strong>. Это формулировка самого headcount (<code>technology:skill-authoring</code>), и она верная.</p>
+  <div class="grid g2">
+    <div class="card">
+      <h3>Описание — маршрутизирует</h3>
+      <p>Единственное, что модель читает, решая, нужен ли скилл. У headcount описания 258–608 символов (в среднем 384); CI отклоняет короче 80. Строятся однотипно: что скилл делает, затем в каких словах об этом спросят — включая косвенные: «почему не конвертит» так же, как «CRO-аудит».</p>
+    </div>
+    <div class="card">
+      <h3>Тело — работает</h3>
+      <p>В среднем 3 400 символов ≈ 850 токенов, максимум 4 300. Грузится только при срабатывании и остаётся в разговоре. Форма одна: упорядоченная процедура, за каждым правилом названа ошибка, которую оно ловит, в конце блок <code>## Never</code>.</p>
+    </div>
+  </div>
+  <blockquote>
+    <p><strong>1. Определите единицу.</strong> Клиент, аккаунт, место, заказ — большинство споров о юнит-экономике это споры о единице. <strong>2. Маржинальная прибыль</strong> — выручка на единицу минус затраты, которые с ней меняются; занижение переменных затрат — самая частая ошибка, и она приукрашивает всё ниже по цепочке. <strong>3. Стоимость привлечения</strong> — полная, включая зарплаты; исключить людей — вторая ошибка по частоте, занижает вдвое.</p>
+    <p>Никогда: сравнивать стоимость привлечения с выручкой вместо маржи; сообщать LTV без данных об удержании и окна наблюдения.</p>
+    <cite>— <code>finance:unit-economics</code>, в переводе, сокращено</cite>
+  </blockquote>
+  <p>Скиллы-руководители устроены иначе: зона ответственности, «артефакты записи» (какой документ прав, если два расходятся), тулинг по слоям, эскалации — и обязательный шестичастный отчёт в конце каждого обращения: решение → почему → что это стоит → допущения → что изменило бы мнение → кто что делает дальше. Пятнадцать департаментов имеют такого руководителя; <code>demand-generation</code> подчинён CMO маркетинга.</p>
+</section>
+
+<!-- ============================ §3 ============================ -->
+<section id="s3">
+  <div class="kicker">§3</div>
+  <h2>Цена в контексте — главное, что надо знать до установки</h2>
+  <blockquote>
+    <p>Claude Code загружает в контекст список имён и описаний скиллов, чтобы Claude знал, что доступно. Список всегда содержит все имена, но если скиллов много, Claude Code укорачивает описания, чтобы уложиться в символьный бюджет списка — что может вырезать ключевые слова, по которым Claude сопоставляет ваш запрос. Бюджет — 1% контекстного окна модели. При переполнении Claude Code убирает описания начиная со скиллов, которые вы вызываете реже всего.</p>
+    <cite>— документация Claude Code, «Skill descriptions are cut short», в переводе</cite>
+  </blockquote>
+  <ul>
+    <li><strong>Описания грузятся всегда</strong>, тело — только при срабатывании.</li>
+    <li><strong>Бюджет маленький</strong> — 1% окна, в символах; на одно описание ещё и потолок 1 536 символов.</li>
+    <li><strong>Первыми теряют описание те, кого вызывали реже</strong> — то есть <em>только что установленный</em> скилл с нулём вызовов.</li>
+  </ul>
+  <div class="note">
+    <p><strong>Ловушка холодного старта.</strong> Поставили департамент → бюджет переполнился → резать начали ровно то, что вы поставили. Скилл остаётся в списке именем, но модель больше не видит, <em>когда</em> его звать. Внешне это выглядит как «плагин не работает».</p>
+  </div>
+
+  <h3>Сколько влезает в бюджет</h3>
+  <p>Описания всех 172 скиллов — <strong>66 180 символов</strong> (<math><mi>токены</mi><mo>≈</mo><mfrac><mi>символы</mi><mn>4</mn></mfrac></math>, то есть ≈16 500). Документация говорит «1% окна», но не уточняет перевод токенов в символы; ниже оба прочтения, точный множитель <strong>не подтверждён</strong> — его показывает <code>/doctor</code>. Департаменты на диаграмме сложены от меньшего к большему; линии — три оценки бюджета.</p>
+  <div class="chart">
+    <svg id="budgetChart" viewBox="0 0 1000 540" role="img" aria-label="Накопленный объём описаний headcount по департаментам против трёх оценок бюджета списка скиллов"></svg>
+    <div class="legend">
+      <span><i style="background:var(--bar-ok)"></i>укладывается в 8 000 (окно 200 тыс., щедрое прочтение)</span>
+      <span><i style="background:var(--bar-mid)"></i>укладывается в 40 000 (окно 1 млн)</span>
+      <span><i style="background:var(--bar-over)"></i>не укладывается даже в окно 1 млн</span>
+    </div>
+  </div>
+  <div class="tbl" style="margin-top:.8rem">
+    <table>
+      <thead><tr><th>Окно</th><th>Прочтение «1%»</th><th class="n">Бюджет, символов</th><th>Влезает департаментов headcount (без учёта других плагинов)</th></tr></thead>
+      <tbody>
+        <tr><td>200 тыс. токенов</td><td>1% токенов × 4 символа</td><td class="n">≈ 8 000</td><td><strong>два самых маленьких</strong> (2 519 + 2 720); третий переполняет</td></tr>
+        <tr><td>200 тыс. токенов</td><td>1% буквально в символах</td><td class="n">≈ 2 000</td><td><strong>ни одного</strong> — самый маленький департамент больше бюджета</td></tr>
+        <tr><td>1 млн токенов</td><td>1% токенов × 4 символа</td><td class="n">≈ 40 000</td><td>одиннадцать; весь headcount не влезает и здесь</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="small">Остальные ваши скиллы делят тот же бюджет. Для масштаба: 14 скиллов superpowers занимают ≈2 150 символов описаний — в 30 раз меньше всего headcount; один <code>marketing</code> втрое больше всего superpowers. Тела не проблема: 850 токенов за одно срабатывание — нормальная цена.</p>
+
+  <details>
+    <summary>Таблица по департаментам: скиллов, символов описаний, токенов</summary>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Департамент</th><th class="n">Скиллов</th><th class="n">Символов</th><th class="n">≈ токенов</th></tr></thead>
+        <tbody>
+          <tr><td>marketing</td><td class="n">19</td><td class="n">7 278</td><td class="n">1 820</td></tr>
+          <tr><td>technology</td><td class="n">19</td><td class="n">6 905</td><td class="n">1 726</td></tr>
+          <tr><td>finance</td><td class="n">13</td><td class="n">4 931</td><td class="n">1 233</td></tr>
+          <tr><td>product</td><td class="n">11</td><td class="n">4 660</td><td class="n">1 165</td></tr>
+          <tr><td>operations</td><td class="n">12</td><td class="n">4 404</td><td class="n">1 101</td></tr>
+          <tr><td>demand-generation</td><td class="n">12</td><td class="n">4 388</td><td class="n">1 097</td></tr>
+          <tr><td>people</td><td class="n">12</td><td class="n">4 343</td><td class="n">1 086</td></tr>
+          <tr><td>it-operations</td><td class="n">12</td><td class="n">4 267</td><td class="n">1 067</td></tr>
+          <tr><td>revenue</td><td class="n">10</td><td class="n">3 732</td><td class="n">933</td></tr>
+          <tr><td>legal-risk</td><td class="n">8</td><td class="n">3 437</td><td class="n">859</td></tr>
+          <tr><td>security</td><td class="n">8</td><td class="n">3 328</td><td class="n">832</td></tr>
+          <tr><td>executive</td><td class="n">7</td><td class="n">3 323</td><td class="n">831</td></tr>
+          <tr><td>pmo</td><td class="n">9</td><td class="n">3 085</td><td class="n">771</td></tr>
+          <tr><td>customer-experience</td><td class="n">7</td><td class="n">2 860</td><td class="n">715</td></tr>
+          <tr><td>data-analytics</td><td class="n">7</td><td class="n">2 720</td><td class="n">680</td></tr>
+          <tr><td>corporate-strategy</td><td class="n">6</td><td class="n">2 519</td><td class="n">630</td></tr>
+          <tr class="total"><td>всего</td><td class="n">172</td><td class="n">66 180</td><td class="n">≈16 500</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
+
+  <h3>Штатные инструменты</h3>
+  <dl class="two">
+    <dt>/doctor</dt><dd>Размер списка скиллов и кто его раздувает — запускать сразу после установки.</dd>
+    <dt>/context</dt><dd>Строка Skills показывает список <em>после</em> применения бюджета — то, что видит модель.</dd>
+    <dt>/skill-doctor</dt><dd>Какие скиллы не вызывались; кандидаты на отключение.</dd>
+    <dt>skillOverrides</dt><dd><code>"finance:tax": "name-only"</code> — скилл в списке без описания (только по имени, бюджет не тратит); <code>"off"</code> — убрать целиком.</dd>
+    <dt>skillListingBudgetFraction</dt><dd><code>0.02</code> — поднять бюджет до 2% окна, если контекста не жалко.</dd>
+  </dl>
+</section>
+
+<!-- ============================ §4 ============================ -->
+<section id="s4">
+  <div class="kicker">§4</div>
+  <h2>Пересечения с тем, что у вас уже стоит</h2>
+  <p>Адресация <code>департамент:скилл</code> спасает от коллизии имён при явном вызове. Но <strong>автозагрузка идёт по описанию</strong>, и там побеждает тот, чьё описание модель сочла ближе, — не лучший, а случайный. Это написано в самом headcount:</p>
+  <blockquote>
+    <p>Два скилла, чьи описания оба подходят под запрос, означают, что ни один не выигрывает надёжно. Прежде чем добавлять, проверьте, что уже покрывает эту землю.</p>
+    <cite>— <code>technology:skill-authoring</code>, «Overlap is the silent killer»</cite>
+  </blockquote>
+  <div class="grid g2">
+    <div class="card">
+      <h3><code>technology</code> и <code>product</code> — почти наверняка есть</h3>
+      <p>19 скиллов <code>technology</code> — стандартный инженерный набор: TDD, системная отладка, планирование, код-ревью, проверка завершённости, worktree, параллельные агенты, написание скиллов. Это ядро самых распространённых процессных плагинов (superpowers — самый заметный). Если такой стоит, 9 из 19 приходят вторым голосом на той же теме. У <code>product</code> 6 из 11 (дизайн-система, стили, интерфейс, бренд) стоят на земле официального frontend-design.</p>
+    </div>
+    <div class="card">
+      <h3>Где обычно никто не конкурирует</h3>
+      <p><code>finance</code>, <code>revenue</code>, <code>legal-risk</code>, <code>people</code>, <code>operations</code>, <code>pmo</code>, <code>corporate-strategy</code>, <code>customer-experience</code>, <code>it-operations</code>. Сюда инженерные наборы не заходят — единственное место, где headcount работает как задумано: библиотека компетенций там, где своих нет.</p>
+    </div>
+  </div>
+  <div class="note">
+    <p><strong>Отключать точечно можно, но это чёрный список.</strong> headcount растёт быстро (с 125 до 172 скиллов за неделю), новые скиллы в обновлении приедут включёнными и могут встать на место погашенных. Правило: <strong>не ставить департамент, в котором пришлось бы выключить половину</strong> — если гасить 9 из 19, департамент не ваш.</p>
+  </div>
+</section>
+
+<!-- ============================ §5 ============================ -->
+<section id="s5">
+  <div class="kicker">§5</div>
+  <h2>Что лежит в поставке</h2>
+  <p>Проверено по содержимому плагинов, не по README: приезжают только <code>SKILL.md</code> выбранных департаментов. Ни один <code>plugin.json</code> не объявляет агентов, команд, хуков или MCP-серверов; шапка у всех 172 скиллов — только <code>name</code> и <code>description</code>, без <code>disable-model-invocation</code>, так что все автозапускаемые. <strong>Радиус поражения от установки — ноль:</strong> ничего не исполняется и в ваш репозиторий не пишется; песочница не нужна, нужен подсчёт символов.</p>
+  <details>
+    <summary>Подробно: что в репозитории и что из этого ставится</summary>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>В репозитории</th><th>Приезжает при <code>/plugin install</code>?</th></tr></thead>
+        <tbody>
+          <tr><td>16 плагинов, 172 файла <code>SKILL.md</code></td><td><span class="yes">да</span> — только выбранные департаменты; 36–112 КБ на департамент</td></tr>
+          <tr><td>19 чартеров агентов в <code>.claude/agents/</code></td><td><span class="no">нет</span> — это агенты самого репозитория headcount, с зонами записи <code>plugins/&lt;департамент&gt;/**</code> внутри его дерева; README здесь не прав</td></tr>
+          <tr><td>Reference-файлы и скрипт <code>agent-guard.mjs</code></td><td><span class="yes">да</span>, но только у одного скилла — <code>executive:agent-hierarchy</code> (≈47 КБ)</td></tr>
+          <tr><td>Команды, хуки, MCP-серверы</td><td>их нет — <strong>0</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
+</section>
+
+<!-- ============================ §6 ============================ -->
+<section id="s6">
+  <div class="kicker">§6</div>
+  <h2>Что headcount обещает, но обеспечить не может</h2>
+  <p><strong>«Выводы reviewer-class не могут быть отменены».</strong> В репозитории это структурно: карта поверхностей, ревьюер без зоны записи, проверка в CI. В вашей сессии <code>security:threat-modeling</code> — просто текст в контексте наравне с остальными; считать ли его вывод блокирующим, решает модель, а не механизм.</p>
+  <p><strong>«Делегируйте департамент как субагента».</strong> Чартеры не приезжают (§5). Агента придётся написать самому и в нём сослаться на скиллы департамента.</p>
+  <p><strong>Автозагрузка на не-английском.</strong> Все 172 описания на английском; как они срабатывают на запрос по-русски — не проверено ни автором, ни здесь.</p>
+  <p><strong>Ни один скилл не ограничен в самозапуске.</strong> Без <code>disable-model-invocation</code> модель вправе подтянуть <code>legal-risk:contract-review</code> на любую реплику со словом «договор». Автор сам пишет: «ставьте то, что будете использовать, а не всё; меньший набор даёт более точное срабатывание».</p>
+</section>
+
+<!-- ============================ §7 ============================ -->
+<section id="s7">
+  <div class="kicker">§7</div>
+  <h2>Инженерный процесс за репозиторием — что стоит перенять</h2>
+  <p>Для библиотеки промптов это необычно дисциплинированный репозиторий; возможно, метод здесь ценнее скиллов. <strong>Журнал решений</strong> — 35 записей, у каждой номер-адрес (присваивается, когда вопрос задан, и не переиспользуется), буквенные варианты, явная рекомендация и записанный исход; отвергнутые варианты остаются с причиной. <strong>Десять проверок в одном скрипте</strong> — тот же <code>check-all.sh</code> запускает и CI, «чтобы они не расходились»; README, оргчарт и соцкарточка генерируются из дерева и не могут от него отстать. <strong>Карта поверхностей</strong> — один владелец на каждый путь, проверяется машинно: метод из <code>executive:agent-hierarchy</code>, применённый к самому репозиторию.</p>
+  <details>
+    <summary>Десять проверок CI — что именно не дают сломать</summary>
+    <div class="tbl">
+      <table>
+        <tbody>
+          <tr><td>Карта поверхностей</td><td>У каждого пути ровно один владелец-агент; ревьюер не может объявить зону записи</td></tr>
+          <tr><td>Шапки скиллов</td><td>Имя = директория, уникально; описание ≥ 80 символов</td></tr>
+          <tr><td>Provenance</td><td>Ни чужих лицензий, копирайтов, SPDX, ни шрифтов</td></tr>
+          <tr><td>README, соцкарточка, оргчарт</td><td>Сгенерированы из дерева и совпадают с ним; ручная правка ломает CI</td></tr>
+          <tr><td>Ссылки на скиллы</td><td>Каждое <code>департамент:скилл</code> в документации и телах существует</td></tr>
+          <tr><td>Американская орфография</td><td>Единый house style</td></tr>
+          <tr><td>Блоки <code>## Never</code></td><td>Не смешивают два стиля пунктуации внутри одного блока — ловит вклейку чужого списка в середину; нашла пять реальных случаев, где плоское правило дало бы 59 ложных</td></tr>
+          <tr><td>Манифесты</td><td>Все <code>plugin.json</code> и <code>marketplace.json</code> — валидный JSON</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
+</section>
+
+<!-- ============================ §8 ============================ -->
+<section id="s8">
+  <div class="kicker">§8</div>
+  <h2>Как ставить, если ставить</h2>
+<pre><code>/plugin marketplace add cbrock84/headcount
+/plugin install finance@headcount</code></pre>
+  <ol class="steps">
+    <li><strong>Один департамент</strong> — где нет своих скиллов и есть потребность. Автор советует идти от того, на что уходит неделя: IT → <code>it-operations</code>, <code>security</code>; компания целиком → <code>executive</code>, <code>finance</code>, <code>operations</code>; продажи → <code>revenue</code>, <code>marketing</code>, <code>demand-generation</code>; найм → <code>people</code>, <code>legal-risk</code>.</li>
+    <li><strong>Сразу <code>/doctor</code>.</strong> Не влезло в бюджет — <code>name-only</code> для ненужного или второй департамент не ставить.</li>
+    <li><strong>2–4 недели, потом <code>/skill-doctor</code>.</strong> Скилл, не сработавший ни разу, платит контекстом и ничего не отдаёт — снимать.</li>
+    <li><strong><code>technology</code> — последним или никогда</strong>, если стоит любой процессный плагин.</li>
+    <li><strong>Не форкать.</strong> Резка по департаментам — родной механизм, внутри департамента — <code>skillOverrides</code>. Форк нужен, только чтобы переписать содержание, а не выбрать его.</li>
+  </ol>
+</section>
+
+<!-- ============================ ГРАНИЦЫ ============================ -->
+<section id="limits">
+  <div class="kicker">Границы разбора</div>
+  <h2>Чего здесь не проверяли</h2>
+  <ul class="small">
+    <li><strong>Качество 166 из 172 тел.</strong> Полностью прочитано шесть — четыре инженерных и два финансовых; форму остальных гарантируют только проверки CI.</li>
+    <li><strong>Точный множитель бюджета.</strong> «1% окна» задокументировано, перевод токенов в символы — нет; истину показывает <code>/doctor</code>.</li>
+    <li><strong>Срабатывание на не-английских запросах</strong> и <strong>поведение reviewer-class в живой сессии</strong> — только эмпирика, здесь её не было.</li>
+    <li><strong>История коммитов.</strong> Клон неглубокий; история взята из журнала решений автора, а не из git.</li>
+  </ul>
+</section>
+
+<!-- ============================ ИСТОЧНИКИ ============================ -->
+<section id="src">
+  <div class="kicker">Источники</div>
+  <h2>Что читали</h2>
+  <ul class="small">
+    <li><a href="https://github.com/cbrock84/headcount">github.com/cbrock84/headcount</a> — README, <code>CONTRIBUTING.md</code>, <code>scripts/*</code>, манифесты, все 172 <code>SKILL.md</code> (шапки целиком, тела — шесть), <code>.claude/agents/*.md</code>; документация: <a href="https://github.com/cbrock84/headcount/blob/main/docs/GETTING-STARTED.md">GETTING-STARTED</a>, <a href="https://github.com/cbrock84/headcount/blob/main/docs/USE-CASES.md">USE-CASES</a>, <a href="https://github.com/cbrock84/headcount/blob/main/docs/AGENT-SURFACES.md">AGENT-SURFACES</a>, <a href="https://github.com/cbrock84/headcount/blob/main/docs/DECISION-LOG.md">DECISION-LOG</a> (D1–D35), <a href="https://github.com/cbrock84/headcount/blob/main/docs/org-chart.md">org-chart</a>; <a href="https://cbrock84.github.io/headcount/org-chart.html">интерактивный оргчарт</a>.</li>
+    <li><a href="https://api.github.com/repos/cbrock84/headcount">GitHub API</a> — звёзды, форки, даты, на 2026-09-05.</li>
+    <li>Claude Code: <a href="https://code.claude.com/docs/en/skills">документация по скиллам</a> (загрузка описаний, бюджет списка, <code>skillOverrides</code>), <a href="https://code.claude.com/docs/en/settings-reference">справочник настроек</a>.</li>
+    <li><a href="https://thedailycommit.in/story/2026-08-30/01-github-cbrock84-headcount">The Daily Commit</a>, заметка от 2026-08-30.</li>
+  </ul>
+</section>
+
+</main>
+
+<footer><div class="inner">Слепок на 2026-09-05. Цитаты из англоязычных источников даны в переводе. Оценка токенов — символы, делённые на четыре, а не замер.</div></footer>
+
+<script>
+(function(){
+  /* ---------- тема и контраст ---------- */
+  var root=document.documentElement, themeBtn=document.getElementById('themeBtn'), hcBtn=document.getElementById('hcBtn');
+  function get(k){try{return localStorage.getItem(k)}catch(e){return null}}
+  function set(k,v){try{v===null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}}
+  function effective(){ var t=root.getAttribute('data-theme'); if(t) return t; return (window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'; }
+  function render(){
+    var t=root.getAttribute('data-theme');
+    themeBtn.textContent='Тема: '+(t? (t==='dark'?'тёмная':'светлая') : 'система');
+    themeBtn.setAttribute('aria-pressed', t?'true':'false');
+    hcBtn.setAttribute('aria-pressed', root.classList.contains('hc')?'true':'false');
+    drawChart();
+  }
+  var saved=get('theme'); if(saved==='dark'||saved==='light') root.setAttribute('data-theme',saved);
+  if(get('hc')==='1') root.classList.add('hc');
+  themeBtn.addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme');
+    /* цикл: система → противоположная системной → своя → система */
+    if(!cur){ var n=effective()==='dark'?'light':'dark'; root.setAttribute('data-theme',n); set('theme',n); }
+    else if(cur==='dark'){ root.setAttribute('data-theme','light'); set('theme','light'); }
+    else { root.removeAttribute('data-theme'); set('theme',null); }
+    render();
+  });
+  hcBtn.addEventListener('click',function(){ var on=root.classList.toggle('hc'); set('hc',on?'1':'0'); render(); });
+  if(window.matchMedia){ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',render); }
+
+  /* ---------- прогресс и активный раздел ---------- */
+  var bar=document.getElementById('progress'), links=[].slice.call(document.querySelectorAll('nav.toc a')), secs=links.map(function(a){return document.querySelector(a.getAttribute('href'))});
+  function onScroll(){
+    var h=document.documentElement, max=h.scrollHeight-h.clientHeight; bar.style.width=(max>0?(h.scrollTop/max*100):0)+'%';
+    var y=h.scrollTop+100, cur=-1; secs.forEach(function(s,i){ if(s && s.offsetTop<=y) cur=i; });
+    links.forEach(function(a,i){ a.classList.toggle('on',i===cur); });
+  }
+  window.addEventListener('scroll',onScroll,{passive:true}); window.addEventListener('resize',onScroll);
+
+  /* ---------- диаграмма бюджета ---------- */
+  var data=[['corporate-strategy',2519],['data-analytics',2720],['customer-experience',2860],['pmo',3085],['executive',3323],['security',3328],['legal-risk',3437],['revenue',3732],['it-operations',4267],['people',4343],['demand-generation',4388],['operations',4404],['product',4660],['finance',4931],['technology',6905],['marketing',7278]];
+  /* [порог, подпись, строка подписи]: 2 000 и 8 000 стоят слишком близко для одной строки — разводим по двум */
+  var budgets=[[2000,'2 000 — окно 200 тыс., 1% буквально',2],[8000,'8 000 — окно 200 тыс., 1% × 4',1],[40000,'40 000 — окно 1 млн, 1% × 4',1]];
+  function css(v){ return getComputedStyle(root).getPropertyValue(v).trim(); }
+  function drawChart(){
+    var svg=document.getElementById('budgetChart'); if(!svg) return;
+    var W=1000,H=540,L=200,R=70,T=56,rowH=27,base=T+14;
+    var total=data.reduce(function(s,d){return s+d[1]},0), scale=(W-L-R)/total;
+    var fg=css('--fg')||'#000', muted=css('--muted')||'#666', line=css('--line')||'#ccc', ok=css('--bar-ok'), mid=css('--bar-mid'), over=css('--bar-over');
+    var s='', cum=0, fs='font-size:14px;';
+    budgets.forEach(function(b){ var x=L+b[0]*scale, ly = b[2]===1 ? T-32 : T-12;
+      s+='<line x1="'+x+'" y1="'+(T-6)+'" x2="'+x+'" y2="'+(base+data.length*rowH-6)+'" stroke="'+fg+'" stroke-width="1.5" stroke-dasharray="5 4"/>';
+      s+='<text x="'+(x+6)+'" y="'+ly+'" text-anchor="start" fill="'+fg+'" style="'+fs+'font-weight:600">'+b[1]+'</text>'; });
+    data.forEach(function(d,i){ cum+=d[1]; var y=base+i*rowH, w=cum*scale, col= cum<=8000?ok : (cum<=40000?mid:over);
+      s+='<text x="'+(L-10)+'" y="'+(y+14)+'" text-anchor="end" fill="'+fg+'" style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">'+d[0]+'</text>';
+      s+='<rect x="'+L+'" y="'+y+'" width="'+Math.max(w,2)+'" height="18" rx="3" fill="'+col+'"/>';
+      s+='<text x="'+(L+w+8)+'" y="'+(y+14)+'" fill="'+fg+'" style="'+fs+'font-variant-numeric:tabular-nums">'+cum.toLocaleString('ru-RU')+'</text>'; });
+    s+='<line x1="'+L+'" y1="'+(base-6)+'" x2="'+L+'" y2="'+(base+data.length*rowH-6)+'" stroke="'+line+'" stroke-width="1"/>';
+    s+='<text x="'+L+'" y="'+(H-8)+'" fill="'+muted+'" style="font-size:12.5px">полоса = сумма описаний всех департаментов до этого включительно, символов</text>';
+    svg.innerHTML=s;
+  }
+  render(); onScroll();
+})();
+</script>
+<!--general:foot-->
+<style>
+.gnrl{margin:4rem auto 0;padding:2rem 1.25rem 2.5rem;max-width:1100px;border-top:1px solid rgba(128,128,128,.28);
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.5}
+.gnrl a{text-decoration:none;color:inherit}
+.gnrl-top{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:space-between;align-items:baseline;margin-bottom:1.25rem}
+.gnrl-back{font-weight:600;opacity:.9}
+.gnrl-back:hover{text-decoration:underline}
+.gnrl-h{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;opacity:.55}
+.gnrl-grid{display:grid;gap:1rem;grid-template-columns:1fr}
+@media(min-width:720px){.gnrl-grid{grid-template-columns:repeat(3,1fr)}}
+.gnrl-card{border:1px solid rgba(128,128,128,.28);border-radius:12px;overflow:hidden;transition:border-color .2s}
+.gnrl-card:hover{border-color:rgba(128,128,128,.6)}
+.gnrl-card img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+.gnrl-card b{display:block;padding:.8rem .9rem .2rem;font-size:.9375rem;font-weight:600}
+.gnrl-card span{display:block;padding:0 .9rem .9rem;font-size:.8125rem;opacity:.6}
+</style>
+<nav class="gnrl">
+  <div class="gnrl-top">
+    <a class="gnrl-back" href="https://paveldiordits.site/presentations/">← General · библиотека разборов</a>
+    <span class="gnrl-h">Ещё по теме</span>
+  </div>
+  <div class="gnrl-grid">
+    <a class="gnrl-card" href="yingzao-skill.html">
+      <img src="covers/yingzao-skill.svg" alt="" loading="lazy">
+      <b>Yingzao: скилл-постер Guizang под микроскопом</b><span>39 мин · 2026-09-05</span>
+    </a>
+    <a class="gnrl-card" href="agents-weekly-2026-09-04.html">
+      <img src="covers/agents-weekly-2026-09-04.svg" alt="" loading="lazy">
+      <b>Неделя агентной экосистемы — 26.08–04.09.2026</b><span>70 мин · 2026-09-04</span>
+    </a>
+    <a class="gnrl-card" href="claude-w23-peremer.html">
+      <img src="covers/claude-w23-peremer.svg" alt="" loading="lazy">
+      <b>Неделя 23 экосистемы Claude — снимок и что с ним стало</b><span>14 мин · 2026-09-04</span>
+    </a>
+  </div>
+</nav>
+<!--/general:foot-->
+</body>
+</html>
