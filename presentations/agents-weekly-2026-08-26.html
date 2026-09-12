@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Неделя агентной экосистемы — 18–26.08.2026</title>
-<meta name="description" content="Скиллы, плагины и подходы агентной разработки за 18–26 августа 2026: каталог по звёздам, официальные изменения, разбор дефекта метода сбора.">
+<meta name="description" content="Скиллы, плагины и подходы агентной разработки за 18–26 августа 2026: найденный дефект метода отбора, первые официальные плагины Unity и NetSuite, каталог по звёздам.">
 <style>
 :root {
   --page: #f4f6f8;
@@ -326,47 +326,6 @@ h2 .count {
   border-block: 1px solid var(--line);
 }
 
-.popular-columns {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 36px;
-  margin-top: 26px;
-}
-.popular-group { border-top: 2px solid var(--ink); }
-.popular-heading {
-  min-height: 58px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  border-bottom: 1px solid var(--line);
-}
-.popular-heading h3 { font-size: .96rem; letter-spacing: -.015em; }
-.popular-heading a { font-size: .8rem; font-weight: 650; text-decoration: none; }
-.popular-row {
-  display: grid;
-  grid-template-columns: 62px minmax(0, 1fr);
-  gap: 16px;
-  min-height: 118px;
-  padding: 17px 0;
-  border-bottom: 1px solid var(--line);
-  align-items: start;
-}
-.popular-score {
-  display: inline-flex;
-  justify-content: center;
-  padding: 6px 7px;
-  border-radius: 8px;
-  background: var(--surface-soft);
-  color: var(--accent-ink);
-  font-size: .78rem;
-  font-weight: 750;
-  font-variant-numeric: tabular-nums;
-}
-.popular-row h4 { font-size: .9rem; line-height: 1.3; }
-.popular-row h4 a { color: var(--ink); text-decoration: none; }
-.popular-row h4 a:hover { color: var(--accent); }
-.popular-row p { margin-top: 5px; color: var(--muted); font-size: .78rem; line-height: 1.42; }
 .editor-mark {
   display: inline-block;
   margin-top: 8px;
@@ -374,7 +333,6 @@ h2 .count {
   font-size: .7rem;
   font-weight: 700;
 }
-.popular-row.featured .popular-score { background: var(--accent); color: #fff; }
 
 .official-overview {
   display: grid;
@@ -412,7 +370,6 @@ h2 .count {
 .pick p { margin-top: 7px; color: var(--muted); font-size: .84rem; }
 .pick a { display: inline-block; margin-top: 10px; font-size: .82rem; font-weight: 650; text-decoration: none; }
 
-#official, #skills, #plugins, #arts, #periph, #sources { max-width: 920px; margin-inline: auto; }
 
 .block {
   padding: 22px 0 25px;
@@ -425,6 +382,33 @@ h2 .count {
 .block ul { padding-left: 1.25rem; display: grid; gap: 7px; }
 .block li::marker { color: var(--accent); }
 .block .g { margin-top: 20px; font-size: .84rem; font-weight: 720; color: var(--ink); }
+
+.catalog-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 46px;
+  align-items: start;
+}
+.catalog-columns > section { margin: 52px 0 0; max-width: none; }
+.catalog-columns .section-intro { max-width: none; }
+
+.two-col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 46px;
+  align-items: start;
+}
+.two-col > .block { padding-top: 0; }
+/* разборы разной высоты: колоночный поток пакует их вплотную, сетка оставляла бы провалы */
+.flow-2col { columns: 2; column-gap: 46px; }
+.flow-2col > .item { break-inside: avoid; }
+.flow-2col > .item:first-child { margin-top: 0; }
+.list-2col { columns: 2; column-gap: 46px; }
+.list-2col > li { break-inside: avoid; }
+/* .block ul уже grid — многоколоночность на нём не работает, даём колонки сеткой */
+.block ul.list-2col { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 46px; }
+/* у блоков в паре нижние границы встали бы на разной высоте — разделяет верхняя линия следующего */
+.two-col > .block:last-child { border-bottom: 0; }
 
 .item {
   display: grid;
@@ -484,33 +468,7 @@ ul.tail .st { grid-column: 1; grid-row: 1 / span 2; }
 ul.tail li > a { grid-column: 2 / span 2; grid-row: 1; }
 ul.tail .tag { grid-column: 2; grid-row: 2; justify-self: start; margin-left: 0; }
 ul.tail .desc { grid-column: 3; grid-row: 2; min-width: 0; }
-.othersrc { margin-top: 20px; color: var(--muted); font-size: .9rem; font-style: italic; }
 mark { padding: 1px 3px; border-radius: 3px; background: var(--mark); color: inherit; }
-
-.catalog-collapsed > .item:nth-of-type(n+4),
-.catalog-collapsed > .tail-h,
-.catalog-collapsed > .tail,
-.catalog-collapsed > .othersrc { display: none; }
-.catalog-collapsed.compact-blocks > .block { display: none; }
-.catalog-collapsed > .item p {
-  display: -webkit-box;
-  overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-}
-.catalog-toggle {
-  margin-top: 24px;
-  padding: 11px 16px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--surface);
-  color: var(--ink);
-  cursor: pointer;
-  font: inherit;
-  font-size: .88rem;
-  font-weight: 650;
-}
-.catalog-toggle:hover { border-color: var(--accent); color: var(--accent-ink); }
 
 .method-fold {
   padding: 0;
@@ -534,8 +492,7 @@ mark { padding: 1px 3px; border-radius: 3px; background: var(--mark); color: inh
 
 .sources ul { padding-left: 1.2rem; display: grid; gap: 8px; word-break: break-word; }
 footer {
-  max-width: 920px;
-  margin: 72px auto 0;
+  margin: 72px 0 0;
   padding-top: 28px;
   border-top: 1px solid var(--line);
   color: var(--muted);
@@ -543,13 +500,15 @@ footer {
 }
 
 @media (max-width: 900px) {
+  .catalog-columns { grid-template-columns: 1fr; gap: 0; }
+  .two-col { grid-template-columns: 1fr; gap: 0; }
+  .flow-2col { columns: 1; }
+  .list-2col { columns: 1; }
   .masthead { grid-template-columns: 1fr; min-height: auto; gap: 44px; padding-top: 52px; }
   .issue-facts { max-width: 520px; }
   .brief-grid { grid-template-columns: 1fr; }
   .metrics { grid-template-columns: repeat(3, 1fr); }
   .metric { min-height: auto; }
-  .highlights, .editor-picks { grid-template-columns: 1fr; }
-  .popular-columns { grid-template-columns: 1fr; gap: 28px; }
   .official-overview { grid-template-columns: 1fr; gap: 22px; }
   .highlight { padding: 26px 0; }
   .highlight + .highlight { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
@@ -568,8 +527,18 @@ footer {
   .brief-grid { margin-top: 24px; }
   .primary-brief { min-height: auto; border-radius: 18px; }
   .metrics { grid-template-columns: 1fr; }
-  .editor-picks { gap: 10px; }
-  .popular-row { min-height: 0; }
+  ul.stories { list-style: none; padding: 0; margin-top: 12px; border-top: 1px solid var(--line); }
+ul.stories li {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 14px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: .86rem;
+  line-height: 1.45;
+}
+ul.stories .st { color: var(--accent-ink); font-weight: 720; font-size: .8rem; font-variant-numeric: tabular-nums; }
+ul.stories .desc { color: var(--muted); }
   .item { grid-template-columns: 1fr; gap: 12px; }
   .stars, .pts { justify-self: start; min-width: 72px; }
   ul.tail li { grid-template-columns: 54px minmax(0, 1fr); }
@@ -578,6 +547,48 @@ footer {
   ul.tail li > a { grid-row: 1; }
   ul.tail .tag { grid-row: 2; }
   ul.tail .desc { grid-row: 3; }
+}
+
+.correction {
+  margin: 10px 0 0;
+  padding: 18px 22px 20px;
+  border: 1px solid var(--accent);
+  border-left-width: 4px;
+  border-radius: 14px;
+  background: var(--surface-soft);
+}
+.correction p { max-width: 860px; font-size: .85rem; line-height: 1.52; }
+.releases-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 34px;
+  margin-top: 20px;
+}
+.release { border-top: 2px solid var(--ink); padding-top: 16px; }
+.release h3 { font-size: 1rem; letter-spacing: -.015em; }
+.release h3 .src { color: var(--muted); font-weight: 500; font-size: .8rem; }
+.release ul { margin-top: 11px; padding-left: 0; list-style: none; display: grid; gap: 7px; }
+.release li { padding-left: 14px; position: relative; font-size: .83rem; line-height: 1.45; color: var(--muted); }
+.release li::before { content: "\2014"; position: absolute; left: 0; color: var(--subtle); }
+.release > p { margin-top: 12px; font-size: .84rem; line-height: 1.5; color: var(--muted); }
+.release .method-fold { margin-top: 10px; }
+ul.stories { list-style: none; padding: 0; margin-top: 12px; border-top: 1px solid var(--line); }
+ul.stories li {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 14px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: .86rem;
+  line-height: 1.45;
+}
+ul.stories .st { color: var(--accent-ink); font-weight: 720; font-size: .8rem; font-variant-numeric: tabular-nums; }
+ul.stories .desc { color: var(--muted); }
+footer .signal, footer .collect { margin-bottom: 14px; line-height: 1.55; }
+footer .signal { color: var(--ink); }
+
+@media (max-width: 900px) {
+  .releases-grid { grid-template-columns: 1fr; gap: 26px; }
 }
 
 </style>
@@ -637,168 +648,180 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
   <div class="issue-facts" aria-label="Параметры выпуска">
     <div class="fact"><span>Период</span><strong>18 – 26 августа</strong></div>
     <div class="fact"><span>Прошли отбор</span><strong>86 репозиториев</strong></div>
-    <div class="fact"><span>Скиллы ★40+</span><strong>21</strong></div>
-    <div class="fact"><span>Плагины ★40+</span><strong>12</strong></div>
+    <div class="fact"><span>Скиллы ★30+</span><strong>26</strong></div>
+    <div class="fact"><span>Плагины ★30+</span><strong>14</strong></div>
   </div>
 </header>
+
 <div class="toc-wrap">
   <nav class="toc" aria-label="Разделы">
-    <a href="#svodka">Популярное</a>
-    <a href="#itogi">Итоги</a>
+    <a href="#releases">Релизы и обсуждения</a>
     <a href="#official">Официальное</a>
-    <a href="#skills">Скиллы<span class="n">21</span></a>
-    <a href="#plugins">Плагины<span class="n">12</span></a>
-    <a href="#periph">Методология</a>
+    <a href="#skills">Скиллы<span class="n">26</span></a>
+    <a href="#plugins">Плагины<span class="n">14</span></a>
+    <a href="#arts">Исследования<span class="n">13</span></a>
     <a href="#sources">Источники</a>
-    <a href="#arts">Тренды и исследования<span class="n">13</span></a>
   </nav>
 </div>
 
-<section id="svodka">
-  <p class="section-kicker">Популярное за неделю</p>
-  <h2>На что обратили внимание</h2>
-  <p class="section-intro">Репозитории с наибольшим приростом звёзд. Короткое описание сразу показывает, стоит ли переходить по ссылке.</p>
-  <div class="popular-columns">
-    <div class="popular-group">
-      <div class="popular-heading"><h3>Скиллы</h3><a href="#skills">Все 21</a></div>
-      <article class="popular-row">
-        <span class="popular-score">★3294</span>
-        <div><h4><a href="https://github.com/s1dashu/ip-as-logo-skill">ip-as-logo-skill</a></h4><p>Генерация упрощённых маскотов-логотипов с жёстко зашитой процедурой: 4–7 примитивов, ровно три цвета.</p></div>
-      </article>
-      <article class="popular-row">
-        <span class="popular-score">★940</span>
-        <div><h4><a href="https://github.com/nateherkai/scroll-craft">scroll-craft</a></h4><p>Скролл-ориентированные сайты с собственным контролем качества: скилл проверяет себя скриншотами.</p></div>
-      </article>
-      <article class="popular-row">
-        <span class="popular-score">★927</span>
-        <div><h4><a href="https://github.com/Leutenegger/watermarks-remover">watermarks-remover</a></h4><p>Снимает AI-провенанс-метки из текста и файлов: невидимый Unicode, экзотические пробелы, bidi-символы.</p></div>
-      </article>
-    </div>
-    <div class="popular-group">
-      <div class="popular-heading"><h3>Плагины и инструменты</h3><a href="#plugins">Все 12</a></div>
-      <article class="popular-row">
-        <span class="popular-score">★1429</span>
-        <div><h4><a href="https://github.com/duty1g/x64dbg-mcp-server">x64dbg-mcp-server</a></h4><p>MCP-плагин для отладчика x64dbg: брейкпоинты, шаги, чтение памяти по HTTP. Написан на Zig, без зависимостей.</p></div>
-      </article>
-      <article class="popular-row">
-        <span class="popular-score">★385</span>
-        <div><h4><a href="https://github.com/kgoedecke/doop">doop</a></h4><p>Открытая альтернатива Paper.design: общий холст, где люди правят в браузере, а агенты — через MCP.</p></div>
-      </article>
-      <article class="popular-row">
-        <span class="popular-score">★343</span>
-        <div><h4><a href="https://github.com/rome-os/rome">rome</a></h4><p>Масштабирует не модель, а среду: инструменты, процессы и память, внутри которых работает агент.</p></div>
-      </article>
-    </div>
+
+<section id="releases">
+  <p class="section-kicker">Что вышло и что обсуждали</p>
+  <h2>Релизы и обсуждения</h2>
+  <p class="section-intro">Версии платформы за окно и сюжеты, вокруг которых шёл разговор. Каталог находок — в разделах ниже.</p>
+
+  <div class="releases-grid">
+    <article class="release">
+      <h3><a href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md">Claude Code 2.1.236 → 2.1.246</a> <span class="src">— одиннадцать версий</span></h3>
+      <ul>
+        <li><mark><code>promptCacheTtl</code> и <code>subagentPromptCacheTtl</code></mark> — TTL промпт-кэша отдельно для сессии и для сабагентов.</li>
+        <li><mark>Разбивка по <code>/loop</code> в <code>/usage</code></mark>, а в <code>/tasks</code> — модель и уровень effort у каждого сабагента.</li>
+        <li><mark>Частичный результат сабагента</mark> вместо «готово» на упоре в <code>maxTurns</code>.</li>
+        <li>Встроенный стиль «Concise», <code>ANTHROPIC_DEFAULT_MODEL</code>, <code>headersHelper</code> для плагин-маркетплейсов и починенная утечка памяти на результатах сабагентов.</li>
+      </ul>
+      <details class="method-fold"><summary>Остальные изменения CLI</summary><div class="method-body">
+    <h3>Claude Code CLI 2.1.236 → 2.1.238 <span class="src">выжимка по агент-разработке</span></h3>
+    <ul>
+      <li><b>2.1.238</b> — <code>headersHelper</code> на url-маркетплейсе или записи каталога:
+      команда, выдающая HTTP-заголовки (например, короткоживущий токен) для запросов каталога и
+      архивов; запускается только при install/update и после показа команды, с подтверждением
+      <code>[y/N]</code>. Плюс требование принятого trust-диалога для <code>headersHelper</code>
+      в проектном <code>.mcp.json</code> и запуск без унаследованных credential-переменных
+      окружения — модель доверия для плагинов и MCP подтянули заметно.</li>
+      <li><b>2.1.238</b> — <mark>починена неограниченная утечка памяти в длинных интерактивных
+      сессиях</mark>: результаты инструментов сабагентов освобождаются, как только уходят из окна
+      отображения. Для долгих мульти-агентных прогонов это самое полезное в релизе.</li>
+      <li><b>2.1.238</b> — <code>claude self-hosted-runner --defer-shutdown-max-min</code>: по
+      SIGTERM раннер продолжает обслуживать прикреплённые сессии заданное число минут. Плюс
+      исправление, из-за которого здоровый раннер отбирался сервером после одного медленного поллинга.</li>
+      <li><b>2.1.237</b> — встроенный output style <b>«Concise»</b>: ответ начинается с результата,
+      без преамбул и нарратива, при той же полноте работы.</li>
+      <li><b>2.1.236</b> — <code>ANTHROPIC_DEFAULT_MODEL</code> (модель для новых сессий,
+      <code>/model</code> по-прежнему перебивает); <code>notify_when_idle</code> в кросс-сессионном
+      <code>SendMessage</code> — одноразовое уведомление, когда соседняя сессия освободится, без
+      поллинга; ограничение <code>/recap</code> 400 символами против разрастания рекапов;
+      auth-режим больше не обманывается настройкой <code>status.showUntrackedFiles=no</code>.</li>
+    </ul>
+    <h3>Claude Code CLI 2.1.239 → 2.1.246</h3>
+    <p>Восемь версий за окно, из них 2.1.240 и 2.1.241 — «bug fixes and reliability improvements»
+    без деталей. Существенное для агент-разработки:</p>
+    <ul>
+      <li><b>Многоагентность и сабагенты.</b> Сабагент, упёршийся в лимит <code>maxTurns</code>,
+      теперь возвращает результат с пометкой «частичный» и подсказкой продолжить через
+      <code>SendMessage</code>, а не выглядит завершившимся. В <code>/tasks</code> показываются
+      модель и уровень effort каждого сабагента. <code>←</code> или <code>/background</code> во время
+      динамического workflow больше не перезапускают его законченных сабагентов молча — сначала
+      спрашивают и говорят, сколько будет перезапущено. Починены фоновые сабагенты, не
+      просыпавшиеся после завершения последней фоновой Bash-задачи.</li>
+      <li><b>Кэш и стоимость.</b> Настройки <code>promptCacheTtl</code> и
+      <code>subagentPromptCacheTtl</code> — часовой prompt-кэш на основном диалоге при
+      пятиминутном у сабагентов. Managed-настройка <code>modelPricing</code>: <code>/cost</code>,
+      статус-строка и телеметрия считают по контрактным ставкам организации, а не по прайс-листу.
+      В <code>/usage</code> — разбивка по Loops: число прогонов, токены, токены на прогон и время
+      последнего.</li>
+      <li><b>Плагины и скиллы.</b> <code>/reload-plugins</code> больше не рапортует 0 скиллов для
+      плагинов, объявляющих их как <code>skills/*/SKILL.md</code>. Плагин-скиллы с префиксом
+      <code>&lt;plugin&gt;:</code> в <code>name</code> перестали дублировать его в меню.
+      <code>claude plugin update</code> работает по голому имени. Починены установка при
+      <code>plugin.json</code> с BOM и дубликаты SHA-каталогов в кэше плагинов.</li>
+      <li><b>Модели.</b> Настройка <code>modelPicker</code> — курируемый упорядоченный список
+      моделей в <code>/model</code> с любым написанием id, включая Vertex/Bedrock. Исправлено, что
+      <code>/model</code> молча игнорировал выбор Ultracode.</li>
+      <li><b>Прочее.</b> Неинтерактивные сессии (<code>-p</code>, SDK, облачные) автоматически
+      продолжают ответ, оборванный ошибкой сервера или обрывом связи. <code>/cd</code> применяет
+      настройки, хуки, <code>.mcp.json</code>, скиллы и агентов нового каталога сразу, а не после
+      <code>--resume</code>. Прерванные MCP-вызовы в headless/remote больше не рапортуются модели
+      как «завершились без вывода». Аргументы MCP-инструмента с пустой схемой отправляются в своём
+      настоящем типе, а не строкой JSON.</li>
+    </ul>
+      </div></details>
+    </article>
+    <article class="release">
+      <h3>Модели <span class="src">— релизов в окне нет</span></h3>
+      <p>Новых моделей за 18–26 августа не выходило. Официальная работа шла в другом месте:
+      <b>Claude Managed Agents</b> получили два релиза, 18 и 19 августа — бюджет на сессию, роль
+      advisor в мульти-агентном ростере, загрузка скиллов прямо из <code>.claude/skills</code>
+      примонтированного репозитория и memory stores в self-hosted-песочницах. Разбор — в блоке
+      «Claude Managed Agents» ниже.</p>
+    </article>
   </div>
+
+  <h3 class="tail-h">Сюжеты недели</h3>
+  <ul class="stories">
+    <li><span class="st">414</span><span><a href="https://fabiensanglard.net/agent.md/index.html">My agent.md to improve LLM-assisted code quality</a> — <span class="desc">самый обсуждаемый текст окна про инструкции агенту</span></span></li>
+    <li><span class="st">310</span><span><a href="https://fx.sh">fx — tiny, open, native coding agent</a> — <span class="desc">минималистичный нативный кодинг-агент</span></span></li>
+    <li><span class="st">289</span><span><a href="https://www.danielvaughn.dev/posts/huzzah/">Huzzah — a novel approach to coding with AI</a> — <span class="desc">другой подход к тому, как человек и агент делят работу</span></span></li>
+    <li><span class="st">244</span><span><a href="https://allaboutcoding.ghinda.com/a-week-of-using-codex-more">A week of using Codex more than Claude</a> — <span class="desc">сравнение двух харнессов на живой неделе</span></span></li>
+    <li><span class="st">120</span><span><a href="https://www.laude.org/updates/headlong-a-microharness-for-persistent-agents">Headlong: микрохарнесс для постоянных агентов</a> — <span class="desc">разборы ниже</span></span></li>
+  </ul>
+  <p class="rank-note">Разборы — в «Исследованиях и наблюдениях» в конце выпуска.</p>
 </section>
 
-<section id="itogi">
-  <p class="section-kicker">Итоги недели</p>
-  <h2>Что произошло за неделю</h2>
-  <div class="lead">
-
-    <p>Недельное окно, сведённое из двух прогонов — 18–21 и 21–26 августа, — и
-    главное в нём случилось не в каталоге, а в самом методе сбора. В середине недели
-    выяснилось, что <mark>команда <code>gh search repos --sort=stars</code>, прописанная в
-    задании джобы, звёзды не сортирует</mark>: на запросе <code>"claude skill"</code> она
-    отдаёт первой пятёркой репозитории с ★6, ★3, ★3, ★3, ★3, тогда как REST-эндпоинт
-    <code>search/repositories</code> с <code>sort=stars&amp;order=desc</code> на том же
-    запросе и окне — ★940, ★216, ★118, ★73, ★56. Значит «топ-100 по звёздам», на который
-    опирались прошлые прогоны, топом по звёздам не был: это была квазислучайная выборка из
-    потока. Вторая половина окна собрана обоими способами и объединена, чтобы не потерять
-    то, что находил старый.</p>
-
-    <p>Итого за неделю: <mark>794 уникальных непроизводных репозитория</mark> в рабочей
-    выборке — 314 в первой половине и 480 во второй, форки отброшены, отсечки ровно по
-    09:11 и 07:47 UTC, показанное ранее исключено. Порог ★10+ перешли <mark>86</mark>, и все
-    86 вошли в каталог; README проверён у каждого, пустых нет. Сырые счётчики GitHub по
-    топику <code>claude-code</code> — 1051 и 1597 — между собой не сопоставимы (разные наборы
-    запросов и разные отсечки), складывать их нельзя, и вывода о росте потока из них делать
-    не стоит.</p>
-
-    <p>Официальная сторона за неделю: в <code>anthropics/skills</code> <mark>ни одного нового
-    скилла</mark> — переименование <code>academy-guide</code> в первой половине и
-    содержательный гайд по переезду Python SDK 0.x → 1.x во второй. В маркетплейсе три дня
-    тишины сменились первыми за два окна новыми плагинами, один из них — от Unity
-    Technologies. CLI прошёл одиннадцать версий, 2.1.236 → 2.1.246. Отдельный сюжет — релизы
-    <b>Claude Managed Agents</b> 18 и 19 августа: бюджет на сессию, роль advisor в
-    мульти-агентном ростере, memory stores в self-hosted-песочницах. Release notes платформы
-    за вторую половину окна пусты: последняя запись датирована 20 августа.</p>
-
-    <p class="g">Официальное</p>
-    <ul>
-      <li><a href="https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration#give-the-session-an-advisor">Managed Agents, релиз 18.08</a> —
-      бюджет на сессию, роль <b>advisor</b> в мульти-агентном ростере и загрузка скиллов
-      прямо из <code>.claude/skills</code> примонтированного GitHub-репозитория.</li>
-      <li><a href="https://platform.claude.com/docs/en/managed-agents/self-hosted-sandboxes#use-memory-stores">Managed Agents, релиз 19.08</a> —
-      memory stores в self-hosted-песочницах и ограничение доменов для <code>web_search</code>/<code>web_fetch</code>.</li>
-      <li><a href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md">Claude Code 2.1.236–2.1.238</a> —
-      встроенный стиль «Concise», <code>ANTHROPIC_DEFAULT_MODEL</code>, <code>headersHelper</code>
-      для плагин-маркетплейсов и починка утечки памяти на результатах сабагентов.</li>
-      <li><a href="https://github.com/anthropics/skills/tree/main/skills/academy-guide">academy-guide</a> —
-      единственный коммит в <code>anthropics/skills</code> за окно: скилл
-      <code>claude-academy-guide</code> переименован и его описание сокращено
-      (<a href="https://github.com/anthropics/skills/pull/1605">#1605</a>).</li>
-      <li><a href="https://github.com/anthropics/skills/pull/1623">claude-api: гайд по переезду Python SDK 0.x → 1.x</a> —
-      единственный коммит в <code>anthropics/skills</code> за окно (PR #1623, +303 строки):
-      новый файл <code>sdk-upgrade.md</code> и подкоманда <code>upgrade</code> у бандлового скилла.</li>
-      <li><a href="https://github.com/Unity-Technologies/unity-agent-plugin">unity</a> —
-      официальный плагин Unity Technologies, 18 скиллов по геймдеву, монетизации, локализации,
-      мультиплееру и Shader Graph (<a href="https://github.com/anthropics/claude-plugins-official/pull/5595">PR #5595</a>).</li>
-      <li><a href="https://github.com/anthropics/claude-plugins-official/pull/5600">netsuite-ai-companion и netsuite-finance-analyst</a> —
-      Oracle NetSuite перестроил раскладку и добавил два плагина к существующему <code>netsuite-suitecloud</code>.</li>
-      <li><a href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md">Claude Code 2.1.239 → 2.1.246</a> —
-      <code>promptCacheTtl</code>/<code>subagentPromptCacheTtl</code>, разбивка по <code>/loop</code>
-      в <code>/usage</code>, модель и уровень effort у каждого сабагента в <code>/tasks</code>,
-      частичный результат сабагента вместо «готово» на упоре в <code>maxTurns</code>.</li>
-    </ul>
-
-    <p class="g">Экосистема</p>
-    <ul>
-      <li><a href="https://github.com/s1dashu/ip-as-logo-skill">s1dashu/ip-as-logo-skill</a> ★3294 —
-      скилл генерации маскотов-логотипов; топ окна с огромным отрывом и при этом самое
-      далёкое от агент-разработки, что в каталоге есть.</li>
-      <li><a href="https://github.com/duty1g/x64dbg-mcp-server">duty1g/x64dbg-mcp-server</a> ★1429 —
-      нативный MCP-плагин для отладчика x64dbg на Zig; топ окна и самый далёкий от скиллов пункт каталога.</li>
-      <li><a href="https://github.com/nateherkai/scroll-craft">nateherkai/scroll-craft</a> ★940 —
-      скилл скролл-сайтов, который проверяет собственную работу скриншотами скролла.</li>
-      <li><a href="https://github.com/Leutenegger/watermarks-remover">Leutenegger/watermarks-remover</a> ★927 —
-      снятие AI-провенанс-меток из текста и файлов; репозиторий-копия чужого проекта, подробности ниже.</li>
-      <li><a href="https://github.com/kgoedecke/doop">kgoedecke/doop</a> ★385 —
-      многопользовательский дизайн-холст, где агент правит фреймы через встроенный MCP-сервер наравне с человеком.</li>
-    </ul>
-  
-  </div>
-</section>
 
 <section id="official">
   <p class="section-kicker">От разработчиков платформы</p>
   <h2>Официальные скиллы и плагины</h2>
-  <p class="section-intro">Сначала показаны изменения официальных каталогов. Релизы моделей, CLI и остальные обновления доступны в продолжении раздела.</p>
-  <div class="block">
-    <h3>anthropics/skills — ни одного нового скилла <span class="src">1 коммит за окно</span></h3>
-    <p>За окно в репозитории один коммит:
-    <a href="https://github.com/anthropics/skills/pull/1605">#1605</a> от 18.08 —
-    <code>claude-academy-guide</code> переименован в
-    <a href="https://github.com/anthropics/skills/tree/main/skills/academy-guide">academy-guide</a>,
-    описание сокращено. Практическое следствие: ссылка на этот скилл из прошлого дайджеста
-    (<code>skills/claude-academy-guide</code>) больше не открывается — новый путь проверен
-    через API и приведён выше. <mark>Новых скиллов Anthropic в этом окне нет</mark>; это факт
-    окна, а не пропуск сбора.</p>
-  </div>
+  <p class="section-intro">Изменения официальных каталогов за окно: что добавилось в <code>anthropics/skills</code> и в маркетплейс плагинов. Релизы CLI — в начале выпуска.</p>
 
+  <div class="two-col">
   <div class="block">
-    <h3>claude-plugins-official — 95 коммитов, ни одного нового плагина</h3>
-    <p>93 из 95 коммитов — бампы версий партнёрских плагинов (<code>wix</code>, <code>sanity</code>,
-    <code>stripe</code>, <code>supabase</code>, <code>sentry-cli</code>, <code>posthog</code>,
-    <code>zscaler</code>, <code>qdrant-skills</code>, <code>sap-fiori-mcp-server</code> и далее
-    по списку). Единственный содержательный —
-    <a href="https://github.com/anthropics/claude-plugins-official/pull/5424">#5424</a>:
-    CI-валидация теперь одинаково проверяет пути манифестов и содержимого для
-    <code>plugins/*/</code> и <code>external_plugins/*/</code>. Сама директория
-    <code>external_plugins/</code> (15 плагинов: asana, context7, discord, firebase, github,
-    gitlab, greptile, linear, playwright, serena, telegram, terraform и др.) существует минимум
-    с 12.08 — то есть это не новая структура, а доведение проверок до неё.</p>
+    <h3>anthropics/skills <span class="src">— переименование academy-guide и гайд по переезду Python SDK</span></h3>
+    <p>За окно в репозиторий официальных скиллов ушёл <b>ровно один коммит</b> —
+    <code>3b3fad9</code> от 21.08 17:10 UTC, merge PR
+    <a href="https://github.com/anthropics/skills/pull/1623">#1623</a>
+    «Update claude-api skill: Python SDK 0.x to 1.x upgrade guide». Изменено 4 файла, +303/−6 строк:</p>
+    <ul>
+      <li><b>новый</b> <code>skills/claude-api/python/claude-api/sdk-upgrade.md</code> (+286) — пошаговое руководство переезда;</li>
+      <li><code>skills/claude-api/SKILL.md</code> (+3) — маршрутизация на новую подкоманду;</li>
+      <li><code>skills/claude-api/python/claude-api/README.md</code> (+6/−6) — HTTP-слой 1.x;</li>
+      <li><code>skills/claude-api/shared/live-sources.md</code> (+8).</li>
+    </ul>
+    <p style="margin-top:.7rem">Повод описан в самом PR: <code>anthropic</code> 1.0.0 вышел на PyPI,
+    HTTP-слой переехал с <code>httpx</code> на поддерживаемый форк <code>httpx2</code>, минимальный
+    Python поднят до 3.10, удалён давно устаревший API (Text Completions, <code>LegacyAPIResponse</code>).
+    Автор PR отдельно объясняет, почему это не механическая правка: <mark><code>httpx.Timeout</code>
+    или <code>httpx.Client</code>, переданные в клиент 1.x, падают не на импорте, а на запросе</mark>,
+    а мокирование и трейсинг, патчащие <code>httpx</code>, тихо перестают видеть трафик SDK.
+    Существовавшая подкоманда <code>migrate</code> покрывает миграции моделей, а не апгрейды
+    пакета, — маршрутизировать такие запросы было некуда.</p>
+    <p style="margin-top:.7rem">Структура руководства, по описанию PR: шаг 0 подтверждает область
+    работ и проверяет, что 1.x вообще опубликован, прежде чем писать пин; шаг 1 — таблица
+    инвентаризации, строка на каждый сигнал для грепа (<code>import httpx</code>,
+    <code>with_raw_response</code>, <code>completions.create</code>, инструментовка <code>respx</code> /
+    <code>pytest_httpx</code> / OpenTelemetry), и та же таблица, прогнанная в конце, работает
+    проверкой; шаги 2–8 — бамп зависимости, замена объектов <code>httpx</code> на <code>httpx2</code>,
+    await у асинхронного <code>.with_raw_response</code>, удаление Text Completions и выпиленных
+    параметров сэмплинга.</p>
+    <p style="margin-top:.7rem">Релиз самого SDK — <a href="https://platform.claude.com/docs/en/release-notes/api">запись
+    от 20 августа</a> в release notes платформы, то есть за сутки до начала окна; сам
+    <a href="https://github.com/anthropics/anthropic-sdk-python/blob/main/MIGRATION.md">migration guide</a>
+    живёт в репозитории SDK.</p>
+  </div>
+  <div class="block">
+    <h3>claude-plugins-official <span class="src">— первые за два окна новые плагины: unity и два NetSuite</span></h3>
+    <p>8 коммитов за окно, и в отличие от прошлого прогона это не только бампы версий.
+    В marketplace сейчас <b>289 плагинов</b>.</p>
+    <ul>
+      <li><b><a href="https://github.com/anthropics/claude-plugins-official/pull/5595">unity</a></b>
+      (merged 24.08 20:52 UTC) — партнёрский листинг Unity Technologies, 18 скиллов: геймдев,
+      монетизация, локализация, мультиплеер, Shader Graph. Только скиллы, без <code>.mcp.json</code>,
+      лицензия Unity Companion, источник запинен на коммит <code>36052397</code> репозитория
+      <a href="https://github.com/Unity-Technologies/unity-agent-plugin">Unity-Technologies/unity-agent-plugin</a>.</li>
+      <li><b><a href="https://github.com/anthropics/claude-plugins-official/pull/5600">netsuite-ai-companion и netsuite-finance-analyst</a></b>
+      (merged 25.08 03:14 UTC) — Oracle NetSuite перешёл на публикацию из ветки
+      <code>ai-plugins-dist</code> репозитория
+      <a href="https://github.com/oracle/netsuite-suitecloud-sdk/tree/ai-plugins-dist/anthropic">oracle/netsuite-suitecloud-sdk</a>,
+      по плагину на подкаталог. Старый сводный бандл заменён тремя реальными плагинами;
+      <code>netsuite-suitecloud</code> сохранил слаг, поэтому установленные копии обновятся на месте.
+      Оба новых требуют NetSuite AI Connector Service.</li>
+      <li><b><a href="https://github.com/anthropics/claude-plugins-official/pull/5597">claude-security 0.10.2 → 0.10.2.3</a></b>
+      — два релиза собственного плагина Anthropic за окно (21.08 и 24.08), тела PR пустые, кроме
+      номера версии: содержание изменений публично не раскрыто.</li>
+      <li><a href="https://github.com/anthropics/claude-plugins-official/pull/5598">Атрибуция unity и qodo</a>
+      — обеим записям добавлено поле <code>author</code>, которого не хватало для отображения партнёра.</li>
+      <li>Бампы версий партнёрских плагинов (carta: три плагина) — одной фоновой строкой.</li>
+    </ul>
+  </div>
   </div>
 
   <div class="block">
@@ -839,142 +862,13 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
     (прошлый прогон закончился в 09:11 UTC того же дня, а релиз-ноты датированы днём без времени) —
     включена, потому что в предыдущий дайджест не попала.</p>
   </div>
-
-  <div class="block">
-    <h3>Claude Code CLI 2.1.236 → 2.1.238 <span class="src">выжимка по агент-разработке</span></h3>
-    <ul>
-      <li><b>2.1.238</b> — <code>headersHelper</code> на url-маркетплейсе или записи каталога:
-      команда, выдающая HTTP-заголовки (например, короткоживущий токен) для запросов каталога и
-      архивов; запускается только при install/update и после показа команды, с подтверждением
-      <code>[y/N]</code>. Плюс требование принятого trust-диалога для <code>headersHelper</code>
-      в проектном <code>.mcp.json</code> и запуск без унаследованных credential-переменных
-      окружения — модель доверия для плагинов и MCP подтянули заметно.</li>
-      <li><b>2.1.238</b> — <mark>починена неограниченная утечка памяти в длинных интерактивных
-      сессиях</mark>: результаты инструментов сабагентов освобождаются, как только уходят из окна
-      отображения. Для долгих мульти-агентных прогонов это самое полезное в релизе.</li>
-      <li><b>2.1.238</b> — <code>claude self-hosted-runner --defer-shutdown-max-min</code>: по
-      SIGTERM раннер продолжает обслуживать прикреплённые сессии заданное число минут. Плюс
-      исправление, из-за которого здоровый раннер отбирался сервером после одного медленного поллинга.</li>
-      <li><b>2.1.237</b> — встроенный output style <b>«Concise»</b>: ответ начинается с результата,
-      без преамбул и нарратива, при той же полноте работы.</li>
-      <li><b>2.1.236</b> — <code>ANTHROPIC_DEFAULT_MODEL</code> (модель для новых сессий,
-      <code>/model</code> по-прежнему перебивает); <code>notify_when_idle</code> в кросс-сессионном
-      <code>SendMessage</code> — одноразовое уведомление, когда соседняя сессия освободится, без
-      поллинга; ограничение <code>/recap</code> 400 символами против разрастания рекапов;
-      auth-режим больше не обманывается настройкой <code>status.showUntrackedFiles=no</code>.</li>
-    </ul>
-  </div>
-
-
-  <div class="block">
-    <h3>anthropics/skills — один коммит, но по делу</h3>
-    <p>За окно в репозиторий официальных скиллов ушёл <b>ровно один коммит</b> —
-    <code>3b3fad9</code> от 21.08 17:10 UTC, merge PR
-    <a href="https://github.com/anthropics/skills/pull/1623">#1623</a>
-    «Update claude-api skill: Python SDK 0.x to 1.x upgrade guide». Изменено 4 файла, +303/−6 строк:</p>
-    <ul>
-      <li><b>новый</b> <code>skills/claude-api/python/claude-api/sdk-upgrade.md</code> (+286) — пошаговое руководство переезда;</li>
-      <li><code>skills/claude-api/SKILL.md</code> (+3) — маршрутизация на новую подкоманду;</li>
-      <li><code>skills/claude-api/python/claude-api/README.md</code> (+6/−6) — HTTP-слой 1.x;</li>
-      <li><code>skills/claude-api/shared/live-sources.md</code> (+8).</li>
-    </ul>
-    <p style="margin-top:.7rem">Повод описан в самом PR: <code>anthropic</code> 1.0.0 вышел на PyPI,
-    HTTP-слой переехал с <code>httpx</code> на поддерживаемый форк <code>httpx2</code>, минимальный
-    Python поднят до 3.10, удалён давно устаревший API (Text Completions, <code>LegacyAPIResponse</code>).
-    Автор PR отдельно объясняет, почему это не механическая правка: <mark><code>httpx.Timeout</code>
-    или <code>httpx.Client</code>, переданные в клиент 1.x, падают не на импорте, а на запросе</mark>,
-    а мокирование и трейсинг, патчащие <code>httpx</code>, тихо перестают видеть трафик SDK.
-    Существовавшая подкоманда <code>migrate</code> покрывает миграции моделей, а не апгрейды
-    пакета, — маршрутизировать такие запросы было некуда.</p>
-    <p style="margin-top:.7rem">Структура руководства, по описанию PR: шаг 0 подтверждает область
-    работ и проверяет, что 1.x вообще опубликован, прежде чем писать пин; шаг 1 — таблица
-    инвентаризации, строка на каждый сигнал для грепа (<code>import httpx</code>,
-    <code>with_raw_response</code>, <code>completions.create</code>, инструментовка <code>respx</code> /
-    <code>pytest_httpx</code> / OpenTelemetry), и та же таблица, прогнанная в конце, работает
-    проверкой; шаги 2–8 — бамп зависимости, замена объектов <code>httpx</code> на <code>httpx2</code>,
-    await у асинхронного <code>.with_raw_response</code>, удаление Text Completions и выпиленных
-    параметров сэмплинга.</p>
-    <p style="margin-top:.7rem">Релиз самого SDK — <a href="https://platform.claude.com/docs/en/release-notes/api">запись
-    от 20 августа</a> в release notes платформы, то есть за сутки до начала окна; сам
-    <a href="https://github.com/anthropics/anthropic-sdk-python/blob/main/MIGRATION.md">migration guide</a>
-    живёт в репозитории SDK.</p>
-  </div>
-
-  <div class="block">
-    <h3>claude-plugins-official — впервые за два окна новые плагины</h3>
-    <p>8 коммитов за окно, и в отличие от прошлого прогона это не только бампы версий.
-    В marketplace сейчас <b>289 плагинов</b>.</p>
-    <ul>
-      <li><b><a href="https://github.com/anthropics/claude-plugins-official/pull/5595">unity</a></b>
-      (merged 24.08 20:52 UTC) — партнёрский листинг Unity Technologies, 18 скиллов: геймдев,
-      монетизация, локализация, мультиплеер, Shader Graph. Только скиллы, без <code>.mcp.json</code>,
-      лицензия Unity Companion, источник запинен на коммит <code>36052397</code> репозитория
-      <a href="https://github.com/Unity-Technologies/unity-agent-plugin">Unity-Technologies/unity-agent-plugin</a>.</li>
-      <li><b><a href="https://github.com/anthropics/claude-plugins-official/pull/5600">netsuite-ai-companion и netsuite-finance-analyst</a></b>
-      (merged 25.08 03:14 UTC) — Oracle NetSuite перешёл на публикацию из ветки
-      <code>ai-plugins-dist</code> репозитория
-      <a href="https://github.com/oracle/netsuite-suitecloud-sdk/tree/ai-plugins-dist/anthropic">oracle/netsuite-suitecloud-sdk</a>,
-      по плагину на подкаталог. Старый сводный бандл заменён тремя реальными плагинами;
-      <code>netsuite-suitecloud</code> сохранил слаг, поэтому установленные копии обновятся на месте.
-      Оба новых требуют NetSuite AI Connector Service.</li>
-      <li><b><a href="https://github.com/anthropics/claude-plugins-official/pull/5597">claude-security 0.10.2 → 0.10.2.3</a></b>
-      — два релиза собственного плагина Anthropic за окно (21.08 и 24.08), тела PR пустые, кроме
-      номера версии: содержание изменений публично не раскрыто.</li>
-      <li><a href="https://github.com/anthropics/claude-plugins-official/pull/5598">Атрибуция unity и qodo</a>
-      — обеим записям добавлено поле <code>author</code>, которого не хватало для отображения партнёра.</li>
-      <li>Бампы версий партнёрских плагинов (carta: три плагина) — одной фоновой строкой.</li>
-    </ul>
-  </div>
-
-  <div class="block">
-    <h3>Claude Code CLI 2.1.239 → 2.1.246</h3>
-    <p>Восемь версий за окно, из них 2.1.240 и 2.1.241 — «bug fixes and reliability improvements»
-    без деталей. Существенное для агент-разработки:</p>
-    <ul>
-      <li><b>Многоагентность и сабагенты.</b> Сабагент, упёршийся в лимит <code>maxTurns</code>,
-      теперь возвращает результат с пометкой «частичный» и подсказкой продолжить через
-      <code>SendMessage</code>, а не выглядит завершившимся. В <code>/tasks</code> показываются
-      модель и уровень effort каждого сабагента. <code>←</code> или <code>/background</code> во время
-      динамического workflow больше не перезапускают его законченных сабагентов молча — сначала
-      спрашивают и говорят, сколько будет перезапущено. Починены фоновые сабагенты, не
-      просыпавшиеся после завершения последней фоновой Bash-задачи.</li>
-      <li><b>Кэш и стоимость.</b> Настройки <code>promptCacheTtl</code> и
-      <code>subagentPromptCacheTtl</code> — часовой prompt-кэш на основном диалоге при
-      пятиминутном у сабагентов. Managed-настройка <code>modelPricing</code>: <code>/cost</code>,
-      статус-строка и телеметрия считают по контрактным ставкам организации, а не по прайс-листу.
-      В <code>/usage</code> — разбивка по Loops: число прогонов, токены, токены на прогон и время
-      последнего.</li>
-      <li><b>Плагины и скиллы.</b> <code>/reload-plugins</code> больше не рапортует 0 скиллов для
-      плагинов, объявляющих их как <code>skills/*/SKILL.md</code>. Плагин-скиллы с префиксом
-      <code>&lt;plugin&gt;:</code> в <code>name</code> перестали дублировать его в меню.
-      <code>claude plugin update</code> работает по голому имени. Починены установка при
-      <code>plugin.json</code> с BOM и дубликаты SHA-каталогов в кэше плагинов.</li>
-      <li><b>Модели.</b> Настройка <code>modelPicker</code> — курируемый упорядоченный список
-      моделей в <code>/model</code> с любым написанием id, включая Vertex/Bedrock. Исправлено, что
-      <code>/model</code> молча игнорировал выбор Ultracode.</li>
-      <li><b>Прочее.</b> Неинтерактивные сессии (<code>-p</code>, SDK, облачные) автоматически
-      продолжают ответ, оборванный ошибкой сервера или обрывом связи. <code>/cd</code> применяет
-      настройки, хуки, <code>.mcp.json</code>, скиллы и агентов нового каталога сразу, а не после
-      <code>--resume</code>. Прерванные MCP-вызовы в headless/remote больше не рапортуются модели
-      как «завершились без вывода». Аргументы MCP-инструмента с пустой схемой отправляются в своём
-      настоящем типе, а не строкой JSON.</li>
-    </ul>
-  </div>
-
-  <div class="block">
-    <h3>Release notes платформы — пусто</h3>
-    <p>За окно в <a href="https://platform.claude.com/docs/en/release-notes/api">release notes
-    Claude Platform</a> нет ни одной записи: последняя датирована 20 августа (Python SDK v1.0),
-    то есть до начала окна. В прошлом прогоне вся официальная активность шла именно там
-    (Managed Agents 18 и 19 августа) — в этом окне она вернулась в репозитории скиллов,
-    плагинов и CLI.</p>
-  </div>
 </section>
 
+
+<div class="catalog-columns">
 <section id="skills">
   <p class="section-kicker">Новые практики</p>
-  <h2>Скиллы <span class="count">21 материал · ★40+</span></h2>
-
+  <h2>Скиллы <span class="count">10 из 26 · ★30+</span></h2>
   <div class="item">
     <div class="stars hot">★3294</div>
     <div>
@@ -1080,7 +974,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
       допущение», три пронумерованных откровения и торжественную ремарку, что третье — самое поучительное.
       Конструктивно важна одна деталь: <mark>скилл обязан печатать перевод дословно</mark>, потому что если
       дать Claude «причесать» результат, ровно тот голос, который убирали, возвращается. Репозиторий занял
-      <b>360 очков на HN</b> 21.08 и в GitHub-поиск этого прогона не попал — см. «На периферии».</p>
+      <b>360 очков на HN</b> 21.08 и в GitHub-поиск этого прогона не попал.</p>
     </div>
   </div>
 
@@ -1122,7 +1016,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
       самый лёгкий в верхней десятке. <i>Найден только исправленным запросом.</i></p>
     </div>
   </div>
-
+  <details class="method-fold"><summary>Показать остальные 16 позиций и 28 строк ★ 10–30</summary><div class="method-body">
   <div class="item">
     <div class="stars">★91</div>
     <div>
@@ -1341,7 +1235,6 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
       «скиллов-сводок»: знание в скилле проверяемо по ссылке, а не выдаётся за общее место.</p>
     </div>
   </div>
-
   <h3 class="tail-h">★10–30 — одной строкой</h3>
   <ul class="tail">
     <li><span class="st">★28</span><span class="desc"><a href="https://github.com/blavkgokuvnn/single-agent-skills">blavkgokuvnn/single-agent-skills</a><span class="tag">процесс</span> — два скилла Codex для дисциплины одиночного агента: <code>anti-over-engineering</code> и <code>statem-single-agent</code>; README на 288 байт — содержимое тоньше, чем звёздный вес.</span></li>
@@ -1373,18 +1266,12 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
     <li><span class="st">★10</span><span class="desc"><a href="https://github.com/anhe2021212-spec/Turritopsis">anhe2021212-spec/Turritopsis</a><span class="tag">память</span> — общее знание о проекте и передача контекста между кодинг-агентами на длинных проектах. MIT.</span></li>
     <li><span class="st">★10</span><span class="desc"><a href="https://github.com/automateyournetwork/pyATS_skills">automateyournetwork/pyATS_skills</a><span class="tag">интеграция</span> — скиллы pyATS для агентов: сетевая автоматизация Cisco. <i>Найден только исправленным запросом.</i></span></li>
   </ul>
-  <p class="othersrc"><b>Из других источников.</b> За окно ничего: единственная находка вне
-  GitHub-поиска — <a href="https://github.com/muratcankoylan/Agent-Skills-for-Context-Engineering">muratcankoylan/Agent-Skills-for-Context-Engineering</a>
-  (★17786) — создана 21.12.2025 и в окно не попадает; вынесена в «На периферии».</p>
-<p class="othersrc">Из других источников: одна позиция — <code>adnanakil/nobuzz</code> ★216 пришла
-  с Hacker News (360 очков, 21.08), в GitHub-поиске прогона её не было. Разбор причины — в «На периферии».</p>
+  </div></details>
 </section>
-
 <section id="plugins">
   <p class="section-kicker">Инструменты</p>
-  <h2>Плагины и проекты <span class="count">12 материалов · ★40+</span></h2>
+  <h2>Плагины и проекты <span class="count">10 из 14 · ★30+</span></h2>
   <p class="section-intro">Инструменты вокруг агента: оркестраторы, интеграции, измерение работы и контроль расхода.</p>
-
   <div class="item">
     <div class="stars hot">★1429</div>
     <div>
@@ -1392,7 +1279,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
       <p>Топ окна с большим отрывом и самый далёкий от скиллов пункт каталога. Нативный MCP-плагин для
       отладчика x64dbg, выставляющий всю его функциональность по HTTP: брейкпоинты, пошаговое исполнение,
       чтение памяти, дамп регистров. Подключается любой MCP-совместимый ассистент. Написан на <b>Zig</b>:
-      без зависимостей, один бинарник, кросс-компиляция под x32 и x64 с любого хоста — ни .NET, ни Python,
+      без зависимостей, один бинарник, кросс-компиляция под x32 и x64 с любого хоста — ни.NET, ни Python,
       ни рантайма, плагин просто кладётся в каталог плагинов x64dbg. Транспорты — streamable HTTP и SSE,
       MCP 2024-11-05. MIT. Жанрово это не «скилл для Claude», а показатель того, куда расходится MCP:
       реверс-инжиниринг и ред-тим как обычный потребитель протокола.</p>
@@ -1535,7 +1422,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
       <i>цифры проверить в рамках прогона нельзя, это заявление автора</i>. MIT.</p>
     </div>
   </div>
-
+  <details class="method-fold"><summary>Показать остальные 4 позиции и 18 строк ★ 10–30</summary><div class="method-body">
   <div class="item">
     <div class="stars">★47</div>
     <div>
@@ -1597,7 +1484,6 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
       делает приблизительно, скрипт — точно.</p>
     </div>
   </div>
-
   <h3 class="tail-h">★10–30 — одной строкой</h3>
   <ul class="tail">
     <li><span class="st">★28</span><span class="desc"><a href="https://github.com/2005selene2005-a11y/susu-phone-agent">2005selene2005-a11y/susu-phone-agent</a><span class="tag">интеграция</span> — мост к Android-устройству для Claude Code через MCP и Shizuku, без рута и без опроса модели. MIT.</span></li>
@@ -1619,16 +1505,16 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
     <li><span class="st">★11</span><span class="desc"><a href="https://github.com/Jason-smithy/claude-certified-architect-foundations-ccao-f">Jason-smithy/claude-certified-architect-foundations-ccao-f</a><span class="tag">процесс</span> — материалы подготовки к сертификации Anthropic Claude Certified Architect Foundations: пять доменов, 25 сценарных вопросов, гайд по MCP. MIT.</span></li>
     <li><span class="st">★10</span><span class="desc"><a href="https://github.com/montezuma-p/harken">montezuma-p/harken</a><span class="tag">медиа</span> — один статический бинарник 13 МБ на whisper.cpp: полностью офлайн-транскрипция экспорта чата WhatsApp или любого аудио, без Python, ffmpeg и API-ключа.</span></li>
   </ul>
-  <p class="othersrc"><b>Из других источников.</b> Пусто: находок вне GitHub-поиска, попадающих
-  в этот блок и в окно, нет.</p>
-<p class="othersrc">Из других источников: пусто — все позиции этого блока пришли из GitHub-поиска.</p>
+  </div></details>
 </section>
+</div>
+
 
 <section id="arts">
   <p class="section-kicker">В завершение</p>
-  <h2>Тренды и исследования <span class="count">13 материалов</span></h2>
+  <h2>Исследования и наблюдения <span class="count">4 из 13</span></h2>
   <p class="section-intro">Короткие наблюдения, научные статьи и подходы — без попытки сделать их главной темой выпуска.</p>
-
+  <div class="flow-2col">
   <div class="item">
     <div class="pts">36<small>HN</small></div>
     <div>
@@ -1693,7 +1579,9 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
       подтверждено</b>; тезисы взяты в той формулировке, которая стоит в самом посте.</p>
     </div>
   </div>
-
+  </div>
+  <details class="method-fold"><summary>Показать остальные 9 материалов</summary><div class="method-body">
+  <div class="flow-2col">
   <div class="item">
     <div class="pts">19.08<small>simonw</small></div>
     <div>
@@ -1843,182 +1731,52 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
       ошибок на нескольких моделях. Для агент-разработки значимо только как фон, но окно им задето.</li>
     </ul>
   </div>
+  </div>
+  </div></details>
 </section>
 
-<section id="periph">
-  <p class="section-kicker">Прозрачность исследования</p>
-  <h2>Методология и отсев</h2>
-  <p class="section-intro">Что не вошло в главный рассказ, какие каналы не покрыты и где метод сбора мог исказить результат.</p>
-  <div class="block">
-    <ul>
-      <li><b>Отсев ★&lt;10.</b> В выборке 314 репозиториев за окно 290 имеют меньше ★10 и в каталог
-      не включены. Это число по выборке (топ-100 по звёздам на каждый из четырёх запросов), а не по
-      полному потоку окна — полный поток больше, но насколько именно, из сырых счётчиков GitHub
-      не выводится (см. «Сводку»). Заметные исключения, о которых стоит знать:
-      <a href="https://github.com/Data-System-School/agent-skills">Data-System-School/agent-skills</a> ★8 —
-      переносимые скилл-процедуры, первая из них <code>investigate-codebase</code>, строящая модель
-      незнакомого репозитория на доказательствах вместо уверенной прогулки по директориям;
-      <a href="https://github.com/Haroon-jay/wctx">Haroon-jay/wctx</a> ★7 — local-first MCP-сервер,
-      превращающий законченные сессии в находки с привязкой к коммитам и проверкой устаревания;
-      <a href="https://github.com/czm15053/dsh-development-practices">czm15053/dsh-development-practices</a> ★7 —
-      инженерная дисциплина, дистиллированная из DeepSeek Harness;
-      <a href="https://github.com/nikshepsvn/scrim">nikshepsvn/scrim</a> ★4 — прореживание вывода
-      инструментов и наблюдаемость стоимости для Claude Code и Codex на fail-open-хуках;
-      <a href="https://github.com/taransalh1/half-life">taransalh1/half-life</a> ★3 — плагин,
-      находящий временные инженерные решения (обходные пути, фича-флаги, запиненные зависимости)
-      и напоминающий о них.</li>
-      <li><b>Полнота счётчиков.</b> Четыре GitHub-запроса выполнялись с <code>--limit 100</code> и
-      сортировкой по звёздам, поэтому «314» — размер выборки, а не популяции. Верхний тир при этом
-      покрыт полностью: минимальное значение звёзд в сотне результатов у всех четырёх запросов ниже
-      ★10 (★2, ★0, ★0, ★1), то есть ни один запрос не обрезан внутри верхнего тира — цифра
-      «24 в каталоге» полная. Сырые счётчики <code>search/repositories</code> (1051 по топику и
-      2033 по строке «agent skills») здесь намеренно не используются как мера потока: первый
-      включает форки и начинается на 9 часов раньше окна, второй — вообще полнотекстовое
-      совпадение фразы, а не число новых скилл-репозиториев.</li>
-      <li><b>Пустых репозиториев не встретилось.</b> README проверен через API у всех 24 кандидатов
-      ★10+; самый тонкий — <code>blavkgokuvnn/single-agent-skills</code> (288 байт), он помечен в
-      каталоге. Пересечение с <code>seenRepos</code> прошлого прогона — пустое, повторов нет.</li>
-      <li><b>Оригинал watermarks-remover вне окна.</b>
-      <a href="https://github.com/guillaumemeyer/watermarks-remover">guillaumemeyer/watermarks-remover</a> ★16227
-      создан 11.08 — это прошлое окно, и в тот дайджест он не попал. Здесь он упомянут только как
-      первоисточник копии, попавшей в каталог.</li>
-      <li><b>Вне окна по дате создания.</b>
-      <a href="https://github.com/muratcankoylan/Agent-Skills-for-Context-Engineering">muratcankoylan/Agent-Skills-for-Context-Engineering</a> ★17786 —
-      крупный сборник скиллов по context engineering и мульти-агентным архитектурам; создан
-      21.12.2025, поэтому в каталог не входит, но как ориентир по теме заслуживает упоминания.</li>
-      <li><b>Вне окна по дате публикации.</b>
-      <a href="https://www.oreilly.com/radar/the-ai-agents-stack-2026-edition/">The AI Agents Stack (2026 Edition)</a>
-      Паоло Перроне на O'Reilly Radar — содержательный разбор шести слоёв production-стека агентов
-      (модели и инференс; протоколы и инструменты; память и знания; фреймворки и SDK; эвал и
-      наблюдаемость; guardrails), опубликован 08.06.2026. Проверен по первоисточнику и не включён
-      в «Статьи» только из-за даты.</li>
-      <li><b>SEO-агрегаторы как радар.</b> WebSearch по подходам агент-разработки в этом окне
-      вернул почти исключительно агрегаторы: atlan.com, digitalapplied.com, hubstic.com,
-      codebridge.tech, deepwiki.com. Использованы только как наводки; единственные две ссылки,
-      которые из этого выхлопа выжили проверку по первоисточнику — O'Reilly Radar и репозиторий
-      muratcankoylan, обе вне окна. Цитат из агрегаторов в дайджесте нет.</li>
-      <li><b>Проверено и отброшено как не по теме.</b> Посты Саймона Уиллисона за 18 и 20 августа —
-      <a href="https://simonwillison.net/2026/Aug/18/mojo-is-now-open-source/">Mojo is now open source</a>,
-      <a href="https://simonwillison.net/2026/Aug/20/bun-webview-json-api/">Bun webview JSON API</a>,
-      <a href="https://simonwillison.net/2026/Aug/20/chatgpt-search-now-uses-the-siteoperator-at-scale/">ChatGPT search now uses the site: operator at scale</a> —
-      к агентам и скиллам отношения не имеют. За 21 августа постов нет (страница отдаёт 404) —
-      это кромка окна, а не сбой сбора.</li>
-      <li><b>Инфраструктура сбоку.</b> <a href="https://machine0.io">machine0 (YC S26)</a> — 81 очко
-      на HN, постоянные CPU/GPU-виртуалки из CLI. Полезно как подложка под автономные прогоны, но
-      это не скилл, не плагин и не подход, поэтому только строка здесь.</li>
-      <li><b>Непокрытые каналы.</b> Дайджест по-прежнему не смотрит Discord/Slack Anthropic,
-      X/Twitter и YouTube — источники, где ранняя часть обсуждений живёт раньше, чем доходит до HN.
-      <code>agent-codemode</code> в этом окне — пример: автор ссылается на собственный тред в X как
-      на основное объяснение, и до GitHub-поиска этот сигнал доходит с задержкой.</li>
-      <li><b>Бампы официального marketplace свёрнуты.</b> 93 коммита вида
-      <code>bump(&lt;плагин&gt;): &lt;sha&gt; → &lt;sha&gt;</code> в
-      <code>anthropics/claude-plugins-official</code> не разбирались поштучно — они не несут
-      содержательных изменений для читателя дайджеста. Сводная строка есть в разделе «Официальное».</li>
-    </ul>
-  </div>
-
-  <div class="block">
-    <ul>
-      <li><b>Дефект метода сбора — главное, что стоит унести из этого прогона.</b> Команда
-      <code>gh search repos --sort=stars</code>, прописанная и в SKILL.md, и в промпте джобы, звёзды не
-      сортирует; флаг молча игнорируется, и с <code>--order=desc</code> тоже. Проверка прямая:
-      <code>gh search repos "claude skill" --created=">=2026-08-21" --sort=stars --limit 5</code> возвращает
-      ★6, ★3, ★3, ★3, ★3, а <code>gh api search/repositories -f q='claude skill created:&gt;=2026-08-21'
-      -f sort=stars -f order=desc</code> на том же окне — ★940, ★216, ★118, ★73, ★56. Минимум звёзд в
-      «топ-100 по звёздам» из старой команды был <b>0</b> при 1655 репозиториях в потоке — этого одного
-      достаточно, чтобы увидеть, что сортировки нет. <b>Следствия:</b> каталоги обоих прошлых прогонов были
-      выборками из потока, а не топами по звёздам, и их «★N» означало ранг внутри случайной выборки.
-      <b>Что сделано:</b> собрано обоими способами, результаты объединены (480 уникальных против 299 у
-      одного только исправленного и 358 у одного только старого). <b>Что стоит поправить:</b> заменить
-      команду в задании джобы и в SKILL.md на вызов REST-эндпоинта.</li>
-
-      <li><b>Пропуск, который поймал HN, а не GitHub.</b>
-      <a href="https://github.com/adnanakil/nobuzz">adnanakil/nobuzz</a> ★216 создан 21.08 в 14:18 UTC и в
-      четвёрку GitHub-запросов не попал ни разу — при том что в описании прямо написано «A Claude Code
-      skill». Причина — у репозитория <mark>нет ни одного топика</mark>, а по текстовым запросам он в
-      сломанной выборке не всплыл. Нашёлся через Hacker News, где взял 360 очков. Это единственная позиция
-      каталога «из других источников» и наглядная иллюстрация, зачем в сборе больше одного канала.</li>
-
-      <li><b>Репозитории-копии продолжаются, и предыдущая копия исчезла.</b>
-      <a href="https://github.com/ShadowAqueduct/watermark-remover">ShadowAqueduct/watermark-remover</a> ★795 —
-      не форк по флагу GitHub, но README сохранил CI-бейджи и ссылки на релизы оригинала
-      <a href="https://github.com/guillaumemeyer/watermarks-remover">guillaumemeyer/watermarks-remover</a>
-      (★18380, создан 11.08), с переписанным полем «Author». Копия из прошлого дайджеста,
-      <code>Leutenegger/watermarks-remover</code> ★927, сейчас отдаёт <mark>404</mark>. За одно окно одна
-      копия исчезла, другая набрала ★795 за трое суток.</li>
-
-      <li><b>Отсев ★&lt;10.</b> В рабочей выборке 480 репозиториев, <b>418</b> не дотянули до ★10 и в
-      каталог не включены. Число — по выборке, а не по полному потоку окна. Заметные исключения:
-      <a href="https://github.com/AS-FOSS/aegis-skills">AS-FOSS/aegis-skills</a> ★9 — оборонительные скиллы
-      по безопасности;
-      <a href="https://github.com/Egoist-Machines/switchboard">Egoist-Machines/switchboard</a> ★5 —
-      локальная модель-нейтральная память, один общий стор для OpenCode, Claude Code и других;
-      <a href="https://github.com/Morningstar202604/AgentSeed">Morningstar202604/AgentSeed</a> ★7 — гибрид
-      скилла и MCP-сервера против галлюцинаций, проверяющий код перед выдачей;
-      <a href="https://github.com/devopsinside/burn-o-meter">devopsinside/burn-o-meter</a> ★5 — сколько на
-      самом деле стоят ваши агенты: токены, траты, эффективность кэша, лимиты;
-      <a href="https://github.com/aiopshwang/verify-regression-tests">aiopshwang/verify-regression-tests</a> ★8 —
-      проверка, что регрессионный тест падает именно из-за целевого бага.</li>
-
-      <li><b>Вне темы, но в каталоге.</b> Три позиции ★20+ к агент-разработке отношения не имеют и включены
-      только потому, что каталог ранжируется по звёздам: <code>KurosawaGeeker/femboy-skill</code> ★79,
-      <code>nevertoday/xxd-panel-028</code> ★56, <code>ra1nyxin/immersive-vibration-response-skill</code> ★20.
-      Ещё две — <code>Neko3000/deepseek-whalechan</code> ★38 и <code>liangdabiao/*-vision-rag</code> ★39/★14 —
-      про генерацию медиа, а не про агентов как таковых.</li>
-
-      <li><b><code>skills.sh</code> как складывающийся канал установки.</b> У четырёх каталожных позиций
-      разных авторов — <code>mkanat/skills</code>, <code>amElnagdy/review-skills</code>,
-      <code>atinux/docster</code>, <code>sidkh/term-radar</code> — а также у
-      <code>alchaincyf/huashu-excel</code> в README стоит бейдж <a href="https://skills.sh">skills.sh</a> и
-      инструкция <code>npx skills add &lt;owner&gt;/&lt;repo&gt;</code>. Это <mark>сторонний реестр, не
-      Anthropic</mark>; в этом окне он выглядит уже не экспериментом, а дефолтным способом раздать скилл вне
-      официального marketplace. Отдельного разбора реестра в этом прогоне не делалось — отмечено как
-      наблюдение по READMEs.</li>
-
-      <li><b>Вышло за окно, но всплыло в нём.</b>
-      <a href="https://simonwillison.net/2026/Feb/23/agentic-engineering-patterns/">Software Engineering in
-      the Agentic Era</a> — 34 очка на HN 23.08, но сам пост датирован февралём 2026; по правилу окна в
-      каталог статей не идёт. Запись release notes платформы про <b>Python SDK v1.0</b> датирована 20 августа —
-      на сутки раньше начала окна; приведена в «Официальном» как повод для PR #1623, а не как находка окна.</li>
-
-      <li><b>Каналы, которые не отработали или не покрывались.</b> WebSearch по подходам агент-разработки за
-      окно дал только SEO-агрегаторы и недатированные обзоры плюс препринты вне окна; ни одна позиция оттуда
-      в дайджест не взята — использованы исключительно как наводка. Архивная страница
-      <code>simonwillison.net/2026/Aug/</code> отдаётся постранично и через WebFetch первую страницу за окно
-      не показала — посты собраны обходом дневных страниц 21–26 августа. Два препринта arXiv включены по
-      названию и ссылке, <b>без чтения</b>. Тела PR релизов <code>claude-security</code> пустые — что именно
-      изменилось в 0.10.2 → 0.10.2.3, публично не раскрыто.</li>
-
-      <li><b>Границы прогона.</b> Дайджест собран джобой <code>xxx</code> (ежедневно в 09:00), а не штатной
-      <code>agent-digest</code> (пятница, 10:00). Обе читают один и тот же
-      <code>~/.cache/agent-digest/state.json</code>, поэтому окно 21→26.08 закрыто этим прогоном, и
-      пятничный прогон получит окно от 26.08, а не от 21.08.</li>
-    </ul>
-  </div>
-</section>
 
 <section id="sources">
   <p class="section-kicker">Проверка</p>
   <h2>Источники</h2>
   <p class="section-intro">Ссылки на первичные материалы, поисковые запросы и данные, использованные в выпуске.</p>
-  <p class="src"><a href="https://github.com/anthropics/skills/pull/1605">github.com/anthropics/skills/pull/1605</a> · <a href="https://github.com/anthropics/skills/tree/main/skills/academy-guide">github.com/anthropics/skills — skills/academy-guide</a> · <a href="https://github.com/anthropics/claude-plugins-official/pull/5424">github.com/anthropics/claude-plugins-official/pull/5424</a> · <a href="https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md">raw.githubusercontent.com — claude-code CHANGELOG.md</a> · <a href="https://platform.claude.com/docs/en/release-notes/api">platform.claude.com — Claude Platform release notes</a> · <a href="https://platform.claude.com/docs/en/managed-agents/budgets">platform.claude.com — Managed Agents: Session budgets</a> · <a href="https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration#give-the-session-an-advisor">platform.claude.com — Managed Agents: advisor</a> · <a href="https://platform.claude.com/docs/en/managed-agents/skills#load-skills-from-a-github-repository">platform.claude.com — Managed Agents: skills from GitHub</a> · <a href="https://platform.claude.com/docs/en/managed-agents/self-hosted-sandboxes#use-memory-stores">platform.claude.com — Managed Agents: memory stores</a> · <a href="https://platform.claude.com/docs/en/managed-agents/tools#restrict-web-search-and-web-fetch-domains">platform.claude.com — Managed Agents: restrict web domains</a> · <a href="https://fx.sh">fx.sh</a> · <a href="https://www.danielvaughn.dev/posts/huzzah/">danielvaughn.dev — Huzzah</a> · <a href="https://demo.frugaltokens.com/">demo.frugaltokens.com</a> · <a href="https://machine0.io">machine0.io</a> · <a href="https://simonwillison.net/2026/Aug/19/conceptual-integrity-and-counting-lines-of-code/">simonwillison.net — Conceptual integrity and counting lines of code</a> · <a href="https://simonwillison.net/2026/Aug/19/smolmachines-untrusted-sandbox/">simonwillison.net — smolmachines untrusted sandbox</a> · <a href="https://github.com/simonw/research/tree/main/smolmachines-untrusted-sandbox#readme">github.com/simonw/research — smolmachines-untrusted-sandbox</a> · <a href="https://www.oreilly.com/radar/the-ai-agents-stack-2026-edition/">oreilly.com/radar — The AI Agents Stack (2026 Edition)</a> · <a href="https://arcprize.org/scorecards/24ddb219-987e-464f-9050-6398a29cf5ac">arcprize.org — скоркарта 24ddb219</a> · <a href="https://github.com/guillaumemeyer/watermarks-remover">github.com/guillaumemeyer/watermarks-remover</a> · <a href="https://github.com/anthropics/skills/pull/1623">github.com/anthropics/skills/pull/1623</a> · <a href="https://github.com/anthropics/claude-plugins-official/pull/5595">claude-plugins-official/pull/5595</a> · <a href="https://github.com/anthropics/claude-plugins-official/pull/5597">/5597</a> · <a href="https://github.com/anthropics/claude-plugins-official/pull/5598">/5598</a> · <a href="https://github.com/anthropics/claude-plugins-official/pull/5600">/5600</a> · <a href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md">github.com/anthropics/claude-code — CHANGELOG.md</a> · <a href="https://github.com/anthropics/anthropic-sdk-python/blob/main/MIGRATION.md">anthropic-sdk-python — MIGRATION.md</a> · <a href="https://fabiensanglard.net/agent.md/index.html">fabiensanglard.net — My agent.md</a> · <a href="https://allaboutcoding.ghinda.com/a-week-of-using-codex-more-than-claude/">allaboutcoding.ghinda.com — A week of using Codex more than Claude</a> · <a href="https://www.laude.org/updates/headlong-a-microharness-for-persistent-agents">laude.org — Headlong</a> · <a href="https://code.joejag.com/2026/your-agent-is-not-the-model.html">code.joejag.com — Your Agent Is Not the Model</a> · <a href="https://simonwillison.net/2026/Aug/22/more-than-just-code-review/">simonwillison.net — More than just code review</a> · <a href="https://simonwillison.net/2026/Aug/23/drew-breunig/">simonwillison.net — Fable &amp; The End of the Free Lunch</a> · <a href="https://www.dbreunig.com/2026/08/23/fable-the-end-of-moore-s-law.html">dbreunig.com — Fable &amp; the end of Moore's Law</a> · <a href="https://arxiv.org/abs/2607.21503">arxiv.org/abs/2607.21503</a> · <a href="https://arxiv.org/abs/2608.16603">arxiv.org/abs/2608.16603</a> · <a href="https://status.claude.com/incidents/vgz5psbjmt1h">status.claude.com — инцидент vgz5psbjmt1h</a> · <a href="https://www.yeswehack.com/fr/learn-bug-bounty/triager-grade-reports-claude-code">yeswehack.com — Triager-grade reports with Claude Code</a></p>
+  <details class="method-fold"><summary>Открыть полный список источников</summary><div class="method-body">
+  <p class="src list-2col"><a href="https://github.com/anthropics/skills/pull/1605">github.com/anthropics/skills/pull/1605</a> · <a href="https://github.com/anthropics/skills/tree/main/skills/academy-guide">github.com/anthropics/skills — skills/academy-guide</a> · <a href="https://github.com/anthropics/claude-plugins-official/pull/5424">github.com/anthropics/claude-plugins-official/pull/5424</a> · <a href="https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md">raw.githubusercontent.com — claude-code CHANGELOG.md</a> · <a href="https://platform.claude.com/docs/en/release-notes/api">platform.claude.com — Claude Platform release notes</a> · <a href="https://platform.claude.com/docs/en/managed-agents/budgets">platform.claude.com — Managed Agents: Session budgets</a> · <a href="https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration#give-the-session-an-advisor">platform.claude.com — Managed Agents: advisor</a> · <a href="https://platform.claude.com/docs/en/managed-agents/skills#load-skills-from-a-github-repository">platform.claude.com — Managed Agents: skills from GitHub</a> · <a href="https://platform.claude.com/docs/en/managed-agents/self-hosted-sandboxes#use-memory-stores">platform.claude.com — Managed Agents: memory stores</a> · <a href="https://platform.claude.com/docs/en/managed-agents/tools#restrict-web-search-and-web-fetch-domains">platform.claude.com — Managed Agents: restrict web domains</a> · <a href="https://fx.sh">fx.sh</a> · <a href="https://www.danielvaughn.dev/posts/huzzah/">danielvaughn.dev — Huzzah</a> · <a href="https://demo.frugaltokens.com/">demo.frugaltokens.com</a> · <a href="https://machine0.io">machine0.io</a> · <a href="https://simonwillison.net/2026/Aug/19/conceptual-integrity-and-counting-lines-of-code/">simonwillison.net — Conceptual integrity and counting lines of code</a> · <a href="https://simonwillison.net/2026/Aug/19/smolmachines-untrusted-sandbox/">simonwillison.net — smolmachines untrusted sandbox</a> · <a href="https://github.com/simonw/research/tree/main/smolmachines-untrusted-sandbox#readme">github.com/simonw/research — smolmachines-untrusted-sandbox</a> · <a href="https://www.oreilly.com/radar/the-ai-agents-stack-2026-edition/">oreilly.com/radar — The AI Agents Stack (2026 Edition)</a> · <a href="https://arcprize.org/scorecards/24ddb219-987e-464f-9050-6398a29cf5ac">arcprize.org — скоркарта 24ddb219</a> · <a href="https://github.com/guillaumemeyer/watermarks-remover">github.com/guillaumemeyer/watermarks-remover</a> · <a href="https://github.com/anthropics/skills/pull/1623">github.com/anthropics/skills/pull/1623</a> · <a href="https://github.com/anthropics/claude-plugins-official/pull/5595">claude-plugins-official/pull/5595</a> · <a href="https://github.com/anthropics/claude-plugins-official/pull/5597">/5597</a> · <a href="https://github.com/anthropics/claude-plugins-official/pull/5598">/5598</a> · <a href="https://github.com/anthropics/claude-plugins-official/pull/5600">/5600</a> · <a href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md">github.com/anthropics/claude-code — CHANGELOG.md</a> · <a href="https://github.com/anthropics/anthropic-sdk-python/blob/main/MIGRATION.md">anthropic-sdk-python — MIGRATION.md</a> · <a href="https://fabiensanglard.net/agent.md/index.html">fabiensanglard.net — My agent.md</a> · <a href="https://allaboutcoding.ghinda.com/a-week-of-using-codex-more-than-claude/">allaboutcoding.ghinda.com — A week of using Codex more than Claude</a> · <a href="https://www.laude.org/updates/headlong-a-microharness-for-persistent-agents">laude.org — Headlong</a> · <a href="https://code.joejag.com/2026/your-agent-is-not-the-model.html">code.joejag.com — Your Agent Is Not the Model</a> · <a href="https://simonwillison.net/2026/Aug/22/more-than-just-code-review/">simonwillison.net — More than just code review</a> · <a href="https://simonwillison.net/2026/Aug/23/drew-breunig/">simonwillison.net — Fable &amp; The End of the Free Lunch</a> · <a href="https://www.dbreunig.com/2026/08/23/fable-the-end-of-moore-s-law.html">dbreunig.com — Fable &amp; the end of Moore's Law</a> · <a href="https://arxiv.org/abs/2607.21503">arxiv.org/abs/2607.21503</a> · <a href="https://arxiv.org/abs/2608.16603">arxiv.org/abs/2608.16603</a> · <a href="https://status.claude.com/incidents/vgz5psbjmt1h">status.claude.com — инцидент vgz5psbjmt1h</a> · <a href="https://www.yeswehack.com/fr/learn-bug-bounty/triager-grade-reports-claude-code">yeswehack.com — Triager-grade reports with Claude Code</a></p>
+  </div></details>
 </section>
+
   <footer>
+    <div class="two-col">
+    <p class="signal"><b>Оговорка о сигнале.</b> Главное этой недели — про сам метод: команда
+    <code>gh search repos --sort=stars</code> звёзды не сортирует, поэтому «топ-100», на который
+    опирались прошлые прогоны, топом не был. Вторая половина окна собрана и старым, и новым способом
+    и объединена, чтобы ничего не потерять. Сырые счётчики GitHub по топику <code>claude-code</code>
+    — 1051 и 1597 — между собой не сопоставимы: разные наборы запросов и разные отсечки, складывать
+    их нельзя. Порог ★10 — мера того, что репозиторий заметили, а не его качества.</p>
+    <p class="collect"><b>Как собран выпуск.</b> Сведён из двух прогонов, 18–21 и 21–26 августа.
+    В рабочей выборке 794 уникальных непроизводных репозитория — 314 в первой половине и 480 во
+    второй, форки отброшены, отсечки ровно по 09:11 и 07:47 UTC, показанное ранее исключено. Порог
+    ★10+ перешли 86, и все 86 вошли в каталог; README проверён у каждого, пустых нет. Release notes
+    платформы за вторую половину окна пусты: последняя запись датирована 20 августа.</p>
+    </div>
     <p>Agent Briefing · собрано cron-джобой <code>agent-digest</code>.</p>
   </footer>
 </main>
 <script>
 (function(){
-  const root=document.documentElement, LS=window.localStorage;
+  const root=document.documentElement, LS=window.localStorage||{getItem(){},setItem(){}};
   const themeBtn=document.getElementById('themeBtn'), contrastBtn=document.getElementById('contrastBtn');
-  const savedT=LS.getItem('ad-theme'); if(savedT) root.setAttribute('data-theme',savedT);
-  const savedC=LS.getItem('ad-contrast'); if(savedC==='on') root.setAttribute('data-contrast','on');
-  function isDark(){ const t=root.getAttribute('data-theme');
-    if(t) return t==='dark';
-    return window.matchMedia('(prefers-color-scheme: dark)').matches; }
-  function syncBtns(){ themeBtn.setAttribute('aria-pressed', String(isDark()));
-    contrastBtn.setAttribute('aria-pressed', String(root.getAttribute('data-contrast')==='on')); }
-  themeBtn.addEventListener('click',()=>{ const next=isDark()?'light':'dark';
+  const savedTheme=LS.getItem('ad-theme'); if(savedTheme) root.setAttribute('data-theme',savedTheme);
+  if(LS.getItem('ad-contrast')==='on') root.setAttribute('data-contrast','on');
+  function syncBtns(){
+    const dark=root.getAttribute('data-theme')==='dark'
+      ||(!root.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
+    themeBtn.setAttribute('aria-pressed',String(dark));
+    contrastBtn.setAttribute('aria-pressed',String(root.getAttribute('data-contrast')==='on'));
+  }
+  themeBtn.addEventListener('click',()=>{ const dark=root.getAttribute('data-theme')==='dark'
+      ||(!root.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
+    const next=dark?'light':'dark';
     root.setAttribute('data-theme',next); LS.setItem('ad-theme',next); syncBtns(); });
   contrastBtn.addEventListener('click',()=>{ const on=root.getAttribute('data-contrast')==='on';
     if(on){ root.removeAttribute('data-contrast'); LS.setItem('ad-contrast','off'); }
@@ -2029,80 +1787,6 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
   addEventListener('scroll',()=>{ const h=document.documentElement;
     const p=h.scrollTop/(h.scrollHeight-h.clientHeight||1);
     bar.style.width=(p*100).toFixed(2)+'%'; },{passive:true});
-
-  function addCatalogToggle(id, label, blocks){
-    const section=document.getElementById(id); if(!section) return;
-    section.classList.add('catalog-collapsed');
-    if(blocks) section.classList.add('compact-blocks');
-    const button=document.createElement('button');
-    button.className='catalog-toggle';
-    button.type='button';
-    button.textContent=label;
-    button.setAttribute('aria-expanded','false');
-    section.appendChild(button);
-    button.addEventListener('click',()=>{
-      const collapsed=section.classList.toggle('catalog-collapsed');
-      button.setAttribute('aria-expanded',String(!collapsed));
-      button.textContent=collapsed?label:'Свернуть раздел';
-    });
-  }
-
-  function foldMethod(id, label){
-    const section=document.getElementById(id); if(!section) return;
-    const intro=section.querySelector('.section-intro'); if(!intro) return;
-    const details=document.createElement('details');
-    details.className='method-fold';
-    const summary=document.createElement('summary');
-    summary.textContent=label;
-    const body=document.createElement('div');
-    body.className='method-body';
-    while(intro.nextSibling) body.appendChild(intro.nextSibling);
-    details.append(summary,body);
-    section.appendChild(details);
-  }
-
-  function applyStarThreshold(id,min){
-    const section=document.getElementById(id); if(!section) return;
-    section.querySelectorAll(':scope > .item').forEach(item=>{
-      const score=item.querySelector('.stars');
-      const value=Number(score?.textContent.replace(/\D/g,''));
-      if(Number.isFinite(value)&&value<min) item.hidden=true;
-    });
-    section.querySelectorAll(':scope > .tail').forEach(list=>{
-      let visible=0;
-      list.querySelectorAll(':scope > li').forEach(row=>{
-        const value=Number(row.querySelector('.st')?.textContent.replace(/\D/g,''));
-        if(Number.isFinite(value)&&value<min) row.hidden=true;
-        else visible++;
-      });
-      if(!visible){
-        list.hidden=true;
-        const heading=list.previousElementSibling;
-        if(heading?.classList.contains('tail-h')) heading.hidden=true;
-      }
-    });
-  }
-
-  function prioritizeOfficialCatalogs(){
-    const section=document.getElementById('official'); if(!section) return;
-    const blocks=[...section.querySelectorAll(':scope > .block')];
-    const first=blocks[0]; if(!first) return;
-    const skills=blocks.find(x=>x.querySelector('h3')?.textContent.includes('anthropics/skills'));
-    const plugins=blocks.find(x=>x.querySelector('h3')?.textContent.includes('claude-plugins-official'));
-    if(skills) section.insertBefore(skills,first);
-    if(plugins) section.insertBefore(plugins,first);
-  }
-
-  prioritizeOfficialCatalogs();
-  applyStarThreshold('skills',40);
-  applyStarThreshold('plugins',40);
-  addCatalogToggle('official','Показать релизы моделей и CLI',true);
-  addCatalogToggle('arts','Показать все исследования',false);
-  foldMethod('periph','Открыть заметки о методе и отсеве');
-  foldMethod('sources','Открыть полный список источников');
-
-  const arts=document.getElementById('arts'), footer=document.querySelector('footer');
-  if(arts&&footer) footer.parentNode.insertBefore(arts,footer);
 })();
 </script>
 <!--general:foot-->
@@ -2156,11 +1840,11 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
     </a>
     <a class="gnrl-card" href="agents-weekly-2026-09-04.html">
       <img src="covers/agents-weekly-2026-09-04.svg" alt="" loading="lazy">
-      <b>Неделя агентной экосистемы — 26.08–04.09.2026</b><span>70 мин · 2026-09-04</span>
+      <b>Неделя агентной экосистемы — 26.08–04.09.2026</b><span>57 мин · 2026-09-04</span>
     </a>
     <a class="gnrl-card" href="agents-weekly-2026-08-18.html">
       <img src="covers/agents-weekly-2026-08-18.svg" alt="" loading="lazy">
-      <b>Неделя агентной экосистемы — 11–18.08.2026</b><span>30 мин · 2026-08-18</span>
+      <b>Неделя агентной экосистемы — 11–18.08.2026</b><span>25 мин · 2026-08-18</span>
     </a>
   </div>
 </nav>
