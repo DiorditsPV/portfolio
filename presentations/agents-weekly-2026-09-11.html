@@ -549,15 +549,6 @@ ul.stories .desc { color: var(--muted); }
   ul.tail .desc { grid-row: 3; }
 }
 
-.correction {
-  margin: 10px 0 0;
-  padding: 18px 22px 20px;
-  border: 1px solid var(--accent);
-  border-left-width: 4px;
-  border-radius: 14px;
-  background: var(--surface-soft);
-}
-.correction p { max-width: 860px; font-size: .85rem; line-height: 1.52; }
 .releases-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
@@ -652,18 +643,6 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
     <div class="fact"><span>Плагины ★30+</span><strong>12</strong></div>
   </div>
 </header>
-
-<aside class="correction" aria-label="Поправка к прошлым выпускам">
-  <p><b>Поправка к выпускам 01 и 03.</b> <code>tokentab</code>, CLI подсчёта стоимости сессий Claude Code, стоял в каталоге выпуска 01 как
-  <code>wzchav/tokentab</code> ★222 и выпуска 03 как <code>damejan80/tokentab</code> ★212 — оба адреса
-  теперь отдают 404. Третья копия с тем же описанием, <code>crwdla/tokentab</code> ★337, содержит
-  <mark>загрузчик</mark>: <a href="https://github.com/crwdla/tokentab/blob/main/tokentab/setup.py">tokentab/setup.py</a>
-  на Windows скачивает модуль <code>manual_mapper.py</code> с сервера по жёстко прописанному IP и
-  исполняет его в памяти, а <code>tokentab/cli.py</code> вызывает это при импорте. <b>Если вы ставили
-  tokentab по ссылкам из выпусков 01 или 03 — проверьте машину.</b> Проверен код только текущей копии:
-  прежних двух больше нет, судить о них нельзя. В каталог эта копия не включена, ссылка ведёт на файл с
-  загрузчиком, а не на страницу установки.</p>
-</aside>
 
 <div class="toc-wrap">
   <nav class="toc" aria-label="Разделы">
@@ -1259,7 +1238,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
     каталог не входит.</p>
     <p class="collect"><b>Как собран выпуск.</b> GitHub-поиск дал 2011 новых непроизводных
     репозиториев по семи запросам, 87 из них с ★10+; в каталог вошло 89 — 83 из поиска и 6 пришедших
-    через HN и блоги. Два репозитория ★10+ отсеяны как вредоносные, один как не относящийся к
+    через HN и блоги. Два репозитория ★10+ отсеяны как вредоносные — один из них третья копия <code>tokentab</code> с загрузчиком, и если вы ставили его по ссылкам из выпусков 01 или 03, проверьте машину, — один как не относящийся к
     теме и один как узко-локальный — вёрстка документов по национальному стандарту работает
     только внутри одной юрисдикции.
     HN: 980 историй в окне, 73 от 30 очков. Недоступны за окно: openai.com отдаёт 403 (анонс
@@ -1353,7 +1332,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
     </a>
     <a class="gnrl-card" href="agents-weekly-2026-08-18.html">
       <img src="covers/agents-weekly-2026-08-18.svg" alt="" loading="lazy">
-      <b>Неделя агентной экосистемы — 11–18.08.2026</b><span>25 мин · 2026-08-18</span>
+      <b>Неделя агентной экосистемы — 11–18.08.2026</b><span>24 мин · 2026-08-18</span>
     </a>
   </div>
 </nav>

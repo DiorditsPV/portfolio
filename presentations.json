@@ -10,7 +10,7 @@
       "desc": "Третья копия tokentab вернулась с загрузчиком малвари, десятки агентов Claude формализовали теорему Ферма на Lean, а каталог недели возглавили находки, пришедшие не из поиска по репозиториям.",
       "descEn": null,
       "tags": [],
-      "minutes": 36,
+      "minutes": 35,
       "keywords": [
         "Релизы и обсуждения",
         "Claude Code 2.1.261 → 2.1.268 — шесть релизов",
@@ -31,7 +31,7 @@
       "pick": true,
       "status": "public",
       "source": "~/dev/docs/lichnoe/research/agent-digest/2026-09-11.html",
-      "bytes": 116018
+      "bytes": 114545
     },
     {
       "slug": "generator-fich",
@@ -239,7 +239,7 @@
       "pick": false,
       "status": "public",
       "source": "~/dev/docs/lichnoe/research/agent-digest/2026-09-04.html",
-      "bytes": 159879
+      "bytes": 159048
     },
     {
       "slug": "claude-w23-peremer",
@@ -346,7 +346,7 @@
       "pick": true,
       "status": "public",
       "source": "~/dev/docs/lichnoe/research/agent-digest/2026-08-26.html",
-      "bytes": 149518
+      "bytes": 149262
     },
     {
       "slug": "agents-weekly-2026-08-18",
@@ -358,7 +358,7 @@
       "desc": "Самая насыщенная неделя серии: 1348 новых репозиториев, 65 в каталоге, и волна плагинов вокруг стороннего харнесса DeepSeek Harness.",
       "descEn": null,
       "tags": [],
-      "minutes": 25,
+      "minutes": 24,
       "keywords": [
         "Релизы и обсуждения",
         "Claude Code 2.1.228 → 2.1.234 — шесть релизов",
@@ -378,7 +378,7 @@
       "pick": false,
       "status": "public",
       "source": "~/dev/docs/lichnoe/research/agent-digest/2026-08-18.html",
-      "bytes": 90463
+      "bytes": 88892
     },
     {
       "slug": "trendy-claude-codex",
