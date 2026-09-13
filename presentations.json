@@ -31,7 +31,7 @@
       "pick": true,
       "status": "public",
       "source": "~/dev/docs/lichnoe/research/agent-digest/2026-09-11.html",
-      "bytes": 114545
+      "bytes": 114827
     },
     {
       "slug": "generator-fich",
@@ -239,7 +239,7 @@
       "pick": false,
       "status": "public",
       "source": "~/dev/docs/lichnoe/research/agent-digest/2026-09-04.html",
-      "bytes": 159048
+      "bytes": 159330
     },
     {
       "slug": "claude-w23-peremer",
@@ -346,7 +346,7 @@
       "pick": true,
       "status": "public",
       "source": "~/dev/docs/lichnoe/research/agent-digest/2026-08-26.html",
-      "bytes": 149262
+      "bytes": 149544
     },
     {
       "slug": "agents-weekly-2026-08-18",
@@ -378,7 +378,7 @@
       "pick": false,
       "status": "public",
       "source": "~/dev/docs/lichnoe/research/agent-digest/2026-08-18.html",
-      "bytes": 88892
+      "bytes": 89174
     },
     {
       "slug": "trendy-claude-codex",

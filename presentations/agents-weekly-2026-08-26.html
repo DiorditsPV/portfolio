@@ -113,6 +113,13 @@ body {
 
 .brand span { color: var(--subtle); font-weight: 500; }
 .site-actions, .controls { display: flex; align-items: center; gap: 8px; }
+/* по правому краю той же колонки, что и контент: слева в журнале встаёт кнопка «Назад» */
+.controls {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  padding-top: 14px;
+  justify-content: flex-end;
+}
 .back-link { color: var(--muted); font-size: .9rem; text-decoration: none; }
 .back-link:hover { color: var(--ink); }
 
