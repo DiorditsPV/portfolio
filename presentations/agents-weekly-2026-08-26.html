@@ -41,26 +41,6 @@ html[data-theme="dark"] {
   --shadow: 0 22px 60px rgba(0, 0, 0, .32);
 }
 
-@media (prefers-color-scheme: dark) {
-  html:not([data-theme]) {
-    --page: #0d1117;
-    --surface: #151b23;
-    --surface-soft: #1d2632;
-    --ink: #edf1f7;
-    --muted: #a6b0c0;
-    --subtle: #7d899a;
-    --line: #2a3544;
-    --accent: #8ba3ff;
-    --accent-soft: #1d2b57;
-    --accent-ink: #b7c5ff;
-    --success: #55c795;
-    --warning: #f5a15f;
-    --badge-bg: #25303e;
-    --badge-fg: #d7deea;
-    --mark: #493b16;
-    --shadow: 0 22px 60px rgba(0, 0, 0, .32);
-  }
-}
 
 html[data-contrast="on"] {
   --muted: var(--ink);
@@ -113,13 +93,6 @@ body {
 
 .brand span { color: var(--subtle); font-weight: 500; }
 .site-actions, .controls { display: flex; align-items: center; gap: 8px; }
-/* по правому краю той же колонки, что и контент: слева в журнале встаёт кнопка «Назад» */
-.controls {
-  width: min(1180px, calc(100% - 40px));
-  margin: 0 auto;
-  padding-top: 14px;
-  justify-content: flex-end;
-}
 .back-link { color: var(--muted); font-size: .9rem; text-decoration: none; }
 .back-link:hover { color: var(--ink); }
 
@@ -194,16 +167,25 @@ h1 .win { color: var(--accent); display: block; }
 .fact span { color: var(--muted); font-size: .88rem; }
 .fact strong { text-align: right; font-size: .9rem; }
 
-.toc-wrap {
+/* Закреплённая шапка: слева «Назад» (его подставляет журнал и переносит сюда скрипт),
+   оглавление и переключатели — на одном уровне. */
+.topbar {
   position: sticky;
   top: 0;
-  z-index: 40;
-  margin-inline: calc(50% - 50vw);
-  padding-inline: max(20px, calc((100vw - 1180px) / 2));
-  border-block: 1px solid var(--line);
+  z-index: 50;
+  border-bottom: 1px solid var(--line);
   background: color-mix(in srgb, var(--page) 91%, transparent);
   backdrop-filter: blur(18px);
 }
+.topbar-inner {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.topbar .toc { flex: 1 1 auto; min-width: 0; }
+.topbar .controls { flex: 0 0 auto; }
 
 nav.toc {
   min-height: 50px;
@@ -529,7 +511,7 @@ footer {
   .masthead { padding: 42px 0 36px; }
   h1 { font-size: clamp(2.35rem, 13vw, 3.7rem); }
   .deck { margin-top: 20px; }
-  .toc-wrap { padding-inline: 14px; }
+  .topbar-inner { width: min(100% - 28px, 1180px); }
   section { margin: 68px 0; }
   .brief-grid { margin-top: 24px; }
   .primary-brief { min-height: auto; border-radius: 18px; }
@@ -632,10 +614,22 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 <div class="gnrl-upwrap"><a class="gnrl-up" id="gnrl-up" href="https://paveldiordits.site/presentations/">← Назад</a></div>
 <!--/general:top-->
 <div id="progress" aria-hidden="true"></div>
-<div class="controls">
-  <button id="themeBtn" aria-pressed="false" aria-label="Переключить тему" title="Тема">◐</button>
-  <button id="contrastBtn" aria-pressed="false" aria-label="Повысить контраст" title="Контраст">◩</button>
-</div>
+<header class="topbar">
+  <div class="topbar-inner">
+  <nav class="toc" aria-label="Разделы">
+    <a href="#releases">Релизы и обсуждения</a>
+    <a href="#official">Официальное</a>
+    <a href="#skills">Скиллы<span class="n">26</span></a>
+    <a href="#plugins">Плагины<span class="n">14</span></a>
+    <a href="#arts">Исследования<span class="n">13</span></a>
+    <a href="#sources">Источники</a>
+  </nav>
+  <div class="controls">
+    <button id="themeBtn" aria-pressed="false" aria-label="Переключить тему" title="Тема">◐</button>
+    <button id="contrastBtn" aria-pressed="false" aria-label="Повысить контраст" title="Контраст">◩</button>
+  </div>
+  </div>
+</header>
 <main>
 <header class="masthead">
   <div>
@@ -651,16 +645,6 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
   </div>
 </header>
 
-<div class="toc-wrap">
-  <nav class="toc" aria-label="Разделы">
-    <a href="#releases">Релизы и обсуждения</a>
-    <a href="#official">Официальное</a>
-    <a href="#skills">Скиллы<span class="n">26</span></a>
-    <a href="#plugins">Плагины<span class="n">14</span></a>
-    <a href="#arts">Исследования<span class="n">13</span></a>
-    <a href="#sources">Источники</a>
-  </nav>
-</div>
 
 
 <section id="releases">
@@ -1767,13 +1751,11 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
   const savedTheme=LS.getItem('ad-theme'); if(savedTheme) root.setAttribute('data-theme',savedTheme);
   if(LS.getItem('ad-contrast')==='on') root.setAttribute('data-contrast','on');
   function syncBtns(){
-    const dark=root.getAttribute('data-theme')==='dark'
-      ||(!root.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
+    const dark=root.getAttribute('data-theme')==='dark';
     themeBtn.setAttribute('aria-pressed',String(dark));
     contrastBtn.setAttribute('aria-pressed',String(root.getAttribute('data-contrast')==='on'));
   }
-  themeBtn.addEventListener('click',()=>{ const dark=root.getAttribute('data-theme')==='dark'
-      ||(!root.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
+  themeBtn.addEventListener('click',()=>{ const dark=root.getAttribute('data-theme')==='dark';
     const next=dark?'light':'dark';
     root.setAttribute('data-theme',next); LS.setItem('ad-theme',next); syncBtns(); });
   contrastBtn.addEventListener('click',()=>{ const on=root.getAttribute('data-contrast')==='on';
@@ -1781,10 +1763,16 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
     else { root.setAttribute('data-contrast','on'); LS.setItem('ad-contrast','on'); }
     syncBtns(); });
   syncBtns();
-  const bar=document.getElementById('progress');
+
+  // Журнал подставляет «← Назад» сразу за <body>; переносим его в закреплённую шапку,
+  // чтобы кнопки стояли на одном уровне. В неопубликованном файле ссылки нет.
+  const up=document.getElementById('gnrl-up'), bar=document.querySelector('.topbar-inner');
+  if(up&&bar){ const wrap=up.closest('.gnrl-upwrap'); bar.prepend(up); if(wrap) wrap.remove(); }
+
+  const progress=document.getElementById('progress');
   addEventListener('scroll',()=>{ const h=document.documentElement;
     const p=h.scrollTop/(h.scrollHeight-h.clientHeight||1);
-    bar.style.width=(p*100).toFixed(2)+'%'; },{passive:true});
+    progress.style.width=(p*100).toFixed(2)+'%'; },{passive:true});
 })();
 </script>
 <!--general:foot-->
