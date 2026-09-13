@@ -549,15 +549,6 @@ ul.stories .desc { color: var(--muted); }
   ul.tail .desc { grid-row: 3; }
 }
 
-.correction {
-  margin: 10px 0 0;
-  padding: 18px 22px 20px;
-  border: 1px solid var(--accent);
-  border-left-width: 4px;
-  border-radius: 14px;
-  background: var(--surface-soft);
-}
-.correction p { max-width: 860px; font-size: .85rem; line-height: 1.52; }
 .releases-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
@@ -652,23 +643,6 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
     <div class="fact"><span>Плагины ★30+</span><strong>15</strong></div>
   </div>
 </header>
-
-<aside class="correction" aria-label="Поправки к выпуску">
-  <p><b>Две поправки, добавленные 12.09.</b> Первая — про безопасность. В каталоге этого выпуска
-  стоял <a href="https://github.com/wzchav/tokentab">wzchav/tokentab</a> ★222; сейчас этот адрес
-  отдаёт 404. Под тем же именем и описанием появились ещё две копии — <code>damejan80/tokentab</code>
-  ★212 в выпуске 03 (тоже 404) и <code>crwdla/tokentab</code> ★337, в которой нашёлся
-  <mark>загрузчик</mark>: на Windows она скачивает модуль с сервера по жёстко прописанному IP и
-  исполняет его в памяти (разбор — в <a href="2026-09-11.html">выпуске 04</a>). Код прежних копий
-  проверить больше нельзя. <b>Если вы ставили tokentab по ссылке из этого выпуска — проверьте
-  машину.</b></p>
-  <p>Вторая — про метод. Каталог этого выпуска собран командой
-  <code>gh search repos --sort=stars</code>, которая, как выяснилось
-  в <a href="2026-08-26.html">выпуске 02</a>, <mark>звёзды не сортирует</mark>. Значит «топ по
-  звёздам» здесь был квазислучайной выборкой из потока: позиции реальны, но полнота верхнего тира
-  не гарантирована. Начиная с выпуска 02 сбор идёт через REST <code>search/repositories</code>
-  с <code>sort=stars&amp;order=desc</code>.</p>
-</aside>
 
 <div class="toc-wrap">
   <nav class="toc" aria-label="Разделы">
@@ -1256,7 +1230,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
     которая звёзды не сортировала (см. поправку в начале). Порог ★10 — мера того, что репозиторий
     заметили, а не его качества: развёрнуто — ★30+ или сигнал вне звёзд, одной строкой — ★10–30,
     ниже ★10 в каталог не входит. Два репозитория каталога к сентябрю исчезли вместе со своими
-    адресами, и на их местах появились тёзки с теми же описаниями.</p>
+    адресами, и на их местах появились тёзки с теми же описаниями. Отдельно стоит знать, чем это кончилось: третья копия под тем же именем, <code>crwdla/tokentab</code> ★337, оказалась с загрузчиком — на Windows она скачивает модуль с сервера по жёстко прописанному IP и исполняет его в памяти. <b>Если вы ставили tokentab по ссылке из этого выпуска — проверьте машину.</b></p>
     <p class="collect"><b>Как собран выпуск.</b> Первый прогон серии, окно 11–18.08 — самое
     насыщенное за её историю: 1348 новых непроизводных репозиториев по скиллам и плагинам, 87 из них
     с ★10+, в каталог вошло 65. Отдельный сюжет окна — рост экосистемы вокруг DeepSeek Harness:
@@ -1339,7 +1313,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
   <div class="gnrl-grid">
     <a class="gnrl-card" href="agents-weekly-2026-09-11.html">
       <img src="covers/agents-weekly-2026-09-11.svg" alt="" loading="lazy">
-      <b>Неделя агентной экосистемы — 04–11.09.2026</b><span>36 мин · 2026-09-11</span>
+      <b>Неделя агентной экосистемы — 04–11.09.2026</b><span>35 мин · 2026-09-11</span>
     </a>
     <a class="gnrl-card" href="agents-weekly-2026-09-04.html">
       <img src="covers/agents-weekly-2026-09-04.svg" alt="" loading="lazy">
