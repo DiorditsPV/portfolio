@@ -588,14 +588,17 @@ const T = {
       tags:["Claude Code","git hooks","marketplace","Bash"],
       source:"https://github.com/DiorditsPV/claude-skills" },
 
-    { name:"interview-graph",
-      sub:{en:"The whole interview on one board", ru:"Всё интервью на одной доске"},
+    { feature:true, viz:"ladder",
+      name:"ladder",
+      sub:{en:"A topic laid out as a board you can actually finish",
+           ru:"Тема, разложенная на доску, которую реально пройти"},
       desc:{
-        en:"Questions for the data engineering stack laid out on a canvas — a column per track, ranked by difficulty inside it. The interviewer scores from the keyboard and watches coverage build up; the session ends as a self-contained HTML report on the candidate.",
-        ru:"Вопросы по дата-инженерному стеку разложены на канве: колонка на направление, внутри — по сложности. Интервьюер ставит оценки с клавиатуры и видит, как набирается покрытие, а на выходе получает самодостаточный HTML-отчёт по кандидату.",
+        en:"Lays a topic out as columns by rungs of difficulty: inside every sub-column the cards climb from the basics to the expert question, and you work through them with a known / review / unknown checklist driven from the keyboard. The service database is the source of truth — tracks, columns, rungs and questions are created through an MCP server and its API straight from a Claude session, while the repository carries only the demo layer. Without signing in the site opens as a demo in Russian and English; the full set of topics is by invitation.",
+        ru:"Раскладывает тему на колонки × ступени сложности: внутри каждой под-колонки карточки идут от азов к экспертному вопросу, а разбор ведётся чек-листом «знаю / повторить / не знаю» с клавиатуры. Источник правды — база сервиса: направления, колонки, ступени и вопросы заводятся через MCP-сервер и его API прямо из сессии Claude, а в репозитории лежит только демонстрационный слой. Без входа сайт открывается как демо на русском и английском, полный набор тем — по приглашению.",
       },
-      tags:["FastAPI","React Flow","Python","TypeScript"],
-      source:"https://github.com/DiorditsPV/interview-graph" },
+      tags:["FastAPI","React Flow","MCP","SQLite","TypeScript","nginx"],
+      source:"https://github.com/DiorditsPV/ladder",
+      live:"https://ladder.paveldiordits.site/" },
 
     { name:"loop-feature",
       sub:{en:"One feature per branch, start to finish", ru:"Одна фича на ветку, от начала до конца"},
@@ -687,6 +690,9 @@ const VIZ = {
   lexis: { img:"lexis",
            alt:{en:"A lexis book page: Project Hail Mary against the Oxford 3000 and 5000 on an Euler diagram",
                 ru:"Страница книги в lexis: «Project Hail Mary» на Эйлеровой диаграмме против Oxford 3000 и 5000"} },
+  ladder: { img:"ladder",
+            alt:{en:"A ladder board: data engineering questions in columns, ranked by rungs of difficulty",
+                 ru:"Доска ladder: вопросы по дата-инженерии в колонках, по ступеням сложности"} },
 };
 const vizHtml = k => {
   const v = VIZ[k];
