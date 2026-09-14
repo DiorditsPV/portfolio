@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ladder: доска самоподготовки, которую наполняет агент — разбор</title>
+<style>
+/* ---------- палитра: доска и ступени — бумага, графит, две краски колонок ---------- */
+:root{
+  --bg:#f6f5f2; --fg:#1a1c1f; --muted:#5d6166; --card:#ffffff; --line:#dcdad4;
+  --accent:#2f6bff; --accent-soft:#e8eeff; --rung:#0e9f8f; --rung-soft:#e2f3f0;
+  --warn:#a8323e; --warn-soft:#f8e7e9; --code-bg:#eeece7;
+  --shadow:0 1px 2px rgba(16,18,22,.06);
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#14161a; --fg:#e7e9ec; --muted:#9aa0a8; --card:#1b1e24; --line:#2c3038;
+    --accent:#7aa2ff; --accent-soft:#1c2438; --rung:#5fc5b3; --rung-soft:#14312d;
+    --warn:#e0707a; --warn-soft:#2c1c1f; --code-bg:#222630; --shadow:none;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14161a; --fg:#e7e9ec; --muted:#9aa0a8; --card:#1b1e24; --line:#2c3038;
+  --accent:#7aa2ff; --accent-soft:#1c2438; --rung:#5fc5b3; --rung-soft:#14312d;
+  --warn:#e0707a; --warn-soft:#2c1c1f; --code-bg:#222630; --shadow:none;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);
+  font-size:17px;line-height:1.62;-webkit-text-size-adjust:100%}
+.wrap{max-width:78ch;margin:0 auto;padding:2.5rem 1.25rem 5rem}
+header.head{border-bottom:1px solid var(--line);padding-bottom:1.6rem;margin-bottom:2.2rem}
+.kicker{font-family:var(--mono);font-size:.8125rem;letter-spacing:.04em;color:var(--muted);
+  text-transform:uppercase;margin:0 0 .7rem}
+h1{font-family:var(--serif);font-size:2.15rem;line-height:1.18;letter-spacing:-.02em;margin:0 0 .6rem;font-weight:700}
+.lead{font-size:1.0625rem;color:var(--muted);margin:0 0 1.1rem;max-width:66ch}
+.meta{display:flex;flex-wrap:wrap;gap:.5rem .9rem;font-family:var(--mono);font-size:.8125rem;color:var(--muted)}
+.meta a{color:var(--accent);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--accent) 35%,transparent)}
+.meta a:hover{border-bottom-color:var(--accent)}
+h2{font-family:var(--serif);font-size:1.5rem;letter-spacing:-.015em;margin:3rem 0 .9rem;font-weight:700}
+h2 .num{font-family:var(--mono);font-size:.8125rem;color:var(--muted);margin-right:.55rem;letter-spacing:.06em}
+h3{font-size:1.0625rem;margin:1.9rem 0 .5rem;font-weight:650}
+p{margin:0 0 1rem}
+a{color:var(--accent)}
+strong{font-weight:650}
+code{font-family:var(--mono);font-size:.875em;background:var(--code-bg);padding:.1em .35em;border-radius:4px}
+ul,ol{margin:0 0 1rem;padding-left:1.35rem}
+li{margin:.35rem 0}
+.gist{list-style:none;padding:0;margin:1.4rem 0 0;display:grid;gap:.75rem}
+.gist li{display:grid;grid-template-columns:2.1rem 1fr;gap:.85rem;align-items:start;
+  background:var(--card);border:1px solid var(--line);border-radius:12px;padding:.9rem 1.05rem;box-shadow:var(--shadow);margin:0}
+.gist .n{font-family:var(--mono);font-size:.9375rem;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);border-radius:8px;text-align:center;padding:.15rem 0}
+.figures{display:grid;grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr));gap:.75rem;margin:1.4rem 0}
+.fig{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:.85rem 1rem;box-shadow:var(--shadow)}
+.fig b{display:block;font-family:var(--mono);font-size:1.45rem;line-height:1.2;letter-spacing:-.02em}
+.fig span{display:block;font-size:.875rem;color:var(--muted);margin-top:.2rem}
+figure{margin:1.6rem 0;padding:0}
+figure svg{display:block;width:100%;height:auto;max-width:100%;border:1px solid var(--line);
+  border-radius:12px;background:var(--card)}
+figcaption{font-size:.875rem;color:var(--muted);margin-top:.6rem}
+table{width:100%;border-collapse:collapse;margin:1.2rem 0;font-size:.9375rem}
+th,td{text-align:left;vertical-align:top;padding:.55rem .7rem;border-bottom:1px solid var(--line)}
+th{font-size:.8125rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:600}
+td code{white-space:nowrap}
+.two{display:grid;gap:.9rem;margin:1.2rem 0}
+@media(min-width:720px){.two{grid-template-columns:1fr 1fr}}
+.mode{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--rung);
+  border-radius:10px;padding:.95rem 1.1rem;box-shadow:var(--shadow)}
+.mode.explicit{border-left-color:var(--accent)}
+.mode h4{margin:0 0 .4rem;font-size:1rem}
+.mode p{margin:0;font-size:.9375rem;color:var(--muted)}
+.risk{background:var(--warn-soft);border:1px solid color-mix(in srgb,var(--warn) 30%,var(--line));
+  border-radius:10px;padding:.9rem 1.1rem;margin:1rem 0}
+.risk p:last-child{margin:0}
+.risk b{color:var(--warn)}
+.sources{font-size:.9375rem;color:var(--muted)}
+.sources a{word-break:break-word}
+.themebtn{position:sticky;top:.75rem;float:right;font-family:var(--mono);font-size:.75rem;
+  background:var(--card);color:var(--muted);border:1px solid var(--line);border-radius:999px;
+  padding:.35rem .8rem;cursor:pointer;z-index:5}
+.themebtn:hover{color:var(--fg);border-color:var(--accent)}
+footer.end{margin-top:3.5rem;padding-top:1.4rem;border-top:1px solid var(--line);
+  font-size:.875rem;color:var(--muted)}
+</style>
+<!--general:head-->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://paveldiordits.site/presentations/ladder.html">
+<meta property="og:site_name" content="Журнал · paveldiordits.site">
+<meta property="og:title" content="ladder: доска самоподготовки, которую наполняет агент — разбор">
+<meta property="og:description" content="Своя доска самоподготовки изнутри: колонки × ступени сложности, источник правды в базе сервиса, контент заводит агент через MCP — и страховка, из-за которой выкладка не может потерять вопросы.">
+<meta property="og:image" content="https://paveldiordits.site/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ladder: доска самоподготовки, которую наполняет агент — разбор">
+<meta name="twitter:description" content="Своя доска самоподготовки изнутри: колонки × ступени сложности, источник правды в базе сервиса, контент заводит агент через MCP — и страховка, из-за которой выкладка не может потерять вопросы.">
+<meta name="twitter:image" content="https://paveldiordits.site/og.png">
+<link rel="canonical" href="https://paveldiordits.site/presentations/ladder.html">
+<link rel="alternate" type="application/rss+xml" title="Журнал — разборы Павла Диордица" href="https://paveldiordits.site/presentations/rss.xml">
+<style>
+#contrastBtn,#btn-contrast,#ct,#hc,#hcBtn,
+button[title*="онтраст"],button[aria-label*="онтраст"]{display:none!important}
+</style>
+<script>
+(function(){
+  var r=document.documentElement;
+  function off(){
+    if(r.hasAttribute('data-contrast')) r.removeAttribute('data-contrast');
+    if(r.classList.contains('hc')) r.classList.remove('hc');
+  }
+  off();
+  // Наблюдатель, а не разовый вызов: собственный скрипт страницы поднимает режим
+  // из localStorage позже, уже после этой вставки, — снимаем сразу же, до отрисовки.
+  new MutationObserver(off).observe(r,{attributes:true,attributeFilter:['data-contrast','class']});
+  // Кнопки будущих разборов с неизвестным id: прячем по подписи, не удаляя узел.
+  addEventListener('DOMContentLoaded',function(){
+    [].forEach.call(document.querySelectorAll('button'),function(b){
+      if(/контраст/i.test(b.textContent||'')) b.style.display='none';
+    });
+  });
+})();
+</script>
+<!--/general:head-->
+</head>
+<body>
+<!--general:top-->
+<div class="gnrl-upwrap"><a class="gnrl-up" id="gnrl-up" href="https://paveldiordits.site/presentations/">← Назад</a></div>
+<!--/general:top-->
+<div class="wrap">
+
+<button class="themebtn" id="themebtn" type="button">тема</button>
+
+<header class="head">
+  <p class="kicker">Разбор своего проекта · слепок 2026-09-14</p>
+  <h1>ladder: доска самоподготовки, которую наполняет агент</h1>
+  <p class="lead">Тема раскладывается на колонки и ступени сложности, карточки разбираются чек-листом
+  с клавиатуры, а вопросы заводит не человек в файлах, а агент через MCP прямо в базу работающего
+  сервиса. Ниже — что внутри, какие решения оказались важными и что из них едва не стоило контента.</p>
+  <p class="meta">
+    <span>репозиторий: <a href="https://github.com/DiorditsPV/ladder">github.com/DiorditsPV/ladder</a></span>
+    <span>сервис: <a href="https://ladder.paveldiordits.site/">ladder.paveldiordits.site</a></span>
+    <span>числа — по файлам репозитория и живой базе на 2026-09-14</span>
+  </p>
+</header>
+
+<h2>Суть в пяти пунктах</h2>
+<ol class="gist">
+  <li><span class="n">1</span><div><strong>Что это.</strong> Тема разложена на доску: вертикальные
+    колонки — области темы, горизонтальные ряды — ступени сложности. На пересечении лежат карточки
+    «вопрос + развёрнутый ответ», внутри под-колонки они идут лесенкой: сверху азы, ниже — вопрос
+    выбора и компромиссов. Разбор ведётся чек-листом «знаю / повторить / не знаю».</div></li>
+  <li><span class="n">2</span><div><strong>Откуда взялось.</strong> Сервис начинался как инструмент
+    интервьюера: сессии с кандидатом, оценки 1–5, HTML-отчёт. В сентябре режим интервью удалён
+    целиком — вместе с таблицами, оценками и экспортом. Осталась одна роль: человек разбирает тему сам.</div></li>
+  <li><span class="n">3</span><div><strong>Главное решение.</strong> Источник правды — не репозиторий,
+    а база работающего сервиса. Файлы только <em>засевают</em> недостающее и ничего не перезаписывают,
+    поэтому выкладка кода не может затереть накопленные вопросы.</div></li>
+  <li><span class="n">4</span><div><strong>Как наполняется.</strong> Контент заводится через
+    MCP-сервер из 25 инструментов поверх собственного API: направление, колонки, ступени, топики и
+    вопросы пачкой — прямо из сессии агента. Правка через API помечается <code>source=user</code>, и
+    синхронизация из файлов её не трогает.</div></li>
+  <li><span class="n">5</span><div><strong>Чем держится.</strong> Перед каждой выкладкой снимается
+    снимок базы, после старта сверяется число видимых карточек по направлениям: стало меньше хоть в
+    одном — выкладка падает. Плюс ночной таймер снимков и гейт CI из 174 тестов бэкенда, 6 тестов MCP
+    и браузерного smoke.</div></li>
+</ol>
+
+<h2><span class="num">01</span>Что видит человек</h2>
+<p>Единица работы — <strong>направление</strong>: тема со своей структурой. У направления есть
+колонки, у широкой колонки — под-колонки, и собственные ступени (от 2 до 8). Ступени — шкала
+сложности именно этой темы, а не универсальные junior/middle/senior: у Kafka это «Понятия →
+Конфигурация → Эксплуатация → Внутренности → Проектирование».</p>
+
+<figure>
+<svg viewBox="0 0 720 300" role="img" aria-label="Схема доски: две колонки с под-колонками по горизонтали и три ступени сложности по вертикали; карточки лежат на пересечениях">
+  <g font-family="ui-monospace,Menlo,monospace" font-size="12">
+    <text x="16" y="26" fill="currentColor" opacity=".65">ступени ↓ · колонки →</text>
+    <g fill="none" stroke="currentColor" opacity=".18">
+      <line x1="16" y1="42" x2="704" y2="42"/>
+      <line x1="16" y1="130" x2="704" y2="130"/>
+      <line x1="16" y1="218" x2="704" y2="218"/>
+    </g>
+    <g fill="currentColor" opacity=".65">
+      <text x="16" y="86">азы</text>
+      <text x="16" y="174">практика</text>
+      <text x="16" y="262">эксперт</text>
+    </g>
+    <g>
+      <rect x="96" y="46" width="270" height="248" rx="10" fill="#2f6bff" opacity=".07"/>
+      <rect x="392" y="46" width="312" height="248" rx="10" fill="#0e9f8f" opacity=".07"/>
+      <text x="108" y="66" fill="#2f6bff">Фреймворки</text>
+      <text x="404" y="66" fill="#0e9f8f">Базы данных</text>
+    </g>
+    <g fill="currentColor" opacity=".55" font-size="11">
+      <text x="108" y="84">Airflow</text><text x="238" y="84">PySpark</text>
+      <text x="404" y="84">SQL</text><text x="536" y="84">Движки</text>
+    </g>
+    <g stroke="currentColor" stroke-opacity=".25" fill="var(--card)">
+      <rect x="104" y="92" width="118" height="30" rx="6"/><rect x="234" y="92" width="118" height="30" rx="6"/>
+      <rect x="400" y="92" width="118" height="30" rx="6"/><rect x="532" y="92" width="118" height="30" rx="6"/>
+      <rect x="104" y="180" width="118" height="30" rx="6"/><rect x="234" y="180" width="118" height="30" rx="6"/>
+      <rect x="400" y="180" width="118" height="30" rx="6"/>
+      <rect x="104" y="252" width="118" height="30" rx="6"/><rect x="400" y="252" width="118" height="30" rx="6"/>
+      <rect x="532" y="252" width="118" height="30" rx="6"/>
+    </g>
+    <g fill="currentColor" opacity=".7" font-size="10">
+      <text x="112" y="111">что такое DAG</text><text x="242" y="111">что такое RDD</text>
+      <text x="408" y="111">как идёт запрос</text><text x="540" y="111">архитектура</text>
+      <text x="112" y="199">идемпотентность</text><text x="242" y="199">shuffle</text>
+      <text x="408" y="199">оконные функции</text>
+      <text x="112" y="271">выбор оркестратора</text><text x="408" y="271">план и индексы</text>
+      <text x="540" y="271">выбор движка</text>
+    </g>
+  </g>
+</svg>
+<figcaption>Доска: колонки с под-колонками по горизонтали, ступени сложности по вертикали. В каждой
+под-колонке карточки поднимаются от азов к вопросу выбора — пустая ячейка сразу видна как пробел в
+разборе.</figcaption>
+</figure>
+
+<p>Карточка — вопрос и эталонный ответ на 400–1500 знаков: сначала суть, потом механика, потом
+пример. У карточки есть короткая подтема внутри колонки и 1–3 тега из словаря сквозных концептов
+(<code>architecture</code>, <code>partitioning</code>, <code>consistency</code>, <code>streaming</code>…):
+названия технологий тегами не бывают, технология и так видна по колонке.</p>
+
+<p>Состояние разбора — три статуса. Клавиши <code>1/2/3</code> ставят статус и переводят к следующей
+карточке, <code>n</code> ведёт к ближайшей неразобранной; счётчики колонок и рядов показывают,
+сколько закрыто.</p>
+
+<div class="figures">
+  <div class="fig"><b>8</b><span>направлений в живой базе</span></div>
+  <div class="fig"><b>435</b><span>видимых карточек</span></div>
+  <div class="fig"><b>61 / 44</b><span>демо: дата-инженер и аналитик</span></div>
+  <div class="fig"><b>RU / EN</b><span>у демо есть переводы-пары</span></div>
+</div>
+
+<p>Без входа открыты только демонстрационные направления и их переводы; остальное — Kafka, Spark на
+Kubernetes и S3, отраслевой набор и агентная разработка — за логином.</p>
+
+<h2><span class="num">02</span>Как устроено внутри</h2>
+<p>Бэкенд — FastAPI и SQLite, 2 550 строк. Фронт — React, Vite и React&nbsp;Flow, 5 580 строк. Ни
+очередей, ни воркеров, ни внешних сервисов: один процесс <code>uvicorn</code> за nginx и один файл
+базы. Поток данных раньше читался как «файлы → импорт → база → API → доска»; сегодня он короче —
+<strong>база → API → доска</strong>, а файлы подключаются только на старте и только как сид.</p>
+
+<table>
+  <thead><tr><th>Часть</th><th>За что отвечает</th></tr></thead>
+  <tbody>
+    <tr><td><code>pools.py</code></td><td>таксономия направления: колонки, под-колонки, цвета, веса, ступени</td></tr>
+    <tr><td><code>importer.py</code></td><td>карточки из Markdown и JSON с проверкой, что колонка и ступень существуют</td></tr>
+    <tr><td><code>sync.py</code></td><td>два режима синхронизации: засев и явное обновление пресета</td></tr>
+    <tr><td><code>db.py</code></td><td>SQLite: направления, банк вопросов, аккаунты, чек-лист</td></tr>
+    <tr><td><code>auth.py</code>, <code>tenancy.py</code></td><td>пароли, серверные сессии, роли и изоляция тенантов</td></tr>
+    <tr><td><code>layout.ts</code></td><td>раскладка swimlane: позиции колонок, под-колонок и ступеней</td></tr>
+  </tbody>
+</table>
+
+<p>Открытая карточка работает в двух режимах: плавающим окном по центру доски (по умолчанию) или
+панелью справа с изменяемой шириной. Окно тащится за шапку и запоминает место, тема одна на весь
+сайт и она же выбирает оформление доски.</p>
+
+<h2><span class="num">03</span>Поворот: из интервью в самоподготовку</h2>
+<p>Первые три месяца продукт был про интервью: кандидат, сессия, оценки, отчёт. Пивот убрал это
+целиком — не спрятал за флагом, а удалил: таблицы сессий, оценки 1–5, страницу отчёта и экспорт в
+HTML. Вместо «интервьюер оценивает кандидата» осталось «человек разбирает тему и отмечает, что уже
+знает».</p>
+<p>Такое удаление дешевле, чем кажется, если продукт держится на данных, а не на экранах: ушли ровно
+те таблицы и ручки, которые обслуживали сессии, а доска, банк вопросов и импорт остались нетронутыми.
+Дороже всего оказалось переписать формулировки: вопрос «для интервью» и вопрос «для разбора» звучат
+по-разному — во втором не бывает мини-кейсов с выдуманными деталями, зато нужен прямой вопрос о сути,
+понятный без контекста.</p>
+
+<h2><span class="num">04</span>Контент живёт в базе, а не в гите</h2>
+<p>Это решение, ради которого переписана синхронизация, и оно же — главный риск, который пришлось
+закрыть. <strong>Как было опасно:</strong> синхронизация шла на каждом старте сервиса, то есть на
+каждой выкладке, и не только создавала направления, но и перезаписывала их конфиг из файлов, а
+карточки, чьи файлы пропали, прятала. Правка колонок через интерфейс откатывалась ближайшим деплоем,
+удаление вопроса из репозитория убирало его с доски, и при этом сам репозиторий был единственной
+копией контента.</p>
+
+<div class="two">
+  <div class="mode"><h4>Засев — по умолчанию</h4>
+    <p>Старт сервера и обычный вызов синхронизации: создать направление, если его нет, добавить
+    карточки с незанятыми id. Ничего не перезаписывает и не прячет — деплой физически не может
+    затереть накопленное.</p></div>
+  <div class="mode explicit"><h4>Обновление пресета — явно</h4>
+    <p>Отдельный флаг, лучше с указанием одного направления и сначала «вхолостую»: прогон идёт на
+    копии базы и возвращает отчёт — что изменится в конфиге, сколько карточек будет переписано,
+    сколько скрыто, где конфликт с правками пользователя.</p></div>
+</div>
+
+<p>В репозитории остался только демонстрационный слой — 208 файлов двух направлений и их переводов.
+Остальное живёт в базе; версионируемая копия — отдельный репозиторий с JSON-выгрузкой по направлению,
+которую забирает тот же скрипт, что снимает снимок базы.</p>
+
+<h3>Что нашло ревью после внедрения</h3>
+<p>Два сценария, в которых можно было потерять контент. Оба касались не «большой» логики, а границ —
+и именно поэтому их не видно на первый взгляд.</p>
+<div class="risk">
+  <p><b>Чужая карточка.</b> Защита правленых карточек считалась в пределах одного направления, хотя
+  id уникален во всём тенанте. Карточка, которую поправили и перенесли в другое направление, при
+  обновлении пресета перезаписывалась файлом и утаскивалась обратно — а в отчёте это выглядело как
+  обычная строка «изменится N».</p>
+</div>
+<div class="risk">
+  <p><b>Фантомная колонка.</b> Засев не трогает конфиг направления, поэтому карточка из файла могла
+  попасть в колонку или ступень, которых в живой структуре уже нет (их убрали в интерфейсе вместе с
+  вопросами). На доске появлялся столбец, которого нет в конфиге, счётчик карточек при этом <em>рос</em>,
+  и проверка выкладки молчала.</p>
+</div>
+<p>Оба закрыты: защита стала тенантной, а засев пропускает карточки, не подходящие живой структуре, и
+показывает их в отчёте отдельным счётчиком.</p>
+
+<h2><span class="num">05</span>MCP как основной способ писать контент</h2>
+<p>Поверх API работает MCP-сервер — 25 инструментов, сгруппированных по тому, что правится:</p>
+<ul>
+  <li><strong>Направления</strong> — список, чтение структуры с матрицей покрытия, создание, правка, удаление.</li>
+  <li><strong>Вертикаль</strong> — колонки и под-колонки: добавить, переименовать, переставить, удалить.</li>
+  <li><strong>Горизонталь</strong> — ступени сложности в том же наборе операций.</li>
+  <li><strong>Топики и вопросы</strong> — создание пачкой, правка любых полей с переносом между
+    направлениями, фильтры по колонке, ступени, тегу и тексту.</li>
+  <li><strong>Служебное</strong> — словарь тегов и синхронизация пресетов из файлов (по умолчанию вхолостую).</li>
+</ul>
+<p>Смысл не в том, что «агент умеет дёргать API», а в том, что правка контента перестала требовать
+файлов, коммита и выкладки. Агент собирает направление целиком: строит каркас, проверяет покрытие
+матрицы, заносит вопросы — и видит результат на живой доске сразу. Удаление колонки, ступени или
+направления с вопросами требует явного подтверждения, а вопросы можно предварительно перенести.</p>
+<p>Рядом живёт скилл для случая «разложи тему целиком»: JSON с каркасом и карточками → проверка
+покрытия → заливка в живую базу, где недостающие колонки и ступени дописываются, а занятые id
+пропускаются или обновляются по явному флагу.</p>
+
+<h2><span class="num">06</span>Выкладка и страховка</h2>
+<p>Выкладка — только ручной запуск: merge в основную ветку ничего не публикует. Раннер собирает фронт
+и отправляет один архив по SSH-ключу, прибитому к единственной команде: ключ не даёт ни шелла, ни
+другого доступа. Архив проверяется до любых изменений на диске, а юнит systemd скрипт выкладки не
+трогает — его ставит только провижининг, чтобы архив не мог подменить пользователя сервиса.</p>
+<ul>
+  <li><strong>Снимки базы</strong> — согласованная копия через backup API SQLite с проверкой
+    целостности и ротацией по меткам: ночной таймер держит 14 последних, выкладка — 10 своих.
+    Сейчас на сервере 13 снимков.</li>
+  <li><strong>Сверка карточек</strong> — скрипт выкладки запоминает число видимых карточек по
+    направлениям до рестарта и сравнивает после старта: стало меньше хоть в одном — выкладка падает
+    и печатает путь к снимку.</li>
+  <li><strong>Копия у владельца</strong> — снимок и JSON-выгрузка всех направлений забираются на
+    ноутбук; выгрузка всегда пишет манифест с флагом полноты, чтобы оборванная копия не выглядела целой.</li>
+</ul>
+<p>После выкладки проверяется и публичный адрес: health отвечает, список направлений и демо-граф
+открываются без cookie, закрытое направление без cookie отдаёт 401.</p>
+
+<h2><span class="num">07</span>Что проверяется автоматически</h2>
+<div class="figures">
+  <div class="fig"><b>174</b><span>теста бэкенда</span></div>
+  <div class="fig"><b>6</b><span>тестов MCP-сервера</span></div>
+  <div class="fig"><b>34</b><span>шага браузерного smoke</span></div>
+  <div class="fig"><b>209 / 54</b><span>коммитов и слитых PR</span></div>
+</div>
+<p>Smoke идёт по живому рантайму на свежей базе: начинает без входа в демо, проверяет темы и языковую
+пару, заходит по скрытой ссылке, создаёт направление мастером, правит структуру перетаскиванием,
+разбирает карточки с клавиатуры, заводит и удаляет аккаунт.</p>
+<p>Один из шагов появился после случайного падения: фоновые узлы доски не имели размера, React Flow
+держал их скрытыми до замера, и при потере замера колонки не появлялись вовсе. Теперь узлы несут
+размер из раскладки, а шаг воспроизводит поломку заглушкой <code>ResizeObserver</code> — проверка,
+которая до исправления падала, а после проходит.</p>
+
+<h2><span class="num">08</span>Чего здесь нет</h2>
+<ul>
+  <li><strong>Связей между вопросами.</strong> Это доска, а не граф зависимостей: поле рёбер удалено из модели.</li>
+  <li><strong>Режима интервью.</strong> Оценок, сессий и отчётов по кандидату не осталось.</li>
+  <li><strong>Ограничения частоты попыток входа.</strong> На публичном адресе это открытый риск,
+    зафиксированный в документации выкладки.</li>
+  <li><strong>Масштабирования.</strong> Один процесс, один файл SQLite, ручная выкладка. Для
+    инструмента самоподготовки это осознанный потолок, а не недоделка.</li>
+</ul>
+
+<h2>Источники</h2>
+<ul class="sources">
+  <li>Репозиторий: <a href="https://github.com/DiorditsPV/ladder">https://github.com/DiorditsPV/ladder</a>
+    — <code>AGENTS.md</code>, <code>CLAUDE.md</code>, <code>DEPLOY.md</code>, <code>backend/app/sync.py</code>,
+    <code>backend/app/main.py</code>, <code>deploy/ladder-backup.py</code>, <code>deploy/deploy-ladder.sh</code>,
+    <code>tools/ladder-mcp/</code>, <code>frontend/smoke.mjs</code></li>
+  <li>Спецификации решений в репозитории: <code>docs/superpowers/specs/2026-09-11-content-in-db-design.md</code>,
+    <code>docs/superpowers/specs/2026-09-11-demo-and-access-design.md</code></li>
+  <li>Работающий сервис: <a href="https://ladder.paveldiordits.site/">https://ladder.paveldiordits.site/</a>
+    — демо-направления и список направлений без входа</li>
+  <li>Счётчики карточек и снимков: <code>ladder-backup --counts</code> на сервере, 2026-09-14</li>
+  <li>Размеры кода и история: <code>wc -l</code> по <code>backend/app</code> и <code>frontend/src</code>,
+    <code>git rev-list --count</code>, на 2026-09-14</li>
+</ul>
+
+<footer class="end">Разбор написан по первоисточнику — самому репозиторию и работающему сервису;
+внешние источники не использовались. Числа верны на 2026-09-14 и будут дрейфовать.</footer>
+
+</div>
+<script>
+(function () {
+  var root = document.documentElement, btn = document.getElementById('themebtn');
+  try { var saved = localStorage.getItem('ladder-razbor-theme'); if (saved) root.setAttribute('data-theme', saved); } catch (e) {}
+  btn.addEventListener('click', function () {
+    var dark = root.getAttribute('data-theme') === 'dark'
+      || (!root.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme:dark)').matches);
+    var next = dark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('ladder-razbor-theme', next); } catch (e) {}
+  });
+})();
+</script>
+<!--general:foot-->
+<style>
+.gnrl{margin:4rem auto 0;padding:2rem 1.25rem 2.5rem;max-width:1100px;border-top:1px solid rgba(128,128,128,.28);
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.5}
+.gnrl a{text-decoration:none;color:inherit}
+.gnrl-top{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:space-between;align-items:baseline;margin-bottom:1.25rem}
+.gnrl-back{font-weight:600;opacity:.9}
+.gnrl-back:hover{text-decoration:underline}
+.gnrl-h{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;opacity:.55}
+.gnrl-grid{display:grid;gap:1rem;grid-template-columns:1fr}
+@media(min-width:720px){.gnrl-grid{grid-template-columns:repeat(3,1fr)}}
+.gnrl-card{border:1px solid rgba(128,128,128,.28);border-radius:12px;overflow:hidden;transition:border-color .2s}
+.gnrl-card:hover{border-color:rgba(128,128,128,.6)}
+.gnrl-card img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+.gnrl-card b{display:block;padding:.8rem .9rem .2rem;font-size:.9375rem;font-weight:600}
+.gnrl-card span{display:block;padding:0 .9rem .9rem;font-size:.8125rem;opacity:.6}
+/* Стили кнопки возврата. Сама кнопка стоит не здесь, а в начале <body>: она в
+   потоке, поэтому резервирует своё место и не накрывает то, что разбор нарисовал
+   у себя вверху (у четырёх выпусков там собственный переключатель темы). Sticky
+   держит её на виду при прокрутке — до подвала на длинном разборе крутить долго. */
+.gnrl-upwrap{
+  position:sticky;top:0;z-index:70;padding:.7rem 0 .1rem .75rem;
+  /* Полоса тянется во всю ширину, но кликам не мешает — ловит их только кнопка. */
+  pointer-events:none;
+}
+.gnrl-up{
+  pointer-events:auto;display:inline-flex;align-items:center;
+  padding:.4rem .8rem;border-radius:999px;font-size:.8125rem;font-weight:600;
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color:inherit;text-decoration:none;border:1px solid rgba(128,128,128,.35);
+  /* Серый в полупрозрачности и цвет текста по наследству: подложка одинаково
+     ложится и на светлую, и на тёмную страницу, а системный Canvas — нет, он не
+     знает про тему разбора и на тёмной странице стал бы белым пятном. */
+  background:rgba(127,127,127,.2);
+  backdrop-filter:blur(10px) saturate(1.4);-webkit-backdrop-filter:blur(10px) saturate(1.4);
+}
+.gnrl-up:hover{border-color:rgba(128,128,128,.75)}
+@media print{.gnrl-upwrap{display:none}}
+</style>
+<nav class="gnrl">
+  <div class="gnrl-top">
+    <a class="gnrl-back" href="https://paveldiordits.site/presentations/">← Журнал</a>
+    <span class="gnrl-h">Ещё по теме</span>
+  </div>
+  <div class="gnrl-grid">
+    <a class="gnrl-card" href="product-lab-karta-processov.html">
+      <img src="covers/product-lab-karta-processov.svg" alt="" loading="lazy">
+      <b>Product Lab — карта процессов и их состояний</b><span>19 мин · 2026-09-04</span>
+    </a>
+    <a class="gnrl-card" href="agents-weekly-2026-09-11.html">
+      <img src="covers/agents-weekly-2026-09-11.svg" alt="" loading="lazy">
+      <b>Неделя агентной экосистемы — 04–11.09.2026</b><span>35 мин · 2026-09-11</span>
+    </a>
+    <a class="gnrl-card" href="generator-fich.html">
+      <img src="covers/generator-fich.svg" alt="" loading="lazy">
+      <b>Генератор фич: что выяснило исследование и что из него брать</b><span>57 мин · 2026-09-05</span>
+    </a>
+  </div>
+</nav>
+<script>
+// Кнопка вверху — настоящая ссылка на журнал: без скриптов и на прямом заходе
+// она ведёт хотя бы туда. Если посетитель пришёл по ссылке с сайта, она вместо
+// этого возвращает на ту же страницу и в ту же точку прокрутки, откуда он ушёл, —
+// это и есть «назад», а не «в начало журнала».
+(function(){
+  var a=document.getElementById('gnrl-up');
+  if(!a||history.length<2) return;
+  var from=document.referrer||'';
+  if(from.indexOf(location.origin+'/')!==0||from===location.href) return;
+  a.addEventListener('click',function(e){ e.preventDefault(); history.back(); });
+})();
+</script>
+<!--/general:foot-->
+</body>
+</html>
