@@ -8,6 +8,13 @@
   <language>ru</language>
   <managingEditor>diordic@gmail.com (Павел Диордиц)</managingEditor>
   <item>
+    <title>Product Lab: процессы</title>
+    <link>https://paveldiordits.site/presentations/product-lab-karta-processov.html</link>
+    <guid isPermaLink="true">https://paveldiordits.site/presentations/product-lab-karta-processov.html</guid>
+    <pubDate>Tue, 15 Sep 2026 00:00:00 GMT</pubDate>
+    <description>Карта процессов Product Lab одной диаграммой: 17 стадий от гипотезы до итерации, внутри каждой — шаги и гейты владельца, артефакт на выходе, команда перехода дальше и петли, которыми путь замыкается после выпуска. У каждой стадии — состояние по ROADMAP с определением и что реально есть в репозитории: скилл, шаблон, донор.</description>
+  </item>
+  <item>
     <title>ladder: доска самоподготовки, которую наполняет агент — разбор</title>
     <link>https://paveldiordits.site/presentations/ladder.html</link>
     <guid isPermaLink="true">https://paveldiordits.site/presentations/ladder.html</guid>
@@ -55,13 +62,6 @@
     <guid isPermaLink="true">https://paveldiordits.site/presentations/claude-w23-peremer.html</guid>
     <pubDate>Fri, 04 Sep 2026 00:00:00 GMT</pubDate>
     <description>Июньский срез популярных репозиториев и навыков Claude за неделю 28.05–04.06, перемеренный три месяца спустя: недельный рейтинг не пережил квартала, а у трёх позиций счётчик звёзд пошёл вниз.</description>
-  </item>
-  <item>
-    <title>Product Lab — карта процессов и их состояний</title>
-    <link>https://paveldiordits.site/presentations/product-lab-karta-processov.html</link>
-    <guid isPermaLink="true">https://paveldiordits.site/presentations/product-lab-karta-processov.html</guid>
-    <pubDate>Fri, 04 Sep 2026 00:00:00 GMT</pubDate>
-    <description>Слепок агентного рабочего пространства: 17 стадий от гипотезы до релиза — что уже работает, что перенесено донором, что ещё не спроектировано. В приложении — досье на headcount: как плагин ставить нечего, как донора он закрывает пять стадий.</description>
   </item>
   <item>
     <title>Неделя агентной экосистемы — 18–26.08.2026</title>

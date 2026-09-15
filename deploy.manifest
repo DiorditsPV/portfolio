@@ -14,6 +14,8 @@ ladder-dark.webp
 # ─── презентации: блок ниже переписывает tools/publish-presentation.mjs ───
 presentations/index.html
 presentations/rss.xml
+presentations/product-lab-karta-processov.html
+presentations/covers/product-lab-karta-processov.svg
 presentations/ladder.html
 presentations/covers/ladder.svg
 presentations/agents-weekly-2026-09-11.html
@@ -28,8 +30,6 @@ presentations/agents-weekly-2026-09-04.html
 presentations/covers/agents-weekly-2026-09-04.svg
 presentations/claude-w23-peremer.html
 presentations/covers/claude-w23-peremer.svg
-presentations/product-lab-karta-processov.html
-presentations/covers/product-lab-karta-processov.svg
 presentations/agents-weekly-2026-08-26.html
 presentations/covers/agents-weekly-2026-08-26.svg
 presentations/agents-weekly-2026-08-18.html
