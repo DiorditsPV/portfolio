@@ -58,7 +58,7 @@ details.states[open] summary::before{content:'▾ ';}
 .pill.import{border-color:var(--accent);color:var(--accent)}
 .st .who{color:var(--muted)}
 .wrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 4px}
-svg#d{display:block;width:1500px;max-width:none;height:auto;color:var(--ink);font-family:var(--sans);margin:0 auto}
+svg#d{display:block;width:1620px;max-width:none;height:auto;color:var(--ink);font-family:var(--sans);margin:0 auto}
 .wrap.fit svg#d{width:100%;min-width:1240px}
 svg#d .hit{cursor:pointer}
 svg#d .hit:hover .shape{stroke-width:2.6}
@@ -77,11 +77,11 @@ svg#d .hit:hover .shape{stroke-width:2.6}
 <meta property="og:url" content="https://paveldiordits.site/presentations/product-lab-karta-processov.html">
 <meta property="og:site_name" content="Журнал · paveldiordits.site">
 <meta property="og:title" content="Product Lab: процессы">
-<meta property="og:description" content="Карта процессов Product Lab одной диаграммой: 17 стадий от гипотезы до итерации, внутри каждой — шаги и гейты владельца, артефакт на выходе, команда перехода дальше и петли, которыми путь замыкается после выпуска. У каждой стадии — состояние по ROADMAP с определением и что реально есть в репозитории: скилл, шаблон, донор.">
+<meta property="og:description" content="Карта процессов Product Lab одной диаграммой: 17 стадий от гипотезы до итерации, у каждой — определение, внутри — шаги и гейты владельца, артефакт на выходе, команда перехода дальше и петли, которыми путь замыкается после выпуска. У каждой стадии — состояние по ROADMAP с расшифровкой и что реально есть в репозитории: скилл, шаблон, донор.">
 <meta property="og:image" content="https://paveldiordits.site/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Product Lab: процессы">
-<meta name="twitter:description" content="Карта процессов Product Lab одной диаграммой: 17 стадий от гипотезы до итерации, внутри каждой — шаги и гейты владельца, артефакт на выходе, команда перехода дальше и петли, которыми путь замыкается после выпуска. У каждой стадии — состояние по ROADMAP с определением и что реально есть в репозитории: скилл, шаблон, донор.">
+<meta name="twitter:description" content="Карта процессов Product Lab одной диаграммой: 17 стадий от гипотезы до итерации, у каждой — определение, внутри — шаги и гейты владельца, артефакт на выходе, команда перехода дальше и петли, которыми путь замыкается после выпуска. У каждой стадии — состояние по ROADMAP с расшифровкой и что реально есть в репозитории: скилл, шаблон, донор.">
 <meta name="twitter:image" content="https://paveldiordits.site/og.png">
 <link rel="canonical" href="https://paveldiordits.site/presentations/product-lab-karta-processov.html">
 <link rel="alternate" type="application/rss+xml" title="Журнал — разборы Павла Диордица" href="https://paveldiordits.site/presentations/rss.xml">
@@ -150,11 +150,11 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 const CLS={discovery:'Discovery',concept:'Concept',definition:'Definition',solution:'Solution',development:'Development',release:'Release',feedback:'Feedback'};
 const STATE={manual:['Manual','человек выполняет стадию по шаблону'],design:['Design','проектируется по команде владельца, шаблон draft'],adaptation:['Adaptation','адаптированный скилл исполняет стадию, шаблон draft'],not:['Not designed','процесса нет, только по явной команде']};
 const S=[
-{num:1,id:'idea',name:'Idea',cls:'discovery',state:'manual',exec:'человек',file:'IDEA.md',tpl:'01 · 1.1 draft',skill:'нет — человек',donor:'нет',donorFull:'нет',
+{num:1,id:'idea',name:'Idea',def:'Фиксируем исходную гипотезу продукта: что строим, для кого и зачем, одной страницей и без решений о том, как.',cls:'discovery',state:'manual',exec:'человек',file:'IDEA.md',tpl:'01 · 1.1 draft',skill:'нет — человек',donor:'нет',donorFull:'нет',
  steps:[{h:'Записать гипотезу',c:'что строим и зачем, одной страницей',d:['IDEA.md по шаблону 01: гипотеза, не решение','материалы владельца — тексты, макеты — в materials/ как есть','IDEA.md, написанный агентом в автономном прогоне, — не вход владельца']},
   {h:'Завести проект',c:'projects/<project>/ и STATUS.md на 17 строк',d:['директория по docs/artifact-model.md','STATUS.md по форме projects/README.md: семнадцать строк, Idea ✓']}],
  next:{cmd:'«собери бриф»',short:'IDEA.md и STATUS.md заведены'}},
-{num:2,id:'brief',name:'Brief',cls:'discovery',state:'design',exec:'skills/brief',file:'BRIEF.md',tpl:'02 · 1.2 draft',skill:'есть',donor:'перенесён',donorFull:'donors/brief: headcount saas-idea-validator, product-discovery; рамка inputs.md; grill-me — ссылка',
+{num:2,id:'brief',name:'Brief',def:'Фиксируем рамку продукта: цель владельца, материалы с ролями, его решения, конфликты входов, ограничения и активы, ничего не выводя.',cls:'discovery',state:'design',exec:'skills/brief',file:'BRIEF.md',tpl:'02 · 1.2 draft',skill:'есть',donor:'перенесён',donorFull:'donors/brief: headcount saas-idea-validator, product-discovery; рамка inputs.md; grill-me — ссылка',
  steps:[{h:'Инвентарь',c:'все входы владельца с ролью и датой',d:['materials/, ссылки, сессия, что уже существует','роль по словам владельца: решение / иллюстрация / гипотеза / не уточнено','наблюдение или мнение — по шкале свидетельств','ноль материалов не блокирует']},
   {h:'Извлечение',c:'цель, решения, ограничения, активы',d:['кандидаты в разделы брифа, каждый со ссылкой на материал','не найдено — «не задано», и это вопрос интервью']},
   {h:'Конфликты',c:'расхождения входов → вопросы владельцу',d:['материал ↔ материал, материал ↔ слова владельца — строкой «Решения владельца»','приоритета по умолчанию нет']},
@@ -162,13 +162,13 @@ const S=[
   {h:'Проверка',c:'ни один раздел не выведен агентом',d:['цель — намерение владельца, не метрика пользователя','продукт назван без описания одного решения; «для кого» — не «все»','ориентир — одна страница']},
   {h:'Запись',c:'«утверждён» только словом владельца',d:['BRIEF.md; утверждён → Brief ✓, иначе черновик «→»','правка утверждённого брифа: «История правок», у затронутых стадий «! требует сверки»']}],
  next:{cmd:'«собери концепт»',short:'BRIEF.md утверждён; черновик не блокирует'}},
-{num:3,id:'concept',name:'Concept',cls:'concept',state:'adaptation',exec:'skills/concept',file:'CONCEPT.md',tpl:'03 · 1.3 draft',skill:'есть',donor:'перенесён',donorFull:'donors/concept: методология концепта (20 шагов), idea-bank',
+{num:3,id:'concept',name:'Concept',def:'Строим продуктовую модель по методологии: пользователь, контекст, задача, ценность, core loop, фичи, экраны, монетизация, метрики.',cls:'concept',state:'adaptation',exec:'skills/concept',file:'CONCEPT.md',tpl:'03 · 1.3 draft',skill:'есть',donor:'перенесён',donorFull:'donors/concept: методология концепта (20 шагов), idea-bank',
  steps:[{h:'Компиляция идеи',gate:true,c:'пять полей блока; альтернативы с источником',d:['прочитать BRIEF.md, IDEA.md, STATUS.md — контекст заново не собирать','альтернативы с веб-проверкой: источник и дата, иначе «не проверено» курсивом','блок: Определение, Для кого, Боль, Альтернативы, Контекст','утверждение владельца или «утверждён автоматически по явной команде»']},
   {h:'20 шагов методологии',c:'от пользователя до concept brief по порядку',d:['пользователь → контекст → JTBD → обещание → ценность → позиционирование → механика → core loop → уровни функциональности → продающие фичи → экраны → монетизация → trust → дизайн-принципы → tone of voice → контент → метрики → growth → differentiator → concept brief','шаблон 03 без пустых разделов; конфликт входов — строка решений; цена только из входа']},
   {h:'Проверка',c:'core loop замкнут, paywall после ценности',d:['JTBD без имени продукта; обещание — фильтр core-фич','продающая фича за 5–10 с; принципы — характер, не HEX','каждый экран привязан к сценарию; альтернативы с источником']},
   {h:'Запись',c:'CONCEPT.md и «Гипотезы и решения»',d:['отметка Concept в STATUS.md; показать раздел «Гипотезы и решения»','статус «утверждён» — только по слову владельца']}],
  next:{cmd:'«продуктовая стратегия»',short:'CONCEPT.md утверждён или утверждён автоматически'}},
-{num:4,id:'product-strategy',name:'Product Strategy',cls:'concept',state:'adaptation',exec:'skills/product-strategy',file:'PRODUCT-STRATEGY.md',tpl:'04 · 1.4 draft',skill:'есть',donor:'перенесён',donorFull:'donors/product-strategy: headcount marketing, revenue, finance, demand-generation ×12, corporate-strategy; методология концепта, шаги 6–19',
+{num:4,id:'product-strategy',name:'Product Strategy',def:'Заостряем концепт до решений: позиционирование, за что платят, North Star и метрики, каналы с критериями остановки, запуск и сценарии.',cls:'concept',state:'adaptation',exec:'skills/product-strategy',file:'PRODUCT-STRATEGY.md',tpl:'04 · 1.4 draft',skill:'есть',donor:'перенесён',donorFull:'donors/product-strategy: headcount marketing, revenue, finance, demand-generation ×12, corporate-strategy; методология концепта, шаги 6–19',
  steps:[{h:'Компиляция',gate:true,c:'шесть строк блока; вопросы владельцу',d:['прочитать CONCEPT.md, STATUS.md; активы — из брифа; гипотезы концепта снять вопросами','конкурентная альтернатива, кому важнее всего, рыночная рамка, за что берём плату, North Star, ограничение роста','вопросы владельцу: переносимое преимущество, потолок потерь, числа плана']},
   {h:'Positioning',c:'пять решений по порядку, one-liner',d:['рамка решается последней; «продукт — это не»; опоры с доказательством']},
   {h:'Monetization',c:'метрика цены → пакеты и поверхности',d:['юнит-экономика без чисел; paywall после первой ценности; у пакета одна причина апгрейда']},
@@ -176,7 +176,7 @@ const S=[
   {h:'Distribution и GTM',c:'ярусы каналов, стоп-критерии, рынок, сценарии',d:['цель периода с датой; ограничение роста со свидетельством','у канала индикатор, дата чтения, критерий остановки; потолок потерь','ярус запуска; рынок снизу вверх курсивом; 2–3 сценария с действиями']},
   {h:'Запись',c:'проверки и «что измерить и когда»',d:['PRODUCT-STRATEGY.md, отметка в STATUS.md; следующую стадию не запускать']}],
  next:{cmd:'«собери пул возможностей»',short:'концепт и стратегия утверждены; BRIEF.md есть'}},
-{num:5,id:'feature-pool',name:'Feature Pool',cls:'definition',state:'adaptation',exec:'skills/feature-pool',file:'FEATURE-POOL.md',tpl:'05 · 1.4 draft',skill:'есть',donor:'перенесён',donorFull:'donors/feature-pool: входной контракт inputs.md, ресёрч feature-generator (эталонная модель, 39 файлов), план приземления',
+{num:5,id:'feature-pool',name:'Feature Pool',def:'Выводим из концепта и стратегии возможности, разрывы между ожиданием пользователя и реальностью, и под каждой собираем 3–5 решений разных классов, одно без разработки.',cls:'definition',state:'adaptation',exec:'skills/feature-pool',file:'FEATURE-POOL.md',tpl:'05 · 1.4 draft',skill:'есть',donor:'перенесён',donorFull:'donors/feature-pool: входной контракт inputs.md, ресёрч feature-generator (эталонная модель, 39 файлов), план приземления',
  steps:[{h:'Компиляция',gate:true,c:'носитель, корни, core loop, выбор возможностей',d:['прочитать CONCEPT.md, PRODUCT-STRATEGY.md, BRIEF.md, IDEA.md, STATUS.md; статусы оснований','черновики возможностей — значимые и отложенные; корзины фич; лимит 3–5 кандидатов','гейт: выбор возможностей принадлежит человеку']},
   {h:'Возможности',c:'разрывы из стратегии, концепта и корзин фич',d:['разложение стратегии от North Star; разрывы из концепта; «какую возможность закрывает фича?»','тест «более одного способа», иначе «Переформулировать»','носитель — эпизод; состояние — «не измерено»']},
   {h:'Линзы и кандидаты',c:'12 линз субагентами, 3–5 кандидатов',d:['каждая линза — отдельный вызов субагента; исходы: неприменима, совпадает, вне пула','кандидат: класс механизма, «чем устроен иначе», рискованное допущение, дешёвая проверка, оценка курсивом','один кандидат без разработки на возможность']},
@@ -184,7 +184,7 @@ const S=[
   {h:'Запись',c:'статусы кандидатов; перезапуск дописывает',d:['FEATURE-POOL.md, заметки прогона, отметка в STATUS.md','кандидат → в работе (ставит Scope) → выпущено с исходом / снят']}],
  next:{cmd:'«выбери состав версии»',short:'FEATURE-POOL.md утверждён'},
  self:'перезапуск: новые данные · пересмотр стратегии · после выпуска'},
-{num:6,id:'scope',name:'Scope',cls:'definition',state:'design',exec:'skills/scope',file:'SCOPE.md',tpl:'06 · 1.1 draft',skill:'есть, прогона не было',donor:'перенесён',donorFull:'donors/scope: headcount pmo ×4, finance capital-allocation, corporate-strategy portfolio-strategy',
+{num:6,id:'scope',name:'Scope',def:'Решаем, что войдёт в версию: черта проходит по реальной ёмкости, а не по достоинству кандидатов, у каждой фичи записано, что она вытесняет.',cls:'definition',state:'design',exec:'skills/scope',file:'SCOPE.md',tpl:'06 · 1.1 draft',skill:'есть, прогона не было',donor:'перенесён',donorFull:'donors/scope: headcount pmo ×4, finance capital-allocation, corporate-strategy portfolio-strategy',
  steps:[{h:'Рамка версии',gate:true,c:'ёмкость, срок, деньги, «готово, когда»',d:['прочитать FEATURE-POOL.md, PRODUCT-STRATEGY.md, BRIEF.md, CONCEPT.md, STATUS.md','лимит «в работе» N = 2; «готово, когда»: признак, дата, кто смотрит, baseline','критерии выбора в порядке — до ранжирования; рамка принадлежит владельцу']},
   {h:'Ранжирование',c:'один список без ярусов, фичи F-N',d:['кандидаты значимых возможностей; сделанное раньше — не аргумент','фичи из целых кандидатов; оценка диапазоном с основанием; резерв отдельно; скрытый объём']},
   {h:'Черта ёмкости',c:'режется объём, не оценка; «что вытесняет»',d:['верхние границы плюс резерв ≤ ёмкость на срок','у каждой фичи «что вытесняет» и «без неё»; проверка раньше сборки']},
@@ -192,47 +192,47 @@ const S=[
   {h:'Запись',c:'SCOPE.md; «в работе» в пуле',d:['гейт перед показом; статусы кандидатов в FEATURE-POOL.md со ссылкой на F-N','перезапуск: точки информации, фича выпущена или снята, данные Observation']}],
  next:{cmd:'команда на Product Definition',short:'SCOPE.md утверждён',plan:true},
  self:'перезапуск: точка информации · фича выпущена или снята · данные Observation'},
-{num:7,id:'product-definition',name:'Product Definition',cls:'definition',state:'design',plan:true,exec:'TBD — скилл проектируется (Q-016)',file:'PRODUCT-DEFINITION.md · design/',tpl:'07 · 1.1 draft, структура TBD',skill:'нет — Q-016',donor:'перенесён',donorFull:'donors/product-definition: headcount product-requirements, ux-product-auditor; видение — docs/base-design.md; design-funnel — ссылка',
+{num:7,id:'product-definition',name:'Product Definition',def:'Превращаем состав версии в поведение продукта: скелет экранов и состояний, поверхности, визуальное направление и проверяемые критерии приёмки, без реализации.',cls:'definition',state:'design',plan:true,exec:'TBD — скилл проектируется (Q-016)',file:'PRODUCT-DEFINITION.md · design/',tpl:'07 · 1.1 draft, структура TBD',skill:'нет — Q-016',donor:'перенесён',donorFull:'donors/product-definition: headcount product-requirements, ux-product-auditor; видение — docs/base-design.md; design-funnel — ссылка',
  steps:[{h:'Скелет и состояния',plan:true,c:'2–3 экрана core loop и шесть состояний',d:['экраны, без которых core loop не замыкается','первый запуск, пусто, загрузка, ошибка, офлайн, paywall','характер — принципы, tone of voice, контент концепта по ссылке']},
   {h:'Направление',plan:true,c:'design-funnel: 1–2 финалиста, имя продукта',d:['воронка над принципами и скелетом → финалисты в design/','имя продукта — в той же воронке (Q-064)','открыто у владельца: платформа, формат передачи в код, роль макета и ещё семь параметров (Q-069)']},
   {h:'Приземление фич',plan:true,c:'F-N на экран или новую поверхность',d:['каждая фича из SCOPE.md садится на экран скелета либо объявляет поверхность','новая поверхность меняет Screens и событие North Star — решение владельца','критерии приёмки без автора; «не входит» — ссылка на SCOPE.md']},
   {h:'Проверка потоков',plan:true,c:'потоки и состояния перед показом',d:['по донору ux-product-auditor']}],
  next:{cmd:'команда на Architecture',short:'PRODUCT-DEFINITION.md утверждён',plan:true}},
-{num:8,id:'architecture',name:'Architecture',cls:'solution',state:'not',plan:true,exec:'TBD',file:'ARCHITECTURE.md',tpl:'08 · 1.0, структура TBD',skill:'нет',donor:'перенесён',donorFull:'donors/architecture: headcount technology solution-architecture, api-design, cloud-infrastructure; security security-architecture-review, threat-modeling',
+{num:8,id:'architecture',name:'Architecture',def:'Проектируем техническое решение под потоки и поверхности продукта: слои, данные, интеграции, окружения; отсюда Tasks берут слой каждой задачи.',cls:'solution',state:'not',plan:true,exec:'TBD',file:'ARCHITECTURE.md',tpl:'08 · 1.0, структура TBD',skill:'нет',donor:'перенесён',donorFull:'donors/architecture: headcount technology solution-architecture, api-design, cloud-infrastructure; security security-architecture-review, threat-modeling',
  steps:[{h:'Техническое решение',plan:true,c:'под потоки и поверхности PD',d:['технические ограничения — из брифа']},
   {h:'Слои и конфигурация',plan:true,c:'слои для Tasks; конфигурация STATUS.md',d:['слои продукта читает Tasks','репозиторий, окружения, конвенции — «Конфигурация» STATUS.md для Development и Release']}],
  next:{cmd:'команда на Specification',short:'ARCHITECTURE.md утверждён',plan:true}},
-{num:9,id:'specification',name:'Specification',cls:'solution',state:'not',plan:true,exec:'TBD',file:'spec / tasks',tpl:'09 · 1.0, структура TBD',skill:'нет',donor:'ссылка',donorFull:'superpowers:writing-plans — ссылка, не копия; api-design из donors/architecture/ (решение Q-021)',
+{num:9,id:'specification',name:'Specification',def:'Готовим решение к разработке: план реализации по архитектуре, из которого выходят постановки задач с границами и порядком.',cls:'solution',state:'not',plan:true,exec:'TBD',file:'spec / tasks',tpl:'09 · 1.0, структура TBD',skill:'нет',donor:'ссылка',donorFull:'superpowers:writing-plans — ссылка, не копия; api-design из donors/architecture/ (решение Q-021)',
  steps:[{h:'План реализации',plan:true,c:'из F-N по архитектуре — задачи',d:['доктрина исполнения планов — writing-plans']},
   {h:'Постановки',plan:true,c:'tasks/<id>.md; артефакт открыт',d:['артефакт стадии — spec или сами задачи (открыто)']}],
  next:{cmd:'«подготовь ТЗ» / «возьми задачу N»',short:'постановки записаны',plan:true}},
-{num:10,id:'tasks',name:'Tasks',cls:'solution',state:'adaptation',exec:'skills/development (стадия)',file:'tasks/<id>.md · README · sources/',tpl:'10 · 1.0 draft',skill:'есть',donor:'перенесён',donorFull:'donors/development: rvi-task (source, analyze), обвязка KB',
+{num:10,id:'tasks',name:'Tasks',def:'Раскладываем решение на исполняемые задачи: постановка, снапшоты источников, ТЗ с оценками по контексту и решению, размер по шкале.',cls:'solution',state:'adaptation',exec:'skills/development (стадия)',file:'tasks/<id>.md · README · sources/',tpl:'10 · 1.0 draft',skill:'есть',donor:'перенесён',donorFull:'donors/development: rvi-task (source, analyze), обвязка KB',
  steps:[{h:'Источники',c:'постановка, снапшоты, слой продукта',d:['фича по knowledge/; постановка с уточнениями; артефакты проекта по ссылке','внешние источники — иммутабельные снапшоты; уточнения перевешивают постановку','слой продукта по ARCHITECTURE.md']},
   {h:'ТЗ',c:'по шаблону 10, сверка слоёв',d:['открытые вопросы; обратный поток «заведи задачу» из потребности']},
   {h:'Гейт ТЗ',gate:true,c:'оценки N/10, размер 1|2|3|5|8, ready',d:['понимание контекста и инженерное решение по 10 баллов','draft → ready; «реализуй N» на draft с готовым ТЗ — это и есть утверждение']}],
  next:{cmd:'«реализуй N»',short:'задача ready'}},
-{num:11,id:'development',name:'Development',cls:'development',state:'adaptation',exec:'skills/development (стадия)',file:'код · «Реализация»',tpl:'11 · 1.1 draft',skill:'есть',donor:'перенесён',donorFull:'donors/development: rvi-task (implement)',
+{num:11,id:'development',name:'Development',def:'Реализуем задачу в репозитории продукта строго по ТЗ и раскатываем там, где продукт живёт; без раскатки задача не выполнена.',cls:'development',state:'adaptation',exec:'skills/development (стадия)',file:'код · «Реализация»',tpl:'11 · 1.1 draft',skill:'есть',donor:'перенесён',donorFull:'donors/development: rvi-task (implement)',
  steps:[{h:'Вход',c:'ТЗ, конвенции репозитория, конфигурация',d:['статус in-progress; README и CONTRIBUTING продукта','репозиторий, ветка, окружения — «Конфигурация» STATUS.md']},
   {h:'Реализация',c:'строго по ТЗ; отклонения — в вопросы',d:['код, конфиги, проверки качества из ТЗ']},
   {h:'Раскатка',c:'там, где продукт живёт, иначе локально',d:['по «Окружениям» конфигурации; задача не выполнена, пока не раскатано','отчёт «Реализация»']}],
  next:{cmd:'«проверь N»',short:'реализовано и раскатано'}},
-{num:12,id:'validation',name:'Validation',cls:'development',state:'adaptation',exec:'skills/development (стадия)',file:'«Валидация» · PR',tpl:'12 · 1.0 draft',skill:'есть',donor:'перенесён',donorFull:'donors/development: rvi-task (Verify + review), профили review-agent и commit-agent; donors/validation: headcount quality-management, vulnerability-management',
+{num:12,id:'validation',name:'Validation',def:'Проверяем результат: гейт Verify по конвенциям репозитория, ревью субагентом по правилам продукта, затем коммит, push и PR.',cls:'development',state:'adaptation',exec:'skills/development (стадия)',file:'«Валидация» · PR',tpl:'12 · 1.0 draft',skill:'есть',donor:'перенесён',donorFull:'donors/development: rvi-task (Verify + review), профили review-agent и commit-agent; donors/validation: headcount quality-management, vulnerability-management',
  steps:[{h:'Verify',gate:true,c:'проверки репозитория; красный — чинить',d:['команды по конвенциям репозитория продукта; сделанное не выбрасывать']},
   {h:'Ревью',c:'субагент по правилам продукта, ≥80',d:['профиль review.md: README и CONTRIBUTING, без корпоративной KB','blocker / major / minor; «проблем нет» — явно, с остаточными рисками']},
   {h:'Коммит и PR',c:'профиль коммита: ветка, PR, вторая линия',d:['ветка задачи от свежей основной; PR в основную ветку','вторая линия — если «Окружения» называют ветку тестового окружения; без CLI — текст PR человеку']}],
  next:{cmd:'«сдай N»',short:'Verify и ревью зелёные, PR создан'}},
-{num:13,id:'delivery',name:'Delivery',cls:'development',state:'adaptation',exec:'skills/development (стадия)',file:'«Сдача» · review',tpl:'13 · 1.1 draft',skill:'есть',donor:'перенесён',donorFull:'donors/development: rvi-task (deliver)',
+{num:13,id:'delivery',name:'Delivery',def:'Сдаём изменение: что из ТЗ сделано и что нет, ссылка на PR и раскатку; замечания проходят обратно через гейты Validation, мерж за человеком.',cls:'development',state:'adaptation',exec:'skills/development (стадия)',file:'«Сдача» · review',tpl:'13 · 1.1 draft',skill:'есть',donor:'перенесён',donorFull:'donors/development: rvi-task (deliver)',
  steps:[{h:'Сдача',c:'что сделано и нет, PR, статус review',d:['фактура из треда и артефактов; комментарий в «Сдача»','предусловие: PR создан во все линии']},
   {h:'Feedback',c:'замечания → верификация → гейты Validation',d:['повторный «сдай N»; каждое замечание против кода','обоснованные — по гейтам Validation; ответ в «Сдача»']},
   {h:'Мерж',plan:true,c:'за человеком',d:['агент не мержит']}],
  next:{cmd:'«задокументируй N»',short:'сдача принята, изменение влито'}},
-{num:14,id:'documentation',name:'Documentation',cls:'development',state:'adaptation',exec:'skills/development (стадия)',file:'knowledge/ · changelog/',tpl:'14 · 1.0 draft',skill:'есть',donor:'перенесён',donorFull:'donors/development: rvi-task (document, kb-update, to-wiki), changelog-agent, снимок changelog/README.md',
+{num:14,id:'documentation',name:'Documentation',def:'Обновляем знания после сдачи: срез фичи в knowledge/, внешняя документация по каналу конфигурации, журнал по дням и реестр задач.',cls:'development',state:'adaptation',exec:'skills/development (стадия)',file:'knowledge/ · changelog/',tpl:'14 · 1.0 draft',skill:'есть',donor:'перенесён',donorFull:'donors/development: rvi-task (document, kb-update, to-wiki), changelog-agent, снимок changelog/README.md',
  steps:[{h:'Рубрика 1–10',c:'вердикт задаёт треки',d:['вверх 7–10: новый компонент или контракт; середина 4–6: изменение поведения; вниз 1–3: точечная правка']},
   {h:'knowledge/',c:'срез фичи; инкремент после СТОП',d:['состояние как факт; список → СТОП → применить только утверждённое']},
   {h:'Внешняя дока',c:'канал из конфигурации; верификация',d:['«Внешняя документация» — «нет» пропускает трек','место, фактура, разделы, публикация, перечитать из канала']},
   {h:'Журнал',c:'changelog по дням, реестр, сверка',d:['changelog/<день>; реестр tasks/README.md; пересмотр размера; сверка за период с историей']}],
  next:{cmd:'«собери релиз»',short:'задачи влиты в основную ветку'}},
-{num:15,id:'release',name:'Release',cls:'release',state:'adaptation',exec:'skills/release',file:'releases/<тег>.md · тег',tpl:'15 · 1.0 draft',skill:'есть',donor:'перенесён',donorFull:'donors/development: rvi-release (прод из тега); donors/release: headcount change-and-adoption',
+{num:15,id:'release',name:'Release',def:'Выпускаем тег из влитых задач пятью актами: scan, classify, scope с остановкой на человеке, cut одним коммитом, release с CI; деплой в прод ручной.',cls:'release',state:'adaptation',exec:'skills/release',file:'releases/<тег>.md · тег',tpl:'15 · 1.0 draft',skill:'есть',donor:'перенесён',donorFull:'donors/development: rvi-release (прод из тега); donors/release: headcount change-and-adoption',
  steps:[{h:'scan',c:'база тега, объём инкремента, задачи',d:['fetch; последний тег и база; база на основной ветке?','отсечь уже вошедшее; сверка с окружением']},
   {h:'classify',c:'по фичам F-N; «механика вне scope»',d:['единица — фича версии из SCOPE.md; нет SCOPE.md — задачи','фичи без изменений — явно']},
   {h:'scope',gate:true,c:'пути, зависимости, номер тега — СТОП',d:['зависимости на базе тега; конфигурация окружений точечно','состав и номер утверждает человек']},
@@ -240,12 +240,12 @@ const S=[
   {h:'release',c:'тег, CI, releases/<тег>.md; без деплоя',d:['push, аннотированный тег, CI тега; деплой не запускать','Release в STATUS.md; rebuild — тот же номер до выкатки']}],
  next:{cmd:'данные после релиза',short:'тег выкачен человеком',plan:true},
  self:'rebuild: «пересобери тег» — тот же номер до выкатки'},
-{num:16,id:'observation',name:'Observation',cls:'feedback',state:'not',plan:true,exec:'TBD',file:'TBD',tpl:'16 · 1.0, структура TBD',skill:'нет',donor:'кандидаты',donorFull:'названы в карте процессов, не перенесены: headcount data-analytics, marketing-analytics, voice-of-customer, activation, retention, observability',
+{num:16,id:'observation',name:'Observation',def:'Собираем фактические данные после релиза: события North Star и метрик, индикаторы каналов, «готово, когда» версии и исходы выпущенных кандидатов.',cls:'feedback',state:'not',plan:true,exec:'TBD',file:'TBD',tpl:'16 · 1.0, структура TBD',skill:'нет',donor:'кандидаты',donorFull:'названы в карте процессов, не перенесены: headcount data-analytics, marketing-analytics, voice-of-customer, activation, retention, observability',
  steps:[{h:'События метрик',plan:true,c:'North Star и индикаторы каналов',d:['«что измерить и когда» из стратегии; даты чтения индикаторов']},
   {h:'Готово, когда',plan:true,c:'признак, дата, baseline из SCOPE.md',d:['кто смотрит и к какой дате']},
   {h:'Исходы кандидатов',plan:true,c:'«выпущено» только с исходом',d:['исход в FEATURE-POOL.md']}],
  next:{cmd:'команда на Iteration',short:'данные к дате проверки',plan:true}},
-{num:17,id:'iteration',name:'Iteration',cls:'feedback',state:'not',plan:true,exec:'TBD',file:'TBD',tpl:'17 · 1.0, структура TBD',skill:'нет',donor:'кандидаты',donorFull:'названы, не перенесены: pmo benefits-realization, demand-generation experimentation, corporate-strategy scenario-planning',
+{num:17,id:'iteration',name:'Iteration',def:'Превращаем данные в следующий цикл: появились ли выгоды, и возвращаем путь в стратегию, пул возможностей, состав версии или рамку брифа.',cls:'feedback',state:'not',plan:true,exec:'TBD',file:'TBD',tpl:'17 · 1.0, структура TBD',skill:'нет',donor:'кандидаты',donorFull:'названы, не перенесены: pmo benefits-realization, demand-generation experimentation, corporate-strategy scenario-planning',
  steps:[{h:'Выгоды появились?',plan:true,c:'мера против baseline; начали бы снова?',d:['post-implementation review по донору benefits-realization']},
   {h:'Куда вернуть',plan:true,c:'стратегия, пул, версия, бриф',d:['Product Strategy: ограничение роста и сценарии — правка отдельной командой','Feature Pool: перезапуск «после выпуска», исходы кандидатов','Scope: следующая версия; тест «начали бы сегодня?»','Brief: правка рамки → «требует сверки»']}],
  next:null}
@@ -260,7 +260,7 @@ const LOOPS=[
 ];
 
 const NS='http://www.w3.org/2000/svg';
-const W=1500, X0=42, LBLW=222, SX0=290, SX1=1206, AX=1232, AW=176, BAND=124, GAP=62, TOP=14;
+const W=1620, X0=42, LBLW=360, SX0=430, SX1=1326, AX=1352, AW=176, BAND=130, GAP=62, TOP=14;
 const el=(n,a,t)=>{const e=document.createElementNS(NS,n);for(const k in a)if(a[k]!==undefined)e.setAttribute(k,a[k]);if(t!=null)e.textContent=t;return e;};
 const svg=document.getElementById('d');
 const H=TOP+S.length*(BAND+GAP)+12;
@@ -312,23 +312,29 @@ S.forEach(s=>{s.skillDot=/^есть, /.test(s.skill)?'warn':(/^есть/.test(s.
 S.forEach((s,idx)=>{
   const y=bandTop(idx), cy=y+BAND/2, col=`var(--c-${s.cls})`;
   g.appendChild(el('rect',{x:X0,y,width:W-X0-64,height:BAND,rx:10,fill:'var(--paper)',stroke:'var(--line)','stroke-width':'1','stroke-dasharray':s.plan?'6 5':'none'}));
-  /* stage label */
+  /* stage label: left column — number, name, state; right column — definition and marks */
   const lg=el('g',{});
   lg.appendChild(el('rect',{class:'shape',x:X0+8,y:y+8,width:LBLW,height:BAND-16,rx:8,fill:'var(--panel)',stroke:col,'stroke-width':s.plan?'1.5':'2','stroke-dasharray':s.plan?'5 4':'none'}));
-  lg.appendChild(el('text',{x:X0+18,y:y+30,'font-size':'20',fill:col,'font-family':SERIF,'font-weight':'600'},String(s.num).padStart(2,'0')));
-  wrapFit(s.name,LBLW-56,2,15,'600',SERIF).forEach((ln,k)=>lg.appendChild(el('text',{x:X0+52,y:y+30+k*16,'font-size':'15','font-weight':'600',fill:'currentColor','font-family':SERIF},ln)));
-  const ss=stateStyle[s.state], pw=tw(STATE[s.state][0],10,'600',FONT)+18, py=y+56;
-  lg.appendChild(el('rect',{x:X0+18,y:py,width:pw,height:17,rx:8.5,fill:ss.fill,stroke:ss.stroke,'stroke-width':'1.4','stroke-dasharray':ss.dash}));
-  lg.appendChild(el('text',{x:X0+18+pw/2,y:py+12,'font-size':'10','font-weight':'600','text-anchor':'middle',fill:ss.text,'font-family':FONT},STATE[s.state][0]));
+  const LX=X0+18, RX=X0+8+124, RW=LBLW-124-10;
+  lg.appendChild(el('text',{x:LX,y:y+30,'font-size':'20',fill:col,'font-family':SERIF,'font-weight':'600'},String(s.num).padStart(2,'0')));
+  const nameLines=wrapFit(s.name,102,2,14,'600',SERIF);
+  nameLines.forEach((ln,k)=>lg.appendChild(el('text',{x:LX,y:y+50+k*15,'font-size':'14','font-weight':'600',fill:'currentColor','font-family':SERIF},ln)));
+  const ss=stateStyle[s.state], pw=tw(STATE[s.state][0],10,'600',FONT)+18, py=y+52+nameLines.length*15+2;
+  lg.appendChild(el('rect',{x:LX,y:py,width:pw,height:17,rx:8.5,fill:ss.fill,stroke:ss.stroke,'stroke-width':'1.4','stroke-dasharray':ss.dash}));
+  lg.appendChild(el('text',{x:LX+pw/2,y:py+12,'font-size':'10','font-weight':'600','text-anchor':'middle',fill:ss.text,'font-family':FONT},STATE[s.state][0]));
+  lg.appendChild(el('line',{x1:RX-8,y1:y+16,x2:RX-8,y2:y+BAND-16,stroke:'var(--line)','stroke-width':'1'}));
+  const defLines=wrapFit(s.def,RW,5,10.5,'400',FONT);
+  defLines.forEach((ln,k)=>lg.appendChild(el('text',{x:RX,y:y+25+k*12,'font-size':'10.5',fill:'currentColor','font-family':FONT},ln)));
   const tplShort=s.tpl.replace(', структура TBD','').replace(' draft, структура TBD',' · TBD').replace(' · 1.0, структура TBD',' · TBD');
   const rows=[['скилл',s.skill.replace('есть, прогона не было','есть, без прогона'),s.skillDot],['шаблон',tplShort,/TBD/.test(s.tpl)?'off':'warn'],['донор',s.donor,s.donorDot]];
-  rows.forEach(([k,v,dc],r)=>{const ry=y+86+r*12;
-    lg.appendChild(el('circle',{cx:X0+22,cy:ry-3.5,r:3.2,fill:`var(--${dc})`}));
-    const kx=X0+30, kw=tw(k+' · ',10,'400',FONT);
+  const r0=y+25+defLines.length*12+9;
+  rows.forEach(([k,v,dc],r)=>{const ry=r0+r*12;
+    lg.appendChild(el('circle',{cx:RX+4,cy:ry-3.5,r:3.2,fill:`var(--${dc})`}));
+    const kx=RX+12, kw=tw(k+' · ',10,'400',FONT);
     lg.appendChild(el('text',{x:kx,y:ry,'font-size':'10',fill:'var(--muted)','font-family':FONT},k+' · '));
     const fam=/шаблон/.test(k)?MONO:FONT;
     lg.appendChild(el('text',{x:kx+kw+4,y:ry,'font-size':'10',fill:'currentColor','font-family':fam},fitOne(v,(X0+8+LBLW-8)-(kx+kw+4),10,'400',fam)));});
-  bind(lg,`<div class="k">стадия ${s.num} · ${esc(CLS[s.cls])}</div><div class="h">${esc(s.name)}</div><dl><dt>состояние</dt><dd>${esc(STATE[s.state][0])} — ${esc(STATE[s.state][1])}</dd><dt>исполняет</dt><dd>${esc(s.exec)}</dd><dt>артефакт</dt><dd>${esc(s.file)}</dd><dt>шаблон</dt><dd>${esc(s.tpl)}</dd><dt>донор</dt><dd>${esc(s.donorFull)}</dd></dl>`);
+  bind(lg,`<div class="k">стадия ${s.num} · ${esc(CLS[s.cls])}</div><div class="h">${esc(s.name)}</div><div style="margin-bottom:6px">${esc(s.def)}</div><dl><dt>состояние</dt><dd>${esc(STATE[s.state][0])} — ${esc(STATE[s.state][1])}</dd><dt>исполняет</dt><dd>${esc(s.exec)}</dd><dt>артефакт</dt><dd>${esc(s.file)}</dd><dt>шаблон</dt><dd>${esc(s.tpl)}</dd><dt>донор</dt><dd>${esc(s.donorFull)}</dd></dl>`);
   g.appendChild(lg);
   /* steps */
   const n=s.steps.length, gap=20;
