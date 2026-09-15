@@ -1,6 +1,24 @@
 {
   "presentations": [
     {
+      "slug": "product-lab-karta-processov",
+      "title": "Product Lab: процессы",
+      "topic": "product",
+      "series": "Product Lab",
+      "date": "2026-09-15",
+      "lang": "ru",
+      "desc": "Карта процессов Product Lab одной диаграммой: 17 стадий от гипотезы до итерации, внутри каждой — шаги и гейты владельца, артефакт на выходе, команда перехода дальше и петли, которыми путь замыкается после выпуска. У каждой стадии — состояние по ROADMAP с определением и что реально есть в репозитории: скилл, шаблон, донор.",
+      "descEn": null,
+      "tags": [],
+      "minutes": 2,
+      "keywords": [],
+      "feature": false,
+      "pick": true,
+      "status": "public",
+      "source": "~/dev/projects/personal/product-lab/.claude/docs/product-lab-diagram-2026-09-15.html",
+      "bytes": 53154
+    },
+    {
       "slug": "ladder",
       "title": "ladder: доска самоподготовки, которую наполняет агент — разбор",
       "topic": "product",
@@ -312,39 +330,6 @@
       "status": "public",
       "source": "~/dev/docs/lichnoe/research/popular-repos-skills-2026-w23.html",
       "bytes": 63202
-    },
-    {
-      "slug": "product-lab-karta-processov",
-      "title": "Product Lab — карта процессов и их состояний",
-      "topic": "product",
-      "series": "Product Lab",
-      "date": "2026-09-04",
-      "lang": "ru",
-      "desc": "Слепок агентного рабочего пространства: 17 стадий от гипотезы до релиза — что уже работает, что перенесено донором, что ещё не спроектировано. В приложении — досье на headcount: как плагин ставить нечего, как донора он закрывает пять стадий.",
-      "descEn": null,
-      "tags": [],
-      "minutes": 19,
-      "keywords": [
-        "Шесть состояний и правило их вывода",
-        "17 стадий: от идеи до итерации",
-        "Слои репозитория и путь одной стадии",
-        "Три вопроса — три места",
-        "Четыре фазы — и что из них живо сейчас",
-        "Четыре наблюдения",
-        "headcount — 172 скилла «компанией из департаментов»",
-        "Что это и что приезжает",
-        "Карта по 17 стадиям",
-        "Что закрывает",
-        "Что не закрывает и почему",
-        "Условия переноса",
-        "Чего не проверяли в этом досье",
-        "Откуда взят каждый факт"
-      ],
-      "feature": false,
-      "pick": true,
-      "status": "public",
-      "source": "~/dev/docs/lichnoe/product-lab/karta-processov-2026-09-04.html",
-      "bytes": 72539
     },
     {
       "slug": "agents-weekly-2026-08-26",

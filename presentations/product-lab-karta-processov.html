@@ -1,267 +1,87 @@
-<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Product Lab — карта процессов и их состояний</title>
+<title>Product Lab: процессы</title>
 <style>
 :root{
-  --paper:#f4f2ec; --panel:#fbfaf7; --ink:#191c21; --ink-soft:#4a5159; --ink-faint:#767f88;
-  --rule:#d9d4c8; --rule-strong:#b9b2a1; --accent:#0d6e6e; --grid:rgba(25,28,33,.055);
-  --c-partial:#1f7a4d; --c-inwork:#1d5fb0; --c-imported:#6d4bb0; --c-donor:#9a6a08;
-  --c-none:#6b7480; --c-manual:#4a5a6e;
-  --tint:.10;
-  --dossier:#e0dac9;
-  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
-  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --paper:#F2F4F7; --panel:#FFFFFF; --ink:#18212B; --muted:#5A6B7C; --line:#C9D3DD; --line-strong:#7F8FA0;
+  --gate:#B7791F; --gate-bg:#FBF1DC; --loop:#0E7490; --plan:#7A8797; --accent:#1F4E79;
+  --ok:#2E8B57; --ok-bg:#E4F3EA; --warn:#B7791F; --warn-bg:#FBF1DC; --off:#7F8FA0; --off-bg:#EDF0F3;
+  --c-discovery:#5C6B7E; --c-concept:#2F6FB3; --c-definition:#7A4FB5; --c-solution:#B7791F;
+  --c-development:#2E8B57; --c-release:#C2410C; --c-feedback:#0E7490;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --mono:"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
 }
 :root[data-theme="dark"]{
-  --paper:#101318; --panel:#171b21; --ink:#e7eaee; --ink-soft:#a8b2bd; --ink-faint:#7b8593;
-  --rule:#2a3038; --rule-strong:#3d4650; --accent:#4fd1c5; --grid:rgba(255,255,255,.045);
-  --c-partial:#4ade80; --c-inwork:#7cb0ff; --c-imported:#b79cff; --c-donor:#f2c14e;
-  --c-none:#98a2af; --c-manual:#93a7bd;
-  --dossier:#070a0d;
-  --tint:.16;
-}
-:root[data-contrast="on"]{
-  --paper:#ffffff; --panel:#ffffff; --ink:#000000; --ink-soft:#101010; --ink-faint:#202020;
-  --rule:#000000; --rule-strong:#000000; --accent:#004a4a; --grid:transparent;
-  --c-partial:#0a5c32; --c-inwork:#0b3f86; --c-imported:#4a2a8a; --c-donor:#6b4600;
-  --c-none:#2b2b2b; --c-manual:#20303f; --dossier:#e6e2d6; --tint:0;
-}
-:root[data-theme="dark"][data-contrast="on"]{
-  --paper:#000000; --panel:#000000; --ink:#ffffff; --ink-soft:#f0f0f0; --ink-faint:#e0e0e0;
-  --rule:#ffffff; --rule-strong:#ffffff; --accent:#5ff0e2; --grid:transparent;
-  --c-partial:#7dfaa8; --c-inwork:#9ec8ff; --c-imported:#d3bfff; --c-donor:#ffd968;
-  --c-none:#dcdcdc; --c-manual:#cfe0f0; --dossier:#121212; --tint:0;
+  --paper:#0E1319; --panel:#161D26; --ink:#E6ECF2; --muted:#98A6B5; --line:#2B3743; --line-strong:#5A6B7C;
+  --gate:#E0A83C; --gate-bg:#2E2413; --loop:#3BB0CB; --plan:#8A98A8; --accent:#7FB0E0;
+  --ok:#5DBB86; --ok-bg:#12281B; --warn:#E0A83C; --warn-bg:#2E2413; --off:#8A98A8; --off-bg:#1D2631;
+  --c-discovery:#8E9DB0; --c-concept:#6FA3E0; --c-definition:#B08BE0; --c-solution:#E0A83C;
+  --c-development:#5DBB86; --c-release:#F08A5B; --c-feedback:#3BB0CB;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0; background:var(--paper); color:var(--ink);
-  font:16px/1.62 var(--sans); -webkit-font-smoothing:antialiased;
-  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
-  background-size:28px 28px;
-}
-main{width:min(1480px,93vw); margin:0 auto; padding:0 0 100px}
-a{color:var(--accent)}
-h1,h2,h3{line-height:1.18; letter-spacing:-.015em}
-h2{font-size:clamp(24px,2.4vw,34px); margin:0 0 6px}
-h3{font-size:19px; margin:30px 0 10px}
-p{margin:0 0 14px; max-width:none}
-code,.mono{font-family:var(--mono); font-size:.9em}
-code{background:color-mix(in srgb,var(--ink) 7%,transparent); padding:1px 5px; border-radius:4px}
-:root[data-contrast="on"] code{background:transparent; border:1px solid var(--rule)}
-
-/* ---- шапка ---- */
-header.top{
-  position:sticky; top:0; z-index:40; background:var(--paper);
-  border-bottom:1px solid var(--rule); backdrop-filter:saturate(1.2);
-}
-.topin{width:min(1480px,93vw); margin:0 auto; display:flex; gap:18px; align-items:center; padding:10px 0; flex-wrap:wrap}
-.brand{font-family:var(--mono); font-size:12.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); font-weight:700}
-nav.jump{display:flex; gap:14px; flex-wrap:wrap; margin-left:auto}
-nav.jump a{font-size:13.5px; text-decoration:none; color:var(--ink-soft); border-bottom:1px solid transparent; padding-bottom:2px}
-nav.jump a:hover{color:var(--ink); border-bottom-color:var(--accent)}
-.ctl{display:flex; gap:8px}
-button.t{
-  font:600 12.5px/1 var(--sans); color:var(--ink-soft); background:var(--panel);
-  border:1px solid var(--rule-strong); border-radius:20px; padding:7px 13px; cursor:pointer;
-}
-button.t:hover{color:var(--ink); border-color:var(--accent)}
-button.t[aria-pressed="true"]{background:var(--accent); color:var(--paper); border-color:var(--accent)}
-#bar{height:3px; background:var(--accent); width:0; transition:width .1s linear}
-
-/* ---- титул ---- */
-.hero{padding:52px 0 30px; border-bottom:1px solid var(--rule)}
-.hero h1{font-size:clamp(32px,4.6vw,58px); margin:0 0 16px; max-width:22ch}
-.hero .lede{font-size:clamp(17px,1.35vw,20px); color:var(--ink-soft); max-width:none}
-.stamp{font-family:var(--mono); font-size:12.5px; color:var(--ink-faint); letter-spacing:.06em; margin-bottom:18px}
-.kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px; margin-top:28px}
-.kpi{background:var(--panel); border:1px solid var(--rule); border-left:3px solid var(--accent); border-radius:3px; padding:14px 16px}
-.kpi b{display:block; font-family:var(--mono); font-size:29px; line-height:1.1; margin-bottom:4px}
-.kpi span{font-size:13.5px; color:var(--ink-soft)}
-
-section{padding:46px 0; border-bottom:1px solid var(--rule); scroll-margin-top:62px}
-.sec-kicker{font-family:var(--mono); font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin-bottom:9px}
-.note{background:var(--panel); border:1px solid var(--rule); border-left:3px solid var(--rule-strong); padding:14px 18px; border-radius:3px; margin:18px 0}
-
-/* ---- легенда ---- */
-.legend{display:grid; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); gap:12px; margin-top:20px}
-.lg{border:1px solid var(--rule); border-radius:3px; padding:13px 15px; background:var(--panel); border-left:4px solid var(--k)}
-.lg.manual,.stage.manual{border-left-style:dashed}
-.lg .h{display:flex; align-items:baseline; gap:9px; margin-bottom:5px}
-.lg .dot{width:11px; height:11px; border-radius:50%; background:var(--k); flex:none; border:1px solid var(--k)}
-.lg .nm{font-weight:700; color:var(--k)}
-.lg .cnt{margin-left:auto; font-family:var(--mono); font-size:12.5px; color:var(--ink-faint)}
-.lg .st{font-family:var(--mono); font-size:12px; color:var(--ink-faint); display:block; margin-bottom:5px}
-.lg p{font-size:13.8px; color:var(--ink-soft); margin:0}
-
-/* распределение */
-.dist{display:flex; height:34px; border:1px solid var(--rule-strong); border-radius:3px; overflow:hidden; margin-top:22px}
-.dist div.striped{background-image:repeating-linear-gradient(135deg,transparent 0 6px,rgba(255,255,255,.34) 6px 12px)}
-.dist div{display:flex; align-items:center; justify-content:center; font:700 12.5px var(--mono); color:var(--paper); background:var(--k)}
-:root[data-contrast="on"] .dist div{color:#fff; border-right:2px solid var(--paper)}
-:root[data-theme="dark"] .dist div{color:#0d1014}
-:root[data-theme="dark"][data-contrast="on"] .dist div{color:#000}
-
-/* ---- лента стадий ---- */
-.rail{margin-top:26px}
-.band{position:relative; padding-left:198px; margin-bottom:6px}
-.band-lbl{
-  position:absolute; left:0; top:0; width:122px; padding-top:8px;
-  font-family:var(--mono); font-size:11.5px; letter-spacing:.13em; text-transform:uppercase;
-  color:var(--ink-faint); border-top:2px solid var(--rule-strong);
-}
-.band-lbl em{display:block; font-style:normal; font-size:10.5px; letter-spacing:.05em; text-transform:none; color:var(--ink-faint); opacity:.75; margin-top:2px}
-.stage{
-  display:grid; grid-template-columns:52px minmax(180px,1.15fr) 168px 1.5fr 1.2fr;
-  gap:14px; align-items:center;
-  background:var(--panel); border:1px solid var(--rule); border-left:5px solid var(--k);
-  border-radius:3px; padding:12px 16px; margin-bottom:8px; position:relative;
-}
-.stage::before{
-  content:""; position:absolute; left:-72px; top:50%; width:60px; height:1px; background:var(--rule-strong);
-}
-.stage::after{
-  content:""; position:absolute; left:-72px; top:-8px; bottom:-8px; width:1px; background:var(--rule-strong);
-}
-.band:last-child .stage:last-child::after{bottom:50%}
-.band:first-child .stage:first-child::after{top:50%}
-.num{font-family:var(--mono); font-size:22px; font-weight:700; color:var(--k); opacity:.9}
-.nmwrap .n{font-size:17.5px; font-weight:650; letter-spacing:-.01em}
-.nmwrap .sub{font-size:12.8px; color:var(--ink-faint); font-family:var(--mono)}
-.badge{
-  display:inline-block; font:700 11.5px/1.35 var(--mono); letter-spacing:.03em;
-  color:var(--k); border:1.5px solid var(--k); border-radius:3px; padding:5px 8px;
-  background:color-mix(in srgb,var(--k) calc(var(--tint)*100%),transparent);
-}
-.badge em{display:block; font-style:normal; font-weight:500; font-size:10.5px; letter-spacing:.02em; opacity:.85; margin-top:2px; text-transform:none}
-.facts{display:flex; flex-wrap:wrap; gap:6px}
-.chip{
-  font:500 12px/1.3 var(--mono); color:var(--ink-soft); background:transparent;
-  border:1px solid var(--rule-strong); border-radius:12px; padding:3px 9px; white-space:nowrap;
-}
-.chip b{color:var(--ink); font-weight:700}
-.chip.ok{color:var(--c-partial); border-color:var(--c-partial)}
-.chip.no{color:var(--ink-faint); border-style:dashed}
-.chip.dn{color:var(--c-donor); border-color:var(--c-donor)}
-.tmpl{font:600 12px var(--mono); color:var(--ink-soft)}
-.tmpl.v{color:var(--c-partial)}
-
-/* ---- svg слои ---- */
-figure{margin:24px 0 0}
-.svgwrap{background:var(--panel); border:1px solid var(--rule); border-radius:3px; padding:18px; overflow-x:auto}
-svg.diag{display:block; min-width:820px; width:100%; height:auto}
-svg.diag .bx{fill:var(--panel); stroke:var(--rule-strong); stroke-width:1.5}
-svg.diag .bx.hi{stroke:var(--accent); stroke-width:2.5}
-svg.diag .ttl{fill:var(--ink); font:700 15px var(--mono)}
-svg.diag .cap{fill:var(--ink-soft); font:400 12.5px var(--sans)}
-svg.diag .lbl{fill:var(--ink-soft); font:400 12px var(--sans)}
-svg.diag .lbl.sm{font-size:11px}
-svg.diag .ln{stroke:var(--ink-faint); stroke-width:1.6; fill:none}
-svg.diag .ln.acc{stroke:var(--accent); stroke-width:2}
-svg.diag .ln.dash{stroke-dasharray:5 5}
-svg.diag .ban{stroke:var(--c-donor); stroke-width:2; fill:none; stroke-dasharray:5 4}
-svg.diag .bantxt{fill:var(--c-donor); font:600 12px var(--sans)}
-figcaption{font-size:13.5px; color:var(--ink-faint); margin-top:10px}
-
-/* ---- таблицы / фазы ---- */
-.tbl{width:100%; border-collapse:collapse; margin-top:18px; font-size:14.5px}
-.tbl th,.tbl td{border:1px solid var(--rule); padding:9px 12px; text-align:left; vertical-align:top}
-.tbl th{background:var(--panel); font-size:12.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft)}
-.tblwrap{overflow-x:auto}
-.phases{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; margin-top:20px}
-.ph{background:var(--panel); border:1px solid var(--rule); border-radius:3px; padding:16px 18px}
-.ph h4{margin:0 0 4px; font-size:16.5px}
-.ph .meta{font:600 11.5px var(--mono); letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:10px}
-.ph ul{list-style:none; margin:0; padding:0}
-.ph li{font-size:14px; padding:5px 0 5px 26px; position:relative; color:var(--ink-soft); border-top:1px solid var(--rule)}
-.ph li:first-child{border-top:none}
-.ph li::before{position:absolute; left:0; top:5px; font:700 13px var(--mono)}
-.ph li.d::before{content:"✓"; color:var(--c-partial)}
-.ph li.d{color:var(--ink-faint); text-decoration:line-through; text-decoration-thickness:1px}
-.ph li.w::before{content:"▸"; color:var(--c-inwork)}
-.ph li.w{color:var(--ink); font-weight:600}
-.ph li.o::before{content:"○"; color:var(--ink-faint)}
-.findings{display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:16px; margin-top:20px}
-.fnd{background:var(--panel); border:1px solid var(--rule); border-top:3px solid var(--accent); border-radius:3px; padding:16px 18px}
-.fnd h4{margin:0 0 8px; font-size:16px}
-.fnd p{font-size:14.2px; color:var(--ink-soft); margin:0 0 8px}
-.fnd p:last-child{margin:0}
-ul.src{list-style:none; padding:0; margin:14px 0 0}
-ul.src li{padding:7px 0; border-top:1px solid var(--rule); font-size:14.2px; color:var(--ink-soft)}
-ul.src li b{color:var(--ink); font-family:var(--mono); font-size:13px; font-weight:700}
-
-/* ---- досье внешнего инструмента ---- */
-.dossier{width:100vw; margin-left:calc(50% - 50vw); background:var(--dossier);
-  border-top:4px solid var(--accent); border-bottom:4px solid var(--accent); padding:0; scroll-margin-top:62px}
-.dsin{width:min(1480px,93vw); margin:0 auto; padding:44px 0 52px}
-.ds-kicker{font-family:var(--mono); font-size:12px; letter-spacing:.2em; text-transform:uppercase;
-  color:var(--accent); font-weight:700; margin-bottom:12px}
-.ds-title{display:flex; gap:10px 24px; align-items:baseline; flex-wrap:wrap; margin-bottom:8px}
-.ds-title h2{margin:0}
-.ds-title .src{font-family:var(--mono); font-size:13px; color:var(--ink-faint)}
-.ds-frame{border-left:3px solid var(--rule-strong); padding-left:18px; margin:18px 0 24px;
-  font-size:14.6px; color:var(--ink-soft); max-width:none}
-.ds-frame b{color:var(--ink)}
-.ds-verdict{border:2px solid var(--accent); border-radius:3px; padding:16px 20px; margin:0 0 26px;
-  font-size:17px; line-height:1.5}
-.ds-verdict b{color:var(--accent)}
-.dossier h3{margin:34px 0 10px; font-size:20px}
-.dossier h3:first-of-type{margin-top:26px}
-.dossier p{font-size:15.4px}
-.fitlegend{display:flex; flex-wrap:wrap; gap:10px; margin:16px 0 14px}
-.fl{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink-soft);
-  font-family:var(--mono)}
-.fl i{width:20px; height:14px; border:1.5px solid var(--accent); border-radius:2px; display:block}
-.fl.cand i{background:var(--accent)}
-.fl.none i{border-color:var(--ink-faint)}
-.fl.na i{border-color:var(--ink-faint); border-style:dashed; opacity:.6}
-.strip{display:grid; grid-template-columns:repeat(auto-fill,minmax(168px,1fr)); gap:8px; margin:6px 0 10px}
-.cell{border:1px solid var(--ink-faint); border-radius:3px; padding:9px 11px; opacity:.86}
-.cell b{font-family:var(--mono); font-size:15px; font-weight:700; display:block; line-height:1.2}
-.cell span{font-size:12.6px; display:block; color:var(--ink-soft); margin-top:2px}
-.cell.cand{background:var(--accent); border:2px solid var(--accent); opacity:1}
-.cell.cand b,.cell.cand span{color:var(--dossier)}
-.cell.part{border:2px solid var(--accent); opacity:1}
-.cell.na{border-style:dashed; opacity:.55}
-.ds-cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); gap:16px; margin-top:18px}
-.dc{border:1px solid var(--rule-strong); border-top:3px solid var(--accent); border-radius:3px; padding:16px 18px}
-.dc h4{margin:0 0 4px; font-size:16.5px}
-.dc .st{font-family:var(--mono); font-size:12px; color:var(--ink-faint); display:block; margin-bottom:8px}
-.dc p{font-size:14.2px; color:var(--ink-soft); margin:0 0 8px}
-.dc p:last-child{margin:0}
-ul.ds-list{list-style:none; padding:0; margin:14px 0 0}
-ul.ds-list li{padding:9px 0; border-top:1px solid var(--rule); font-size:14.6px; color:var(--ink-soft)}
-ul.ds-list li b{color:var(--ink)}
-ol.ds-cond{margin:14px 0 0; padding-left:22px}
-ol.ds-cond li{font-size:14.8px; color:var(--ink-soft); margin-bottom:10px}
-ol.ds-cond li b{color:var(--ink)}
-@media (max-width:760px){ .dsin{padding:32px 0 38px} .dossier h3{font-size:18px} }
-
-@media (max-width:1080px){
-  .stage{grid-template-columns:46px 1fr; row-gap:10px}
-  .stage .st-badge{grid-column:1/-1}
-  .stage .facts{grid-column:1/-1}
-  .stage .tmplcell{grid-column:1/-1}
-}
-@media (max-width:760px){
-  main{width:94vw}
-  .band{padding-left:0}
-  .band-lbl{position:static; width:auto; border-top:2px solid var(--rule-strong); margin:18px 0 10px; padding-top:6px}
-  .stage::before,.stage::after{display:none}
-  nav.jump{display:none}
-  .hero{padding:32px 0 22px}
-}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.45;padding-inline:14px;padding-block:0 28px}
+.bar{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline;padding-block:12px 6px}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(22px,2.4vw,30px);margin:0;letter-spacing:.005em}
+.sub{color:var(--muted);font-size:13.5px}
+.controls{margin-left:auto;display:flex;gap:6px;align-items:center}
+.controls label{font-size:12.5px;color:var(--muted)}
+.controls select{font:inherit;font-size:12.5px;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:3px 8px;cursor:pointer}
+.controls select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:12px;color:var(--muted);padding-block:0 4px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:13px;height:13px;border-radius:3px;display:inline-block;border:1.5px solid var(--line-strong);background:var(--panel)}
+.sw.gate{background:var(--gate-bg);border-color:var(--gate)}
+.sw.plan{border-style:dashed;border-color:var(--plan)}
+.sw.loop{border:0;background:var(--loop);height:3px;width:22px;border-radius:2px}
+.sw.art{border-radius:2px 5px 2px 2px}
+/* state definitions */
+details.states{margin:4px 0 8px;padding:6px 12px;background:var(--panel);border:1px solid var(--line);border-radius:10px}
+details.states summary{cursor:pointer;font-size:12.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;list-style:none}
+details.states summary::before{content:'▸ ';}
+details.states[open] summary::before{content:'▾ ';}
+.states-grid{display:grid;grid-template-columns:170px minmax(0,1fr) minmax(280px,34%);gap:5px 18px;padding:8px 0 4px;align-items:start}
+.states-grid .hd{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.states-grid .txt{font-size:12.5px;line-height:1.4}
+.states-grid .who{font-size:12.5px;line-height:1.4;color:var(--muted)}
+@media (max-width:900px){.states-grid{grid-template-columns:150px 1fr}.states-grid .hd:nth-child(3),.states-grid .who{grid-column:2}}
+.st{display:contents}
+.pill{display:inline-block;justify-self:start;font-size:11px;padding:1px 8px;border-radius:999px;border:1.5px solid var(--off);color:var(--off);background:var(--panel);white-space:nowrap;font-weight:600;letter-spacing:.02em;margin-top:1px}
+.pill.manual{border-color:var(--off);color:var(--off)}
+.pill.not{border-style:dashed;border-color:var(--off);color:var(--off)}
+.pill.design{border-color:var(--warn);color:var(--warn);background:var(--warn-bg)}
+.pill.adaptation{border-color:var(--ok);color:var(--ok);background:var(--ok-bg)}
+.pill.adapted{border-color:var(--ok);color:var(--panel);background:var(--ok)}
+.pill.import{border-color:var(--accent);color:var(--accent)}
+.st .who{color:var(--muted)}
+.wrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 4px}
+svg#d{display:block;width:1500px;max-width:none;height:auto;color:var(--ink);font-family:var(--sans);margin:0 auto}
+.wrap.fit svg#d{width:100%;min-width:1240px}
+svg#d .hit{cursor:pointer}
+svg#d .hit:hover .shape{stroke-width:2.6}
+.tip{position:fixed;z-index:50;max-width:400px;background:var(--panel);color:var(--ink);border:1px solid var(--line-strong);border-radius:8px;padding:10px 12px;font-size:13px;line-height:1.4;box-shadow:0 8px 24px -12px rgba(0,0,0,.35);display:none}
+.tip .h{font-weight:600;margin-bottom:4px}
+.tip .k{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:4px}
+.tip ul{margin:0;padding-left:16px}
+.tip li{margin:2px 0}
+.tip dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:2px 10px}
+.tip dt{color:var(--muted)}
+.tip dd{margin:0}
+.foot{color:var(--muted);font-size:12.5px;padding-top:8px}
 </style>
 <!--general:head-->
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://paveldiordits.site/presentations/product-lab-karta-processov.html">
 <meta property="og:site_name" content="Журнал · paveldiordits.site">
-<meta property="og:title" content="Product Lab — карта процессов и их состояний">
-<meta property="og:description" content="Слепок агентного рабочего пространства: 17 стадий от гипотезы до релиза — что уже работает, что перенесено донором, что ещё не спроектировано. В приложении — досье на headcount: как плагин ставить нечего, как донора он закрывает пять стадий.">
+<meta property="og:title" content="Product Lab: процессы">
+<meta property="og:description" content="Карта процессов Product Lab одной диаграммой: 17 стадий от гипотезы до итерации, внутри каждой — шаги и гейты владельца, артефакт на выходе, команда перехода дальше и петли, которыми путь замыкается после выпуска. У каждой стадии — состояние по ROADMAP с определением и что реально есть в репозитории: скилл, шаблон, донор.">
 <meta property="og:image" content="https://paveldiordits.site/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Product Lab — карта процессов и их состояний">
-<meta name="twitter:description" content="Слепок агентного рабочего пространства: 17 стадий от гипотезы до релиза — что уже работает, что перенесено донором, что ещё не спроектировано. В приложении — досье на headcount: как плагин ставить нечего, как донора он закрывает пять стадий.">
+<meta name="twitter:title" content="Product Lab: процессы">
+<meta name="twitter:description" content="Карта процессов Product Lab одной диаграммой: 17 стадий от гипотезы до итерации, внутри каждой — шаги и гейты владельца, артефакт на выходе, команда перехода дальше и петли, которыми путь замыкается после выпуска. У каждой стадии — состояние по ROADMAP с определением и что реально есть в репозитории: скилл, шаблон, донор.">
 <meta name="twitter:image" content="https://paveldiordits.site/og.png">
 <link rel="canonical" href="https://paveldiordits.site/presentations/product-lab-karta-processov.html">
 <link rel="alternate" type="application/rss+xml" title="Журнал — разборы Павла Диордица" href="https://paveldiordits.site/presentations/rss.xml">
@@ -289,703 +109,296 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 })();
 </script>
 <!--/general:head-->
-</head><body>
+</head>
+<body>
 <!--general:top-->
 <div class="gnrl-upwrap"><a class="gnrl-up" id="gnrl-up" href="https://paveldiordits.site/presentations/">← Назад</a></div>
 <!--/general:top-->
-
-<header class="top">
-  <div class="topin">
-    <div class="brand">Product&nbsp;Lab · слепок 2026-09-04</div>
-    <nav class="jump">
-      <a href="#legend">Легенда</a><a href="#life">Стадии</a><a href="#layers">Слои</a>
-      <a href="#phases">Фазы</a><a href="#find">Выводы</a><a href="#dossier-01">Досье 01</a><a href="#src">Источники</a>
-    </nav>
-    <div class="ctl">
-      <button class="t" id="th" type="button">Тема: системная</button>
-      <button class="t" id="hc" type="button" aria-pressed="false">Контраст</button>
-    </div>
-  </div>
-  <div id="bar"></div>
-</header>
-
-<main>
-
-<div class="hero">
-  <div class="stamp">репозиторий ~/dev/projects/personal/product-lab · коммит 63142f5 · ветка docs/handoff-teardown</div>
-  <h1>Карта процессов Product&nbsp;Lab и их состояний</h1>
-  <p class="lede">Product Lab — агентное рабочее пространство, в котором продуктовая идея проходит
-  17 стадий от исходной гипотезы до релиза и обратной связи. Каждая стадия производит формализованный
-  артефакт, который становится входом следующей. Сам Product Lab собирается инкрементально: процесс
-  либо переносится от донора и адаптируется, либо проектируется с нуля — и только по явной команде.
-  Эта страница отвечает на один вопрос: <b>что уже работает, что в работе, что ещё не описано и где
-  стоит запрет на самостоятельное проектирование.</b></p>
-  <div class="kpis">
-    <div class="kpi"><b>0 / 17</b><span>стадий готовы полностью — исполняемый скилл есть только у одной, и та в середине адаптации</span></div>
-    <div class="kpi"><b>1</b><span>исполняемый скилл: <code>skills/concept</code>. Остальные четыре файла — заготовки на 8–9 строк</span></div>
-    <div class="kpi"><b>2 / 17</b><span>шаблонов результата утверждены (<code>validated</code>): <code>01-idea</code> и <code>03-concept</code></span></div>
-    <div class="kpi"><b>3</b><span>донора перенесены: concept, development, feature-pool. Адаптирован — ни один целиком</span></div>
-  </div>
+<div class="bar">
+  <h1>Product Lab: процессы</h1>
+  <span class="sub">17 стадий, их шаги и гейты, артефакты, переходы и замыкание · репозиторий на 2026-09-15</span>
+  <div class="controls"><label for="zoom">Масштаб</label>
+    <select id="zoom"><option value="0.6">60 %</option><option value="0.75">75 %</option><option value="0.9">90 %</option><option value="1" selected>100 %</option><option value="fit">по ширине</option></select>
+    <label for="theme">Тема</label>
+    <select id="theme"><option value="light">светлая</option><option value="dark">тёмная</option><option value="system">системная</option></select></div>
 </div>
-
-<section id="legend">
-  <div class="sec-kicker">Как читать</div>
-  <h2>Шесть состояний и правило их вывода</h2>
-  <p>Ни одно состояние здесь не выведено «на глаз». Каждая стадия описана шестью независимо
-  проверяемыми полями: <b>State</b> — дословно из таблицы в <code>docs/ROADMAP.md</code>;
-  <b>скилл</b> — по фактическому содержимому <code>skills/&lt;name&gt;/SKILL.md</code>;
-  <b>template_status</b> — из frontmatter <code>templates/NN-&lt;stage&gt;.md</code>;
-  <b>артефакт</b> — из <code>docs/artifact-model.md</code>; <b>донор</b> — по наличию директории
-  в <code>donors/</code>; <b>фаза</b> — колонка Phase в ROADMAP. Цвет на диаграмме — производная
-  от State, а не отдельный словарь: под каждым цветом ниже указана порождающая строка ROADMAP.</p>
-
-  <div class="legend">
-    <div class="lg" style="--k:var(--c-partial)">
-      <div class="h"><span class="dot"></span><span class="nm">Частично готов</span><span class="cnt">1 стадия</span></div>
-      <span class="st">State: Import / adaptation</span>
-      <p>Скилл существует и исполняется, но адаптация продолжается: версия в <code>skills/</code> ещё
-      сверяется с донором. Максимальная зрелость, достигнутая в репозитории на сегодня.</p>
-    </div>
-    <div class="lg" style="--k:var(--c-inwork)">
-      <div class="h"><span class="dot"></span><span class="nm">В работе</span><span class="cnt">1 стадия</span></div>
-      <span class="st">State: Design</span>
-      <p>Процесс проектируется прямо сейчас, донора у него нет — основой служит методология
-      соседней стадии. Шаблон результата в статусе draft: структура ещё меняется.</p>
-    </div>
-    <div class="lg" style="--k:var(--c-imported)">
-      <div class="h"><span class="dot"></span><span class="nm">Донор перенесён</span><span class="cnt">1 стадия</span></div>
-      <span class="st">State: Import first, adapt second</span>
-      <p>Исходный материал лежит в репозитории как есть, адаптация не начиналась. Порядок задан
-      явно: сначала импорт без содержательной переработки, потом адаптация отдельной задачей.</p>
-    </div>
-    <div class="lg" style="--k:var(--c-donor)">
-      <div class="h"><span class="dot"></span><span class="nm">Донор есть, не адаптирован</span><span class="cnt">4 стадии</span></div>
-      <span class="st">State: Not adapted</span>
-      <p>Материал доступен внутри корпоративного донора development, но работа над стадией
-      не начиналась и скилла у неё нет. Это очередь фаз 2–3, а не пробел в замысле.</p>
-    </div>
-    <div class="lg" style="--k:var(--c-none)">
-      <div class="h"><span class="dot"></span><span class="nm">Не спроектирован</span><span class="cnt">8 стадий</span></div>
-      <span class="st">State: Not designed</span>
-      <p>Проектирование <b>запрещено</b> без явной команды — это ближайший аналог «заблокирован»:
-      блокирует правило инкрементальной работы, а не внешняя зависимость. Наличие заготовки
-      <code>SKILL.md</code>, папки или пункта фазы разрешением не является.</p>
-    </div>
-    <div class="lg manual" style="--k:var(--c-manual)">
-      <div class="h"><span class="dot"></span><span class="nm">Вручную по замыслу</span><span class="cnt">2 стадии</span></div>
-      <span class="st">State: Not designed · Source: None (пишет человек)</span>
-      <p>Формально те же <code>Not designed</code>, но это не пробел: стадию выполняет человек,
-      и автоматизировать её не собирались. Красить её как непроектированную Architecture значило бы
-      соврать о репозитории — отсюда отдельная группа.</p>
-    </div>
+<div class="legend">
+  <span><i class="sw"></i> шаг стадии, под названием — что происходит; наведите или нажмите: подробности</span>
+  <span><i class="sw gate"></i> гейт: решение владельца, дальше не идти</span>
+  <span><i class="sw art"></i> артефакт стадии в projects/&lt;project&gt;/</span>
+  <span><i class="sw plan"></i> план: стадия ещё не исполняется</span>
+  <span>→ переход: команда · условие</span>
+  <span><i class="sw loop"></i> петля возврата или перезапуска</span>
+</div>
+<details class="states" open>
+  <summary>Состояния стадий — колонка State в docs/ROADMAP.md; только она даёт разрешение работать над стадией</summary>
+  <div class="states-grid">
+    <div class="hd">состояние</div><div class="hd">что это значит</div><div class="hd">стадии сейчас</div>
+    <div class="st"><span class="pill manual">Manual</span><div class="txt">Стадию выполняет человек, агент не участвует; контракт результата — шаблон в templates/.</div><div class="who">Idea</div></div>
+    <div class="st"><span class="pill not">Not designed</span><div class="txt">Процесса нет: ни логики в skills/, ни структуры в шаблоне. Работа начинается только по явной команде владельца, даже если донор уже лежит в donors/.</div><div class="who">Architecture, Specification, Observation, Iteration</div></div>
+    <div class="st"><span class="pill import">Import</span><div class="txt">Донор — исходный материал чужого процесса — перенесён в donors/&lt;process&gt;/ как есть, без переработки. Сам по себе разрешения не даёт; на диаграмме это строка «донор · перенесён» у стадии.</div><div class="who">доноры лежат у десяти процессов, от Brief до Release</div></div>
+    <div class="st"><span class="pill design">Design</span><div class="txt">Команда владельца выдана, стадия проектируется: шаблон в draft, скилл пишется или уже написан, прогона на реальной идее ещё не было.</div><div class="who">Brief, Scope, Product Definition</div></div>
+    <div class="st"><span class="pill adaptation">Adaptation</span><div class="txt">Адаптированная версия донора написана в skills/ и исполняет стадию; шаблон остаётся draft, пока стадию не прогнали на реальной идее и не утвердили форму результата.</div><div class="who">Concept, Product Strategy, Feature Pool, Tasks, Development, Validation, Delivery, Documentation, Release</div></div>
+    <div class="st"><span class="pill adapted">Adapted · Designed</span><div class="txt">Процесс в работе как часть Product Lab: стадию прогнали на реальной идее, форма результата утверждена — шаблон validated.</div><div class="who">пока ни одной стадии: все шаблоны draft</div></div>
   </div>
-
-  <div class="dist" role="img" aria-label="Распределение 17 стадий по группам: не спроектирован 8, донор есть 4, вручную 2, частично готов 1, в работе 1, донор перенесён 1">
-    <div style="--k:var(--c-partial); flex:1">1</div>
-    <div style="--k:var(--c-inwork); flex:1">1</div>
-    <div style="--k:var(--c-imported); flex:1">1</div>
-    <div style="--k:var(--c-donor); flex:4">4</div>
-    <div style="--k:var(--c-none); flex:8">8 не спроектировано</div>
-    <div class="striped" style="--k:var(--c-manual); flex:2">2</div>
-  </div>
-
-  <div class="note"><b>Кажущееся противоречие, которое им не является.</b> У стадии Idea
-  <code>template_status: validated</code> при <code>State: Not designed</code>. В модели репозитория
-  это согласовано: форма результата утверждена как контракт, а процесс её получения не проектируется,
-  потому что его выполняет человек. Зрелость шаблона и состояние процесса — разные вещи.</div>
-</section>
-
-<section id="life">
-  <div class="sec-kicker">Lifecycle</div>
-  <h2>17 стадий: от идеи до итерации</h2>
-  <p>Порядок жёсткий: сначала для кого и какая ценность, потом поведение, потом функциональность,
-  интерфейс, монетизация и метрики. Стадии сгруппированы в классы — логические группы из нескольких
-  шагов. Стадии не сцепляются автоматически: агент произвёл артефакт стадии — остановился и показал
-  результат, следующая стадия запускается отдельной командой.</p>
-  <p><b>Заготовка (stub)</b> в колонке скилла — это файл <code>SKILL.md</code> на 8–9 строк
-  с <code>status: stub</code>, который сообщает «не исполняется» и отсылает к ROADMAP. Навигационный
-  указатель, а не незаконченная реализация.</p>
-
-  <div class="rail">
-
-    <div class="band">
-      <div class="band-lbl">Discovery<em>вход в систему</em></div>
-      <div class="stage manual" style="--k:var(--c-manual)">
-        <div class="num">01</div>
-        <div class="nmwrap"><div class="n">Idea</div><div class="sub">фиксируем исходную гипотезу</div></div>
-        <div class="st-badge"><span class="badge">ВРУЧНУЮ<em>Not designed · пишет человек</em></span></div>
-        <div class="facts"><span class="chip no">скилл: не нужен</span><span class="chip"><b>IDEA.md</b></span><span class="chip no">донора нет</span></div>
-        <div class="tmplcell"><span class="tmpl v">шаблон 01-idea · validated</span></div>
-      </div>
-      <div class="stage manual" style="--k:var(--c-manual)">
-        <div class="num">02</div>
-        <div class="nmwrap"><div class="n">Brief</div><div class="sub">кратко фиксируем задачу и контекст</div></div>
-        <div class="st-badge"><span class="badge">ВРУЧНУЮ<em>Not designed · пишет человек</em></span></div>
-        <div class="facts"><span class="chip no">скилл: не нужен</span><span class="chip no">артефакт: TBD</span><span class="chip no">донора нет</span></div>
-        <div class="tmplcell"><span class="tmpl">шаблон 02-brief · draft</span></div>
-      </div>
-    </div>
-
-    <div class="band">
-      <div class="band-lbl">Concept<em>ценность и модель</em></div>
-      <div class="stage" style="--k:var(--c-partial)">
-        <div class="num">03</div>
-        <div class="nmwrap"><div class="n">Concept</div><div class="sub">формируем продуктовую модель</div></div>
-        <div class="st-badge"><span class="badge">ЧАСТИЧНО ГОТОВ<em>Import / adaptation · фаза 1</em></span></div>
-        <div class="facts"><span class="chip ok">скилл <b>исполняется</b></span><span class="chip"><b>CONCEPT.md</b></span><span class="chip dn">донор: donors/concept</span></div>
-        <div class="tmplcell"><span class="tmpl v">шаблон 03-concept · validated</span></div>
-      </div>
-      <div class="stage" style="--k:var(--c-inwork)">
-        <div class="num">04</div>
-        <div class="nmwrap"><div class="n">Product Strategy</div><div class="sub">позиционирование, монетизация, метрики, GTM</div></div>
-        <div class="st-badge"><span class="badge">В РАБОТЕ<em>Design · фаза 1</em></span></div>
-        <div class="facts"><span class="chip ok">ведёт <b>skills/concept</b></span><span class="chip"><b>STRATEGY.md</b></span><span class="chip no">донора нет</span></div>
-        <div class="tmplcell"><span class="tmpl">шаблон 04-product-strategy · draft</span></div>
-      </div>
-    </div>
-
-    <div class="band">
-      <div class="band-lbl">Definition<em>состав продукта</em></div>
-      <div class="stage" style="--k:var(--c-none)">
-        <div class="num">05</div>
-        <div class="nmwrap"><div class="n">Feature Pool</div><div class="sub">собираем потенциальные возможности</div></div>
-        <div class="st-badge"><span class="badge">НЕ СПРОЕКТИРОВАН<em>Not designed · фаза 2</em></span></div>
-        <div class="facts"><span class="chip no">скилл: TBD</span><span class="chip no">артефакт: TBD</span><span class="chip dn">донор: входной контракт</span></div>
-        <div class="tmplcell"><span class="tmpl">шаблон 05-feature-pool · draft</span></div>
-      </div>
-      <div class="stage" style="--k:var(--c-none)">
-        <div class="num">06</div>
-        <div class="nmwrap"><div class="n">Scope</div><div class="sub">выбираем состав версии</div></div>
-        <div class="st-badge"><span class="badge">НЕ СПРОЕКТИРОВАН<em>Not designed · фаза 2</em></span></div>
-        <div class="facts"><span class="chip no">skills/scope — заготовка</span><span class="chip"><b>SCOPE.md</b></span><span class="chip no">донора нет</span></div>
-        <div class="tmplcell"><span class="tmpl">шаблон 06-scope · draft</span></div>
-      </div>
-      <div class="stage" style="--k:var(--c-none)">
-        <div class="num">07</div>
-        <div class="nmwrap"><div class="n">Product Definition</div><div class="sub">описываем поведение продукта</div></div>
-        <div class="st-badge"><span class="badge">НЕ СПРОЕКТИРОВАН<em>Not designed · фаза 2</em></span></div>
-        <div class="facts"><span class="chip no">скилл: TBD</span><span class="chip"><b>PRODUCT.md</b></span><span class="chip no">донора нет</span></div>
-        <div class="tmplcell"><span class="tmpl">шаблон 07-product-definition · draft</span></div>
-      </div>
-    </div>
-
-    <div class="band">
-      <div class="band-lbl">Solution<em>техническое решение</em></div>
-      <div class="stage" style="--k:var(--c-none)">
-        <div class="num">08</div>
-        <div class="nmwrap"><div class="n">Architecture</div><div class="sub">проектируем техническое решение</div></div>
-        <div class="st-badge"><span class="badge">НЕ СПРОЕКТИРОВАН<em>Not designed · фаза 2</em></span></div>
-        <div class="facts"><span class="chip no">скилл: TBD</span><span class="chip"><b>ARCHITECTURE.md</b></span><span class="chip no">источник: частичное знание</span></div>
-        <div class="tmplcell"><span class="tmpl">шаблон 08-architecture · draft</span></div>
-      </div>
-      <div class="stage" style="--k:var(--c-none)">
-        <div class="num">09</div>
-        <div class="nmwrap"><div class="n">Specification</div><div class="sub">готовим решение к разработке</div></div>
-        <div class="st-badge"><span class="badge">НЕ СПРОЕКТИРОВАН<em>Not designed · фаза 2</em></span></div>
-        <div class="facts"><span class="chip no">скилл: TBD</span><span class="chip no">артефакт: TBD</span><span class="chip no">источник: частичное знание</span></div>
-        <div class="tmplcell"><span class="tmpl">шаблон 09-specification · draft</span></div>
-      </div>
-      <div class="stage" style="--k:var(--c-donor)">
-        <div class="num">10</div>
-        <div class="nmwrap"><div class="n">Tasks</div><div class="sub">раскладываем решение на исполняемые задачи</div></div>
-        <div class="st-badge"><span class="badge">ДОНОР, НЕ АДАПТИРОВАН<em>Not adapted · фаза 2</em></span></div>
-        <div class="facts"><span class="chip no">скилл: TBD</span><span class="chip"><b>tasks/</b></span><span class="chip dn">донор: обвязка development</span></div>
-        <div class="tmplcell"><span class="tmpl">шаблон 10-tasks · draft</span></div>
-      </div>
-    </div>
-
-    <div class="band">
-      <div class="band-lbl">Development<em>реализация</em></div>
-      <div class="stage" style="--k:var(--c-imported)">
-        <div class="num">11</div>
-        <div class="nmwrap"><div class="n">Development</div><div class="sub">реализуем изменение</div></div>
-        <div class="st-badge"><span class="badge">ДОНОР ПЕРЕНЕСЁН<em>Import first, adapt second · фаза 1</em></span></div>
-        <div class="facts"><span class="chip no">skills/development — заготовка</span><span class="chip">код + <b>knowledge/</b></span><span class="chip dn">донор: корпоративный RVI</span></div>
-        <div class="tmplcell"><span class="tmpl">шаблон 11-development · draft</span></div>
-      </div>
-      <div class="stage" style="--k:var(--c-none)">
-        <div class="num">12</div>
-        <div class="nmwrap"><div class="n">Validation</div><div class="sub">проверяем результат</div></div>
-        <div class="st-badge"><span class="badge">НЕ СПРОЕКТИРОВАН<em>Not designed · фаза 3</em></span></div>
-        <div class="facts"><span class="chip no">skills/development — заготовка</span><span class="chip no">артефакт: TBD</span><span class="chip no">донора нет</span></div>
-        <div class="tmplcell"><span class="tmpl">шаблон 12-validation · draft</span></div>
-      </div>
-      <div class="stage" style="--k:var(--c-donor)">
-        <div class="num">13</div>
-        <div class="nmwrap"><div class="n">Delivery</div><div class="sub">интегрируем изменение</div></div>
-        <div class="st-badge"><span class="badge">ДОНОР, НЕ АДАПТИРОВАН<em>Not adapted · фаза 3</em></span></div>
-        <div class="facts"><span class="chip no">skills/development — заготовка</span><span class="chip no">артефакт: TBD</span><span class="chip dn">донор: обвязка development</span></div>
-        <div class="tmplcell"><span class="tmpl">шаблон 13-delivery · draft</span></div>
-      </div>
-      <div class="stage" style="--k:var(--c-donor)">
-        <div class="num">14</div>
-        <div class="nmwrap"><div class="n">Documentation</div><div class="sub">обновляем знания</div></div>
-        <div class="st-badge"><span class="badge">ДОНОР, НЕ АДАПТИРОВАН<em>Not adapted · фаза 3</em></span></div>
-        <div class="facts"><span class="chip no">skills/development — заготовка</span><span class="chip"><b>knowledge/</b>, <b>changelog/</b></span><span class="chip dn">донор: rvi-kb-update</span></div>
-        <div class="tmplcell"><span class="tmpl">шаблон 14-documentation · draft</span></div>
-      </div>
-    </div>
-
-    <div class="band">
-      <div class="band-lbl">Release<em>выпуск</em></div>
-      <div class="stage" style="--k:var(--c-donor)">
-        <div class="num">15</div>
-        <div class="nmwrap"><div class="n">Release</div><div class="sub">выпускаем пользователю</div></div>
-        <div class="st-badge"><span class="badge">ДОНОР, НЕ АДАПТИРОВАН<em>Not adapted · фаза 3</em></span></div>
-        <div class="facts"><span class="chip no">skills/release — заготовка</span><span class="chip"><b>releases/</b></span><span class="chip dn">донор: rvi-release, прод из тега</span></div>
-        <div class="tmplcell"><span class="tmpl">шаблон 15-release · draft</span></div>
-      </div>
-    </div>
-
-    <div class="band">
-      <div class="band-lbl">Feedback<em>обратная связь</em></div>
-      <div class="stage" style="--k:var(--c-none)">
-        <div class="num">16</div>
-        <div class="nmwrap"><div class="n">Observation</div><div class="sub">собираем фактические данные после релиза</div></div>
-        <div class="st-badge"><span class="badge">НЕ СПРОЕКТИРОВАН<em>Not designed · вне фаз</em></span></div>
-        <div class="facts"><span class="chip no">скилл: TBD</span><span class="chip no">артефакт: TBD</span><span class="chip no">донора нет</span></div>
-        <div class="tmplcell"><span class="tmpl">шаблон 16-observation · draft</span></div>
-      </div>
-      <div class="stage" style="--k:var(--c-none)">
-        <div class="num">17</div>
-        <div class="nmwrap"><div class="n">Iteration</div><div class="sub">превращаем данные в следующий цикл</div></div>
-        <div class="st-badge"><span class="badge">НЕ СПРОЕКТИРОВАН<em>Not designed · вне фаз</em></span></div>
-        <div class="facts"><span class="chip no">скилл: TBD</span><span class="chip no">артефакт: TBD</span><span class="chip no">донора нет</span></div>
-        <div class="tmplcell"><span class="tmpl">шаблон 17-iteration · draft</span></div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<section id="layers">
-  <div class="sec-kicker">Устройство</div>
-  <h2>Слои репозитория и путь одной стадии</h2>
-  <p>Репозиторий разложен на пять слоёв, и каждый отвечает ровно на один вопрос. Разделение
-  строгое: смешение слоёв — главная ошибка, от которой защищают правила в <code>CLAUDE.md</code>.</p>
-
-  <figure>
-    <div class="svgwrap">
-      <svg class="diag" viewBox="0 0 960 486" role="img" aria-labelledby="difig">
-        <title id="difig">Схема слоёв: PRODUCT-LAB.md определяет стадии; donors адаптируются в skills; templates задают форму результата; ROADMAP даёт разрешение на работу; skills производят артефакты в projects; donors в рантайме не читаются</title>
-        <defs>
-          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-            <path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/>
-          </marker>
-        </defs>
-
-        <rect class="bx hi" x="210" y="8" width="540" height="58" rx="3"/>
-        <text class="ttl" x="480" y="32" text-anchor="middle">PRODUCT-LAB.md</text>
-        <text class="cap" x="480" y="52" text-anchor="middle">единственный источник истины: названия, порядок, классы и смысл 17 стадий</text>
-
-        <path class="ln acc" d="M480 66 L480 96"/>
-        <path class="ln acc" d="M120 96 L840 96"/>
-        <path class="ln acc" d="M120 96 L120 126" marker-end="url(#ar)"/>
-        <path class="ln acc" d="M480 96 L480 126" marker-end="url(#ar)"/>
-        <path class="ln acc" d="M840 96 L840 126" marker-end="url(#ar)"/>
-        <text class="lbl" x="496" y="89">определяет стадии и их порядок</text>
-
-        <rect class="bx" x="20" y="130" width="200" height="96" rx="3"/>
-        <text class="ttl" x="120" y="156" text-anchor="middle">donors/</text>
-        <text class="cap" x="120" y="177" text-anchor="middle">исходный материал</text>
-        <text class="cap" x="120" y="195" text-anchor="middle">как есть, не править</text>
-        <text class="lbl sm" x="120" y="214" text-anchor="middle">concept · development · feature-pool</text>
-
-        <rect class="bx hi" x="380" y="130" width="200" height="96" rx="3"/>
-        <text class="ttl" x="480" y="156" text-anchor="middle">skills/</text>
-        <text class="cap" x="480" y="177" text-anchor="middle">как агент получает</text>
-        <text class="cap" x="480" y="195" text-anchor="middle">результат стадии</text>
-        <text class="lbl" x="480" y="214" text-anchor="middle">1 исполняемый + 3 заготовки</text>
-
-        <rect class="bx" x="740" y="130" width="200" height="96" rx="3"/>
-        <text class="ttl" x="840" y="156" text-anchor="middle">templates/</text>
-        <text class="cap" x="840" y="177" text-anchor="middle">контракт результата:</text>
-        <text class="cap" x="840" y="195" text-anchor="middle">что получится на выходе</text>
-        <text class="lbl" x="840" y="214" text-anchor="middle">17 файлов · 2 validated</text>
-
-        <path class="ln" d="M220 178 L372 178" marker-end="url(#ar)"/>
-        <text class="lbl" x="296" y="170" text-anchor="middle">адаптация</text>
-        <path class="ln" d="M740 163 L588 163" marker-end="url(#ar)"/>
-        <text class="lbl" x="664" y="155" text-anchor="middle">задаёт форму</text>
-
-        <rect class="bx hi" x="260" y="290" width="420" height="86" rx="3"/>
-        <text class="ttl" x="470" y="316" text-anchor="middle">projects/&lt;project&gt;/</text>
-        <text class="cap" x="470" y="337" text-anchor="middle">единственное место для output по конкретной идее</text>
-        <text class="lbl" x="470" y="357" text-anchor="middle">IDEA · CONCEPT · STRATEGY · SCOPE · tasks/ · releases/ · STATUS</text>
-
-        <path class="ln acc" d="M480 226 L480 282" marker-end="url(#ar)"/>
-        <text class="lbl" x="492" y="258">прогон стадии для идеи</text>
-
-        <rect class="bx" x="740" y="290" width="200" height="86" rx="3"/>
-        <text class="ttl" x="840" y="316" text-anchor="middle">docs/</text>
-        <text class="cap" x="840" y="337" text-anchor="middle">ROADMAP.md — состояние</text>
-        <text class="cap" x="840" y="356" text-anchor="middle">artifact-model.md — где лежит</text>
-
-        <path class="ln dash" d="M740 320 L692 320 L692 200 L588 200" marker-end="url(#ar)"/>
-        <text class="lbl" x="702" y="252">разрешение на работу</text>
-
-        <path class="ban" d="M120 226 L120 434 L470 434 L470 384"/>
-        <circle cx="270" cy="434" r="13" fill="none" stroke="var(--c-donor)" stroke-width="2"/>
-        <path d="M262 426 L278 442 M278 426 L262 442" stroke="var(--c-donor)" stroke-width="2"/>
-        <text class="bantxt" x="296" y="458">donors/ — материал для адаптации процесса, а не рантайм-контекст:</text>
-        <text class="bantxt" x="296" y="476">при прогоне стадии для конкретной идеи они не читаются</text>
-      </svg>
-    </div>
-    <figcaption>Схема слоёв. Сплошные стрелки — обязательные связи; пунктир — управляющая:
-    ROADMAP разрешает работу над процессом. Перечёркнутая линия внизу — явный запрет:
-    донор не участвует в прогоне стадии.</figcaption>
-  </figure>
-
-  <h3>Три вопроса — три места</h3>
-  <div class="tblwrap"><table class="tbl">
-    <thead><tr><th>Вопрос</th><th>Где ответ</th><th>Что там лежит</th></tr></thead>
-    <tbody>
-      <tr><td>Что происходит на этой стадии</td><td><code>PRODUCT-LAB.md</code></td><td>Название, класс, смысл, чем выполняется, что производит. Определения стадий не дублируются больше нигде.</td></tr>
-      <tr><td>Что я получу на выходе</td><td><code>templates/NN-&lt;stage&gt;.md</code></td><td>Контракт результата с frontmatter: артефакт, формат, файл вывода, кардинальность, версия и статус шаблона. Промпта в шаблоне нет.</td></tr>
-      <tr><td>Как агент должен получить результат</td><td><code>skills/&lt;stage&gt;/SKILL.md</code></td><td>Алгоритм анализа, вопросы агента, гейты. Один скилл может вести несколько стадий — логика каждой в <code>stages/</code>.</td></tr>
-    </tbody>
-  </table></div>
-
-  <p style="margin-top:22px">За рамками пяти слоёв остаётся <code>examples/</code> — место для одного
-  продукта, прошедшего весь flow целиком. Директория пуста и заполняется только тогда, когда
-  соответствующие процессы адаптированы или спроектированы, поэтому на схеме её нет: сегодня
-  такого продукта не существует.</p>
-
-  <div class="note"><b>Правило изоляции проектов.</b> Любой артефакт, код, исследование или
-  release-материал по конкретной идее создаётся только внутри <code>projects/&lt;project&gt;/</code>.
-  Skills, templates, docs и donors — общие ресурсы Product Lab и состояния конкретного проекта
-  не содержат. Поэтому и эта страница лежит вне репозитория: состоянием процессов владеет
-  <code>docs/ROADMAP.md</code>, второго источника той же правды быть не должно.</div>
-</section>
-
-<section id="phases">
-  <div class="sec-kicker">Порядок сборки</div>
-  <h2>Четыре фазы — и что из них живо сейчас</h2>
-  <p>Фазы задают только очерёдность работ. Разрешение на работу даёт исключительно колонка State
-  в ROADMAP: пункт фазы, пустая заготовка или упоминание в BRIEF заданием не являются.
-  Живая работа сегодня — два выделенных ниже пункта фазы 1: у обоих донор уже импортирован, идёт или предстоит адаптация. Остальные незакрытые пункты не начаты.</p>
-  <div class="phases">
-    <div class="ph">
-      <h4>Фаза 1 — Foundation</h4>
-      <div class="meta">3 из 7 закрыто · 2 в работе</div>
-      <ul>
-        <li class="d">Структура репозитория</li>
-        <li class="d">Импорт доноров как есть: concept, development</li>
-        <li class="d">Статусы процессов и правила инкрементальной работы</li>
-        <li class="w">Перенос concept-скилла: адаптация v0 сверяется с донором</li>
-        <li class="w">Перенос development-скилла отдельной задачей</li>
-        <li class="o">Описать текущий development workflow</li>
-        <li class="o">Убрать корпоративные зависимости</li>
-      </ul>
-    </div>
-    <div class="ph">
-      <h4>Фаза 2 — Concept → Task</h4>
-      <div class="meta">не начата</div>
-      <ul>
-        <li class="o">Feature Pool skill</li>
-        <li class="o">Scope skill</li>
-        <li class="o">Product Definition skill</li>
-        <li class="o">Architecture skill</li>
-        <li class="o">Specification skill</li>
-        <li class="o">Шаблон задачи</li>
-      </ul>
-    </div>
-    <div class="ph">
-      <h4>Фаза 3 — Development lifecycle</h4>
-      <div class="meta">не начата</div>
-      <ul>
-        <li class="o">Validation</li>
-        <li class="o">Documentation</li>
-        <li class="o">Knowledge Base</li>
-        <li class="o">Модель Delivery</li>
-      </ul>
-    </div>
-    <div class="ph">
-      <h4>Фаза 4 — Orchestration</h4>
-      <div class="meta">не начата</div>
-      <ul>
-        <li class="o">Определение состояния проекта</li>
-        <li class="o">Маршрутизация скиллов</li>
-        <li class="o">Валидация артефактов</li>
-        <li class="o">Оркестрация workflow</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<section id="find">
-  <div class="sec-kicker">Что видно из данных</div>
-  <h2>Четыре наблюдения</h2>
-  <div class="findings">
-    <div class="fnd">
-      <h4>Готовых стадий нет ни одной</h4>
-      <p>Единственная стадия с исполняемым скиллом — Concept, и она сама в середине адаптации:
-      версия <code>skills/concept/</code> (v0) ещё сверяется с донором. Остальные шестнадцать —
-      либо донор без адаптации, либо чистая заготовка.</p>
-      <p>Практический вывод: сегодня Product Lab запускается ровно на двух стадиях — Concept
-      и Product Strategy, обе через один скилл <code>skills/concept</code>.</p>
-    </div>
-    <div class="fnd">
-      <h4>Шаблоны опережают процессы</h4>
-      <p>Все 17 контрактов результата написаны, но утверждены только два — <code>01-idea</code>
-      и <code>03-concept</code>. Пятнадцать в статусе <code>draft</code>: структура отлаживается
-      и может меняться.</p>
-      <p>Путь к <code>validated</code> задан явно: draft → скилл и правила генерации → прогон
-      на реальных идеях → правка шаблона и скилла → validated. Пропустить прогон нельзя,
-      поэтому статус шаблона напрямую упирается в готовность процесса.</p>
-    </div>
-    <div class="fnd">
-      <h4>«Не спроектирован» — это запрет, а не пробел</h4>
-      <p>Восемь стадий в состоянии <code>Not designed</code>. Правило инкрементальной работы
-      делает это состояние блокирующим: наличие директории, файла-заготовки или упоминания
-      будущего процесса в BRIEF/ROADMAP не является разрешением его заполнить.</p>
-      <p>Снять блокировку может только явная команда, и смена состояния оформляется отдельным
-      коммитом с правкой таблицы в ROADMAP.</p>
-    </div>
-    <div class="fnd">
-      <h4>Легенда ROADMAP расходится со своей же таблицей</h4>
-      <p>Легенда определяет шесть состояний — <span class="mono">Not designed, Design, Import,
-      Adaptation, Adapted, Designed</span>. Таблица в том же файле фактически использует три
-      другие строки: <span class="mono">«Import / adaptation»</span>,
-      <span class="mono">«Import first, adapt second»</span>, <span class="mono">«Not adapted»</span>.
-      Ни одна из них в легенде не описана.</p>
-      <p>На этой странице State приведён дословно по таблице. Расхождение стоит устранить
-      отдельной правкой — либо расширив легенду, либо приведя таблицу к ней.</p>
-    </div>
-  </div>
-</section>
-
-<section class="dossier" id="dossier-01">
- <div class="dsin">
-  <div class="ds-kicker">Досье · внешний инструмент · 01</div>
-  <div class="ds-title">
-    <h2>headcount — 172 скилла «компанией из департаментов»</h2>
-    <span class="src">github.com/cbrock84/headcount · v1.0.0 · MIT · слепок 2026-09-05</span>
-  </div>
-
-  <div class="ds-frame">Это <b>приложение к карте, а не её продолжение</b>. Формат повторяется
-  для каждого следующего плагина или скилла, который мы оцениваем на пригодность для Product Lab,
-  и скелет у него фиксированный: что это → карта по 17 стадиям → что закрывает → что не закрывает
-  → вердикт → условия переноса → чего не проверяли. Оценивается не инструмент вообще, а ровно
-  один вопрос: какие стадии Product Lab он способен закрыть.</div>
-
-  <div class="ds-verdict"><b>Вердикт.</b> Как плагин — ставить ради Product Lab нечего: ни одной
-  стадии он не исполняет, а на тех, где у нас уже есть скилл, только конкурирует за автозагрузку.
-  Как <b>донор</b> — пять стадий-кандидатов, и у четырёх из них донора нет вообще.</div>
-
-  <h3>Что это и что приезжает</h3>
-  <p>Маркетплейс из 16 плагинов-«департаментов», 172 файла <code>SKILL.md</code>. Приезжает только
-  текст: ни агентов, ни команд, ни хуков, ни MCP-серверов. Установка ничего не запускает и в
-  репозиторий ничего не пишет — цена чисто контекстная: описания всех установленных скиллов висят
-  в контексте постоянно (весь headcount ≈17 400 токенов, один средний департамент — 650–1 900).</p>
-  <p>Разница, вокруг которой держится весь разбор: <b>установить плагин и перенести донора — не одно
-  и то же.</b> Установленный плагин конкурирует описаниями за автозагрузку и платит контекстом
-  в каждой сессии. Донор — текст под MIT, который копируется в <code>donors/&lt;process&gt;/</code>,
-  адаптируется отдельной задачей и в рантайме не читается вообще. Product Lab интересует второй
-  режим, поэтому вопрос здесь не «стоит ли ставить», а «есть ли материал для стадий, у которых
-  донора нет».</p>
-
-  <h3>Карта по 17 стадиям</h3>
-  <p>Четыре группы. <b>Это суждение, а не поле из файла</b> — в отличие от State,
-  <code>template_status</code> и остальных колонок основной карты, которые прочитаны из репозитория.
-  Правило вывода: <b>донор-кандидат</b> — у стадии нет донора и headcount даёт материал ровно на её
-  предмет; <b>частично</b> — донор уже есть либо материал перекрывается с установленным;
-  <b>не даёт</b> — у стадии есть донор или исполняемый скилл, и headcount там лишь второй голос;
-  <b>не нужно</b> — стадию выполняет человек по замыслу.</p>
-
-  <div class="fitlegend">
-    <span class="fl cand"><i></i>донор-кандидат · 5</span>
-    <span class="fl part"><i></i>частично · 6</span>
-    <span class="fl none"><i></i>не даёт · 4</span>
-    <span class="fl na"><i></i>не нужно · 2</span>
-  </div>
-
-  <div class="strip">
-    <div class="cell na"><b>01</b><span>Idea</span></div>
-    <div class="cell na"><b>02</b><span>Brief</span></div>
-    <div class="cell"><b>03</b><span>Concept</span></div>
-    <div class="cell cand"><b>04</b><span>Product Strategy</span></div>
-    <div class="cell cand"><b>05</b><span>Feature Pool</span></div>
-    <div class="cell cand"><b>06</b><span>Scope</span></div>
-    <div class="cell part"><b>07</b><span>Product Definition</span></div>
-    <div class="cell part"><b>08</b><span>Architecture</span></div>
-    <div class="cell part"><b>09</b><span>Specification</span></div>
-    <div class="cell part"><b>10</b><span>Tasks</span></div>
-    <div class="cell"><b>11</b><span>Development</span></div>
-    <div class="cell part"><b>12</b><span>Validation</span></div>
-    <div class="cell"><b>13</b><span>Delivery</span></div>
-    <div class="cell"><b>14</b><span>Documentation</span></div>
-    <div class="cell part"><b>15</b><span>Release</span></div>
-    <div class="cell cand"><b>16</b><span>Observation</span></div>
-    <div class="cell cand"><b>17</b><span>Iteration</span></div>
-  </div>
-
-  <h3>Что закрывает</h3>
-  <div class="ds-cards">
-    <div class="dc">
-      <h4>04 · Product Strategy</h4>
-      <span class="st">State: Design · донора нет · шаблон draft</span>
-      <p>Единственная стадия, где headcount закрывает не кусок, а весь контур. Четыре блока
-      шаблона ложатся один в один: позиционирование — <code>marketing:positioning-and-messaging</code>;
-      монетизация — <code>revenue:pricing-and-packaging</code> и <code>finance:unit-economics</code>;
-      distribution и GTM — департамент <code>demand-generation</code> целиком (12 скиллов:
-      <code>seo-strategy</code>, <code>paid-advertising</code>, <code>lifecycle-messaging</code>,
-      <code>landing-page-cro-expert</code>, <code>marketing-analytics</code>…) плюс
-      <code>marketing:marketing-planning</code> и <code>product-launch</code>; рыночная рамка —
-      <code>corporate-strategy:market-entry</code> и <code>scenario-planning</code>.</p>
-    </div>
-    <div class="dc">
-      <h4>05 · Feature Pool</h4>
-      <span class="st">State: Not designed · донор — только входной контракт</span>
-      <p>Существующий донор описывает лишь вход: какие четыре артефакта стадия принимает и запрет
-      придумывать продукт заново. Как порождаются возможности — не покрыто. На этой дыре сидят
-      <code>customer-experience:voice-of-customer</code>, <code>marketing:customer-research</code>,
-      <code>demand-generation:experimentation</code>, <code>product:product-discovery</code>.</p>
-      <p>Оговорка существенная: донор требует <b>выводить</b> возможности из принятых артефактов,
-      а эти скиллы устроены как поход в поле за инсайтами — материал придётся адаптировать под
-      ограничение, а не переносить методом.</p>
-    </div>
-    <div class="dc">
-      <h4>06 · Scope</h4>
-      <span class="st">State: Not designed · ни донора, ни скилла</span>
-      <p>Выбор состава версии — это приоритизация при ограниченном ресурсе, то есть предмет PMO
-      и финансов: <code>pmo:estimating-and-contingency</code>,
-      <code>dependency-and-risk-management</code>, <code>portfolio-governance</code>,
-      <code>benefits-realization</code>, <code>finance:capital-allocation</code>,
-      <code>corporate-strategy:portfolio-strategy</code>.</p>
-    </div>
-    <div class="dc">
-      <h4>16 · Observation</h4>
-      <span class="st">State: Not designed · вне фаз · пусто полностью</span>
-      <p>Самая пустая стадия Product Lab встречается с самой плотной областью headcount:
-      <code>data-analytics:business-intelligence</code> и <code>quantitative-analysis</code>,
-      <code>demand-generation:marketing-analytics</code>,
-      <code>customer-experience:voice-of-customer</code>, <code>revenue:activation</code> и
-      <code>retention</code>, <code>technology:observability-and-reliability</code>.</p>
-    </div>
-    <div class="dc">
-      <h4>17 · Iteration</h4>
-      <span class="st">State: Not designed · вне фаз · пусто полностью</span>
-      <p><code>pmo:benefits-realization</code> отвечает ровно на вопрос стадии — получили ли
-      обещанную ценность и что с этим делать дальше. Рядом
-      <code>demand-generation:experimentation</code> и
-      <code>corporate-strategy:scenario-planning</code>.</p>
-    </div>
-  </div>
-
-  <h3>Что не закрывает и почему</h3>
-  <p><b>Частично — шесть стадий.</b> Материал есть, но либо донор уже свой, либо он спорит
-  с тем, что установлено:</p>
-  <ul class="ds-list">
-    <li><b>07 Product Definition</b> — <code>product:product-requirements</code> и
-    <code>ux-product-auditor</code> на предмет, но <code>product-requirements</code> спорит
-    с уже исполняемым скиллом <code>concept</code>.</li>
-    <li><b>08 Architecture</b> — имена ложатся точно:
-    <code>technology:solution-architecture</code>, <code>api-design</code>,
-    <code>cloud-infrastructure</code>, <code>data-migration</code>,
-    <code>security:security-architecture-review</code>, <code>threat-modeling</code>,
-    <code>data-analytics:data-modeling</code>. Но тела этих файлов не читаны: форму гарантируют
-    только проверки CI репозитория headcount.</li>
-    <li><b>09 Specification</b> — <code>technology:implementation-planning</code> (спорит
-    с <code>superpowers:writing-plans</code>), <code>api-design</code>,
-    <code>pmo:schedule-development-and-analysis</code>.</li>
-    <li><b>10 Tasks</b> — донор уже есть (обвязка корпоративного development); headcount
-    добавляет метод оценки и зависимостей, а не саму стадию.</li>
-    <li><b>12 Validation</b> — <code>operations:quality-management</code> и
-    <code>security:vulnerability-management</code> на предмет, но
-    <code>technology:completion-verification</code> дублирует установленный
-    <code>superpowers:verification-before-completion</code>.</li>
-    <li><b>15 Release</b> — донор технический, «прод из тега». Рыночную половину «выпускаем
-    пользователю» закрывают <code>marketing:product-launch</code> и
-    <code>pmo:change-and-adoption</code>.</li>
-  </ul>
-  <p style="margin-top:18px"><b>Не даёт — четыре стадии.</b> У Concept, Development, Delivery
-  и Documentation уже есть донор либо исполняемый скилл. headcount там второй голос на той же
-  земле — а по его же критерию (<code>technology:skill-authoring</code>) два подходящих под запрос
-  описания означают, что надёжно не выигрывает ни одно.</p>
-  <p><b>Не нужно — две стадии.</b> Idea и Brief пишет человек по замыслу.</p>
-
-  <h3>Условия переноса</h3>
-  <ol class="ds-cond">
-    <li><b>Донор разрешением не является.</b> Единственное разрешение на работу — колонка State
-    в <code>docs/ROADMAP.md</code>, изменённая явной командой. Это досье — список кандидатов,
-    а не наряд на работу; таблица состояний им не меняется.</li>
-    <li><b>MIT нужно унести вместе с текстом.</b> Перенос требует сохранить уведомление
-    о лицензии: в <code>donors/&lt;process&gt;/SOURCE.md</code> — файл, коммит-слепок, лицензия
-    и автор. Автор headcount на этом обжёгся сам: 77 заимствованных скиллов пришлось удалить
-    и переписать после лицензионного аудита.</li>
-    <li><b>Правило «не ставить департамент, где гасить половину» — про установку, не про донора.</b>
-    Донор берёт отдельные файлы и остальных не касается. Поэтому Architecture-кандидат внутри
-    <code>technology</code> не противоречит выводу «<code>technology</code> не ставить»: конфликтны
-    там девять процессных скиллов, а архитектурные — нет.</li>
-    <li><b>Донор переносится как есть</b>, без содержательной переработки; адаптация — отдельная
-    задача и отдельный коммит.</li>
-    <li><b>Перед переносом конкретный файл нужно прочитать.</b> Из 172 тел прочитано шесть.</li>
-  </ol>
-
-  <h3>Чего не проверяли в этом досье</h3>
-  <ul class="ds-list">
-    <li>Тела 166 скиллов из 172 — форму гарантируют только проверки CI репозитория headcount.</li>
-    <li>Срабатывание английских описаний на русских запросах: не проверено ни автором, ни здесь.</li>
-    <li>Полезность материала в живой сессии — вывод сделан по названиям и прочитанной выборке.</li>
-  </ul>
- </div>
-</section>
-
-<section id="src">
-  <div class="sec-kicker">Источники</div>
-  <h2>Откуда взят каждый факт</h2>
-  <p><b>Основная карта</b> выведена только из файлов репозитория: веб-ресёрч по приватному
-  репозиторию бессмысленен, внешних источников по нему не существует. Все её факты прочитаны
-  на 2026-09-04, коммит <code>63142f5</code>, рабочее дерево чистое, и ничего не помечено как
-  непроверенное. <b>Досье №01</b> — единственная часть страницы, опирающаяся на источники
-  за пределами репозитория; что в нём не проверялось, перечислено внутри самого досье.</p>
-  <ul class="src">
-    <li><b>PRODUCT-LAB.md</b> — состав, порядок и классы 17 стадий, что на каждой происходит, принципы системы</li>
-    <li><b>docs/ROADMAP.md</b> — таблица состояний процессов (колонка State и Skill), легенда состояний, четыре фазы с чекбоксами</li>
-    <li><b>docs/artifact-model.md</b> — артефакт каждой стадии и его расположение внутри проекта</li>
-    <li><b>CLAUDE.md</b> — правило инкрементальной работы, описание слоёв, правило единого источника, правило изоляции проектов</li>
-    <li><b>templates/01-idea.md … templates/17-iteration.md</b> — frontmatter каждого шаблона: <code>template_status</code>, <code>output</code>, <code>cardinality</code></li>
-    <li><b>skills/concept/SKILL.md</b> (56 строк + <code>stages/</code> + <code>reference/methodology.md</code> на 425 строк) — единственный исполняемый скилл</li>
-    <li><b>skills/development/SKILL.md, skills/release/SKILL.md, skills/scope/SKILL.md</b> — заготовки по 8–9 строк с <code>status: stub</code></li>
-    <li><b>donors/concept/SOURCE.md, donors/development/SOURCE.md, donors/feature-pool/SOURCE.md</b> — происхождение и состав каждого донора; <code>donors/feature-pool/inputs.md</code> — входной контракт стадии</li>
-  </ul>
-  <p style="margin-top:20px">Досье №01 опирается на источники за пределами репозитория:
-  на этой странице:</p>
-  <ul class="src">
-    <li><b>~/dev/docs/lichnoe/research/headcount-razbor-2026-09-05.md</b> — разбор плагина: состав, цена в контексте, что приезжает при установке, инженерный процесс репозитория</li>
-    <li><b>~/dev/docs/lichnoe/research/headcount-konflikty-2026-09-05.md</b> — конфликты с текущим набором скиллов, доктринальные расхождения, протокол пробы</li>
-    <li><b><a href="https://github.com/cbrock84/headcount">github.com/cbrock84/headcount</a></b> — README (сгенерирован из дерева репозитория): полный каталог 16 департаментов и 172 скиллов, по которому построена карта соответствия</li>
-  </ul>
-  <p style="margin-top:18px; color:var(--ink-faint); font-size:14px">Текстовая версия того же
-  разбора — <code>karta-processov-2026-09-04.md</code> в этой же папке.</p>
-</section>
-
-</main>
-
+</details>
+<div class="wrap"><svg id="d" role="img" aria-label="Семнадцать стадий Product Lab сверху вниз; в каждой полосе шаги с комментариями, гейты и артефакт; между полосами переходы с командой; справа петли возврата"></svg></div>
+<div class="tip" id="tip" role="tooltip"></div>
+<p class="foot">Источник — файлы репозитория: PRODUCT-LAB.md, docs/ROADMAP.md, templates/, файлы стадий skills/*/stages, skills/development, skills/release, docs/base-design.md.</p>
 <script>
 (function(){
-  var r=document.documentElement, th=document.getElementById('th'), hc=document.getElementById('hc');
-  var names={system:'Тема: системная',light:'Тема: светлая',dark:'Тема: тёмная'}, order=['system','light','dark'];
-  var mode=null, contrast=null;
-  try{mode=localStorage.getItem('pl-theme'); contrast=localStorage.getItem('pl-contrast');}catch(e){}
-  mode=names[mode]?mode:'system'; contrast=contrast==='on'?'on':'off';
-  function apply(){
-    if(mode==='system'){r.removeAttribute('data-theme');}else{r.setAttribute('data-theme',mode);}
-    r.setAttribute('data-contrast',contrast);
-    th.textContent=names[mode];
-    hc.setAttribute('aria-pressed',contrast==='on'?'true':'false');
-    try{localStorage.setItem('pl-theme',mode);localStorage.setItem('pl-contrast',contrast);}catch(e){}
+const CLS={discovery:'Discovery',concept:'Concept',definition:'Definition',solution:'Solution',development:'Development',release:'Release',feedback:'Feedback'};
+const STATE={manual:['Manual','человек выполняет стадию по шаблону'],design:['Design','проектируется по команде владельца, шаблон draft'],adaptation:['Adaptation','адаптированный скилл исполняет стадию, шаблон draft'],not:['Not designed','процесса нет, только по явной команде']};
+const S=[
+{num:1,id:'idea',name:'Idea',cls:'discovery',state:'manual',exec:'человек',file:'IDEA.md',tpl:'01 · 1.1 draft',skill:'нет — человек',donor:'нет',donorFull:'нет',
+ steps:[{h:'Записать гипотезу',c:'что строим и зачем, одной страницей',d:['IDEA.md по шаблону 01: гипотеза, не решение','материалы владельца — тексты, макеты — в materials/ как есть','IDEA.md, написанный агентом в автономном прогоне, — не вход владельца']},
+  {h:'Завести проект',c:'projects/<project>/ и STATUS.md на 17 строк',d:['директория по docs/artifact-model.md','STATUS.md по форме projects/README.md: семнадцать строк, Idea ✓']}],
+ next:{cmd:'«собери бриф»',short:'IDEA.md и STATUS.md заведены'}},
+{num:2,id:'brief',name:'Brief',cls:'discovery',state:'design',exec:'skills/brief',file:'BRIEF.md',tpl:'02 · 1.2 draft',skill:'есть',donor:'перенесён',donorFull:'donors/brief: headcount saas-idea-validator, product-discovery; рамка inputs.md; grill-me — ссылка',
+ steps:[{h:'Инвентарь',c:'все входы владельца с ролью и датой',d:['materials/, ссылки, сессия, что уже существует','роль по словам владельца: решение / иллюстрация / гипотеза / не уточнено','наблюдение или мнение — по шкале свидетельств','ноль материалов не блокирует']},
+  {h:'Извлечение',c:'цель, решения, ограничения, активы',d:['кандидаты в разделы брифа, каждый со ссылкой на материал','не найдено — «не задано», и это вопрос интервью']},
+  {h:'Конфликты',c:'расхождения входов → вопросы владельцу',d:['материал ↔ материал, материал ↔ слова владельца — строкой «Решения владельца»','приоритета по умолчанию нет']},
+  {h:'Интервью',gate:true,c:'по одному вопросу; ответ = решение',d:['блок: цель, роли, решения, конфликты, ограничения, активы, недостающее','вопросы самодостаточные, с вариантами и рекомендацией, по ветвям неопределённости','автономный прогон: вопросы → строки решений, бриф остаётся черновиком']},
+  {h:'Проверка',c:'ни один раздел не выведен агентом',d:['цель — намерение владельца, не метрика пользователя','продукт назван без описания одного решения; «для кого» — не «все»','ориентир — одна страница']},
+  {h:'Запись',c:'«утверждён» только словом владельца',d:['BRIEF.md; утверждён → Brief ✓, иначе черновик «→»','правка утверждённого брифа: «История правок», у затронутых стадий «! требует сверки»']}],
+ next:{cmd:'«собери концепт»',short:'BRIEF.md утверждён; черновик не блокирует'}},
+{num:3,id:'concept',name:'Concept',cls:'concept',state:'adaptation',exec:'skills/concept',file:'CONCEPT.md',tpl:'03 · 1.3 draft',skill:'есть',donor:'перенесён',donorFull:'donors/concept: методология концепта (20 шагов), idea-bank',
+ steps:[{h:'Компиляция идеи',gate:true,c:'пять полей блока; альтернативы с источником',d:['прочитать BRIEF.md, IDEA.md, STATUS.md — контекст заново не собирать','альтернативы с веб-проверкой: источник и дата, иначе «не проверено» курсивом','блок: Определение, Для кого, Боль, Альтернативы, Контекст','утверждение владельца или «утверждён автоматически по явной команде»']},
+  {h:'20 шагов методологии',c:'от пользователя до concept brief по порядку',d:['пользователь → контекст → JTBD → обещание → ценность → позиционирование → механика → core loop → уровни функциональности → продающие фичи → экраны → монетизация → trust → дизайн-принципы → tone of voice → контент → метрики → growth → differentiator → concept brief','шаблон 03 без пустых разделов; конфликт входов — строка решений; цена только из входа']},
+  {h:'Проверка',c:'core loop замкнут, paywall после ценности',d:['JTBD без имени продукта; обещание — фильтр core-фич','продающая фича за 5–10 с; принципы — характер, не HEX','каждый экран привязан к сценарию; альтернативы с источником']},
+  {h:'Запись',c:'CONCEPT.md и «Гипотезы и решения»',d:['отметка Concept в STATUS.md; показать раздел «Гипотезы и решения»','статус «утверждён» — только по слову владельца']}],
+ next:{cmd:'«продуктовая стратегия»',short:'CONCEPT.md утверждён или утверждён автоматически'}},
+{num:4,id:'product-strategy',name:'Product Strategy',cls:'concept',state:'adaptation',exec:'skills/product-strategy',file:'PRODUCT-STRATEGY.md',tpl:'04 · 1.4 draft',skill:'есть',donor:'перенесён',donorFull:'donors/product-strategy: headcount marketing, revenue, finance, demand-generation ×12, corporate-strategy; методология концепта, шаги 6–19',
+ steps:[{h:'Компиляция',gate:true,c:'шесть строк блока; вопросы владельцу',d:['прочитать CONCEPT.md, STATUS.md; активы — из брифа; гипотезы концепта снять вопросами','конкурентная альтернатива, кому важнее всего, рыночная рамка, за что берём плату, North Star, ограничение роста','вопросы владельцу: переносимое преимущество, потолок потерь, числа плана']},
+  {h:'Positioning',c:'пять решений по порядку, one-liner',d:['рамка решается последней; «продукт — это не»; опоры с доказательством']},
+  {h:'Monetization',c:'метрика цены → пакеты и поверхности',d:['юнит-экономика без чисел; paywall после первой ценности; у пакета одна причина апгрейда']},
+  {h:'Metrics',c:'North Star; событие и решение у метрики',d:['Activation / Engagement / Retention / Monetization / Growth','North Star — ценность, не выручка']},
+  {h:'Distribution и GTM',c:'ярусы каналов, стоп-критерии, рынок, сценарии',d:['цель периода с датой; ограничение роста со свидетельством','у канала индикатор, дата чтения, критерий остановки; потолок потерь','ярус запуска; рынок снизу вверх курсивом; 2–3 сценария с действиями']},
+  {h:'Запись',c:'проверки и «что измерить и когда»',d:['PRODUCT-STRATEGY.md, отметка в STATUS.md; следующую стадию не запускать']}],
+ next:{cmd:'«собери пул возможностей»',short:'концепт и стратегия утверждены; BRIEF.md есть'}},
+{num:5,id:'feature-pool',name:'Feature Pool',cls:'definition',state:'adaptation',exec:'skills/feature-pool',file:'FEATURE-POOL.md',tpl:'05 · 1.4 draft',skill:'есть',donor:'перенесён',donorFull:'donors/feature-pool: входной контракт inputs.md, ресёрч feature-generator (эталонная модель, 39 файлов), план приземления',
+ steps:[{h:'Компиляция',gate:true,c:'носитель, корни, core loop, выбор возможностей',d:['прочитать CONCEPT.md, PRODUCT-STRATEGY.md, BRIEF.md, IDEA.md, STATUS.md; статусы оснований','черновики возможностей — значимые и отложенные; корзины фич; лимит 3–5 кандидатов','гейт: выбор возможностей принадлежит человеку']},
+  {h:'Возможности',c:'разрывы из стратегии, концепта и корзин фич',d:['разложение стратегии от North Star; разрывы из концепта; «какую возможность закрывает фича?»','тест «более одного способа», иначе «Переформулировать»','носитель — эпизод; состояние — «не измерено»']},
+  {h:'Линзы и кандидаты',c:'12 линз субагентами, 3–5 кандидатов',d:['каждая линза — отдельный вызов субагента; исходы: неприменима, совпадает, вне пула','кандидат: класс механизма, «чем устроен иначе», рискованное допущение, дешёвая проверка, оценка курсивом','один кандидат без разработки на возможность']},
+  {h:'Гейт перед показом',c:'классы, семейства, «без разработки»',d:['≥3 классов из ≥2 семейств; никто никого не пересказывает','ссылки разрешаются; общие ресурсы проверок сведены','параметры плана — решение владельца или курсив']},
+  {h:'Запись',c:'статусы кандидатов; перезапуск дописывает',d:['FEATURE-POOL.md, заметки прогона, отметка в STATUS.md','кандидат → в работе (ставит Scope) → выпущено с исходом / снят']}],
+ next:{cmd:'«выбери состав версии»',short:'FEATURE-POOL.md утверждён'},
+ self:'перезапуск: новые данные · пересмотр стратегии · после выпуска'},
+{num:6,id:'scope',name:'Scope',cls:'definition',state:'design',exec:'skills/scope',file:'SCOPE.md',tpl:'06 · 1.1 draft',skill:'есть, прогона не было',donor:'перенесён',donorFull:'donors/scope: headcount pmo ×4, finance capital-allocation, corporate-strategy portfolio-strategy',
+ steps:[{h:'Рамка версии',gate:true,c:'ёмкость, срок, деньги, «готово, когда»',d:['прочитать FEATURE-POOL.md, PRODUCT-STRATEGY.md, BRIEF.md, CONCEPT.md, STATUS.md','лимит «в работе» N = 2; «готово, когда»: признак, дата, кто смотрит, baseline','критерии выбора в порядке — до ранжирования; рамка принадлежит владельцу']},
+  {h:'Ранжирование',c:'один список без ярусов, фичи F-N',d:['кандидаты значимых возможностей; сделанное раньше — не аргумент','фичи из целых кандидатов; оценка диапазоном с основанием; резерв отдельно; скрытый объём']},
+  {h:'Черта ёмкости',c:'режется объём, не оценка; «что вытесняет»',d:['верхние границы плюс резерв ≤ ёмкость на срок','у каждой фичи «что вытесняет» и «без неё»; проверка раньше сборки']},
+  {h:'Очерёдность, риски',c:'N в работе, зависимости, «не входит»',d:['«в работе» с датой решения; зависимости — обязательство или желание; риски с датой решения','«не входит»: отложено против отвергнуто — источник истины версии']},
+  {h:'Запись',c:'SCOPE.md; «в работе» в пуле',d:['гейт перед показом; статусы кандидатов в FEATURE-POOL.md со ссылкой на F-N','перезапуск: точки информации, фича выпущена или снята, данные Observation']}],
+ next:{cmd:'команда на Product Definition',short:'SCOPE.md утверждён',plan:true},
+ self:'перезапуск: точка информации · фича выпущена или снята · данные Observation'},
+{num:7,id:'product-definition',name:'Product Definition',cls:'definition',state:'design',plan:true,exec:'TBD — скилл проектируется (Q-016)',file:'PRODUCT-DEFINITION.md · design/',tpl:'07 · 1.1 draft, структура TBD',skill:'нет — Q-016',donor:'перенесён',donorFull:'donors/product-definition: headcount product-requirements, ux-product-auditor; видение — docs/base-design.md; design-funnel — ссылка',
+ steps:[{h:'Скелет и состояния',plan:true,c:'2–3 экрана core loop и шесть состояний',d:['экраны, без которых core loop не замыкается','первый запуск, пусто, загрузка, ошибка, офлайн, paywall','характер — принципы, tone of voice, контент концепта по ссылке']},
+  {h:'Направление',plan:true,c:'design-funnel: 1–2 финалиста, имя продукта',d:['воронка над принципами и скелетом → финалисты в design/','имя продукта — в той же воронке (Q-064)','открыто у владельца: платформа, формат передачи в код, роль макета и ещё семь параметров (Q-069)']},
+  {h:'Приземление фич',plan:true,c:'F-N на экран или новую поверхность',d:['каждая фича из SCOPE.md садится на экран скелета либо объявляет поверхность','новая поверхность меняет Screens и событие North Star — решение владельца','критерии приёмки без автора; «не входит» — ссылка на SCOPE.md']},
+  {h:'Проверка потоков',plan:true,c:'потоки и состояния перед показом',d:['по донору ux-product-auditor']}],
+ next:{cmd:'команда на Architecture',short:'PRODUCT-DEFINITION.md утверждён',plan:true}},
+{num:8,id:'architecture',name:'Architecture',cls:'solution',state:'not',plan:true,exec:'TBD',file:'ARCHITECTURE.md',tpl:'08 · 1.0, структура TBD',skill:'нет',donor:'перенесён',donorFull:'donors/architecture: headcount technology solution-architecture, api-design, cloud-infrastructure; security security-architecture-review, threat-modeling',
+ steps:[{h:'Техническое решение',plan:true,c:'под потоки и поверхности PD',d:['технические ограничения — из брифа']},
+  {h:'Слои и конфигурация',plan:true,c:'слои для Tasks; конфигурация STATUS.md',d:['слои продукта читает Tasks','репозиторий, окружения, конвенции — «Конфигурация» STATUS.md для Development и Release']}],
+ next:{cmd:'команда на Specification',short:'ARCHITECTURE.md утверждён',plan:true}},
+{num:9,id:'specification',name:'Specification',cls:'solution',state:'not',plan:true,exec:'TBD',file:'spec / tasks',tpl:'09 · 1.0, структура TBD',skill:'нет',donor:'ссылка',donorFull:'superpowers:writing-plans — ссылка, не копия; api-design из donors/architecture/ (решение Q-021)',
+ steps:[{h:'План реализации',plan:true,c:'из F-N по архитектуре — задачи',d:['доктрина исполнения планов — writing-plans']},
+  {h:'Постановки',plan:true,c:'tasks/<id>.md; артефакт открыт',d:['артефакт стадии — spec или сами задачи (открыто)']}],
+ next:{cmd:'«подготовь ТЗ» / «возьми задачу N»',short:'постановки записаны',plan:true}},
+{num:10,id:'tasks',name:'Tasks',cls:'solution',state:'adaptation',exec:'skills/development (стадия)',file:'tasks/<id>.md · README · sources/',tpl:'10 · 1.0 draft',skill:'есть',donor:'перенесён',donorFull:'donors/development: rvi-task (source, analyze), обвязка KB',
+ steps:[{h:'Источники',c:'постановка, снапшоты, слой продукта',d:['фича по knowledge/; постановка с уточнениями; артефакты проекта по ссылке','внешние источники — иммутабельные снапшоты; уточнения перевешивают постановку','слой продукта по ARCHITECTURE.md']},
+  {h:'ТЗ',c:'по шаблону 10, сверка слоёв',d:['открытые вопросы; обратный поток «заведи задачу» из потребности']},
+  {h:'Гейт ТЗ',gate:true,c:'оценки N/10, размер 1|2|3|5|8, ready',d:['понимание контекста и инженерное решение по 10 баллов','draft → ready; «реализуй N» на draft с готовым ТЗ — это и есть утверждение']}],
+ next:{cmd:'«реализуй N»',short:'задача ready'}},
+{num:11,id:'development',name:'Development',cls:'development',state:'adaptation',exec:'skills/development (стадия)',file:'код · «Реализация»',tpl:'11 · 1.1 draft',skill:'есть',donor:'перенесён',donorFull:'donors/development: rvi-task (implement)',
+ steps:[{h:'Вход',c:'ТЗ, конвенции репозитория, конфигурация',d:['статус in-progress; README и CONTRIBUTING продукта','репозиторий, ветка, окружения — «Конфигурация» STATUS.md']},
+  {h:'Реализация',c:'строго по ТЗ; отклонения — в вопросы',d:['код, конфиги, проверки качества из ТЗ']},
+  {h:'Раскатка',c:'там, где продукт живёт, иначе локально',d:['по «Окружениям» конфигурации; задача не выполнена, пока не раскатано','отчёт «Реализация»']}],
+ next:{cmd:'«проверь N»',short:'реализовано и раскатано'}},
+{num:12,id:'validation',name:'Validation',cls:'development',state:'adaptation',exec:'skills/development (стадия)',file:'«Валидация» · PR',tpl:'12 · 1.0 draft',skill:'есть',donor:'перенесён',donorFull:'donors/development: rvi-task (Verify + review), профили review-agent и commit-agent; donors/validation: headcount quality-management, vulnerability-management',
+ steps:[{h:'Verify',gate:true,c:'проверки репозитория; красный — чинить',d:['команды по конвенциям репозитория продукта; сделанное не выбрасывать']},
+  {h:'Ревью',c:'субагент по правилам продукта, ≥80',d:['профиль review.md: README и CONTRIBUTING, без корпоративной KB','blocker / major / minor; «проблем нет» — явно, с остаточными рисками']},
+  {h:'Коммит и PR',c:'профиль коммита: ветка, PR, вторая линия',d:['ветка задачи от свежей основной; PR в основную ветку','вторая линия — если «Окружения» называют ветку тестового окружения; без CLI — текст PR человеку']}],
+ next:{cmd:'«сдай N»',short:'Verify и ревью зелёные, PR создан'}},
+{num:13,id:'delivery',name:'Delivery',cls:'development',state:'adaptation',exec:'skills/development (стадия)',file:'«Сдача» · review',tpl:'13 · 1.1 draft',skill:'есть',donor:'перенесён',donorFull:'donors/development: rvi-task (deliver)',
+ steps:[{h:'Сдача',c:'что сделано и нет, PR, статус review',d:['фактура из треда и артефактов; комментарий в «Сдача»','предусловие: PR создан во все линии']},
+  {h:'Feedback',c:'замечания → верификация → гейты Validation',d:['повторный «сдай N»; каждое замечание против кода','обоснованные — по гейтам Validation; ответ в «Сдача»']},
+  {h:'Мерж',plan:true,c:'за человеком',d:['агент не мержит']}],
+ next:{cmd:'«задокументируй N»',short:'сдача принята, изменение влито'}},
+{num:14,id:'documentation',name:'Documentation',cls:'development',state:'adaptation',exec:'skills/development (стадия)',file:'knowledge/ · changelog/',tpl:'14 · 1.0 draft',skill:'есть',donor:'перенесён',donorFull:'donors/development: rvi-task (document, kb-update, to-wiki), changelog-agent, снимок changelog/README.md',
+ steps:[{h:'Рубрика 1–10',c:'вердикт задаёт треки',d:['вверх 7–10: новый компонент или контракт; середина 4–6: изменение поведения; вниз 1–3: точечная правка']},
+  {h:'knowledge/',c:'срез фичи; инкремент после СТОП',d:['состояние как факт; список → СТОП → применить только утверждённое']},
+  {h:'Внешняя дока',c:'канал из конфигурации; верификация',d:['«Внешняя документация» — «нет» пропускает трек','место, фактура, разделы, публикация, перечитать из канала']},
+  {h:'Журнал',c:'changelog по дням, реестр, сверка',d:['changelog/<день>; реестр tasks/README.md; пересмотр размера; сверка за период с историей']}],
+ next:{cmd:'«собери релиз»',short:'задачи влиты в основную ветку'}},
+{num:15,id:'release',name:'Release',cls:'release',state:'adaptation',exec:'skills/release',file:'releases/<тег>.md · тег',tpl:'15 · 1.0 draft',skill:'есть',donor:'перенесён',donorFull:'donors/development: rvi-release (прод из тега); donors/release: headcount change-and-adoption',
+ steps:[{h:'scan',c:'база тега, объём инкремента, задачи',d:['fetch; последний тег и база; база на основной ветке?','отсечь уже вошедшее; сверка с окружением']},
+  {h:'classify',c:'по фичам F-N; «механика вне scope»',d:['единица — фича версии из SCOPE.md; нет SCOPE.md — задачи','фичи без изменений — явно']},
+  {h:'scope',gate:true,c:'пути, зависимости, номер тега — СТОП',d:['зависимости на базе тега; конфигурация окружений точечно','состав и номер утверждает человек']},
+  {h:'cut',c:'worktree, один коммит, проверки',d:['git-проверки и «Проверки среза» конфигурации']},
+  {h:'release',c:'тег, CI, releases/<тег>.md; без деплоя',d:['push, аннотированный тег, CI тега; деплой не запускать','Release в STATUS.md; rebuild — тот же номер до выкатки']}],
+ next:{cmd:'данные после релиза',short:'тег выкачен человеком',plan:true},
+ self:'rebuild: «пересобери тег» — тот же номер до выкатки'},
+{num:16,id:'observation',name:'Observation',cls:'feedback',state:'not',plan:true,exec:'TBD',file:'TBD',tpl:'16 · 1.0, структура TBD',skill:'нет',donor:'кандидаты',donorFull:'названы в карте процессов, не перенесены: headcount data-analytics, marketing-analytics, voice-of-customer, activation, retention, observability',
+ steps:[{h:'События метрик',plan:true,c:'North Star и индикаторы каналов',d:['«что измерить и когда» из стратегии; даты чтения индикаторов']},
+  {h:'Готово, когда',plan:true,c:'признак, дата, baseline из SCOPE.md',d:['кто смотрит и к какой дате']},
+  {h:'Исходы кандидатов',plan:true,c:'«выпущено» только с исходом',d:['исход в FEATURE-POOL.md']}],
+ next:{cmd:'команда на Iteration',short:'данные к дате проверки',plan:true}},
+{num:17,id:'iteration',name:'Iteration',cls:'feedback',state:'not',plan:true,exec:'TBD',file:'TBD',tpl:'17 · 1.0, структура TBD',skill:'нет',donor:'кандидаты',donorFull:'названы, не перенесены: pmo benefits-realization, demand-generation experimentation, corporate-strategy scenario-planning',
+ steps:[{h:'Выгоды появились?',plan:true,c:'мера против baseline; начали бы снова?',d:['post-implementation review по донору benefits-realization']},
+  {h:'Куда вернуть',plan:true,c:'стратегия, пул, версия, бриф',d:['Product Strategy: ограничение роста и сценарии — правка отдельной командой','Feature Pool: перезапуск «после выпуска», исходы кандидатов','Scope: следующая версия; тест «начали бы сегодня?»','Brief: правка рамки → «требует сверки»']}],
+ next:null}
+];
+const LOOPS=[
+ {from:'iteration',to:'product-strategy',label:'из Iteration: пересмотр стратегии',lane:3},
+ {from:'iteration',to:'feature-pool',label:'из Iteration: перезапуск пула после выпуска',lane:2},
+ {from:'iteration',to:'scope',label:'из Iteration: следующая версия',lane:1},
+ {from:'iteration',to:'brief',label:'из Iteration: правка рамки',lane:4,dash:true},
+ {from:'brief',to:'feature-pool',label:'правка брифа → «требует сверки» у Concept, Product Strategy, Feature Pool',lane:0,dash:true},
+ {from:'delivery',to:'validation',label:'Feedback → гейты Validation',lane:0}
+];
+
+const NS='http://www.w3.org/2000/svg';
+const W=1500, X0=42, LBLW=222, SX0=290, SX1=1206, AX=1232, AW=176, BAND=124, GAP=62, TOP=14;
+const el=(n,a,t)=>{const e=document.createElementNS(NS,n);for(const k in a)if(a[k]!==undefined)e.setAttribute(k,a[k]);if(t!=null)e.textContent=t;return e;};
+const svg=document.getElementById('d');
+const H=TOP+S.length*(BAND+GAP)+12;
+svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+const defs=el('defs',{});
+const mk=(id,color)=>{const m=el('marker',{id,viewBox:'0 0 10 10',refX:'9',refY:'5',markerWidth:'7',markerHeight:'7',orient:'auto-start-reverse'});m.appendChild(el('path',{d:'M0,0 L10,5 L0,10 z',fill:color}));return m;};
+defs.appendChild(mk('ah','currentColor'));defs.appendChild(mk('ahl','var(--loop)'));defs.appendChild(mk('ahp','var(--plan)'));
+svg.appendChild(defs);
+const g=el('g',{});svg.appendChild(g);
+const FONT='-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial,sans-serif';
+const SERIF='Iowan Old Style,Palatino Linotype,Georgia,serif';
+const MONO='SF Mono,Menlo,Consolas,monospace';
+const meas=el('text',{x:-2000,y:-2000,'font-family':FONT,visibility:'hidden'});svg.appendChild(meas);
+const tw=(str,size,weight,family)=>{meas.setAttribute('font-size',size);meas.setAttribute('font-weight',weight||'400');meas.setAttribute('font-family',family||FONT);meas.textContent=str;try{return meas.getComputedTextLength();}catch(e){return String(str).length*size*0.55;}};
+const wrapW=(str,maxW,size,weight,family)=>{const words=String(str).split(' ');const L=[];let cur='';words.forEach(x=>{const cand=(cur+' '+x).trim();if(cur&&tw(cand,size,weight,family)>maxW){L.push(cur);cur=x;}else cur=cand;});if(cur)L.push(cur);return L;};
+const fitOne=(str,maxW,size,weight,family)=>{let t=String(str);if(tw(t,size,weight,family)<=maxW)return t;while(t.length>1&&tw(t+'…',size,weight,family)>maxW)t=t.slice(0,-1);return t.replace(/[\s·,;—-]+$/,'')+'…';};
+const wrapFit=(str,maxW,n,size,weight,family)=>{const L=wrapW(str,maxW,size,weight,family);if(L.length<=n)return L;const head=L.slice(0,n-1);const tail=L.slice(n-1).join(' ');head.push(fitOne(tail,maxW,size,weight,family));return head;};
+const wrap=(s,max)=>{const w=String(s).split(' ');const L=[];let cur='';w.forEach(x=>{if((cur+' '+x).trim().length>max&&cur){L.push(cur);cur=x;}else cur=(cur+' '+x).trim();});if(cur)L.push(cur);return L;};
+const bandTop=i=>TOP+i*(BAND+GAP);
+const pos={};const slots={};
+
+/* class strips */
+let i=0;while(i<S.length){let j=i;while(j+1<S.length&&S[j+1].cls===S[i].cls)j++;
+  const y1=bandTop(i),y2=bandTop(j)+BAND;
+  g.appendChild(el('rect',{x:X0-30,y:y1,width:16,height:y2-y1,rx:4,fill:`var(--c-${S[i].cls})`,opacity:'.85'}));
+  if(y2-y1>70)g.appendChild(el('text',{x:X0-18,y:(y1+y2)/2,'font-size':'10.5','letter-spacing':'1.6',fill:'var(--panel)','text-anchor':'middle','font-family':FONT,transform:`rotate(-90 ${X0-18} ${(y1+y2)/2})`},CLS[S[i].cls].toUpperCase()));
+  i=j+1;}
+
+/* tooltip */
+const tip=document.getElementById('tip');let pinned=null;
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function placeTip(ev){const pad=14;let x=ev.clientX+pad,y=ev.clientY+pad;const r=tip.getBoundingClientRect();if(x+r.width>window.innerWidth-8)x=ev.clientX-r.width-pad;if(y+r.height>window.innerHeight-8)y=ev.clientY-r.height-pad;tip.style.left=Math.max(4,x)+'px';tip.style.top=Math.max(4,y)+'px';}
+function showTip(html,ev){tip.innerHTML=html;tip.style.display='block';placeTip(ev);}
+function hideTip(){if(!pinned)tip.style.display='none';}
+function bind(node,html){node.classList.add('hit');node.setAttribute('tabindex','0');
+  node.addEventListener('mouseenter',ev=>{if(!pinned)showTip(html,ev);});
+  node.addEventListener('mousemove',ev=>{if(!pinned)placeTip(ev);});
+  node.addEventListener('mouseleave',hideTip);
+  node.addEventListener('click',ev=>{ev.preventDefault();ev.stopPropagation();if(pinned===node){pinned=null;tip.style.display='none';}else{pinned=node;showTip(html,ev);}});
+  node.addEventListener('focus',()=>{const r=node.getBoundingClientRect();showTip(html,{clientX:r.left+r.width/2,clientY:r.bottom});});
+  node.addEventListener('blur',hideTip);}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){pinned=null;tip.style.display='none';}});
+document.addEventListener('click',()=>{if(pinned){pinned=null;tip.style.display='none';}});
+
+const stateStyle={manual:{stroke:'var(--off)',fill:'var(--off-bg)',text:'var(--off)',dash:'none'},not:{stroke:'var(--off)',fill:'var(--panel)',text:'var(--off)',dash:'3 3'},design:{stroke:'var(--warn)',fill:'var(--warn-bg)',text:'var(--warn)',dash:'none'},adaptation:{stroke:'var(--ok)',fill:'var(--ok-bg)',text:'var(--ok)',dash:'none'}};
+S.forEach(s=>{s.skillDot=/^есть, /.test(s.skill)?'warn':(/^есть/.test(s.skill)?'ok':'off');s.donorDot=/^перенес/.test(s.donor)?'ok':(/ссылка|кандидат/.test(s.donor)?'warn':'off');});
+
+/* bands */
+S.forEach((s,idx)=>{
+  const y=bandTop(idx), cy=y+BAND/2, col=`var(--c-${s.cls})`;
+  g.appendChild(el('rect',{x:X0,y,width:W-X0-64,height:BAND,rx:10,fill:'var(--paper)',stroke:'var(--line)','stroke-width':'1','stroke-dasharray':s.plan?'6 5':'none'}));
+  /* stage label */
+  const lg=el('g',{});
+  lg.appendChild(el('rect',{class:'shape',x:X0+8,y:y+8,width:LBLW,height:BAND-16,rx:8,fill:'var(--panel)',stroke:col,'stroke-width':s.plan?'1.5':'2','stroke-dasharray':s.plan?'5 4':'none'}));
+  lg.appendChild(el('text',{x:X0+18,y:y+30,'font-size':'20',fill:col,'font-family':SERIF,'font-weight':'600'},String(s.num).padStart(2,'0')));
+  wrapFit(s.name,LBLW-56,2,15,'600',SERIF).forEach((ln,k)=>lg.appendChild(el('text',{x:X0+52,y:y+30+k*16,'font-size':'15','font-weight':'600',fill:'currentColor','font-family':SERIF},ln)));
+  const ss=stateStyle[s.state], pw=tw(STATE[s.state][0],10,'600',FONT)+18, py=y+56;
+  lg.appendChild(el('rect',{x:X0+18,y:py,width:pw,height:17,rx:8.5,fill:ss.fill,stroke:ss.stroke,'stroke-width':'1.4','stroke-dasharray':ss.dash}));
+  lg.appendChild(el('text',{x:X0+18+pw/2,y:py+12,'font-size':'10','font-weight':'600','text-anchor':'middle',fill:ss.text,'font-family':FONT},STATE[s.state][0]));
+  const tplShort=s.tpl.replace(', структура TBD','').replace(' draft, структура TBD',' · TBD').replace(' · 1.0, структура TBD',' · TBD');
+  const rows=[['скилл',s.skill.replace('есть, прогона не было','есть, без прогона'),s.skillDot],['шаблон',tplShort,/TBD/.test(s.tpl)?'off':'warn'],['донор',s.donor,s.donorDot]];
+  rows.forEach(([k,v,dc],r)=>{const ry=y+86+r*12;
+    lg.appendChild(el('circle',{cx:X0+22,cy:ry-3.5,r:3.2,fill:`var(--${dc})`}));
+    const kx=X0+30, kw=tw(k+' · ',10,'400',FONT);
+    lg.appendChild(el('text',{x:kx,y:ry,'font-size':'10',fill:'var(--muted)','font-family':FONT},k+' · '));
+    const fam=/шаблон/.test(k)?MONO:FONT;
+    lg.appendChild(el('text',{x:kx+kw+4,y:ry,'font-size':'10',fill:'currentColor','font-family':fam},fitOne(v,(X0+8+LBLW-8)-(kx+kw+4),10,'400',fam)));});
+  bind(lg,`<div class="k">стадия ${s.num} · ${esc(CLS[s.cls])}</div><div class="h">${esc(s.name)}</div><dl><dt>состояние</dt><dd>${esc(STATE[s.state][0])} — ${esc(STATE[s.state][1])}</dd><dt>исполняет</dt><dd>${esc(s.exec)}</dd><dt>артефакт</dt><dd>${esc(s.file)}</dd><dt>шаблон</dt><dd>${esc(s.tpl)}</dd><dt>донор</dt><dd>${esc(s.donorFull)}</dd></dl>`);
+  g.appendChild(lg);
+  /* steps */
+  const n=s.steps.length, gap=20;
+  const w=Math.min(200,(SX1-SX0-gap*(n-1))/n), h=80;
+  const total=n*w+gap*(n-1), sx=SX0+(SX1-SX0-total)/2;
+  s.steps.forEach((st,k)=>{
+    const x=sx+k*(w+gap), ty=cy-h/2;
+    const sg=el('g',{});
+    if(st.gate){const c=9;sg.appendChild(el('path',{class:'shape',d:`M${x+c},${ty} H${x+w-c} L${x+w},${ty+c} V${ty+h-c} L${x+w-c},${ty+h} H${x+c} L${x},${ty+h-c} V${ty+c} Z`,fill:'var(--gate-bg)',stroke:'var(--gate)','stroke-width':'1.8'}));}
+    else sg.appendChild(el('rect',{class:'shape',x,y:ty,width:w,height:h,rx:7,fill:'var(--panel)',stroke:st.plan?'var(--plan)':'var(--line-strong)','stroke-width':'1.5','stroke-dasharray':st.plan?'5 4':'none'}));
+    sg.appendChild(el('text',{x:x+9,y:ty+13,'font-size':'9','letter-spacing':'1',fill:st.gate?'var(--gate)':'var(--muted)','font-family':FONT},(st.gate?'ГЕЙТ':(st.plan?'ПЛАН':'ШАГ'))+' '+(k+1)));
+    const tl=wrapFit(st.h,w-18,2,12,'600',FONT);
+    tl.forEach((ln,q)=>sg.appendChild(el('text',{x:x+9,y:ty+29+q*14,'font-size':'12','font-weight':'600',fill:'currentColor','font-family':FONT},ln)));
+    const cy0=ty+29+tl.length*14+1;
+    wrapFit(st.c,w-18,tl.length===1?3:2,10.5,'400',FONT).forEach((ln,q)=>sg.appendChild(el('text',{x:x+9,y:cy0+q*12,'font-size':'10.5',fill:'var(--muted)','font-family':FONT},ln)));
+    if(k<n-1)g.appendChild(el('line',{x1:x+w,y1:cy,x2:x+w+gap-2,y2:cy,stroke:'var(--line-strong)','stroke-width':'1.5','marker-end':'url(#ah)'}));
+    bind(sg,`<div class="k">${st.gate?'гейт — решение владельца':(st.plan?'план — стадия не исполняется':'шаг')} ${k+1} · ${esc(s.name)}</div><div class="h">${esc(st.h)}</div><ul>${st.d.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`);
+    g.appendChild(sg);
+  });
+  g.appendChild(el('line',{x1:sx+total,y1:cy,x2:AX-4,y2:cy,stroke:'var(--line-strong)','stroke-width':'1.5','marker-end':'url(#ah)'}));
+  /* artifact */
+  const ag=el('g',{}), ah=52, ay=cy-ah/2, fold=11;
+  ag.appendChild(el('path',{class:'shape',d:`M${AX},${ay} H${AX+AW-fold} L${AX+AW},${ay+fold} V${ay+ah} H${AX} Z`,fill:'var(--panel)',stroke:col,'stroke-width':s.plan?'1.5':'2','stroke-dasharray':s.plan?'5 4':'none'}));
+  ag.appendChild(el('path',{d:`M${AX+AW-fold},${ay} V${ay+fold} H${AX+AW}`,fill:'none',stroke:col,'stroke-width':'1.2'}));
+  ag.appendChild(el('text',{x:AX+10,y:ay+13,'font-size':'9','letter-spacing':'1',fill:'var(--muted)','font-family':FONT},'АРТЕФАКТ'));
+  wrapFit(s.file,AW-20,2,11,'400',MONO).forEach((ln,q)=>ag.appendChild(el('text',{x:AX+10,y:ay+31+q*13,'font-size':'11',fill:'currentColor','font-family':MONO},ln)));
+  bind(ag,`<div class="k">артефакт стадии</div><div class="h">${esc(s.file)}</div><dl><dt>где</dt><dd>projects/&lt;project&gt;/</dd><dt>шаблон</dt><dd>${esc(s.tpl)}</dd></dl>`);
+  g.appendChild(ag);
+  pos[s.id]={y,cy,ax:AX+AW};
+  if(s.self){const x=AX+AW-30, yb=ay+ah;
+    g.appendChild(el('path',{d:`M${x},${yb} C${x},${yb+18} ${x+40},${yb+18} ${x+40},${yb}`,fill:'none',stroke:'var(--loop)','stroke-width':'1.4','marker-end':'url(#ahl)'}));
+    slots[idx]=slots[idx]||[];slots[idx].push('↺ '+s.self);}
+  /* transition */
+  const nx=S[idx+1];
+  if(nx){const yb=y+BAND, ymid=yb+22, plan=!!(s.next&&s.next.plan);
+    const stroke=plan?'var(--plan)':'currentColor', dash=plan?'5 4':'none', mkr=plan?'url(#ahp)':'url(#ah)';
+    const xa=AX+AW/2, xe=X0+8+LBLW/2;
+    g.appendChild(el('path',{d:`M${xa},${ay+ah} V${ymid} H${xe} V${yb+GAP-2}`,fill:'none',stroke,'stroke-width':'1.6','stroke-dasharray':dash,'marker-end':mkr}));
+    g.appendChild(el('text',{x:xe+16,y:ymid-4,'font-size':'11.5','font-weight':'600',fill:'currentColor','font-family':MONO},s.next.cmd));
+    g.appendChild(el('text',{x:xe+16,y:ymid+12,'font-size':'11',fill:'var(--muted)','font-family':FONT},fitOne('условие: '+s.next.short+(plan?' · стадия впереди ещё не исполняется':''),(AX-30)-(xe+16),11,'400',FONT)));
+  } else {
+    g.appendChild(el('text',{x:X0+8,y:y+BAND+26,'font-size':'12',fill:'var(--loop)','font-family':FONT,'font-weight':'600'},'Конца у пути нет: Iteration возвращает данные в стратегию, пул возможностей и состав версии — синие дуги справа.'));
   }
-  th.addEventListener('click',function(){mode=order[(order.indexOf(mode)+1)%3];apply();});
-  hc.addEventListener('click',function(){contrast=contrast==='on'?'off':'on';apply();});
-  apply();
-  var bar=document.getElementById('bar');
-  function prog(){
-    var h=document.documentElement.scrollHeight-window.innerHeight;
-    bar.style.width=(h>0?(window.scrollY/h*100):0)+'%';
-  }
-  window.addEventListener('scroll',prog,{passive:true}); window.addEventListener('resize',prog); prog();
+});
+
+/* loops on the right margin */
+LOOPS.forEach(L=>{
+  const a=pos[L.from], b=pos[L.to], x0=a.ax+2, x1=b.ax+2, lane=W-58+L.lane*11, ya=a.cy, yb=b.cy;
+  const d=`M${x0},${ya} H${lane-14} Q${lane},${ya} ${lane},${ya+(yb>ya?14:-14)} V${yb+(yb>ya?-14:14)} Q${lane},${yb} ${lane-14},${yb} H${x1+8}`;
+  g.appendChild(el('path',{d,fill:'none',stroke:'var(--loop)','stroke-width':'1.5','stroke-dasharray':L.dash?'5 4':'none','marker-end':'url(#ahl)'}));
+  const ti=S.findIndex(x=>x.id===L.to);
+  const slotIdx=yb>ya? ti-1 : ti;
+  slots[slotIdx]=slots[slotIdx]||[];slots[slotIdx].push('↺ '+L.label);
+});
+/* label slots in transition zones, right-aligned */
+Object.keys(slots).forEach(k=>{const idx=+k;const yb=bandTop(idx)+BAND;
+  slots[k].forEach((txt,r)=>g.appendChild(el('text',{x:AX+AW-2,y:yb+35+r*11.5,'font-size':'10',fill:'var(--loop)','text-anchor':'end','font-family':FONT},fitOne(txt,640,10,'400',FONT))));});
+
+/* zoom */
+const zoom=document.getElementById('zoom'), wrapEl=document.querySelector('.wrap');
+function applyZoom(v){if(v==='fit'){wrapEl.classList.add('fit');svg.style.width='';}else{wrapEl.classList.remove('fit');svg.style.width=Math.round(W*parseFloat(v))+'px';}}
+const z0=(function(){try{return localStorage.getItem('pl-zoom')||'1';}catch(e){return '1';}})();zoom.value=z0;applyZoom(z0);
+zoom.addEventListener('change',()=>{applyZoom(zoom.value);try{localStorage.setItem('pl-zoom',zoom.value);}catch(e){}});
+/* theme */
+const rootEl=document.documentElement, theme=document.getElementById('theme');
+const get=k=>{try{return localStorage.getItem(k);}catch(e){return null;}};
+const set=(k,v)=>{try{localStorage.setItem(k,v);}catch(e){}};
+function applyTheme(v){if(v==='system'){rootEl.setAttribute('data-theme',window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');}else rootEl.setAttribute('data-theme',v);}
+const t0=get('pl-theme2')||'light';theme.value=t0;applyTheme(t0);
+theme.addEventListener('change',()=>{applyTheme(theme.value);set('pl-theme2',theme.value);});
 })();
 </script>
 <!--general:foot-->
@@ -1061,4 +474,5 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 })();
 </script>
 <!--/general:foot-->
-</body></html>
+</body>
+</html>
