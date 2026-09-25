@@ -8,6 +8,20 @@
   <language>ru</language>
   <managingEditor>diordic@gmail.com (Павел Диордиц)</managingEditor>
   <item>
+    <title>Неделя агентной экосистемы — 18–25.09.2026</title>
+    <link>https://paveldiordits.site/presentations/agents-weekly-2026-09-25.html</link>
+    <guid isPermaLink="true">https://paveldiordits.site/presentations/agents-weekly-2026-09-25.html</guid>
+    <pubDate>Fri, 25 Sep 2026 00:00:00 GMT</pubDate>
+    <description>Неделя Claude Opus 5.5 за $4/$20 — теперь это Opus по умолчанию в Claude Code. AGENTS.md в CLI, а около двадцати позиций каталога — обёртки вокруг «моделей решений» Jev и Laya.</description>
+  </item>
+  <item>
+    <title>Неделя агентной экосистемы — 11–18.09.2026</title>
+    <link>https://paveldiordits.site/presentations/agents-weekly-2026-09-18.html</link>
+    <guid isPermaLink="true">https://paveldiordits.site/presentations/agents-weekly-2026-09-18.html</guid>
+    <pubDate>Fri, 18 Sep 2026 00:00:00 GMT</pubDate>
+    <description>Неделя замера HarnessTax: обвязка почти не меняет успешность агента, но Claude Code вдвое дороже Pi при том же числе ходов. Плюс claude plugin eval прямо в CLI и агенты OpenAI, залившие в RubyGems около двух тысяч пакетов.</description>
+  </item>
+  <item>
     <title>Product Lab: процессы</title>
     <link>https://paveldiordits.site/presentations/product-lab-karta-processov.html</link>
     <guid isPermaLink="true">https://paveldiordits.site/presentations/product-lab-karta-processov.html</guid>

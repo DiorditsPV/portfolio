@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675" role="img">
+<defs>
+  <radialGradient id="g" cx="20%" cy="15%" r="105%">
+    <stop offset="0%" stop-color="#6d4cff" stop-opacity=".42"/>
+    <stop offset="55%" stop-color="#6d4cff" stop-opacity=".08"/>
+    <stop offset="100%" stop-color="#141024" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="h" color-interpolation-filters="sRGB">
+    <feColorMatrix type="hueRotate" values="12"/>
+  </filter>
+  <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0 0 L10 5 L0 10 z" fill="#b9aee8" fill-opacity=".6"/>
+  </marker>
+</defs>
+<rect width="1200" height="675" fill="#141024"/>
+<rect width="1200" height="675" fill="url(#g)"/>
+<g filter="url(#h)">
+<line x1="388.13" y1="257.19" x2="336.21" y2="469.94" stroke="#b9aee8" stroke-opacity="0.26" stroke-width="1.8"/><line x1="388.13" y1="257.19" x2="414.62" y2="425.57" stroke="#b9aee8" stroke-opacity="0.31" stroke-width="1.8"/><line x1="388.13" y1="257.19" x2="564.22" y2="290.82" stroke="#b9aee8" stroke-opacity="0.3" stroke-width="1.8"/><line x1="388.13" y1="257.19" x2="370.92" y2="158.33" stroke="#b9aee8" stroke-opacity="0.39" stroke-width="1.8"/><line x1="388.13" y1="257.19" x2="233.11" y2="179.52" stroke="#b9aee8" stroke-opacity="0.31" stroke-width="1.8"/><line x1="336.21" y1="469.94" x2="414.62" y2="425.57" stroke="#b9aee8" stroke-opacity="0.4" stroke-width="1.8"/><line x1="336.21" y1="469.94" x2="564.22" y2="290.82" stroke="#b9aee8" stroke-opacity="0.18" stroke-width="1.8"/><line x1="336.21" y1="469.94" x2="370.92" y2="158.33" stroke="#b9aee8" stroke-opacity="0.15" stroke-width="1.8"/><line x1="336.21" y1="469.94" x2="233.11" y2="179.52" stroke="#b9aee8" stroke-opacity="0.16" stroke-width="1.8"/><line x1="414.62" y1="425.57" x2="564.22" y2="290.82" stroke="#b9aee8" stroke-opacity="0.28" stroke-width="1.8"/><line x1="414.62" y1="425.57" x2="370.92" y2="158.33" stroke="#b9aee8" stroke-opacity="0.2" stroke-width="1.8"/><line x1="414.62" y1="425.57" x2="233.11" y2="179.52" stroke="#b9aee8" stroke-opacity="0.16" stroke-width="1.8"/><line x1="564.22" y1="290.82" x2="370.92" y2="158.33" stroke="#b9aee8" stroke-opacity="0.24" stroke-width="1.8"/><line x1="564.22" y1="290.82" x2="775.93" y2="457.97" stroke="#b9aee8" stroke-opacity="0.2" stroke-width="1.8"/><line x1="564.22" y1="290.82" x2="844.17" y2="228.59" stroke="#b9aee8" stroke-opacity="0.18" stroke-width="1.8"/><line x1="564.22" y1="290.82" x2="863.1" y2="238.85" stroke="#b9aee8" stroke-opacity="0.16" stroke-width="1.8"/><line x1="370.92" y1="158.33" x2="233.11" y2="179.52" stroke="#b9aee8" stroke-opacity="0.35" stroke-width="1.8"/><line x1="775.93" y1="457.97" x2="844.17" y2="228.59" stroke="#b9aee8" stroke-opacity="0.23" stroke-width="1.8"/><line x1="775.93" y1="457.97" x2="863.1" y2="238.85" stroke="#b9aee8" stroke-opacity="0.24" stroke-width="1.8"/><line x1="844.17" y1="228.59" x2="863.1" y2="238.85" stroke="#b9aee8" stroke-opacity="0.48" stroke-width="1.8"/><circle cx="388.13" cy="257.19" r="26" fill="#141024" stroke="#8b6dff" stroke-width="2.5"/><circle cx="388.13" cy="257.19" r="17" fill="#8b6dff" fill-opacity=".75"/><circle cx="336.21" cy="469.94" r="15" fill="#141024" stroke="#8b6dff" stroke-width="2.5"/><circle cx="414.62" cy="425.57" r="15" fill="#141024" stroke="#8b6dff" stroke-width="2.5"/><circle cx="564.22" cy="290.82" r="26" fill="#141024" stroke="#8b6dff" stroke-width="2.5"/><circle cx="564.22" cy="290.82" r="17" fill="#8b6dff" fill-opacity=".75"/><circle cx="370.92" cy="158.33" r="15" fill="#141024" stroke="#8b6dff" stroke-width="2.5"/><circle cx="775.93" cy="457.97" r="15" fill="#141024" stroke="#8b6dff" stroke-width="2.5"/><circle cx="233.11" cy="179.52" r="26" fill="#141024" stroke="#8b6dff" stroke-width="2.5"/><circle cx="233.11" cy="179.52" r="17" fill="#8b6dff" fill-opacity=".75"/><circle cx="844.17" cy="228.59" r="15" fill="#141024" stroke="#8b6dff" stroke-width="2.5"/><circle cx="863.1" cy="238.85" r="15" fill="#141024" stroke="#8b6dff" stroke-width="2.5"/>
+</g>
+</svg>
