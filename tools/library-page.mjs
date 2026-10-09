@@ -17,7 +17,7 @@
 // берётся первая подошедшая группа; метка, не подошедшая ни к одной, попадает в
 // «Предметные области».
 
-import { BASE_CSS, siteHeader, plural } from './journal-page.mjs';
+import { BASE_CSS, siteHeader, plural, THEME_BOOT, SHELL_JS } from './journal-page.mjs';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -54,7 +54,9 @@ const pack = it => {
 };
 
 export function libraryPage({ catalog, base, author, ogImage }) {
-  const rows = catalog.items.map(pack);
+  // Позиция без адреса — не репозиторий, а сюжет, записанный в каталог выпуска
+  // («волна из 132 репозиториев»): открыть по ней нечего, в библиотеке ей не место.
+  const rows = catalog.items.filter(it => it.url).map(pack);
   const issues = [...new Map(rows.map(r => [r.i, { no: r.i, slug: r.a, date: r.e }])).values()].sort((a, b) => b.no - a.no);
   const title = 'Библиотека — скиллы и плагины из Agents Weekly';
   const about = `${rows.length} ${plural(rows.length, 'позиция', 'позиции', 'позиций')} из ${issues.length} выпусков Agents Weekly: скиллы, плагины, официальные обновления и исследования.`;
@@ -69,6 +71,7 @@ export function libraryPage({ catalog, base, author, ogImage }) {
 <meta name="description" content="${esc(about)}">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◆</text></svg>">
 <meta name="theme-color" content="#ffffff">
+${THEME_BOOT}
 <link rel="canonical" href="${base}library.html">
 <link rel="preload" href="fonts/golos-text.woff2" as="font" type="font/woff2" crossorigin>
 <meta name="robots" content="index, follow">
@@ -123,8 +126,9 @@ ${BASE_CSS}
 .topic{font-size:.82rem;font-weight:600;color:var(--fg);background:var(--field);border:1px solid var(--rule);border-radius:.35rem;padding:.05rem .5rem;white-space:nowrap}
 .tags{display:flex;flex-wrap:wrap;gap:.15rem .7rem;font-size:.82rem;color:var(--muted)}
 .tags a:hover{color:var(--link)}
-.flag{color:#b54708;font-weight:600}
-.desc{color:var(--muted);font-size:.95rem}
+.flag{color:var(--warn);font-weight:600}
+/* описание набрано основным цветом: серым на этом кегле оно читалось с усилием */
+.desc{color:var(--fg);font-size:.95rem}
 .desc.clamp{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 .more{grid-column:2;font:inherit;font-size:.82rem;color:var(--link);background:none;border:0;padding:0;margin-top:.15rem;cursor:pointer;justify-self:start}
 .empty{padding:3rem 0;color:var(--muted)}
@@ -179,6 +183,7 @@ ${siteHeader()}
 
 <script type="application/json" id="data">${JSON.stringify(rows).replace(/</g, '\\u003c')}</script>
 <script>
+${SHELL_JS}
 const ROWS = JSON.parse(document.getElementById('data').textContent);
 const KINDS = ${JSON.stringify(KINDS)};
 const GROUPS = ${JSON.stringify(groupNames)};

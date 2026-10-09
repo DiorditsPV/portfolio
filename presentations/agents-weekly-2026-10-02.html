@@ -630,9 +630,17 @@ html:not([data-theme="dark"]){
   --badge-bg:#f4f5f6; --badge-fg:#2f353d;
 }
 
+/* Тёмная тема — та же, что у журнала. */
+html[data-theme="dark"]{
+  --page:#121316; --surface:#1b1d21; --surface-soft:#1f2227;
+  --ink:#eceef1; --muted:#a3a9b3; --subtle:#8b919b; --line:#2c2f36;
+  --accent:#8fb0ff; --accent-soft:#1d2b57; --accent-ink:#a9c1ff;
+  --badge-bg:#1f2227; --badge-fg:#d7dbe2;
+}
+
 /* Кегль растёт вместе с экраном, все размеры выпуска заданы в rem и em и растут
    за ним: на мониторе 27 дюймов текст был 14 пикселей в колонке на 46% ширины. */
-html{font-size:clamp(14.7px,calc(9.9px + .315vw),17px)}
+html{font-size:calc(clamp(14.7px,calc(9.9px + .315vw),17px)*var(--ts,1))}
 body{
   font:1rem/1.55 "Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   -webkit-font-smoothing:antialiased;overflow-x:clip;
@@ -707,7 +715,24 @@ ul.stories li,ul.tail li{font-size:.95rem}
 /* Блок «Ещё по теме», который журнал ставит под выпуском, — той же ширины, что и
    сам выпуск: узкая полоса посередине под широкой страницей смотрелась чужой. */
 nav.gnrl{max-width:none;width:min(126rem,100% - 2*clamp(1.25rem,4vw,5.6rem));margin-inline:auto;padding-inline:0}
+
+/* Описания позиций каталога набраны основным цветом: серым на этом кегле они
+   читались с усилием. */
+.item p,ul.tail .desc{color:var(--ink)}
+
+/* Кнопки масштаба текста в шапке выпуска — рядом с переключателем темы. */
+.controls button.ts{width:auto;min-width:36px;padding:0 .5rem;font-size:.85rem;font-weight:600;color:var(--muted)}
+.controls button.ts:hover{color:var(--ink)}
 </style>
+<script>(function(){var d=document.documentElement,S=[.9,1,1.1,1.2,1.35];
+try{var s=+localStorage.getItem('text-scale');if(s)d.style.setProperty('--ts',s)}catch(e){}
+try{if(!localStorage.getItem('ad-theme')){var t=localStorage.getItem('theme');if(t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches)d.setAttribute('data-theme','dark')}}catch(e){}
+function step(n){var c=+d.style.getPropertyValue('--ts')||1,a=0;S.forEach(function(v,i){if(Math.abs(v-c)<Math.abs(S[a]-c))a=i});
+var v=S[Math.max(0,Math.min(S.length-1,a+n))];d.style.setProperty('--ts',v);try{localStorage.setItem('text-scale',v)}catch(e){}}
+document.addEventListener('DOMContentLoaded',function(){var box=document.querySelector('.topbar .controls');if(!box)return;
+[['A−',-1,'Уменьшить текст'],['A+',1,'Увеличить текст']].forEach(function(b){var el=document.createElement('button');
+el.type='button';el.className='ts';el.textContent=b[0];el.setAttribute('aria-label',b[2]);el.addEventListener('click',function(){step(b[1])});
+box.insertBefore(el,box.firstChild)});var up=box.querySelector('.ts');if(up&&up.nextSibling)box.insertBefore(up.nextSibling,up);});})()</script>
 <!--/general:head-->
 </head><body>
 <!--general:top-->

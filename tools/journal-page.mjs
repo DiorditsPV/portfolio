@@ -60,11 +60,20 @@ export const BASE_CSS = `@font-face{
   --link:#1d4ed8;
   --gutter:clamp(1.25rem,4vw,5.6rem);
   --maxw:126rem;
+  --warn:#b54708;
+}
+/* Тёмная тема: выбор читателя из шапки, а до первого выбора — настройка системы. */
+html[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121316; --field:#1b1d21; --fg:#eceef1; --muted:#a3a9b3; --rule:#2c2f36;
+  --link:#8fb0ff; --warn:#f5a15f;
 }
 /* Кегль растёт вместе с экраном, всё остальное задано в rem. Масштаб тот же, что
    у выпусков дайджеста (tools/digest-theme.css): страницы одного раздела не должны
    различаться размером текста. */
-html{font-size:clamp(14.7px,calc(9.9px + .315vw),17px)}
+html{font-size:calc(clamp(14.7px,calc(9.9px + .315vw),17px)*var(--ts,1))}
+/* --ts — множитель кегля, который читатель задаёт кнопками в шапке; хранится в
+   localStorage и общий для журнала, библиотеки и выпусков. */
 *,*::before,*::after{box-sizing:border-box}
 body{
   margin:0;background:var(--bg);color:var(--fg);overflow-x:clip;
@@ -83,11 +92,15 @@ ol{list-style:none;padding:0}
 .top{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--rule)}
 .bar{display:flex;align-items:center;gap:2rem;height:3.5rem}
 .logo{font-weight:800;letter-spacing:-.03em;font-size:1.15rem}
-.site-nav{display:flex;gap:1.5rem;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+.site-nav{display:flex;gap:1.5rem;margin-left:auto;min-width:0;overflow-x:auto;scrollbar-width:none}
 .site-nav::-webkit-scrollbar{display:none}
 .site-nav a{font-size:.9rem;color:var(--muted);white-space:nowrap;padding-block:.3rem}
 .site-nav a:hover{color:var(--fg)}
 .site-nav a[aria-current]{color:var(--fg);box-shadow:0 2px 0 var(--fg)}
+.tools{display:flex;gap:.35rem;flex:none}
+.tbtn{font:inherit;font-size:.85rem;font-weight:600;color:var(--muted);background:var(--bg);border:1px solid var(--rule);border-radius:.5rem;height:2.1rem;min-width:2.1rem;padding:0 .5rem;cursor:pointer;display:grid;place-items:center}
+.tbtn:hover{color:var(--fg);border-color:var(--fg)}
+.tbtn svg{width:1rem;height:1rem;display:block}
 `;
 
 export const siteHeader = () => `<header class="top">
@@ -100,8 +113,36 @@ export const siteHeader = () => `<header class="top">
       <a href="./" aria-current="page">Журнал</a>
       <a href="https://paveldiordits.site/#contact">Контакты</a>
     </nav>
+    <div class="tools">
+      <button class="tbtn" id="ts-down" type="button" aria-label="Уменьшить текст">A−</button>
+      <button class="tbtn" id="ts-up" type="button" aria-label="Увеличить текст">A+</button>
+      <button class="tbtn" id="theme" type="button" aria-label="Светлая или тёмная тема"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
+    </div>
   </div>
 </header>`;
+
+// Тема и масштаб применяются до первой отрисовки, иначе страница мигнула бы светлой.
+export const THEME_BOOT = `<script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme');if(t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches)d.dataset.theme='dark';var s=+localStorage.getItem('text-scale');if(s)d.style.setProperty('--ts',s)}catch(e){}})()</script>`;
+
+// Кнопки шапки. Тема пишется и под ключом выпусков дайджеста (ad-theme): выбор,
+// сделанный в журнале, действует и в них.
+export const SHELL_JS = `(function(){
+  const d = document.documentElement, STEPS = [.9, 1, 1.1, 1.2, 1.35];
+  const save = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+  document.getElementById('theme').addEventListener('click', () => {
+    const dark = d.dataset.theme !== 'dark';
+    if (dark) d.dataset.theme = 'dark'; else delete d.dataset.theme;
+    save('theme', dark ? 'dark' : 'light'); save('ad-theme', dark ? 'dark' : 'light');
+  });
+  const step = n => {
+    const cur = +d.style.getPropertyValue('--ts') || 1;
+    const at = STEPS.reduce((b, v, i) => Math.abs(v - cur) < Math.abs(STEPS[b] - cur) ? i : b, 0);
+    const v = STEPS[Math.max(0, Math.min(STEPS.length - 1, at + n))];
+    d.style.setProperty('--ts', v); save('text-scale', v);
+  };
+  document.getElementById('ts-down').addEventListener('click', () => step(-1));
+  document.getElementById('ts-up').addEventListener('click', () => step(1));
+})();`;
 
 // ── записи ───────────────────────────────────────────────────────────────────
 
@@ -207,6 +248,7 @@ export function journalPage({ entries, groups, base, author, ogImage, coverOf, l
 <meta name="description" content="${esc(about)}">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◆</text></svg>">
 <meta name="theme-color" content="#ffffff">
+${THEME_BOOT}
 <link rel="canonical" href="${base}">
 <link rel="alternate" type="application/rss+xml" title="Журнал — Павел Диордиц" href="${base}rss.xml">
 <link rel="preload" href="fonts/golos-text.woff2" as="font" type="font/woff2" crossorigin>
@@ -329,6 +371,7 @@ ${shelves.map(g => shelf(g, lead, coverOf)).join('\n')}
 </footer>
 
 <script>
+${SHELL_JS}
 document.getElementById('copy').textContent = '© ' + new Date().getFullYear() + ' ${esc(author.name)}';
 // Свежей считается запись моложе двух недель на день просмотра: страница
 // статическая, и отметка, расставленная при сборке, со временем начала бы врать.

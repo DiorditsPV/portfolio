@@ -192,8 +192,20 @@ const cut = (html, a, b) => {
 // после собственных стилей выпуска. Формат выпуска при этом остаётся в макете
 // дайджеста, а вид всех выпусков, прошлых и будущих, меняется одной правкой здесь.
 const SERIES_THEME = { 'Agents Weekly': 'digest-theme.css' };
+// Масштаб текста в выпуске: тот же множитель и тот же ключ localStorage, что у
+// журнала, кнопки встают в шапку выпуска рядом с переключателем темы. Тема: пока
+// читатель не выбрал её в самом выпуске, действует выбор из журнала или настройка системы.
+const SCALE_JS = `<script>(function(){var d=document.documentElement,S=[.9,1,1.1,1.2,1.35];
+try{var s=+localStorage.getItem('text-scale');if(s)d.style.setProperty('--ts',s)}catch(e){}
+try{if(!localStorage.getItem('ad-theme')){var t=localStorage.getItem('theme');if(t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches)d.setAttribute('data-theme','dark')}}catch(e){}
+function step(n){var c=+d.style.getPropertyValue('--ts')||1,a=0;S.forEach(function(v,i){if(Math.abs(v-c)<Math.abs(S[a]-c))a=i});
+var v=S[Math.max(0,Math.min(S.length-1,a+n))];d.style.setProperty('--ts',v);try{localStorage.setItem('text-scale',v)}catch(e){}}
+document.addEventListener('DOMContentLoaded',function(){var box=document.querySelector('.topbar .controls');if(!box)return;
+[['A−',-1,'Уменьшить текст'],['A+',1,'Увеличить текст']].forEach(function(b){var el=document.createElement('button');
+el.type='button';el.className='ts';el.textContent=b[0];el.setAttribute('aria-label',b[2]);el.addEventListener('click',function(){step(b[1])});
+box.insertBefore(el,box.firstChild)});var up=box.querySelector('.ts');if(up&&up.nextSibling)box.insertBefore(up.nextSibling,up);});})()</script>`;
 const themeOf = p => SERIES_THEME[p.series]
-  ? `<style>\n${fs.readFileSync(path.join(ROOT, 'tools', SERIES_THEME[p.series]), 'utf8')}</style>` : '';
+  ? `<style>\n${fs.readFileSync(path.join(ROOT, 'tools', SERIES_THEME[p.series]), 'utf8')}</style>\n${SCALE_JS}` : '';
 
 function headBlock(p, ogImage) {
   return `${HEAD_A}
@@ -574,7 +586,7 @@ function rebuild(reg) {
     libraryPage({ catalog, base: BASE, author: AUTHOR, ogImage: `${SITE}og.png` }));
 
   fs.writeFileSync(path.join(DIR, 'index.html'), journalPage({
-    library: catalog.items.length,
+    library: catalog.items.filter(it => it.url).length,
     coverOf,
     entries,
     groups,
