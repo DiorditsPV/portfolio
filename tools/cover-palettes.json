@@ -1,0 +1,11 @@
+[
+  { "id": "pale-oak",        "name": "Pale Oak / Slate Grey / Vintage Berry",      "colors": ["#C7C0B0", "#627E89", "#902E47"] },
+  { "id": "cream-olive",     "name": "Cream / Muted Olive / Punch Red",            "colors": ["#FFFECD", "#B0BC68", "#EB313F"] },
+  { "id": "coral-cyan",      "name": "Vibrant Coral / Powder Blush / Sunflower Gold / Seashell / Pacific Cyan", "colors": ["#F47068", "#FFB3AE", "#FFC24B", "#FFF4F1", "#1697A6"] },
+  { "id": "pearl-aqua",      "name": "Pure Red / Pearl Aqua / Ivory",              "colors": ["#EF2300", "#A9D7CD", "#F9FAEA"] },
+  { "id": "onyx-grapefruit", "name": "Onyx / Grapefruit Pink / Papaya Whip",       "colors": ["#0A0A0A", "#FF6B6B", "#FFEDD5"] },
+  { "id": "nougat-cacao",    "name": "Palsand Nougat / Cacao Husk / Midnight Soil", "colors": ["#FFD9A0", "#5C3B2E", "#201A17"] },
+  { "id": "petal-berry",     "name": "Petal Frost / Autumn Leaf / Berry Blush",    "colors": ["#FEDDE8", "#E47130", "#974472"] },
+  { "id": "dust-olive",      "name": "Dust Grey / Rosy Taupe / Olive",             "colors": ["#D4D2C6", "#BF8B7D", "#7B741C"] },
+  { "id": "rosy-pine",       "name": "Rosy Taupe / Spicy Orange / Pine Teal",      "colors": ["#C8A5A9", "#D04C01", "#214335"] }
+]

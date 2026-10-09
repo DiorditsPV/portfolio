@@ -1,21 +1,26 @@
-// Страница «Журнал» — публичная лента разборов.
+// Страница «Журнал» — указатель разборов.
 //
 // Здесь только вёрстка: что публиковать, решает publish-presentation.mjs, а этот
-// модуль получает готовый список и рисует страницу. Разделение по одной причине —
-// шаблон вырос до размера, на котором в одном файле с логикой публикации оба
-// перестают читаться.
+// модуль получает готовый список и рисует страницу.
 //
-// Оформление не своё, а сайтовое: токены (три набора света × светлая и тёмная
-// тема) вынимаются из index.html при каждой сборке и вставляются сюда целиком,
-// как это делает tools/build-assets.mjs с резюме. Поэтому Журнал не может
-// разъехаться с главной, а переключатели темы и набора работают на тех же
-// ключах localStorage — выбор переносится между разделами.
+// Читатель страницы — сам автор: он открывает её, чтобы окинуть взглядом весь
+// архив и сразу увидеть самое свежее. Отсюда подача.
 //
-// Подача — полки по темам, внутри полки новые сверху. Один сплошной поток по
-// датам journal уже пробовал: хронология отвечает на «что нового», но теряет
-// «что тут вообще есть», а у журнала из четырёх непохожих серий второй вопрос
-// важнее. Записи при этом не карточки в сетке, а строки: в строку помещается
-// описание целиком, и полку видно одним взглядом, не листая колонки.
+//   Свежая запись стоит первой и крупно — всегда самая новая по дате, без ручной
+//   отметки: отметка устаревала, и на первом экране месяцами висела старая запись.
+//
+//   Периодика (полка, где больше четырёх записей) идёт одной строкой, уходящей
+//   вправо, и листается слева направо. Серия с выпуском в неделю иначе за полгода
+//   заняла бы всю страницу, а в строке она остаётся одной полосой любой длины.
+//
+//   Остальные полки стоят под ней на отдельном сером поле, по две в ряд: запись —
+//   строка с обложкой слева и описанием справа.
+//
+// Страница целиком вбок не прокручивается: прокрутка есть только внутри строки
+// периодики.
+//
+// Оформление у журнала своё и с главной не связано: белый лист, один цвет для
+// ссылок и отметки свежести, одна гарнитура. Цвет на странице дают обложки.
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -42,81 +47,169 @@ export const plural = (n, one, few, many) => {
 
 const minutesOf = p => `${p.minutes}&nbsp;${plural(p.minutes, 'минута', 'минуты', 'минут')}`;
 
+// ── общее для страниц журнала ────────────────────────────────────────────────
+// Шрифт, цвета, сетка и шапка одни на указатель и на библиотеку: страницы одного
+// раздела не должны расходиться в мелочах.
+export const BASE_CSS = `@font-face{
+  font-family:"Golos Text";src:url(fonts/golos-text.woff2) format("woff2");
+  font-weight:400 900;font-display:swap;
+}
+:root{
+  color-scheme:light;
+  --bg:#ffffff; --field:#f4f5f6; --fg:#14171c; --muted:#5a616c; --rule:#e3e5e8;
+  --link:#1d4ed8;
+  --gutter:clamp(1.25rem,4vw,5.6rem);
+  --maxw:126rem;
+}
+/* Кегль растёт вместе с экраном, всё остальное задано в rem. Масштаб тот же, что
+   у выпусков дайджеста (tools/digest-theme.css): страницы одного раздела не должны
+   различаться размером текста. */
+html{font-size:clamp(14.7px,calc(9.9px + .315vw),17px)}
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--fg);overflow-x:clip;
+  font-family:"Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-size:1rem;line-height:1.5;-webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%;height:auto}
+p,h1,h2,h3,ol{margin:0}
+ol{list-style:none;padding:0}
+::selection{background:var(--link);color:#fff}
+:focus-visible{outline:2px solid var(--link);outline-offset:3px;border-radius:4px}
+.wrap{width:100%;max-width:var(--maxw);margin:0 auto;padding-inline:var(--gutter)}
+
+/* ── шапка ── */
+.top{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--rule)}
+.bar{display:flex;align-items:center;gap:2rem;height:3.5rem}
+.logo{font-weight:800;letter-spacing:-.03em;font-size:1.15rem}
+.site-nav{display:flex;gap:1.5rem;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+.site-nav::-webkit-scrollbar{display:none}
+.site-nav a{font-size:.9rem;color:var(--muted);white-space:nowrap;padding-block:.3rem}
+.site-nav a:hover{color:var(--fg)}
+.site-nav a[aria-current]{color:var(--fg);box-shadow:0 2px 0 var(--fg)}
+`;
+
+export const siteHeader = () => `<header class="top">
+  <div class="wrap bar">
+    <a class="logo" href="https://paveldiordits.site/">PD</a>
+    <nav class="site-nav">
+      <a href="https://paveldiordits.site/">Главная</a>
+      <a href="https://paveldiordits.site/#experience">Обо мне</a>
+      <a href="https://paveldiordits.site/#projects">Проекты</a>
+      <a href="./" aria-current="page">Журнал</a>
+      <a href="https://paveldiordits.site/#contact">Контакты</a>
+    </nav>
+  </div>
+</header>`;
+
 // ── записи ───────────────────────────────────────────────────────────────────
 
-// Метки под заголовком: направление цветом, время просмотра, язык.
-const marks = (p, topic) =>
-  `<span class="topic" style="--topic:${topic.color}">${esc(topic.ru)}</span>`
-  + `<span class="dot">·</span><span>${minutesOf(p)}</span>`
-  + (p.lang && p.lang !== 'ru' ? `<span class="lang">${esc(p.lang.toUpperCase())}</span>` : '');
+const PERIODICAL_FROM = 5;   // с какого числа записей полка становится периодикой
 
-function entry(p, topic) {
-  return `          <li class="entry">
-            <a class="entry-cover" href="${esc(p.slug)}.html" tabindex="-1" aria-hidden="true">
-              <img src="covers/${esc(p.slug)}.svg" alt="" loading="lazy" width="1200" height="675">
-              ${p.pick ? '<span class="badge">★ Лучшее</span>' : ''}
-            </a>
-            <div class="entry-body">
-              <time class="entry-date" datetime="${esc(p.date)}">${esc(humanDate(p.date))}</time>
+const cover = (p, coverOf, eager) =>
+  `<a class="cover" href="${esc(p.slug)}.html" tabindex="-1" aria-hidden="true">`
+  + `<img src="${esc(coverOf(p.slug))}" alt="" ${eager ? '' : 'loading="lazy" '}width="1600" height="900"></a>`;
+
+// Строка под обложкой: номер выпуска, дата, время чтения, отметка автора. Класс
+// fresh ставит скрипт внизу страницы по возрасту записи на день просмотра.
+const meta = (p, no) =>
+  `<p class="meta" data-date="${esc(p.date)}">${no ? `<b>№${no}</b>` : ''}`
+  + `<time datetime="${esc(p.date)}">${esc(humanDate(p.date))}</time>`
+  + `<span>${minutesOf(p)}</span>`
+  + (p.lang && p.lang !== 'ru' ? `<span>${esc(p.lang.toUpperCase())}</span>` : '')
+  + (p.pick ? '<span>выбор автора</span>' : '') + `</p>`;
+
+function leadEntry(p, no, coverOf) {
+  return `    <article class="lead">
+      ${cover(p, coverOf, true)}
+      <div class="lead-body">
+        ${meta(p, no)}
+        <h2><a href="${esc(p.slug)}.html">${esc(p.title)}</a></h2>
+        <p>${esc(p.desc)}</p>
+        <a class="read" href="${esc(p.slug)}.html">Читать</a>
+      </div>
+    </article>`;
+}
+
+function issue(p, no, coverOf) {
+  return `          <li class="issue">
+            ${cover(p, coverOf)}
+            ${meta(p, no)}
+            <h3><a href="${esc(p.slug)}.html">${esc(p.title)}</a></h3>
+            <p>${esc(p.desc)}</p>
+          </li>`;
+}
+
+function row(p, coverOf) {
+  return `          <li class="row">
+            ${cover(p, coverOf)}
+            <div>
+              ${meta(p, 0)}
               <h3><a href="${esc(p.slug)}.html">${esc(p.title)}</a></h3>
               <p>${esc(p.desc)}</p>
-              ${(p.tags || []).length ? `<div class="tags">${p.tags.slice(0, 3).map(t => `<span>${esc(t)}</span>`).join('')}</div>` : ''}
-              <div class="marks">${marks(p, topic)}</div>
             </div>
           </li>`;
 }
 
-// Полка: заголовок, счётчик, пояснение и записи от новых к старым. Список
-// нумерованный (<ol>) — внутри полки это хронология, а не набор.
-function shelf(g, byId) {
-  return `      <section class="shelf">
-        <div class="shelf-head">
-          <h2>${esc(g.ru)}</h2>
-          <span class="count">${g.items.length}</span>
-        </div>
-        ${g.note ? `<p class="shelf-note">${esc(g.note)}</p>` : ''}
-        <ol class="stream">
-${g.items.map(p => entry(p, byId[p.topic])).join('\n')}
+const shelfHead = g => `<header class="shelf-head">
+          <h2>${esc(g.ru)} <span class="count">${g.items.length}</span></h2>
+          ${g.note ? `<p>${esc(g.note)}</p>` : ''}
+        </header>`;
+
+// Периодика: строка выпусков от свежих к старым. Запись с первого экрана в строке
+// не повторяется; номер считается по всей серии, включая её.
+function periodical(g, lead, coverOf) {
+  const shown = g.items.map((p, i) => ({ p, no: g.items.length - i })).filter(x => x.p !== lead);
+  if (!shown.length) return '';
+  return `    <section class="shelf periodical">
+      <div class="wrap">
+        ${shelfHead(g)}
+      </div>
+      <div class="rail" tabindex="0" role="region" aria-label="${esc(g.ru)}: выпуски от свежих к старым">
+        <ol class="issues">
+${shown.map(x => issue(x.p, x.no, coverOf)).join('\n')}
         </ol>
-      </section>`;
+      </div>
+    </section>`;
 }
 
-function lead(p, topic) {
-  return `      <article class="lead-entry">
-        <a class="lead-cover" href="${esc(p.slug)}.html" tabindex="-1" aria-hidden="true">
-          <img src="covers/${esc(p.slug)}.svg" alt="" width="1200" height="675">
-        </a>
-        <div class="lead-body">
-          <time class="entry-date" datetime="${esc(p.date)}">${esc(humanDate(p.date))}</time>
-          <h2><a href="${esc(p.slug)}.html">${esc(p.title)}</a></h2>
-          <p>${esc(p.desc)}</p>
-          <div class="marks">${marks(p, topic)}</div>
-          <a class="btn" href="${esc(p.slug)}.html">Читать запись</a>
-        </div>
-      </article>`;
+function shelf(g, lead, coverOf) {
+  const shown = g.items.filter(p => p !== lead);
+  if (!shown.length) return '';
+  return `        <section class="shelf">
+        ${shelfHead(g)}
+        <ol class="rows">
+${shown.map(p => row(p, coverOf)).join('\n')}
+        </ol>
+        </section>`;
 }
 
 // ── страница ─────────────────────────────────────────────────────────────────
 
-export function journalPage({ entries, groups, topics, tokens, base, author, ogImage, feature }) {
-  const byId = Object.fromEntries(topics.map(t => [t.id, t]));
+export function journalPage({ entries, groups, base, author, ogImage, coverOf, library }) {
   // Счётчик в подвале считается по плоскому списку, а не по сумме полок: полка
   // может не показать запись, а посчитать её всё равно нужно.
   const total = entries.length;
   const title = JOURNAL_TITLE, about = JOURNAL_ABOUT;
+  const lead = entries[0];
+  const isPeriodical = g => g.items.length >= PERIODICAL_FROM;
+  const leadShelf = groups.find(g => g.items.includes(lead));
+  const leadNo = leadShelf && isPeriodical(leadShelf) ? leadShelf.items.length - leadShelf.items.indexOf(lead) : 0;
+  const rails = groups.filter(isPeriodical), shelves = groups.filter(g => !isPeriodical(g));
 
   return `<!doctype html>
-<html lang="ru" class="dark">
+<html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(about)}">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◆</text></svg>">
-<meta name="theme-color" content="#f6f3f1" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0b0a0a" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff">
 <link rel="canonical" href="${base}">
 <link rel="alternate" type="application/rss+xml" title="Журнал — Павел Диордиц" href="${base}rss.xml">
+<link rel="preload" href="fonts/golos-text.woff2" as="font" type="font/woff2" crossorigin>
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="website">
 <meta property="og:url" content="${base}">
@@ -130,225 +223,119 @@ export function journalPage({ entries, groups, topics, tokens, base, author, ogI
 <meta name="twitter:image" content="${ogImage}">
 <style>
 /* ВНИМАНИЕ: страница собирается tools/publish-presentation.mjs из tools/journal-page.mjs.
-   Правки здесь затрутся — меняй шаблон и прогоняй --rebuild.
-   Блок токенов ниже вынут из index.html при сборке: он там источник правды. */
+   Правки здесь затрутся — меняй шаблон и прогоняй --rebuild. */
 
-${tokens}
+${BASE_CSS}
+/* ── строка о журнале ── */
+/* Заголовок и описание стоят столбиком, ссылка на библиотеку — справа на строке
+   заголовка: в одну строку описание переносилось и висело рядом с заголовком уступом. */
+.mast{padding-block:2.25rem 1.5rem;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;gap:.35rem 2rem}
+.mast h1{font-size:2rem;line-height:1.1;letter-spacing:-.035em;font-weight:750}
+.mast p{grid-column:1/-1;color:var(--muted)}
+.lib{grid-row:1;grid-column:2;color:var(--link);font-weight:600;white-space:nowrap}
+.lib::after{content:" →"}
+.lib:hover{text-decoration:underline;text-underline-offset:.25em}
 
-*,*::before,*::after{box-sizing:border-box}
-html{color-scheme:light}
-html.dark{color-scheme:dark}
-body{
-  margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-sans);
-  font-size:16px;line-height:1.55;letter-spacing:-.01em;-webkit-font-smoothing:antialiased;
-  transition:background-color .4s ease,color .4s ease;
-}
-/* Световой слой набора — как на главной: живёт только на первом экране. */
-#bg{
-  position:absolute;top:0;left:0;right:0;height:100vh;z-index:0;pointer-events:none;
-  background:var(--glow);
-  -webkit-mask-image:linear-gradient(180deg,#000 58%,transparent 100%);
-          mask-image:linear-gradient(180deg,#000 58%,transparent 100%);
-}
-header,main,footer{position:relative;z-index:1}
-a{color:inherit;text-decoration:none}
-button{font:inherit;color:inherit}
-img{display:block;max-width:100%;height:auto}
-::selection{background:var(--accent);color:var(--accent-fg)}
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
-.wrap{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 1.25rem}
-@media(min-width:900px){.wrap{padding:0 2rem}}
+/* ── общее для записей ── */
+.cover{display:block;border-radius:.6rem;overflow:hidden;border:1px solid var(--rule);background:var(--field)}
+.cover img{width:100%;aspect-ratio:16/9;object-fit:cover;transition:transform .5s cubic-bezier(.16,1,.3,1)}
+@media(hover:hover){.cover:hover img{transform:scale(1.025)}}
+@media(prefers-reduced-motion:reduce){.cover img{transition:none}}
+.meta{display:flex;flex-wrap:wrap;align-items:center;gap:.2rem .85rem;font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.meta b{color:var(--fg);font-weight:700}
+/* отметка свежести: точка перед датой у записей моложе двух недель */
+.meta.fresh time{color:var(--link);font-weight:600}
+.meta.fresh time::before{content:"";display:inline-block;width:.5em;height:.5em;border-radius:50%;background:var(--link);margin-right:.45em;vertical-align:.08em}
+h3{font-size:1.08rem;line-height:1.28;letter-spacing:-.015em;font-weight:650;text-wrap:balance}
+h2 a:hover,h3 a:hover{color:var(--link)}
 
-/* ── шапка: логотип, разделы сайта, инструменты ── */
-header{
-  position:sticky;top:0;z-index:50;padding:.75rem 0;
-  background:color-mix(in srgb,var(--bg) 84%,transparent);
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  border-bottom:1px solid transparent;transition:border-color .3s ease;
-}
-header.scrolled{border-bottom-color:var(--border)}
-.bar{display:flex;align-items:center;gap:1rem}
-.logo{font-weight:800;letter-spacing:-.04em;font-size:1.1rem;flex-shrink:0}
-.site-nav{
-  display:flex;align-items:center;gap:.25rem;margin:0 auto;
-  overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;
-}
-.site-nav::-webkit-scrollbar{display:none}
-.site-nav a{
-  padding:.35rem .65rem;border-radius:8px;font-size:.875rem;color:var(--muted);
-  white-space:nowrap;transition:color .2s;
-}
-.site-nav a:hover{color:var(--fg)}
-.site-nav a[aria-current]{color:var(--fg);font-weight:600}
-.tools{display:flex;align-items:center;gap:.4rem;flex-shrink:0}
-.tool-btn{
-  font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.08em;
-  color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:.35rem .7rem;
-  white-space:nowrap;cursor:pointer;background:none;transition:color .2s,border-color .2s;
-}
-.tool-btn:hover{color:var(--fg);border-color:var(--fg)}
-.icon-btn{
-  width:32px;height:32px;display:grid;place-items:center;border:1px solid var(--border);
-  border-radius:999px;background:none;color:var(--muted);cursor:pointer;
-  transition:color .2s,border-color .2s;
-}
-.icon-btn:hover{color:var(--fg);border-color:var(--fg)}
+/* ── свежая запись ── */
+.lead{display:grid;gap:1.25rem 3rem;align-items:center;padding-bottom:3rem}
+.lead-body{display:flex;flex-direction:column;gap:.85rem;min-width:0}
+.lead-body h2{font-size:clamp(1.6rem,2.6vw,2.6rem);line-height:1.1;letter-spacing:-.035em;font-weight:750;text-wrap:balance}
+.lead-body>p:not(.meta){color:var(--muted);font-size:1.08rem}
+.read{align-self:start;margin-top:.3rem;color:var(--link);font-weight:600}
+.read::after{content:" →"}
+.read:hover{text-decoration:underline;text-underline-offset:.25em}
+@media(min-width:900px){.lead{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
-/* ── первый экран: о чём журнал слева, свежая рекомендация справа ── */
-.top{display:grid;gap:2.25rem;padding-block:3rem 2.5rem;align-items:center}
-@media(min-width:1000px){.top{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:3rem;padding-block:4rem 3rem}}
-.top h1{font-size:clamp(2.75rem,7.5vw,4.5rem);line-height:1;letter-spacing:-.045em;margin:0 0 1rem;font-weight:800}
-.lede{font-size:clamp(1.0625rem,2.2vw,1.3125rem);line-height:1.35;margin:0 0 .85rem;max-width:32ch;letter-spacing:-.02em}
-.byline{margin:0;color:var(--muted);max-width:46ch}
+/* ── полки ── */
+.shelf-head{margin-bottom:1.1rem}
+.shelf-head h2{font-size:1.35rem;line-height:1.2;letter-spacing:-.025em;font-weight:750}
+.count{color:var(--muted);font-weight:500;font-size:.75em;font-variant-numeric:tabular-nums;margin-left:.15em}
+.shelf-head p{margin-top:.25rem;color:var(--muted);font-size:.9rem}
 
-.lead-entry{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;display:grid}
-@media(min-width:760px){.lead-entry{grid-template-columns:1.1fr 1fr}}
-.lead-cover{display:block;background:#0d0f14}
-.lead-cover img{width:100%;height:100%;object-fit:cover;aspect-ratio:16/9}
-@media(min-width:760px){.lead-cover img{aspect-ratio:auto;min-height:100%}}
-.lead-body{padding:1.6rem;display:flex;flex-direction:column;gap:.6rem;justify-content:center}
-.lead-body h2{font-size:clamp(1.3rem,2.4vw,1.65rem);line-height:1.18;letter-spacing:-.03em;margin:0;font-weight:700}
-.lead-body p{margin:0;color:var(--muted)}
-.btn{
-  margin-top:.5rem;align-self:start;display:inline-flex;align-items:center;
-  padding:.7rem 1.1rem;border-radius:11px;background:var(--accent);color:var(--accent-fg);
-  font-weight:600;font-size:.9375rem;white-space:nowrap;transition:filter .2s;
+/* периодика: строка выпусков, уходящая за правый край; листается только она */
+.periodical{padding-block:2.25rem 2.5rem;border-top:1px solid var(--rule)}
+.rail{
+  overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;
+  scroll-padding-inline:max(var(--gutter),calc((100vw - var(--maxw))/2 + var(--gutter)));
+  scrollbar-width:thin;scrollbar-color:#c3c7cd transparent;
 }
-.btn:hover{filter:brightness(1.08)}
-
-/* ── полки: заголовок, счётчик, пояснение и записи строками ── */
-.shelves{padding-top:1rem}
-.shelf + .shelf{margin-top:3.5rem;padding-top:3rem;border-top:1px solid var(--border)}
-.shelf-head{display:flex;align-items:baseline;gap:.65rem}
-.shelf-head h2{font-size:1.4rem;letter-spacing:-.03em;margin:0;font-weight:700}
-.count{font-family:var(--font-mono);font-size:.75rem;color:var(--muted)}
-.shelf-note{margin:.4rem 0 0;max-width:72ch;color:var(--muted);font-size:.9375rem}
-
-.stream{list-style:none;margin:1.5rem 0 0;padding:0}
-.entry{display:grid;gap:.45rem 1.5rem;padding:1.35rem 0;border-top:1px solid var(--border)}
-.stream .entry:first-child{border-top:none;padding-top:.25rem}
-.entry-cover{
-  display:none;position:relative;border-radius:12px;overflow:hidden;
-  background:#0d0f14;border:1px solid var(--border);align-self:start;
+.issues{
+  display:grid;grid-auto-flow:column;grid-auto-columns:clamp(15rem,23vw,24rem);gap:1.5rem;
+  width:max-content;padding-bottom:1rem;
+  padding-inline:max(var(--gutter),calc((100vw - var(--maxw))/2 + var(--gutter)));
 }
-.entry-cover img{width:100%;aspect-ratio:16/9;object-fit:cover}
-.badge{
-  position:absolute;left:.4rem;top:.4rem;padding:.1rem .45rem;border-radius:999px;
-  background:rgba(10,12,18,.72);color:#fff;font-size:.625rem;font-weight:600;
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-}
-.entry-body{display:flex;flex-direction:column;gap:.4rem;min-width:0}
-.entry-body h3{font-size:1.125rem;line-height:1.3;letter-spacing:-.025em;margin:0;font-weight:650}
-.entry-body h3 a{transition:color .2s}
-.entry:hover h3 a{color:var(--accent)}
-html.dark .entry:hover h3 a{color:var(--fg)}
-.entry-body p{margin:0;color:var(--muted);font-size:.9375rem;max-width:74ch}
-.entry-date{font-family:var(--font-mono);font-size:.75rem;color:var(--muted)}
+.issue{display:flex;flex-direction:column;gap:.5rem;min-width:0;scroll-snap-align:start}
+.issue .cover{margin-bottom:.25rem}
+.issue>p:not(.meta){color:var(--muted);font-size:.9rem}
 
-/* Обложка появляется только там, где есть чем её оплатить по ширине: на телефоне
-   строка сжимается до текста, и картинка съела бы весь экран под каждой записью. */
-@media(min-width:720px){
-  .entry{grid-template-columns:12rem minmax(0,1fr)}
-  .entry-cover{display:block}
-}
-@media(prefers-reduced-motion:reduce){.entry-body h3 a,.btn{transition:none}}
+/* остальные полки: отдельное серое поле, по две полки в ряд */
+.rest{background:var(--field);padding-block:2.75rem 3.5rem}
+.shelves{display:grid;gap:3rem 4rem}
+.rows{display:grid;gap:1.5rem}
+.row{display:grid;gap:.75rem 1.5rem;align-items:start}
+.row>div{display:flex;flex-direction:column;gap:.4rem;min-width:0}
+.row>div>p:not(.meta){color:var(--muted);font-size:.92rem}
+.rest .cover{background:var(--bg)}
+@media(min-width:560px){.row{grid-template-columns:minmax(0,15rem) minmax(0,1fr)}}
+@media(min-width:1200px){.shelves{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
-.tags{display:flex;flex-wrap:wrap;gap:.35rem}
-.tags span{
-  font-family:var(--font-mono);font-size:.6875rem;color:var(--muted);
-  border:1px solid var(--border);border-radius:999px;padding:.1rem .5rem;
-}
-.marks{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;font-size:.8125rem;color:var(--muted)}
-.topic{color:var(--topic);font-weight:600}
-.dot{opacity:.45}
-.lang{border:1px solid var(--border);border-radius:5px;padding:0 .3rem;font-size:.6875rem}
-
-main{padding-bottom:4rem}
-footer{border-top:1px solid var(--border);padding:1.75rem 0 3rem;color:var(--muted);font-size:.8125rem}
-.foot-row{display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between}
+footer{border-top:1px solid var(--rule);padding-block:1.5rem 2.5rem;color:var(--muted);font-size:.85rem}
+.foot{display:flex;flex-wrap:wrap;gap:.5rem 2rem;justify-content:space-between}
+.foot p{max-width:64ch}
+footer a{color:var(--link)}
+footer a:hover{text-decoration:underline;text-underline-offset:.25em}
 </style>
 </head>
 <body>
-<div id="bg" aria-hidden="true"></div>
-
-<header id="site-header">
-  <div class="wrap bar">
-    <a class="logo" href="https://paveldiordits.site/">PD</a>
-    <nav class="site-nav">
-      <a href="https://paveldiordits.site/">Главная</a>
-      <a href="https://paveldiordits.site/#experience">Обо мне</a>
-      <a href="https://paveldiordits.site/#projects">Проекты</a>
-      <a href="./" aria-current="page">Журнал</a>
-      <a href="https://paveldiordits.site/#contact">Контакты</a>
-    </nav>
-    <div class="tools">
-      <button class="tool-btn" id="design-toggle" type="button"></button>
-      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Переключить тему"></button>
-    </div>
-  </div>
-</header>
+${siteHeader()}
 
 <main>
-  <section class="wrap top">
-    <div>
+  <div class="wrap">
+    <div class="mast">
       <h1>Журнал</h1>
-      <p class="lede">${esc(about)}</p>
-      <p class="byline">Каждая запись — одна самодостаточная html-страница: без трекеров и внешних запросов, открывается и читается как есть.</p>
+      <p>${esc(about)}</p>
+      ${library ? `<a class="lib" href="library.html">Библиотека: ${library} ${plural(library, 'позиция', 'позиции', 'позиций')} из выпусков Agents Weekly</a>` : ''}
     </div>
-${feature ? lead(feature, byId[feature.topic]) : '<div></div>'}
-  </section>
+${lead ? leadEntry(lead, leadNo, coverOf) : ''}
+  </div>
 
-  <div class="wrap shelves">
-${groups.map(g => shelf(g, byId)).join('\n')}
+${rails.map(g => periodical(g, lead, coverOf)).join('\n')}
+
+  <div class="rest">
+    <div class="wrap shelves">
+${shelves.map(g => shelf(g, lead, coverOf)).join('\n')}
+    </div>
   </div>
 </main>
 
 <footer>
-  <div class="wrap foot-row">
-    <span id="copy"></span>
-    <span>${total} ${plural(total, 'запись', 'записи', 'записей')} · <a href="rss.xml">RSS</a></span>
+  <div class="wrap foot">
+    <p>Каждая запись — одна самодостаточная html-страница: без трекеров и внешних запросов, открывается и читается как есть.</p>
+    <span>${total} ${plural(total, 'запись', 'записи', 'записей')} · <a href="rss.xml">RSS</a> · <span id="copy"></span></span>
   </div>
 </footer>
 
 <script>
-// Тема и набор света живут в тех же ключах localStorage, что и на главной, —
-// переход между разделами не сбрасывает выбор.
-const DESIGNS = [
-  { id:'two-sources', ru:'Два света' },
-  { id:'cold-leak',   ru:'Засветка' },
-  { id:'dawn-fog',    ru:'Рассвет' },
-];
-const $ = s => document.querySelector(s);
-const ls = {
-  get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } },
-  set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} },
-};
-
-function designIndex() {
-  const i = DESIGNS.findIndex(d => d.id === ls.get('design'));
-  return i === -1 ? 0 : i;
+document.getElementById('copy').textContent = '© ' + new Date().getFullYear() + ' ${esc(author.name)}';
+// Свежей считается запись моложе двух недель на день просмотра: страница
+// статическая, и отметка, расставленная при сборке, со временем начала бы врать.
+const FRESH_DAYS = 14;
+for (const m of document.querySelectorAll('.meta[data-date]')) {
+  if ((Date.now() - new Date(m.dataset.date)) / 864e5 <= FRESH_DAYS) m.classList.add('fresh');
 }
-function applyDesign(i) {
-  const d = DESIGNS[(i + DESIGNS.length) % DESIGNS.length];
-  document.documentElement.dataset.design = d.id;
-  ls.set('design', d.id);
-  $('#design-toggle').textContent = (designIndex() + 1) + '/' + DESIGNS.length + ' · ' + d.ru;
-}
-function applyTheme(dark) {
-  document.documentElement.classList.toggle('dark', dark);
-  ls.set('theme', dark ? 'dark' : 'light');
-  $('#theme-toggle').textContent = dark ? '☾' : '☀';
-}
-const savedTheme = ls.get('theme');
-applyTheme(savedTheme ? savedTheme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches);
-applyDesign(designIndex());
-$('#theme-toggle').onclick = () => applyTheme(!document.documentElement.classList.contains('dark'));
-$('#design-toggle').onclick = () => applyDesign(designIndex() + 1);
-$('#copy').textContent = '© ' + new Date().getFullYear() + ' ${esc(author.name)}';
-
-addEventListener('scroll', () => {
-  $('#site-header').classList.toggle('scrolled', scrollY > 8);
-}, { passive: true });
 </script>
 </body>
 </html>

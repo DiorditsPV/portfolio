@@ -1,0 +1,90 @@
+{
+  "product-lab-karta-processov": {
+    "label": "Product Lab",
+    "big": "17",
+    "unit": "stages",
+    "facts": [
+      "hypothesis → iteration",
+      "owner gates",
+      "loops close after release"
+    ],
+    "art": "a chain of seventeen small roughly drawn boxes joined by arrows, winding in an S-shape, a few small diamonds between boxes, and one long arrow looping from the last box back to the first"
+  },
+  "generator-fich": {
+    "label": "Product Lab",
+    "big": "24",
+    "unit": "sources",
+    "facts": [
+      "measured vs assigned",
+      "14 steps, 9 gates",
+      "minimal version for Product Lab"
+    ],
+    "art": "a large funnel seen from the side: many small dots pour in at the wide top, pass a row of narrow gates inside, and only three dots drop out at the bottom"
+  },
+  "headcount": {
+    "label": "Repo teardown",
+    "big": "172",
+    "unit": "skills",
+    "facts": [
+      "16 departments",
+      "skill list budget: 1% of context",
+      "install one department at a time"
+    ],
+    "art": "an org chart tree: one box at the top branching down into sixteen small boxes in two rows, a few of them filled in"
+  },
+  "yingzao-skill": {
+    "label": "Repo teardown",
+    "big": "104",
+    "unit": "design tokens",
+    "facts": [
+      "one GPT-Image-2 call",
+      "8 hard gates before it",
+      "7 tricks worth stealing"
+    ],
+    "art": "the corner of a traditional Chinese pagoda roof with layered wooden bracket sets, drawn as an architectural study with construction lines"
+  },
+  "ladder": {
+    "label": "Own project",
+    "big": "435",
+    "unit": "cards",
+    "facts": [
+      "columns × difficulty rungs",
+      "agent writes content via MCP",
+      "deploy cannot lose questions"
+    ],
+    "art": "a wooden ladder leaning against a board that is a grid of small cards in columns and rows, some cards filled in, some cells empty"
+  },
+  "claude-w23-peremer": {
+    "label": "Agentic dev",
+    "big": "3",
+    "unit": "months later",
+    "facts": [
+      "weekly ranking did not survive a quarter",
+      "3 repos lost stars",
+      "skills went beyond code"
+    ],
+    "art": "a ranked list drawn as ten horizontal bars of decreasing length, several bars crossed out and re-ordered with curved arrows, three bars with arrows pointing down"
+  },
+  "trendy-claude-codex": {
+    "label": "Agentic dev",
+    "big": "6",
+    "unit": "trends of July",
+    "facts": [
+      "a fleet of agents, not one",
+      "control plane is the product",
+      "context is reset, not grown"
+    ],
+    "art": "a flotilla of many small paper boats sailing in formation"
+  },
+  "gastown": {
+    "label": "Repo teardown",
+    "big": "8",
+    "unit": "agent roles",
+    "facts": [
+      "state lives in Dolt, not in context",
+      "one deterministic watchdog",
+      "README vs code: 8 gaps"
+    ],
+    "art": "a small walled desert town seen from above, roughly drawn: one tall watchtower in the middle, a ring of tiny identical buggies leaving through a single gate in a line, and a refinery chimney with a thin plume of smoke"
+  }
+}

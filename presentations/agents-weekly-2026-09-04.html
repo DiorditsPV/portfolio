@@ -608,6 +608,106 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
   });
 })();
 </script>
+<style>
+/* Оформление выпусков Agents Weekly в журнале.
+   Журнал подставляет этот блок в <head> каждого выпуска при публикации, после
+   собственных стилей выпуска, поэтому правила здесь их перекрывают. Разметку и
+   порядок блоков выпуска он не трогает: меняются ширина, кегль, цвета и число
+   колонок. Так все выпуски, прошлые и будущие, одеты одинаково, а формат самого
+   дайджеста остаётся в его макете. */
+
+@font-face{
+  font-family:"Golos Text";src:url(fonts/golos-text.woff2) format("woff2");
+  font-weight:400 900;font-display:swap;
+}
+
+/* Цвета светлой темы — те же, что на странице журнала. Тёмная тема выпуска
+   остаётся его собственной. */
+html:not([data-theme="dark"]){
+  --page:#ffffff; --surface:#ffffff; --surface-soft:#f4f5f6;
+  --ink:#14171c; --muted:#5a616c; --subtle:#737a85; --line:#e3e5e8;
+  --accent:#1d4ed8; --accent-soft:#e8eefc; --accent-ink:#1d4ed8;
+  --badge-bg:#f4f5f6; --badge-fg:#2f353d;
+}
+
+/* Кегль растёт вместе с экраном, все размеры выпуска заданы в rem и em и растут
+   за ним: на мониторе 27 дюймов текст был 14 пикселей в колонке на 46% ширины. */
+html{font-size:clamp(14.7px,calc(9.9px + .315vw),17px)}
+body{
+  font:1rem/1.55 "Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;overflow-x:clip;
+}
+::selection{background:var(--accent);color:#fff}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+/* Ширина: страница занимает экран с теми же полями, что и журнал. */
+main,.topbar-inner,.sitebar-inner{
+  width:min(126rem,100% - 2*clamp(1.25rem,4vw,5.6rem));
+}
+
+/* Шапка: сплошной фон вместо размытого стекла. */
+.topbar,.sitebar{background:var(--page);backdrop-filter:none;-webkit-backdrop-filter:none}
+nav.toc a{font-size:.9rem;border-radius:6px}
+.controls button{border-radius:8px}
+
+/* Первый экран выпуска. */
+.masthead{min-height:0;padding:3rem 0 2.5rem;gap:clamp(2.5rem,6vw,7rem);align-items:end}
+.issue-label{font-size:.9rem;margin-bottom:1rem;color:var(--muted);font-weight:600}
+.issue-label::before{display:none}
+h1{font-size:clamp(2.4rem,4vw,4.25rem);line-height:1;letter-spacing:-.04em;font-weight:750;max-width:18ch;text-wrap:balance}
+.deck{max-width:68ch;margin-top:1.25rem;font-size:1.12rem;line-height:1.5}
+.fact{padding:.75rem 0}
+.fact span,.fact strong{font-size:.95rem}
+
+/* Разделы. Надзаголовок раздела — обычная строка, без капса и разрядки. */
+section{margin:4rem 0}
+.section-kicker{margin-bottom:.4rem;color:var(--muted);font-size:.9rem;font-weight:500;letter-spacing:0;text-transform:none}
+h2{font-size:clamp(1.6rem,2.2vw,2.3rem);letter-spacing:-.035em;font-weight:750;line-height:1.1}
+h2 .count{font-size:.95rem}
+.section-intro,.rank-note{max-width:none;font-size:1rem}
+h3.tail-h{color:var(--ink);font-size:1.05rem;letter-spacing:-.01em;text-transform:none;margin:2.5rem 0 .9rem}
+
+/* Текст блоков занимает всю ширину своей колонки: при ограничении длины строки
+   правая половина колонки оставалась пустой, и страница выглядела скошенной влево. */
+.block h3{font-size:1.2rem}
+.release h3{font-size:1.15rem}
+.release li,.release>p{font-size:.95rem;line-height:1.5}
+.item h4{font-size:1.05rem}
+.item p{font-size:.95rem;line-height:1.5}
+ul.stories li,ul.tail li{font-size:.95rem}
+.official-overview h3{font-size:1.02rem}
+.official-overview p,.official-stat{font-size:.9rem}
+
+/* Метки: звёзды и очки — табличные цифры на спокойной плашке. */
+.item{grid-template-columns:5.2rem minmax(0,1fr);gap:1.1rem;padding:1.1rem 0 1.2rem}
+.stars,.pts{border-radius:6px;font-size:.88rem;padding:.4rem .5rem}
+.tag{border-radius:4px;font-size:.72rem;padding:.15rem .45rem}
+
+/* Широкий экран: списки релизов, сюжетов, исследований и источников идут в
+   несколько колонок. */
+@media(min-width:1500px){
+  .release ul{display:block;columns:2;column-gap:3rem}
+  .release li{break-inside:avoid;margin-bottom:.5rem}
+  ul.stories{columns:2;column-gap:3.5rem;border-top:0}
+  ul.stories li{break-inside:avoid}
+  .catalog-columns{gap:4rem}
+  .flow-2col{columns:3;column-gap:3.5rem}
+  .sources ul{display:block;columns:3;column-gap:3.5rem}
+  .sources li{break-inside:avoid;margin-bottom:.5rem}
+}
+/* Позиции каталога идут по одной в строке на всю ширину своей колонки: широкая
+   строка читается лучше, чем две узкие позиции рядом. */
+
+/* Список в две колонки: колоночный поток вместо сетки. Сетка ставит пункты
+   парами в строку, и рядом с длинным пунктом под коротким остаётся провал. */
+.block ul.list-2col{display:block;columns:2;column-gap:3.5rem}
+.block ul.list-2col>li{break-inside:avoid;margin-bottom:.45rem}
+@media(max-width:900px){.block ul.list-2col{columns:1}}
+
+/* Блок «Ещё по теме», который журнал ставит под выпуском, — той же ширины, что и
+   сам выпуск: узкая полоса посередине под широкой страницей смотрелась чужой. */
+nav.gnrl{max-width:none;width:min(126rem,100% - 2*clamp(1.25rem,4vw,5.6rem));margin-inline:auto;padding-inline:0}
+</style>
 <!--/general:head-->
 </head><body>
 <!--general:top-->
@@ -660,110 +760,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
         <li><mark><code>--permission-prompts none</code></mark> (2.1.259) для необслуживаемых хостов и правило Containment Escape в auto mode (2.1.257).</li>
         <li><mark>Футпринт Workflow урезан с 5.7k до 1k токенов</mark> (2.1.248): справочник вынесен в бандловый скилл <code>workflow-authoring</code>.</li>
       </ul>
-      <details class="method-fold"><summary>Остальные изменения CLI</summary><div class="method-body">
-  <p>Три версии новее зафиксированной в состоянии 2.1.246 — <b>2.1.247, 2.1.248 и 2.1.250</b>.
-  Версии 2.1.249 в CHANGELOG.md нет; это не пропуск сбора, её там просто не опубликовали.
-  Ниже — только то, что относится к агент-разработке.</p>
-
-  <p><b>Изоляция и безопасность.</b> Главное в 2.1.248 — флаг <mark><code>--restricted</code></mark>
-  (он же <code>CLAUDE_CODE_RESTRICTED=1</code>): убирает встроенные инструменты, которые запускают
-  команды и код, и <code>WebFetch</code> (если он не назван явно в <code>--tools</code>), оставляет
-  файловые инструменты внутри рабочей директории, отказывает в <code>bypassPermissions</code> и
-  игнорирует пользовательские, проектные и локальные файлы настроек. Это первый в серии дайджестов
-  случай, когда Anthropic даёт цельный «урезанный» профиль запуска одним флагом, а не набором
-  отдельных настроек. Рядом — исправление, у которого читается сюжет: <code>/ultrareview</code> и
-  локально засеянные облачные сессии <b>больше не выгружают</b> незакоммиченные правки файлов вида
-  <code>prod.env</code> и <code>*.tfvars</code>, а также редакторские swap-, temp- и backup-копии
-  файлов с секретами (<code>key.pem.tmp</code>, <code>id_rsa.swo</code>); теперь они остаются на машине.</p>
-
-  <p><b>Экономика контекста.</b> В 2.1.248 добавлен <b><code>experimental.cacheTtl</code></b>
-  (<code>"5m"</code> или <code>"1h"</code>) прямо во фронтматтер агента — TTL промпт-кэша на
-  конкретного агента, применяемый, когда общая настройка сабагентного TTL не задана. Там же починен
-  промах кэша примерно раз в час в длинных сессиях: определения инструментов перерисовывались после
-  обновления OAuth-токена, и вместе с кэшем терялся контекст расширенного мышления. И отдельно —
-  <mark>футпринт самого инструмента Workflow урезан с 5.7k до 1k токенов</mark>: справочник по
-  написанию скриптов вынесен в бандловый скилл <code>workflow-authoring</code>. Это ровно тот же ход,
-  что год назад проделали с <code>claude-api</code> (200k → 25k), и он подтверждает линию:
-  описание инструмента — не место для документации.</p>
-
-  <p><b>Мульти-агентность и сессии.</b> Кросс-сессионные сообщения (<code>SendMessage</code> /
-  <code>ListAgents</code>) между сессиями на одной машине <b>дошли до Bedrock, Vertex и Foundry</b>,
-  а также до конфигураций с отключённой телеметрией — раньше канал был доступен не везде.
-  <code>SendMessage</code> из сабагента в другую сессию теперь честно сообщает, что ответ придёт
-  в разговор родительской сессии, а не сабагенту. В 2.1.247 починена неприятная штука: сабагенты
-  умирали на первом же 404 по модели — теперь они используют цепочку фолбэков сессии, а ошибка
-  родителю содержит тип, статус, request id и модель. Там же — защита от переполнения: хук или
-  фоновый агент, напечатавший мегабайты вывода, больше не может «заклинить» сессию на
-  «Prompt is too long».</p>
-
-  <p><b>Инструменты для работы с API.</b> В 2.1.247 у скилла <code>/claude-api</code> появилась
-  подкоманда <b><code>cost-optimize</code></b> — профилирует траты существующего проекта и проводит
-  по рычагам стоимости (кэширование, гигиена токенов, batch, effort, выбор модели) по одному
-  измеряемому изменению за раз. Сам скилл дополнен покрытием Admin API: участники организации,
-  инвайты, воркспейсы, ключи, отчёты по рейт-лимитам, workload identity federation, CMEK.</p>
-
-  <p><b>Прочее по мелочи, но по делу.</b> <code>/loop</code> в самопейсящем динамическом режиме и
-  автономный режим без промпта стали доступны везде, включая Bedrock/Vertex/Foundry. Окно
-  авто-компакта Sonnet 5 переведено на полный 1M контекст: авто-компакт теперь около 967K токенов
-  вместо примерно 934K. Добавлен инструмент <code>SendFeedback</code> — Claude может составить
-  черновик отчёта о проблеме, который человек отправляет через <code>/feedback</code>. Плюс закалка
-  marketplace плагинов: имена с управляющими и невидимыми символами отклоняются.</p>
-    <h3>Claude Code CLI 2.1.251 → 2.1.260</h3>
-    <p>Версии новее зафиксированной 2.1.250: <b>2.1.251, 2.1.252, 2.1.257, 2.1.258, 2.1.259,
-    2.1.260</b>. Версии 253–256 в публичном changelog отсутствуют — это не пропуск сбора.</p>
-
-    <p class="g">Модели и субагенты</p>
-    <ul>
-      <li>Новые хуки <b><code>PreModelSwitch</code> и <code>PostModelSwitch</code></b> (2.1.251) —
-      можно блокировать, подтверждать или аннотировать смену модели. Хуки <code>SessionStart</code>
-      при возобновлении теперь получают степень «протухания» сессии и оценку стоимости повторного
-      кеширования.</li>
-      <li><b>Смена семантики <code>CLAUDE_CODE_SUBAGENT_MODEL</code></b> (2.1.251): переменная теперь
-      задаёт модель субагента <i>по умолчанию</i>, а не переопределяет всё; <code>model:</code> в
-      определении агента и явная модель при спавне имеют приоритет. Для жёсткого переопределения
-      добавлен <code>CLAUDE_CODE_SUBAGENT_MODEL_FORCE</code> (2.1.257).</li>
-      <li>Живая трансляция вызовов инструментов <i>переднего</i> субагента в Remote Control (2.1.251);
-      фоновые, которые по умолчанию, по-прежнему показывают только статус.</li>
-      <li>Починены агентные команды: финальный ответ тиммейта доходит до лида, фоновые субагенты снова
-      могут отвечать безымянному сиблингу или родителю (2.1.251); субагент, возобновивший другого
-      агента через <code>SendMessage</code>, наконец просыпается по его завершении (2.1.260).</li>
-      <li>Снят часовой лимит на фоновые команды, запущенные субагентами (2.1.260).</li>
-    </ul>
-
-    <p class="g">Разрешения и изоляция — самая плотная линия окна</p>
-    <ul>
-      <li><b><code>--permission-prompts none</code></b> (2.1.259) для необслуживаемых headless-хостов:
-      всё, что запросило бы подтверждение, автоматически отклоняется, при этом активный режим
-      разрешений продолжает решать.</li>
-      <li><b><code>managedMcpServers</code></b> (2.1.259) — организация может раздать HTTP/SSE
-      MCP-серверы всем пользователям.</li>
-      <li>Правило <b>Containment Escape</b> в auto mode (2.1.257): обращения к метаданным облачных
-      кредов, обход egress-ограничений и дотягивание до чужого тенанта больше не одобряются
-      автоматически.</li>
-      <li>Заткнуты подмена симлинка внутри рабочей директории после проверки прав (2.1.251), выход
-      плагиновых команд за пределы каталога плагина (2.1.251), чтение <code>scriptPath</code>
-      инструментом Workflow до проверки прав (2.1.251) и несколько способов проскочить проверку Bash
-      через особенности zsh (2.1.257, 2.1.260).</li>
-      <li>В 2.1.260 <mark>откатили</mark> изменение 2.1.259, распространявшее
-      <code>Read()</code>-deny-правила на аргументы Bash: оно запрещало <code>npm run build</code> под
-      правилом <code>Read(./**/build/**)</code>.</li>
-    </ul>
-
-    <p class="g">Наблюдаемость и работа</p>
-    <ul>
-      <li><b>Панель диффа</b> рядом с диалогом в полноэкранном режиме (<code>/diff</code>) и
-      <b>вероятная причина промаха промпт-кеша</b> в <code>/cost</code> и статус-строке (2.1.260).</li>
-      <li>Строка промпт-кеша в <code>/cost</code> — доля попаданий, промахи, перекешированные токены
-      (2.1.251).</li>
-      <li>Текстовая форма <b><code>/advisor</code></b> для десктопа, Remote Control и headless-сессий
-      (2.1.260).</li>
-      <li>Workflow: <code>agent({schema})</code> заранее отклоняет заведомо невыполнимую JSON-схему,
-      а ошибки исчерпания ретраев включают последнюю ошибку валидации (2.1.260).</li>
-      <li>Автокомпакт для моделей с 1M контекста и правки изоляции worktree — фоновые сессии и
-      субагенты снова могут править файлы в созданном ими worktree (2.1.251).</li>
-    </ul>
-      </div></details>
-    </article>
+      </article>
     <article class="release">
       <h3>Модели <span class="src">— Claude Fable 5.1 и Mythos 5.1, 01.09</span></h3>
       <p><a href="https://www.anthropic.com/claude-fable-and-mythos-5-1">Анонс Anthropic</a> — 1407 очков
@@ -939,11 +936,9 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
       дорожек, и каждой ставит свой вопрос: <b>SEO</b> (краулеры Google/Bing — могут ли они вообще
       прочитать и проиндексировать), <b>AEO</b> (блоки AI-ответов — цитируют ли), <b>GEO</b>
       (ChatGPT/Perplexity/Claude при обходе сети — я ли первоисточник), <b>LLMO</b> (знает ли модель
-      бренд из собственных весов и знает ли верно) и <b>NEO</b> — корейский Naver с его AI Briefing.
-      Последняя дорожка и есть то, чего нет в глобальных руководствах, а она держит половину
+      бренд из собственных весов и знает ли верно) и <b>NEO</b> — корейский Naver с его AI Briefing. Последняя дорожка и есть то, чего нет в глобальных руководствах, а она держит половину
       корейского рынка. Заявленные цифры даны на своём же проекте: 1.54 млн показов за 30 дней и
-      7.4 тыс. кликов при нулевых тратах на рекламу — <i>цифры авторские, не проверялись</i>.
-      Ставится как плагин через <code>/plugin marketplace add</code>. MIT, 1.2 МБ, README на двух языках.</p>
+      7.4 тыс. кликов при нулевых тратах на рекламу — <i>цифры авторские, не проверялись</i>. MIT, 1.2 МБ, README на двух языках.</p>
     </div>
   </div>
 
@@ -1107,7 +1102,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
       <p>Скилл для проектирования, сборки, отладки и <b>визуальной проверки</b> GPU-эффектов внутри
       продуктовых интерфейсов: выбор рендерера (CSS / SVG / Canvas 2D / Three.js-WebGL /
       WebGPU-WGSL), работа с GLSL и WGSL, частицы, интеграция в UI, производительность, доступность,
-      проверка в браузере. Ставится через <code>npx skills@latest add</code>. Сильная сторона по
+      проверка в браузере. Сильная сторона по
       методу — скилл описывает не только как построить эффект, но и как убедиться, что он получился:
       пиксельные проверки через Node, поддержка <code>prefers-reduced-motion</code>, верификация на
       десктопе и мобильном. Версия 0.1.0 от 30.08, MIT.</p>

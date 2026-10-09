@@ -1,15 +1,15 @@
 <!doctype html>
-<html lang="ru" class="dark">
+<html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Журнал — разборы Павла Диордица</title>
 <meta name="description" content="Разборы инструментов, агентных практик и продуктовых заходов: что внутри, чего это стоит и что забрать себе.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◆</text></svg>">
-<meta name="theme-color" content="#f6f3f1" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0b0a0a" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff">
 <link rel="canonical" href="https://paveldiordits.site/presentations/">
 <link rel="alternate" type="application/rss+xml" title="Журнал — Павел Диордиц" href="https://paveldiordits.site/presentations/rss.xml">
+<link rel="preload" href="fonts/golos-text.woff2" as="font" type="font/woff2" crossorigin>
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://paveldiordits.site/presentations/">
@@ -23,225 +23,122 @@
 <meta name="twitter:image" content="https://paveldiordits.site/og.png">
 <style>
 /* ВНИМАНИЕ: страница собирается tools/publish-presentation.mjs из tools/journal-page.mjs.
-   Правки здесь затрутся — меняй шаблон и прогоняй --rebuild.
-   Блок токенов ниже вынут из index.html при сборке: он там источник правды. */
+   Правки здесь затрутся — меняй шаблон и прогоняй --rebuild. */
 
-/* ─────────────────────────── tokens ───────────────────────────
-   Шесть наборов оформления. Каждый живёт в двух темах и задаёт
-   не только цвета, но и --glow — световой слой под содержимым (#bg).
-   Переключатель в шапке; выбор хранится в localStorage.
-   Набор ставится атрибутом data-design на <html>, тема — классом .dark
-   ──────────────────────────────────────────────────────────────── */
+@font-face{
+  font-family:"Golos Text";src:url(fonts/golos-text.woff2) format("woff2");
+  font-weight:400 900;font-display:swap;
+}
 :root{
-  --font-sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
-  --maxw:72rem;
-  /* запасные значения на случай, если набор не проставился —
-     повторяют основной набор (Два света, светлая тема) */
-  --bg:#f6f3f1; --fg:#1e1b20; --muted:#6c6570; --border:#ded7dd;
-  --card:#ffffff; --card-hover:#fbf9fa; --accent:#2b2630; --accent-fg:#f7f4f1;
-  --glow:none;
+  color-scheme:light;
+  --bg:#ffffff; --field:#f4f5f6; --fg:#14171c; --muted:#5a616c; --rule:#e3e5e8;
+  --link:#1d4ed8;
+  --gutter:clamp(1.25rem,4vw,5.6rem);
+  --maxw:126rem;
 }
-
-/* ── 31 · Холодная засветка ── */
-html[data-design="cold-leak"]{
-  --bg:#eef3f9; --fg:#0f1a26; --muted:#56697e; --border:#cdd9e6;
-  --card:#ffffff; --card-hover:#f7fafd; --accent:#1b6fd0; --accent-fg:#ffffff;
-  /* на светлом фоне белое ядро не читается — берём насыщенный тон,
-     он даёт разницу по цвету, а не по светлоте */
-  --glow:radial-gradient(112% 104% at 106% -6%,
-           rgba(96,164,255,.92) 0%, rgba(140,193,255,.62) 26%,
-           rgba(186,218,255,.34) 50%, rgba(214,234,255,.12) 70%, transparent 86%),
-         radial-gradient(76% 66% at 86% 14%,rgba(70,138,232,.3),transparent 74%);
-}
-html[data-design="cold-leak"].dark{
-  --bg:#0a0d11; --fg:#e6edf5; --muted:#94a6bb; --border:#2c3644;
-  --card:#12171e; --card-hover:#171d25; --accent:#ffffff; --accent-fg:#0a1017;
-  --glow:radial-gradient(110% 100% at 108% -6%,
-           rgba(196,228,255,.78) 0%, rgba(130,186,255,.38) 30%,
-           rgba(70,120,205,.16) 56%, rgba(40,70,140,.06) 70%, transparent 84%),
-         radial-gradient(74% 64% at 86% 16%,rgba(120,175,255,.28),transparent 76%);
-}
-
-/* ── 32 · Два источника ── */
-html[data-design="two-sources"]{
-  --bg:#f6f3f1; --fg:#1e1b20; --muted:#6c6570; --border:#ded7dd;
-  --card:#ffffff; --card-hover:#fbf9fa; --accent:#2b2630; --accent-fg:#f7f4f1;
-  /* тона взяты насыщеннее фона: на светлом читается цвет, а не яркость */
-  --glow:radial-gradient(100% 92% at 104% -6%,
-           rgba(255,170,98,.9) 0%, rgba(255,199,150,.6) 30%,
-           rgba(255,222,192,.26) 54%, transparent 76%),
-         radial-gradient(104% 96% at -6% 106%,
-           rgba(96,158,255,.85) 0%, rgba(150,196,255,.54) 32%,
-           rgba(198,224,255,.22) 56%, transparent 78%);
-}
-html[data-design="two-sources"].dark{
-  --bg:#101015; --fg:#eee9e6; --muted:#aaa2a8; --border:#39343c;
-  --card:#18171d; --card-hover:#1e1c23; --accent:#f2ece8; --accent-fg:#16151a;
-  --glow:radial-gradient(98% 88% at 106% -6%,
-           rgba(255,176,110,.66) 0%, rgba(228,124,66,.3) 34%,
-           rgba(150,80,45,.1) 56%, transparent 76%),
-         radial-gradient(102% 92% at -8% 106%,
-           rgba(104,176,255,.54) 0%, rgba(60,124,220,.24) 36%,
-           rgba(35,70,150,.08) 58%, transparent 78%);
-}
-
-/* ── 52 · Восход за дымкой ── */
-html[data-design="dawn-fog"]{
-  --bg:#ecefef; --fg:#2a2b28; --muted:#6e6a61; --border:#d5d1c6;
-  --card:#fbf9f5; --card-hover:#fffefb; --accent:#b4611f; --accent-fg:#ffffff;
-  /* сверху холодная тень, снизу насыщенный восход — вместе дают
-     тот же перепад, что в тёмной теме */
-  --glow:radial-gradient(92% 54% at 50% 106%,
-           rgba(255,164,88,.72) 0%, rgba(255,198,146,.44) 34%,
-           rgba(255,222,192,.18) 58%, transparent 78%),
-         linear-gradient(180deg,rgba(108,132,158,.2) 0%,rgba(150,170,190,.07) 26%,
-           transparent 44%,rgba(255,255,255,.5) 64%,transparent 84%);
-}
-html[data-design="dawn-fog"].dark{
-  --bg:#2f3740; --fg:#f6f1e8; --muted:#b9b2a6; --border:#4a4a46;
-  --card:#373f49; --card-hover:#3f4852; --accent:#ffc98f; --accent-fg:#241503;
-  --glow:radial-gradient(84% 48% at 50% 104%,rgba(255,198,138,.42),transparent 66%),
-         linear-gradient(180deg,transparent 40%,rgba(255,252,246,.22) 60%,transparent 78%);
-}
-
+/* Кегль растёт вместе с экраном, всё остальное задано в rem. Масштаб тот же, что
+   у выпусков дайджеста (tools/digest-theme.css): страницы одного раздела не должны
+   различаться размером текста. */
+html{font-size:clamp(14.7px,calc(9.9px + .315vw),17px)}
 *,*::before,*::after{box-sizing:border-box}
-html{color-scheme:light}
-html.dark{color-scheme:dark}
 body{
-  margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-sans);
-  font-size:16px;line-height:1.55;letter-spacing:-.01em;-webkit-font-smoothing:antialiased;
-  transition:background-color .4s ease,color .4s ease;
+  margin:0;background:var(--bg);color:var(--fg);overflow-x:clip;
+  font-family:"Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-size:1rem;line-height:1.5;-webkit-font-smoothing:antialiased;
 }
-/* Световой слой набора — как на главной: живёт только на первом экране. */
-#bg{
-  position:absolute;top:0;left:0;right:0;height:100vh;z-index:0;pointer-events:none;
-  background:var(--glow);
-  -webkit-mask-image:linear-gradient(180deg,#000 58%,transparent 100%);
-          mask-image:linear-gradient(180deg,#000 58%,transparent 100%);
-}
-header,main,footer{position:relative;z-index:1}
 a{color:inherit;text-decoration:none}
-button{font:inherit;color:inherit}
 img{display:block;max-width:100%;height:auto}
-::selection{background:var(--accent);color:var(--accent-fg)}
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
-.wrap{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 1.25rem}
-@media(min-width:900px){.wrap{padding:0 2rem}}
+p,h1,h2,h3,ol{margin:0}
+ol{list-style:none;padding:0}
+::selection{background:var(--link);color:#fff}
+:focus-visible{outline:2px solid var(--link);outline-offset:3px;border-radius:4px}
+.wrap{width:100%;max-width:var(--maxw);margin:0 auto;padding-inline:var(--gutter)}
 
-/* ── шапка: логотип, разделы сайта, инструменты ── */
-header{
-  position:sticky;top:0;z-index:50;padding:.75rem 0;
-  background:color-mix(in srgb,var(--bg) 84%,transparent);
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  border-bottom:1px solid transparent;transition:border-color .3s ease;
-}
-header.scrolled{border-bottom-color:var(--border)}
-.bar{display:flex;align-items:center;gap:1rem}
-.logo{font-weight:800;letter-spacing:-.04em;font-size:1.1rem;flex-shrink:0}
-.site-nav{
-  display:flex;align-items:center;gap:.25rem;margin:0 auto;
-  overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;
-}
+/* ── шапка ── */
+.top{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--rule)}
+.bar{display:flex;align-items:center;gap:2rem;height:3.5rem}
+.logo{font-weight:800;letter-spacing:-.03em;font-size:1.15rem}
+.site-nav{display:flex;gap:1.5rem;margin-left:auto;overflow-x:auto;scrollbar-width:none}
 .site-nav::-webkit-scrollbar{display:none}
-.site-nav a{
-  padding:.35rem .65rem;border-radius:8px;font-size:.875rem;color:var(--muted);
-  white-space:nowrap;transition:color .2s;
-}
+.site-nav a{font-size:.9rem;color:var(--muted);white-space:nowrap;padding-block:.3rem}
 .site-nav a:hover{color:var(--fg)}
-.site-nav a[aria-current]{color:var(--fg);font-weight:600}
-.tools{display:flex;align-items:center;gap:.4rem;flex-shrink:0}
-.tool-btn{
-  font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.08em;
-  color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:.35rem .7rem;
-  white-space:nowrap;cursor:pointer;background:none;transition:color .2s,border-color .2s;
-}
-.tool-btn:hover{color:var(--fg);border-color:var(--fg)}
-.icon-btn{
-  width:32px;height:32px;display:grid;place-items:center;border:1px solid var(--border);
-  border-radius:999px;background:none;color:var(--muted);cursor:pointer;
-  transition:color .2s,border-color .2s;
-}
-.icon-btn:hover{color:var(--fg);border-color:var(--fg)}
+.site-nav a[aria-current]{color:var(--fg);box-shadow:0 2px 0 var(--fg)}
 
-/* ── первый экран: о чём журнал слева, свежая рекомендация справа ── */
-.top{display:grid;gap:2.25rem;padding-block:3rem 2.5rem;align-items:center}
-@media(min-width:1000px){.top{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:3rem;padding-block:4rem 3rem}}
-.top h1{font-size:clamp(2.75rem,7.5vw,4.5rem);line-height:1;letter-spacing:-.045em;margin:0 0 1rem;font-weight:800}
-.lede{font-size:clamp(1.0625rem,2.2vw,1.3125rem);line-height:1.35;margin:0 0 .85rem;max-width:32ch;letter-spacing:-.02em}
-.byline{margin:0;color:var(--muted);max-width:46ch}
+/* ── строка о журнале ── */
+/* Заголовок и описание стоят столбиком, ссылка на библиотеку — справа на строке
+   заголовка: в одну строку описание переносилось и висело рядом с заголовком уступом. */
+.mast{padding-block:2.25rem 1.5rem;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;gap:.35rem 2rem}
+.mast h1{font-size:2rem;line-height:1.1;letter-spacing:-.035em;font-weight:750}
+.mast p{grid-column:1/-1;color:var(--muted)}
+.lib{grid-row:1;grid-column:2;color:var(--link);font-weight:600;white-space:nowrap}
+.lib::after{content:" →"}
+.lib:hover{text-decoration:underline;text-underline-offset:.25em}
 
-.lead-entry{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;display:grid}
-@media(min-width:760px){.lead-entry{grid-template-columns:1.1fr 1fr}}
-.lead-cover{display:block;background:#0d0f14}
-.lead-cover img{width:100%;height:100%;object-fit:cover;aspect-ratio:16/9}
-@media(min-width:760px){.lead-cover img{aspect-ratio:auto;min-height:100%}}
-.lead-body{padding:1.6rem;display:flex;flex-direction:column;gap:.6rem;justify-content:center}
-.lead-body h2{font-size:clamp(1.3rem,2.4vw,1.65rem);line-height:1.18;letter-spacing:-.03em;margin:0;font-weight:700}
-.lead-body p{margin:0;color:var(--muted)}
-.btn{
-  margin-top:.5rem;align-self:start;display:inline-flex;align-items:center;
-  padding:.7rem 1.1rem;border-radius:11px;background:var(--accent);color:var(--accent-fg);
-  font-weight:600;font-size:.9375rem;white-space:nowrap;transition:filter .2s;
+/* ── общее для записей ── */
+.cover{display:block;border-radius:.6rem;overflow:hidden;border:1px solid var(--rule);background:var(--field)}
+.cover img{width:100%;aspect-ratio:16/9;object-fit:cover;transition:transform .5s cubic-bezier(.16,1,.3,1)}
+@media(hover:hover){.cover:hover img{transform:scale(1.025)}}
+@media(prefers-reduced-motion:reduce){.cover img{transition:none}}
+.meta{display:flex;flex-wrap:wrap;align-items:center;gap:.2rem .85rem;font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.meta b{color:var(--fg);font-weight:700}
+/* отметка свежести: точка перед датой у записей моложе двух недель */
+.meta.fresh time{color:var(--link);font-weight:600}
+.meta.fresh time::before{content:"";display:inline-block;width:.5em;height:.5em;border-radius:50%;background:var(--link);margin-right:.45em;vertical-align:.08em}
+h3{font-size:1.08rem;line-height:1.28;letter-spacing:-.015em;font-weight:650;text-wrap:balance}
+h2 a:hover,h3 a:hover{color:var(--link)}
+
+/* ── свежая запись ── */
+.lead{display:grid;gap:1.25rem 3rem;align-items:center;padding-bottom:3rem}
+.lead-body{display:flex;flex-direction:column;gap:.85rem;min-width:0}
+.lead-body h2{font-size:clamp(1.6rem,2.6vw,2.6rem);line-height:1.1;letter-spacing:-.035em;font-weight:750;text-wrap:balance}
+.lead-body>p:not(.meta){color:var(--muted);font-size:1.08rem}
+.read{align-self:start;margin-top:.3rem;color:var(--link);font-weight:600}
+.read::after{content:" →"}
+.read:hover{text-decoration:underline;text-underline-offset:.25em}
+@media(min-width:900px){.lead{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* ── полки ── */
+.shelf-head{margin-bottom:1.1rem}
+.shelf-head h2{font-size:1.35rem;line-height:1.2;letter-spacing:-.025em;font-weight:750}
+.count{color:var(--muted);font-weight:500;font-size:.75em;font-variant-numeric:tabular-nums;margin-left:.15em}
+.shelf-head p{margin-top:.25rem;color:var(--muted);font-size:.9rem}
+
+/* периодика: строка выпусков, уходящая за правый край; листается только она */
+.periodical{padding-block:2.25rem 2.5rem;border-top:1px solid var(--rule)}
+.rail{
+  overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;
+  scroll-padding-inline:max(var(--gutter),calc((100vw - var(--maxw))/2 + var(--gutter)));
+  scrollbar-width:thin;scrollbar-color:#c3c7cd transparent;
 }
-.btn:hover{filter:brightness(1.08)}
-
-/* ── полки: заголовок, счётчик, пояснение и записи строками ── */
-.shelves{padding-top:1rem}
-.shelf + .shelf{margin-top:3.5rem;padding-top:3rem;border-top:1px solid var(--border)}
-.shelf-head{display:flex;align-items:baseline;gap:.65rem}
-.shelf-head h2{font-size:1.4rem;letter-spacing:-.03em;margin:0;font-weight:700}
-.count{font-family:var(--font-mono);font-size:.75rem;color:var(--muted)}
-.shelf-note{margin:.4rem 0 0;max-width:72ch;color:var(--muted);font-size:.9375rem}
-
-.stream{list-style:none;margin:1.5rem 0 0;padding:0}
-.entry{display:grid;gap:.45rem 1.5rem;padding:1.35rem 0;border-top:1px solid var(--border)}
-.stream .entry:first-child{border-top:none;padding-top:.25rem}
-.entry-cover{
-  display:none;position:relative;border-radius:12px;overflow:hidden;
-  background:#0d0f14;border:1px solid var(--border);align-self:start;
+.issues{
+  display:grid;grid-auto-flow:column;grid-auto-columns:clamp(15rem,23vw,24rem);gap:1.5rem;
+  width:max-content;padding-bottom:1rem;
+  padding-inline:max(var(--gutter),calc((100vw - var(--maxw))/2 + var(--gutter)));
 }
-.entry-cover img{width:100%;aspect-ratio:16/9;object-fit:cover}
-.badge{
-  position:absolute;left:.4rem;top:.4rem;padding:.1rem .45rem;border-radius:999px;
-  background:rgba(10,12,18,.72);color:#fff;font-size:.625rem;font-weight:600;
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-}
-.entry-body{display:flex;flex-direction:column;gap:.4rem;min-width:0}
-.entry-body h3{font-size:1.125rem;line-height:1.3;letter-spacing:-.025em;margin:0;font-weight:650}
-.entry-body h3 a{transition:color .2s}
-.entry:hover h3 a{color:var(--accent)}
-html.dark .entry:hover h3 a{color:var(--fg)}
-.entry-body p{margin:0;color:var(--muted);font-size:.9375rem;max-width:74ch}
-.entry-date{font-family:var(--font-mono);font-size:.75rem;color:var(--muted)}
+.issue{display:flex;flex-direction:column;gap:.5rem;min-width:0;scroll-snap-align:start}
+.issue .cover{margin-bottom:.25rem}
+.issue>p:not(.meta){color:var(--muted);font-size:.9rem}
 
-/* Обложка появляется только там, где есть чем её оплатить по ширине: на телефоне
-   строка сжимается до текста, и картинка съела бы весь экран под каждой записью. */
-@media(min-width:720px){
-  .entry{grid-template-columns:12rem minmax(0,1fr)}
-  .entry-cover{display:block}
-}
-@media(prefers-reduced-motion:reduce){.entry-body h3 a,.btn{transition:none}}
+/* остальные полки: отдельное серое поле, по две полки в ряд */
+.rest{background:var(--field);padding-block:2.75rem 3.5rem}
+.shelves{display:grid;gap:3rem 4rem}
+.rows{display:grid;gap:1.5rem}
+.row{display:grid;gap:.75rem 1.5rem;align-items:start}
+.row>div{display:flex;flex-direction:column;gap:.4rem;min-width:0}
+.row>div>p:not(.meta){color:var(--muted);font-size:.92rem}
+.rest .cover{background:var(--bg)}
+@media(min-width:560px){.row{grid-template-columns:minmax(0,15rem) minmax(0,1fr)}}
+@media(min-width:1200px){.shelves{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
-.tags{display:flex;flex-wrap:wrap;gap:.35rem}
-.tags span{
-  font-family:var(--font-mono);font-size:.6875rem;color:var(--muted);
-  border:1px solid var(--border);border-radius:999px;padding:.1rem .5rem;
-}
-.marks{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;font-size:.8125rem;color:var(--muted)}
-.topic{color:var(--topic);font-weight:600}
-.dot{opacity:.45}
-.lang{border:1px solid var(--border);border-radius:5px;padding:0 .3rem;font-size:.6875rem}
-
-main{padding-bottom:4rem}
-footer{border-top:1px solid var(--border);padding:1.75rem 0 3rem;color:var(--muted);font-size:.8125rem}
-.foot-row{display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between}
+footer{border-top:1px solid var(--rule);padding-block:1.5rem 2.5rem;color:var(--muted);font-size:.85rem}
+.foot{display:flex;flex-wrap:wrap;gap:.5rem 2rem;justify-content:space-between}
+.foot p{max-width:64ch}
+footer a{color:var(--link)}
+footer a:hover{text-decoration:underline;text-underline-offset:.25em}
 </style>
 </head>
 <body>
-<div id="bg" aria-hidden="true"></div>
-
-<header id="site-header">
+<header class="top">
   <div class="wrap bar">
     <a class="logo" href="https://paveldiordits.site/">PD</a>
     <nav class="site-nav">
@@ -251,324 +148,199 @@ footer{border-top:1px solid var(--border);padding:1.75rem 0 3rem;color:var(--mut
       <a href="./" aria-current="page">Журнал</a>
       <a href="https://paveldiordits.site/#contact">Контакты</a>
     </nav>
-    <div class="tools">
-      <button class="tool-btn" id="design-toggle" type="button"></button>
-      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Переключить тему"></button>
-    </div>
   </div>
 </header>
 
 <main>
-  <section class="wrap top">
-    <div>
+  <div class="wrap">
+    <div class="mast">
       <h1>Журнал</h1>
-      <p class="lede">Разборы инструментов, агентных практик и продуктовых заходов: что внутри, чего это стоит и что забрать себе.</p>
-      <p class="byline">Каждая запись — одна самодостаточная html-страница: без трекеров и внешних запросов, открывается и читается как есть.</p>
+      <p>Разборы инструментов, агентных практик и продуктовых заходов: что внутри, чего это стоит и что забрать себе.</p>
+      <a class="lib" href="library.html">Библиотека: 940 позиций из выпусков Agents Weekly</a>
     </div>
-      <article class="lead-entry">
-        <a class="lead-cover" href="trendy-claude-codex.html" tabindex="-1" aria-hidden="true">
-          <img src="covers/trendy-claude-codex.svg" alt="" width="1200" height="675">
-        </a>
-        <div class="lead-body">
-          <time class="entry-date" datetime="2026-08-04">4 августа 2026</time>
-          <h2><a href="trendy-claude-codex.html">Тренды агентной разработки — Claude и Codex, июль 2026</a></h2>
-          <p>Срез по четырём направлениям за июль 2026 — Claude Code и Agent SDK, OpenAI Codex, MCP, практики комьюнити. Сквозной сюжет: обе экосистемы синхронно сделали мультиагентность штатным режимом.</p>
-          <div class="marks"><span class="topic" style="--topic:#7c5cff">AI и агенты</span><span class="dot">·</span><span>16&nbsp;минут</span></div>
-          <a class="btn" href="trendy-claude-codex.html">Читать запись</a>
-        </div>
-      </article>
-  </section>
+    <article class="lead">
+      <a class="cover" href="agents-weekly-2026-10-09.html" tabindex="-1" aria-hidden="true"><img src="covers/agents-weekly-2026-10-09.webp" alt="" width="1600" height="900"></a>
+      <div class="lead-body">
+        <p class="meta" data-date="2026-10-09"><b>№8</b><time datetime="2026-10-09">9 октября 2026</time><span>79&nbsp;минут</span></p>
+        <h2><a href="agents-weekly-2026-10-09.html">Неделя агентной экосистемы — 02–09.10.2026</a></h2>
+        <p>Guard-hooks в Claude Code теперь можно сделать fail-closed, вышла Claude Haiku 5.5 по $0.10/$0.50, а около сорока позиций каталога — моды, которыми сообщество за неделю обжило CLI.</p>
+        <a class="read" href="agents-weekly-2026-10-09.html">Читать</a>
+      </div>
+    </article>
+  </div>
 
-  <div class="wrap shelves">
-      <section class="shelf">
-        <div class="shelf-head">
-          <h2>Product Lab</h2>
-          <span class="count">2</span>
-        </div>
-        <p class="shelf-note">Одна продуктовая лаборатория: исследование, из которого выросла её модель фич, и карта её процессов.</p>
-        <ol class="stream">
-          <li class="entry">
-            <a class="entry-cover" href="product-lab-karta-processov.html" tabindex="-1" aria-hidden="true">
-              <img src="covers/product-lab-karta-processov.svg" alt="" loading="lazy" width="1200" height="675">
-              <span class="badge">★ Лучшее</span>
-            </a>
-            <div class="entry-body">
-              <time class="entry-date" datetime="2026-09-15">15 сентября 2026</time>
+    <section class="shelf periodical">
+      <div class="wrap">
+        <header class="shelf-head">
+          <h2>Agents Weekly <span class="count">8</span></h2>
+          <p>Дайджест агент-экосистемы по расписанию. Каждый выпуск закрывает своё окно наблюдения и не повторяет сюжеты прошлых прогонов, поэтому выпуски читаются подряд, а не выборочно.</p>
+        </header>
+      </div>
+      <div class="rail" tabindex="0" role="region" aria-label="Agents Weekly: выпуски от свежих к старым">
+        <ol class="issues">
+          <li class="issue">
+            <a class="cover" href="agents-weekly-2026-10-02.html" tabindex="-1" aria-hidden="true"><img src="covers/agents-weekly-2026-10-02.webp" alt="" loading="lazy" width="1600" height="900"></a>
+            <p class="meta" data-date="2026-10-02"><b>№7</b><time datetime="2026-10-02">2 октября 2026</time><span>81&nbsp;минута</span></p>
+            <h3><a href="agents-weekly-2026-10-02.html">Неделя агентной экосистемы — 25.09–02.10.2026</a></h3>
+            <p>Плагины Claude Code научились менять саму CLI: в 2.1.287 появились моды, а в каталоге около трети позиций — скиллы, где Opus 5.5 рисует и монтирует видео кодом.</p>
+          </li>
+          <li class="issue">
+            <a class="cover" href="agents-weekly-2026-09-25.html" tabindex="-1" aria-hidden="true"><img src="covers/agents-weekly-2026-09-25.webp" alt="" loading="lazy" width="1600" height="900"></a>
+            <p class="meta" data-date="2026-09-25"><b>№6</b><time datetime="2026-09-25">25 сентября 2026</time><span>47&nbsp;минут</span></p>
+            <h3><a href="agents-weekly-2026-09-25.html">Неделя агентной экосистемы — 18–25.09.2026</a></h3>
+            <p>Неделя Claude Opus 5.5 за $4/$20 — теперь это Opus по умолчанию в Claude Code. AGENTS.md в CLI, а около двадцати позиций каталога — обёртки вокруг «моделей решений» Jev и Laya.</p>
+          </li>
+          <li class="issue">
+            <a class="cover" href="agents-weekly-2026-09-18.html" tabindex="-1" aria-hidden="true"><img src="covers/agents-weekly-2026-09-18.webp" alt="" loading="lazy" width="1600" height="900"></a>
+            <p class="meta" data-date="2026-09-18"><b>№5</b><time datetime="2026-09-18">18 сентября 2026</time><span>33&nbsp;минуты</span></p>
+            <h3><a href="agents-weekly-2026-09-18.html">Неделя агентной экосистемы — 11–18.09.2026</a></h3>
+            <p>Неделя замера HarnessTax: обвязка почти не меняет успешность агента, но Claude Code вдвое дороже Pi при том же числе ходов. Плюс claude plugin eval прямо в CLI и агенты OpenAI, залившие в RubyGems около двух тысяч пакетов.</p>
+          </li>
+          <li class="issue">
+            <a class="cover" href="agents-weekly-2026-09-11.html" tabindex="-1" aria-hidden="true"><img src="covers/agents-weekly-2026-09-11.webp" alt="" loading="lazy" width="1600" height="900"></a>
+            <p class="meta" data-date="2026-09-11"><b>№4</b><time datetime="2026-09-11">11 сентября 2026</time><span>35&nbsp;минут</span><span>выбор автора</span></p>
+            <h3><a href="agents-weekly-2026-09-11.html">Неделя агентной экосистемы — 04–11.09.2026</a></h3>
+            <p>Третья копия tokentab вернулась с загрузчиком малвари, десятки агентов Claude формализовали теорему Ферма на Lean, а каталог недели возглавили находки, пришедшие не из поиска по репозиториям.</p>
+          </li>
+          <li class="issue">
+            <a class="cover" href="agents-weekly-2026-09-04.html" tabindex="-1" aria-hidden="true"><img src="covers/agents-weekly-2026-09-04.webp" alt="" loading="lazy" width="1600" height="900"></a>
+            <p class="meta" data-date="2026-09-04"><b>№3</b><time datetime="2026-09-04">4 сентября 2026</time><span>57&nbsp;минут</span></p>
+            <h3><a href="agents-weekly-2026-09-04.html">Неделя агентной экосистемы — 26.08–04.09.2026</a></h3>
+            <p>Неделя релиза Claude Fable 5.1 и десяти репозиториев про учёт квот: экосистема строит приборы для измерения того, сколько агенты съедают.</p>
+          </li>
+          <li class="issue">
+            <a class="cover" href="agents-weekly-2026-08-26.html" tabindex="-1" aria-hidden="true"><img src="covers/agents-weekly-2026-08-26.webp" alt="" loading="lazy" width="1600" height="900"></a>
+            <p class="meta" data-date="2026-08-26"><b>№2</b><time datetime="2026-08-26">26 августа 2026</time><span>49&nbsp;минут</span><span>выбор автора</span></p>
+            <h3><a href="agents-weekly-2026-08-26.html">Неделя агентной экосистемы — 18–26.08.2026</a></h3>
+            <p>Неделя, на которой выяснилось, что каталог прошлых выпусков не был топом по звёздам: gh search repos --sort=stars звёзды не сортирует. 86 позиций каталога.</p>
+          </li>
+          <li class="issue">
+            <a class="cover" href="agents-weekly-2026-08-18.html" tabindex="-1" aria-hidden="true"><img src="covers/agents-weekly-2026-08-18.webp" alt="" loading="lazy" width="1600" height="900"></a>
+            <p class="meta" data-date="2026-08-18"><b>№1</b><time datetime="2026-08-18">18 августа 2026</time><span>24&nbsp;минуты</span></p>
+            <h3><a href="agents-weekly-2026-08-18.html">Неделя агентной экосистемы — 11–18.08.2026</a></h3>
+            <p>Самая насыщенная неделя серии: 1348 новых репозиториев, 65 в каталоге, и волна плагинов вокруг стороннего харнесса DeepSeek Harness.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+  <div class="rest">
+    <div class="wrap shelves">
+        <section class="shelf">
+        <header class="shelf-head">
+          <h2>Product Lab <span class="count">2</span></h2>
+          <p>Одна продуктовая лаборатория: исследование, из которого выросла её модель фич, и карта её процессов.</p>
+        </header>
+        <ol class="rows">
+          <li class="row">
+            <a class="cover" href="product-lab-karta-processov.html" tabindex="-1" aria-hidden="true"><img src="covers/product-lab-karta-processov.webp" alt="" loading="lazy" width="1600" height="900"></a>
+            <div>
+              <p class="meta" data-date="2026-09-15"><time datetime="2026-09-15">15 сентября 2026</time><span>2&nbsp;минуты</span><span>выбор автора</span></p>
               <h3><a href="product-lab-karta-processov.html">Product Lab: процессы</a></h3>
               <p>Карта процессов Product Lab одной диаграммой: 17 стадий от гипотезы до итерации, у каждой — определение простыми словами, внутри — шаги и гейты владельца, артефакт на выходе, команда перехода дальше и петли, которыми путь замыкается после выпуска. У каждого шага — вход, действие и выход с явными зависимостями, у гейтов — что решает владелец; у каждой стадии — состояние по ROADMAP с расшифровкой и что реально есть в репозитории: скилл, шаблон, донор.</p>
-              
-              <div class="marks"><span class="topic" style="--topic:#2f6bff">Личные проекты</span><span class="dot">·</span><span>2&nbsp;минуты</span></div>
             </div>
           </li>
-          <li class="entry">
-            <a class="entry-cover" href="generator-fich.html" tabindex="-1" aria-hidden="true">
-              <img src="covers/generator-fich.svg" alt="" loading="lazy" width="1200" height="675">
-              
-            </a>
-            <div class="entry-body">
-              <time class="entry-date" datetime="2026-09-05">5 сентября 2026</time>
+          <li class="row">
+            <a class="cover" href="generator-fich.html" tabindex="-1" aria-hidden="true"><img src="covers/generator-fich.webp" alt="" loading="lazy" width="1600" height="900"></a>
+            <div>
+              <p class="meta" data-date="2026-09-05"><time datetime="2026-09-05">5 сентября 2026</time><span>57&nbsp;минут</span></p>
               <h3><a href="generator-fich.html">Генератор фич: что выяснило исследование и что из него брать</a></h3>
               <p>Разбор исследовательского пакета о генерации фич: 24 источника, что измерено и что назначено, модель из 14 шагов и 9 гейтов и минимальная версия для Product Lab.</p>
-              <div class="tags"><span>product discovery</span><span>feature pool</span><span>LLM</span></div>
-              <div class="marks"><span class="topic" style="--topic:#7c5cff">AI и агенты</span><span class="dot">·</span><span>57&nbsp;минут</span></div>
             </div>
           </li>
         </ol>
-      </section>
-      <section class="shelf">
-        <div class="shelf-head">
-          <h2>Agents Weekly</h2>
-          <span class="count">8</span>
-        </div>
-        <p class="shelf-note">Дайджест агент-экосистемы по расписанию. Каждый выпуск закрывает своё окно наблюдения и не повторяет сюжеты прошлых прогонов, поэтому выпуски читаются подряд, а не выборочно.</p>
-        <ol class="stream">
-          <li class="entry">
-            <a class="entry-cover" href="agents-weekly-2026-10-09.html" tabindex="-1" aria-hidden="true">
-              <img src="covers/agents-weekly-2026-10-09.svg" alt="" loading="lazy" width="1200" height="675">
-              
-            </a>
-            <div class="entry-body">
-              <time class="entry-date" datetime="2026-10-09">9 октября 2026</time>
-              <h3><a href="agents-weekly-2026-10-09.html">Неделя агентной экосистемы — 02–09.10.2026</a></h3>
-              <p>Guard-hooks в Claude Code теперь можно сделать fail-closed, вышла Claude Haiku 5.5 по $0.10/$0.50, а около сорока позиций каталога — моды, которыми сообщество за неделю обжило CLI.</p>
-              
-              <div class="marks"><span class="topic" style="--topic:#7c5cff">AI и агенты</span><span class="dot">·</span><span>79&nbsp;минут</span></div>
+        </section>
+        <section class="shelf">
+        <header class="shelf-head">
+          <h2>Разборы репозиториев и скилл-паков <span class="count">3</span></h2>
+          <p>Чужие репозитории, плагины и паки скиллов под микроскопом: что внутри на самом деле, чего это стоит и что забрать себе. Каждый разбор — слепок на дату.</p>
+        </header>
+        <ol class="rows">
+          <li class="row">
+            <a class="cover" href="gastown.html" tabindex="-1" aria-hidden="true"><img src="covers/gastown.webp" alt="" loading="lazy" width="1600" height="900"></a>
+            <div>
+              <p class="meta" data-date="2026-10-09"><time datetime="2026-10-09">9 октября 2026</time><span>22&nbsp;минуты</span></p>
+              <h3><a href="gastown.html">Gas Town: разбор оркестратора кодящих агентов</a></h3>
+              <p>Оркестратор кодящих агентов изнутри: роли и цепочка надзора, путь задачи от постановки до слияния, хранилище на Dolt и git, расхождения документации с кодом и идеи, которые стоит забрать без установки.</p>
             </div>
           </li>
-          <li class="entry">
-            <a class="entry-cover" href="agents-weekly-2026-10-02.html" tabindex="-1" aria-hidden="true">
-              <img src="covers/agents-weekly-2026-10-02.svg" alt="" loading="lazy" width="1200" height="675">
-              
-            </a>
-            <div class="entry-body">
-              <time class="entry-date" datetime="2026-10-02">2 октября 2026</time>
-              <h3><a href="agents-weekly-2026-10-02.html">Неделя агентной экосистемы — 25.09–02.10.2026</a></h3>
-              <p>Плагины Claude Code научились менять саму CLI: в 2.1.287 появились моды, а в каталоге около трети позиций — скиллы, где Opus 5.5 рисует и монтирует видео кодом.</p>
-              
-              <div class="marks"><span class="topic" style="--topic:#7c5cff">AI и агенты</span><span class="dot">·</span><span>81&nbsp;минута</span></div>
-            </div>
-          </li>
-          <li class="entry">
-            <a class="entry-cover" href="agents-weekly-2026-09-25.html" tabindex="-1" aria-hidden="true">
-              <img src="covers/agents-weekly-2026-09-25.svg" alt="" loading="lazy" width="1200" height="675">
-              
-            </a>
-            <div class="entry-body">
-              <time class="entry-date" datetime="2026-09-25">25 сентября 2026</time>
-              <h3><a href="agents-weekly-2026-09-25.html">Неделя агентной экосистемы — 18–25.09.2026</a></h3>
-              <p>Неделя Claude Opus 5.5 за $4/$20 — теперь это Opus по умолчанию в Claude Code. AGENTS.md в CLI, а около двадцати позиций каталога — обёртки вокруг «моделей решений» Jev и Laya.</p>
-              
-              <div class="marks"><span class="topic" style="--topic:#7c5cff">AI и агенты</span><span class="dot">·</span><span>47&nbsp;минут</span></div>
-            </div>
-          </li>
-          <li class="entry">
-            <a class="entry-cover" href="agents-weekly-2026-09-18.html" tabindex="-1" aria-hidden="true">
-              <img src="covers/agents-weekly-2026-09-18.svg" alt="" loading="lazy" width="1200" height="675">
-              
-            </a>
-            <div class="entry-body">
-              <time class="entry-date" datetime="2026-09-18">18 сентября 2026</time>
-              <h3><a href="agents-weekly-2026-09-18.html">Неделя агентной экосистемы — 11–18.09.2026</a></h3>
-              <p>Неделя замера HarnessTax: обвязка почти не меняет успешность агента, но Claude Code вдвое дороже Pi при том же числе ходов. Плюс claude plugin eval прямо в CLI и агенты OpenAI, залившие в RubyGems около двух тысяч пакетов.</p>
-              
-              <div class="marks"><span class="topic" style="--topic:#7c5cff">AI и агенты</span><span class="dot">·</span><span>33&nbsp;минуты</span></div>
-            </div>
-          </li>
-          <li class="entry">
-            <a class="entry-cover" href="agents-weekly-2026-09-11.html" tabindex="-1" aria-hidden="true">
-              <img src="covers/agents-weekly-2026-09-11.svg" alt="" loading="lazy" width="1200" height="675">
-              <span class="badge">★ Лучшее</span>
-            </a>
-            <div class="entry-body">
-              <time class="entry-date" datetime="2026-09-11">11 сентября 2026</time>
-              <h3><a href="agents-weekly-2026-09-11.html">Неделя агентной экосистемы — 04–11.09.2026</a></h3>
-              <p>Третья копия tokentab вернулась с загрузчиком малвари, десятки агентов Claude формализовали теорему Ферма на Lean, а каталог недели возглавили находки, пришедшие не из поиска по репозиториям.</p>
-              
-              <div class="marks"><span class="topic" style="--topic:#7c5cff">AI и агенты</span><span class="dot">·</span><span>35&nbsp;минут</span></div>
-            </div>
-          </li>
-          <li class="entry">
-            <a class="entry-cover" href="agents-weekly-2026-09-04.html" tabindex="-1" aria-hidden="true">
-              <img src="covers/agents-weekly-2026-09-04.svg" alt="" loading="lazy" width="1200" height="675">
-              
-            </a>
-            <div class="entry-body">
-              <time class="entry-date" datetime="2026-09-04">4 сентября 2026</time>
-              <h3><a href="agents-weekly-2026-09-04.html">Неделя агентной экосистемы — 26.08–04.09.2026</a></h3>
-              <p>Неделя релиза Claude Fable 5.1 и десяти репозиториев про учёт квот: экосистема строит приборы для измерения того, сколько агенты съедают.</p>
-              
-              <div class="marks"><span class="topic" style="--topic:#7c5cff">AI и агенты</span><span class="dot">·</span><span>57&nbsp;минут</span></div>
-            </div>
-          </li>
-          <li class="entry">
-            <a class="entry-cover" href="agents-weekly-2026-08-26.html" tabindex="-1" aria-hidden="true">
-              <img src="covers/agents-weekly-2026-08-26.svg" alt="" loading="lazy" width="1200" height="675">
-              <span class="badge">★ Лучшее</span>
-            </a>
-            <div class="entry-body">
-              <time class="entry-date" datetime="2026-08-26">26 августа 2026</time>
-              <h3><a href="agents-weekly-2026-08-26.html">Неделя агентной экосистемы — 18–26.08.2026</a></h3>
-              <p>Неделя, на которой выяснилось, что каталог прошлых выпусков не был топом по звёздам: gh search repos --sort=stars звёзды не сортирует. 86 позиций каталога.</p>
-              
-              <div class="marks"><span class="topic" style="--topic:#7c5cff">AI и агенты</span><span class="dot">·</span><span>49&nbsp;минут</span></div>
-            </div>
-          </li>
-          <li class="entry">
-            <a class="entry-cover" href="agents-weekly-2026-08-18.html" tabindex="-1" aria-hidden="true">
-              <img src="covers/agents-weekly-2026-08-18.svg" alt="" loading="lazy" width="1200" height="675">
-              
-            </a>
-            <div class="entry-body">
-              <time class="entry-date" datetime="2026-08-18">18 августа 2026</time>
-              <h3><a href="agents-weekly-2026-08-18.html">Неделя агентной экосистемы — 11–18.08.2026</a></h3>
-              <p>Самая насыщенная неделя серии: 1348 новых репозиториев, 65 в каталоге, и волна плагинов вокруг стороннего харнесса DeepSeek Harness.</p>
-              
-              <div class="marks"><span class="topic" style="--topic:#7c5cff">AI и агенты</span><span class="dot">·</span><span>24&nbsp;минуты</span></div>
-            </div>
-          </li>
-        </ol>
-      </section>
-      <section class="shelf">
-        <div class="shelf-head">
-          <h2>Разборы репозиториев и скилл-паков</h2>
-          <span class="count">2</span>
-        </div>
-        <p class="shelf-note">Чужие репозитории, плагины и паки скиллов под микроскопом: что внутри на самом деле, чего это стоит и что забрать себе. Каждый разбор — слепок на дату.</p>
-        <ol class="stream">
-          <li class="entry">
-            <a class="entry-cover" href="headcount.html" tabindex="-1" aria-hidden="true">
-              <img src="covers/headcount.svg" alt="" loading="lazy" width="1200" height="675">
-              
-            </a>
-            <div class="entry-body">
-              <time class="entry-date" datetime="2026-09-05">5 сентября 2026</time>
+          <li class="row">
+            <a class="cover" href="headcount.html" tabindex="-1" aria-hidden="true"><img src="covers/headcount.webp" alt="" loading="lazy" width="1600" height="900"></a>
+            <div>
+              <p class="meta" data-date="2026-09-05"><time datetime="2026-09-05">5 сентября 2026</time><span>15&nbsp;минут</span></p>
               <h3><a href="headcount.html">headcount — «компания из агентов» для Claude Code: разбор</a></h3>
               <p>Разбор headcount — маркетплейса из 16 департаментов и 172 скиллов для Claude Code: что реально приезжает при установке, почему бюджет списка скиллов в 1% окна решает больше, чем качество текста, и как ставить по одному департаменту, не сломав то, что уже стоит.</p>
-              <div class="tags"><span>скиллы</span><span>github</span><span>плагины</span></div>
-              <div class="marks"><span class="topic" style="--topic:#7c5cff">AI и агенты</span><span class="dot">·</span><span>15&nbsp;минут</span></div>
             </div>
           </li>
-          <li class="entry">
-            <a class="entry-cover" href="yingzao-skill.html" tabindex="-1" aria-hidden="true">
-              <img src="covers/yingzao-skill.svg" alt="" loading="lazy" width="1200" height="675">
-              
-            </a>
-            <div class="entry-body">
-              <time class="entry-date" datetime="2026-09-05">5 сентября 2026</time>
+          <li class="row">
+            <a class="cover" href="yingzao-skill.html" tabindex="-1" aria-hidden="true"><img src="covers/yingzao-skill.webp" alt="" loading="lazy" width="1600" height="900"></a>
+            <div>
+              <p class="meta" data-date="2026-09-05"><time datetime="2026-09-05">5 сентября 2026</time><span>40&nbsp;минут</span></p>
               <h3><a href="yingzao-skill.html">Yingzao: скилл-постер Guizang под микроскопом</a></h3>
               <p>Разбор скилла Guizang, который превращает фото китайской архитектуры в editorial-постер: детерминированный Python как ворота перед единственным вызовом GPT-Image-2, 104 дизайн-токена для поиска, а не для промпта, и семь приёмов, которые стоит забрать в свои скиллы.</p>
-              <div class="tags"><span>скиллы</span><span>github</span></div>
-              <div class="marks"><span class="topic" style="--topic:#7c5cff">AI и агенты</span><span class="dot">·</span><span>40&nbsp;минут</span></div>
             </div>
           </li>
         </ol>
-      </section>
-      <section class="shelf">
-        <div class="shelf-head">
-          <h2>Свои проекты</h2>
-          <span class="count">1</span>
-        </div>
-        <p class="shelf-note">Собственные сервисы изнутри: какая задача решалась, как устроено и какие решения оказались важными. Разбор пишется по репозиторию и работающему сервису, а не по замыслу.</p>
-        <ol class="stream">
-          <li class="entry">
-            <a class="entry-cover" href="ladder.html" tabindex="-1" aria-hidden="true">
-              <img src="covers/ladder.svg" alt="" loading="lazy" width="1200" height="675">
-              
-            </a>
-            <div class="entry-body">
-              <time class="entry-date" datetime="2026-09-14">14 сентября 2026</time>
+        </section>
+        <section class="shelf">
+        <header class="shelf-head">
+          <h2>Свои проекты <span class="count">1</span></h2>
+          <p>Собственные сервисы изнутри: какая задача решалась, как устроено и какие решения оказались важными. Разбор пишется по репозиторию и работающему сервису, а не по замыслу.</p>
+        </header>
+        <ol class="rows">
+          <li class="row">
+            <a class="cover" href="ladder.html" tabindex="-1" aria-hidden="true"><img src="covers/ladder.webp" alt="" loading="lazy" width="1600" height="900"></a>
+            <div>
+              <p class="meta" data-date="2026-09-14"><time datetime="2026-09-14">14 сентября 2026</time><span>11&nbsp;минут</span></p>
               <h3><a href="ladder.html">ladder: доска самоподготовки, которую наполняет агент — разбор</a></h3>
               <p>Своя доска самоподготовки изнутри: колонки × ступени сложности, источник правды в базе сервиса, контент заводит агент через MCP — и страховка, из-за которой выкладка не может потерять вопросы.</p>
-              <div class="tags"><span>MCP</span><span>FastAPI</span><span>SQLite</span></div>
-              <div class="marks"><span class="topic" style="--topic:#2f6bff">Личные проекты</span><span class="dot">·</span><span>11&nbsp;минут</span></div>
             </div>
           </li>
         </ol>
-      </section>
-      <section class="shelf">
-        <div class="shelf-head">
-          <h2>Агентная разработка</h2>
-          <span class="count">2</span>
-        </div>
-        <p class="shelf-note">Разовые разборы инструментов и трендов — не серия, а срез на дату.</p>
-        <ol class="stream">
-          <li class="entry">
-            <a class="entry-cover" href="claude-w23-peremer.html" tabindex="-1" aria-hidden="true">
-              <img src="covers/claude-w23-peremer.svg" alt="" loading="lazy" width="1200" height="675">
-              <span class="badge">★ Лучшее</span>
-            </a>
-            <div class="entry-body">
-              <time class="entry-date" datetime="2026-09-04">4 сентября 2026</time>
+        </section>
+        <section class="shelf">
+        <header class="shelf-head">
+          <h2>Агентная разработка <span class="count">2</span></h2>
+          <p>Разовые разборы инструментов и трендов — не серия, а срез на дату.</p>
+        </header>
+        <ol class="rows">
+          <li class="row">
+            <a class="cover" href="claude-w23-peremer.html" tabindex="-1" aria-hidden="true"><img src="covers/claude-w23-peremer.webp" alt="" loading="lazy" width="1600" height="900"></a>
+            <div>
+              <p class="meta" data-date="2026-09-04"><time datetime="2026-09-04">4 сентября 2026</time><span>13&nbsp;минут</span><span>выбор автора</span></p>
               <h3><a href="claude-w23-peremer.html">Неделя 23 экосистемы Claude — снимок и перемер</a></h3>
               <p>Июньский срез популярных репозиториев и навыков Claude за неделю 28.05–04.06, перемеренный три месяца спустя: недельный рейтинг не пережил квартала, а у трёх позиций счётчик звёзд пошёл вниз.</p>
-              <div class="tags"><span>ресёрч</span><span>github</span></div>
-              <div class="marks"><span class="topic" style="--topic:#7c5cff">AI и агенты</span><span class="dot">·</span><span>13&nbsp;минут</span></div>
             </div>
           </li>
-          <li class="entry">
-            <a class="entry-cover" href="trendy-claude-codex.html" tabindex="-1" aria-hidden="true">
-              <img src="covers/trendy-claude-codex.svg" alt="" loading="lazy" width="1200" height="675">
-              <span class="badge">★ Лучшее</span>
-            </a>
-            <div class="entry-body">
-              <time class="entry-date" datetime="2026-08-04">4 августа 2026</time>
+          <li class="row">
+            <a class="cover" href="trendy-claude-codex.html" tabindex="-1" aria-hidden="true"><img src="covers/trendy-claude-codex.webp" alt="" loading="lazy" width="1600" height="900"></a>
+            <div>
+              <p class="meta" data-date="2026-08-04"><time datetime="2026-08-04">4 августа 2026</time><span>16&nbsp;минут</span><span>выбор автора</span></p>
               <h3><a href="trendy-claude-codex.html">Тренды агентной разработки — Claude и Codex, июль 2026</a></h3>
               <p>Срез по четырём направлениям за июль 2026 — Claude Code и Agent SDK, OpenAI Codex, MCP, практики комьюнити. Сквозной сюжет: обе экосистемы синхронно сделали мультиагентность штатным режимом.</p>
-              <div class="tags"><span>тренды</span><span>codex</span></div>
-              <div class="marks"><span class="topic" style="--topic:#7c5cff">AI и агенты</span><span class="dot">·</span><span>16&nbsp;минут</span></div>
             </div>
           </li>
         </ol>
-      </section>
+        </section>
+    </div>
   </div>
 </main>
 
 <footer>
-  <div class="wrap foot-row">
-    <span id="copy"></span>
-    <span>15 записей · <a href="rss.xml">RSS</a></span>
+  <div class="wrap foot">
+    <p>Каждая запись — одна самодостаточная html-страница: без трекеров и внешних запросов, открывается и читается как есть.</p>
+    <span>16 записей · <a href="rss.xml">RSS</a> · <span id="copy"></span></span>
   </div>
 </footer>
 
 <script>
-// Тема и набор света живут в тех же ключах localStorage, что и на главной, —
-// переход между разделами не сбрасывает выбор.
-const DESIGNS = [
-  { id:'two-sources', ru:'Два света' },
-  { id:'cold-leak',   ru:'Засветка' },
-  { id:'dawn-fog',    ru:'Рассвет' },
-];
-const $ = s => document.querySelector(s);
-const ls = {
-  get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } },
-  set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} },
-};
-
-function designIndex() {
-  const i = DESIGNS.findIndex(d => d.id === ls.get('design'));
-  return i === -1 ? 0 : i;
+document.getElementById('copy').textContent = '© ' + new Date().getFullYear() + ' Павел Диордиц';
+// Свежей считается запись моложе двух недель на день просмотра: страница
+// статическая, и отметка, расставленная при сборке, со временем начала бы врать.
+const FRESH_DAYS = 14;
+for (const m of document.querySelectorAll('.meta[data-date]')) {
+  if ((Date.now() - new Date(m.dataset.date)) / 864e5 <= FRESH_DAYS) m.classList.add('fresh');
 }
-function applyDesign(i) {
-  const d = DESIGNS[(i + DESIGNS.length) % DESIGNS.length];
-  document.documentElement.dataset.design = d.id;
-  ls.set('design', d.id);
-  $('#design-toggle').textContent = (designIndex() + 1) + '/' + DESIGNS.length + ' · ' + d.ru;
-}
-function applyTheme(dark) {
-  document.documentElement.classList.toggle('dark', dark);
-  ls.set('theme', dark ? 'dark' : 'light');
-  $('#theme-toggle').textContent = dark ? '☾' : '☀';
-}
-const savedTheme = ls.get('theme');
-applyTheme(savedTheme ? savedTheme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches);
-applyDesign(designIndex());
-$('#theme-toggle').onclick = () => applyTheme(!document.documentElement.classList.contains('dark'));
-$('#design-toggle').onclick = () => applyDesign(designIndex() + 1);
-$('#copy').textContent = '© ' + new Date().getFullYear() + ' Павел Диордиц';
-
-addEventListener('scroll', () => {
-  $('#site-header').classList.toggle('scrolled', scrollY > 8);
-}, { passive: true });
 </script>
 </body>
 </html>

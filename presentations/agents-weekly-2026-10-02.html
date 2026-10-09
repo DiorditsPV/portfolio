@@ -608,6 +608,106 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
   });
 })();
 </script>
+<style>
+/* Оформление выпусков Agents Weekly в журнале.
+   Журнал подставляет этот блок в <head> каждого выпуска при публикации, после
+   собственных стилей выпуска, поэтому правила здесь их перекрывают. Разметку и
+   порядок блоков выпуска он не трогает: меняются ширина, кегль, цвета и число
+   колонок. Так все выпуски, прошлые и будущие, одеты одинаково, а формат самого
+   дайджеста остаётся в его макете. */
+
+@font-face{
+  font-family:"Golos Text";src:url(fonts/golos-text.woff2) format("woff2");
+  font-weight:400 900;font-display:swap;
+}
+
+/* Цвета светлой темы — те же, что на странице журнала. Тёмная тема выпуска
+   остаётся его собственной. */
+html:not([data-theme="dark"]){
+  --page:#ffffff; --surface:#ffffff; --surface-soft:#f4f5f6;
+  --ink:#14171c; --muted:#5a616c; --subtle:#737a85; --line:#e3e5e8;
+  --accent:#1d4ed8; --accent-soft:#e8eefc; --accent-ink:#1d4ed8;
+  --badge-bg:#f4f5f6; --badge-fg:#2f353d;
+}
+
+/* Кегль растёт вместе с экраном, все размеры выпуска заданы в rem и em и растут
+   за ним: на мониторе 27 дюймов текст был 14 пикселей в колонке на 46% ширины. */
+html{font-size:clamp(14.7px,calc(9.9px + .315vw),17px)}
+body{
+  font:1rem/1.55 "Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;overflow-x:clip;
+}
+::selection{background:var(--accent);color:#fff}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+/* Ширина: страница занимает экран с теми же полями, что и журнал. */
+main,.topbar-inner,.sitebar-inner{
+  width:min(126rem,100% - 2*clamp(1.25rem,4vw,5.6rem));
+}
+
+/* Шапка: сплошной фон вместо размытого стекла. */
+.topbar,.sitebar{background:var(--page);backdrop-filter:none;-webkit-backdrop-filter:none}
+nav.toc a{font-size:.9rem;border-radius:6px}
+.controls button{border-radius:8px}
+
+/* Первый экран выпуска. */
+.masthead{min-height:0;padding:3rem 0 2.5rem;gap:clamp(2.5rem,6vw,7rem);align-items:end}
+.issue-label{font-size:.9rem;margin-bottom:1rem;color:var(--muted);font-weight:600}
+.issue-label::before{display:none}
+h1{font-size:clamp(2.4rem,4vw,4.25rem);line-height:1;letter-spacing:-.04em;font-weight:750;max-width:18ch;text-wrap:balance}
+.deck{max-width:68ch;margin-top:1.25rem;font-size:1.12rem;line-height:1.5}
+.fact{padding:.75rem 0}
+.fact span,.fact strong{font-size:.95rem}
+
+/* Разделы. Надзаголовок раздела — обычная строка, без капса и разрядки. */
+section{margin:4rem 0}
+.section-kicker{margin-bottom:.4rem;color:var(--muted);font-size:.9rem;font-weight:500;letter-spacing:0;text-transform:none}
+h2{font-size:clamp(1.6rem,2.2vw,2.3rem);letter-spacing:-.035em;font-weight:750;line-height:1.1}
+h2 .count{font-size:.95rem}
+.section-intro,.rank-note{max-width:none;font-size:1rem}
+h3.tail-h{color:var(--ink);font-size:1.05rem;letter-spacing:-.01em;text-transform:none;margin:2.5rem 0 .9rem}
+
+/* Текст блоков занимает всю ширину своей колонки: при ограничении длины строки
+   правая половина колонки оставалась пустой, и страница выглядела скошенной влево. */
+.block h3{font-size:1.2rem}
+.release h3{font-size:1.15rem}
+.release li,.release>p{font-size:.95rem;line-height:1.5}
+.item h4{font-size:1.05rem}
+.item p{font-size:.95rem;line-height:1.5}
+ul.stories li,ul.tail li{font-size:.95rem}
+.official-overview h3{font-size:1.02rem}
+.official-overview p,.official-stat{font-size:.9rem}
+
+/* Метки: звёзды и очки — табличные цифры на спокойной плашке. */
+.item{grid-template-columns:5.2rem minmax(0,1fr);gap:1.1rem;padding:1.1rem 0 1.2rem}
+.stars,.pts{border-radius:6px;font-size:.88rem;padding:.4rem .5rem}
+.tag{border-radius:4px;font-size:.72rem;padding:.15rem .45rem}
+
+/* Широкий экран: списки релизов, сюжетов, исследований и источников идут в
+   несколько колонок. */
+@media(min-width:1500px){
+  .release ul{display:block;columns:2;column-gap:3rem}
+  .release li{break-inside:avoid;margin-bottom:.5rem}
+  ul.stories{columns:2;column-gap:3.5rem;border-top:0}
+  ul.stories li{break-inside:avoid}
+  .catalog-columns{gap:4rem}
+  .flow-2col{columns:3;column-gap:3.5rem}
+  .sources ul{display:block;columns:3;column-gap:3.5rem}
+  .sources li{break-inside:avoid;margin-bottom:.5rem}
+}
+/* Позиции каталога идут по одной в строке на всю ширину своей колонки: широкая
+   строка читается лучше, чем две узкие позиции рядом. */
+
+/* Список в две колонки: колоночный поток вместо сетки. Сетка ставит пункты
+   парами в строку, и рядом с длинным пунктом под коротким остаётся провал. */
+.block ul.list-2col{display:block;columns:2;column-gap:3.5rem}
+.block ul.list-2col>li{break-inside:avoid;margin-bottom:.45rem}
+@media(max-width:900px){.block ul.list-2col{columns:1}}
+
+/* Блок «Ещё по теме», который журнал ставит под выпуском, — той же ширины, что и
+   сам выпуск: узкая полоса посередине под широкой страницей смотрелась чужой. */
+nav.gnrl{max-width:none;width:min(126rem,100% - 2*clamp(1.25rem,4vw,5.6rem));margin-inline:auto;padding-inline:0}
+</style>
 <!--/general:head-->
 </head><body>
 <!--general:top-->
@@ -659,41 +759,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
         <li><b>Auto mode — режим по умолчанию</b> (2.1.283 → 2.1.285) — сначала на сторонних провайдерах, затем в интерактивном терминале и VS Code на всех планах, если режим не задан; в 2.1.285 то же для <code>claude -p</code> и Python Agent SDK на сторонних провайдерах. Сессии без явного режима теперь идут через классификатор auto mode; <code>permissions.defaultMode</code> и <code>--permission-mode</code> его перекрывают.</li>
         <li><b><code>/doctor prompt-audit</code></b> (2.1.283) — аудит CLAUDE.md, скиллов, агентов и команд на формулировки, написанные под старые модели: первыми в отчёте идут устаревшие пути и команды и противоречия между файлами инструкций.</li>
       </ul>
-      <details class="method-fold"><summary>Остальные изменения CLI</summary><div class="method-body">
-      <h3 class="tail-h">Безопасность и разрешения</h3>
-      <ul>
-        <li>Bash-правила на весь инструмент и разрешающие хуки теперь спрашивают, а не выполняют shell-запись в файлы, которые файловые инструменты отвергают (профиль Anthropic, файл учётных данных хоста); запись через закоммиченный symlink на чувствительный файл называет цель и ждёт человека (2.1.287).</li>
-        <li>Установка плагина отказывается от npm-источников, которые оказались git-репозиториями или каталогами: зависимости ставятся только из реестра (2.1.286); строже проверка git-URL плагинов и маркетплейсов (2.1.285).</li>
-        <li>Проектные настройки не могут расширить или выключить требуемую администратором песочницу; <code>claude mcp get</code> скрывает команду, аргументы и env stdio-серверов из плагинов; <code>CLAUDE_CODE_DISABLE_WEB_FETCH</code> отключает WebFetch; Team и Enterprise не выдают WebFetch, пока не загружена политика организации (2.1.285).</li>
-        <li>Содержимое <code>MEMORY.md</code> и вспоминаемых заметок очищается от невидимых символов и имитации служебной разметки (2.1.284); правила <code>Skill(anthropic-skills:&lt;name&gt;)</code> блокируют скилл и когда он доставлен как плагин (2.1.283).</li>
-      </ul>
-      <h3 class="tail-h">Кэш, стоимость, модели</h3>
-      <ul>
-        <li>Opus 4.7+ и Fable получают 1M-контекст по умолчанию на Bedrock, Vertex, Foundry и gateway, без суффикса <code>[1m]</code> (<code>CLAUDE_CODE_DISABLE_1M_CONTEXT=1</code> оставляет 200K); то же при своём <code>ANTHROPIC_BASE_URL</code> (2.1.285, 2.1.287).</li>
-        <li>Sonnet 5.5 стал дефолтным Sonnet: 1M контекста, $2/$10 за Mtok (2.1.284); в <code>/usage</code> и статус-строке видны доллары лимита gateway.</li>
-        <li>Единый лимит повторов на вызов модели — при настройках по умолчанию не более 14 запросов (2.1.286); большие результаты MCP-инструментов занимают меньше памяти (2.1.287); <code>/claude-api</code> hillclimb не тратит раунды на слишком мелкие перефразировки (2.1.284).</li>
-        <li>Заголовок <code>x-claude-code-prompt-id</code> группирует запросы одного промпта в LLM-шлюзах (<code>CLAUDE_CODE_GATEWAY_HINT_HEADERS=1</code>, 2.1.283).</li>
-      </ul>
-      <h3 class="tail-h">Воркфлоу и агенты</h3>
-      <ul>
-        <li>Если у проекта или пользователя есть скилл <code>verify</code>, Claude прогоняет его перед коммитом (кроме коммитов только с доками или тестами); ctrl+enter в окне субагента переводит его команду в фон (2.1.286).</li>
-        <li>Фоновые Bash/PowerShell-команды останавливаются по таймауту (по умолчанию 30 минут, максимум 2 часа); субагент в auto mode завершается сразу после отчёта; <code>claude --resume &lt;id&gt; "prompt"</code> шлёт промпт фоновой сессии (2.1.285).</li>
-        <li>Ultracode — отдельный переключатель в <code>/effort</code> и не навязывает xhigh (2.1.284); <code>--system-prompt</code> и <code>--system-prompt-file</code> можно давать вместе (2.1.283); <code>--bare</code> подключает только MCP-серверы из командной строки (2.1.286).</li>
-        <li>Фильтр <code>n:&lt;текст&gt;</code> в списке агентов; ответы <code>claude agents</code> приходят как сообщения в очереди; self-hosted runner получил встроенный <code>gh api</code> (только REST) (2.1.287).</li>
-      </ul>
-      <h3 class="tail-h">MCP и плагины</h3>
-      <ul>
-        <li>URL-запросы (elicitation) от MCP-серверов по протоколу 2025-11-25, например для входа; если сервер перестал подключаться, в его конфиг добавляют <code>"bareElicitationCapability": true</code> (2.1.287).</li>
-        <li><code>alwaysLoad: false</code> откладывает все инструменты сервера за поиск инструментов (2.1.287); <code>/mcp reconnect all</code> переподключает упавшие серверы (2.1.284); картинки из результатов MCP сохраняются в файл, чтобы их открывали Bash и Read (2.1.283).</li>
-        <li><code>claude plugin configure &lt;plugin&gt;</code> показывает опции и незаданные значения, <code>claude plugin install --config</code> задаёт настройки встроенного <code>.mcpb</code>-сервера при установке (2.1.285); список плагинов отмечает непоставленные зависимости, обновление повторяет незавершённую установку (2.1.287).</li>
-      </ul>
-      <h3 class="tail-h">Для организаций</h3>
-      <ul>
-        <li>Managed-настройки <code>deniedModels</code>, <code>allowedProviders</code> и <code>availableModelsMatch: "exact"</code> (новые релизы моделей остаются заблокированы, пока их не внесут явно) (2.1.283, 2.1.285).</li>
-        <li>Поле <code>prompt_text</code> в OpenTelemetry-событии <code>user_prompt</code> — копия <code>prompt</code> для бэкендов с вложенными ключами; маскировать нужно вместе с <code>prompt</code> (2.1.287).</li>
-      </ul>
-      </div></details>
-    </article>
+      </article>
     <article class="release">
       <h3>Модели <span class="src">— Claude Sonnet 5.5 и GPT-6.1 Sol</span></h3>
 
@@ -905,11 +971,11 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
   </div></div>
   <div class="item"><span class="stars">★ 39</span><div>
     <h4><a href="https://github.com/HRuiCcc/RuiC-motion-reel">HRuiCcc/RuiC-motion-reel</a><span class="tag">видео</span></h4>
-    <p>Скилл, выпускающий 15-секундный моушн-ролик 1920×1080, 30 fps (450 кадров) целиком кодом: собственный движок с 2× суперсэмплингом векторов и текста, настоящим 3D (параметрические поверхности, облака точек, скрытые линии), печатным конвейером (цветоделение на четыре краски, растр, оттиск) и синтезом саундтрека без сэмплов. Структура: 128 BPM × 8 тактов = ровно 15 секунд, каждая сцена — один такт, монтаж на сильную долю; 15 карт стилей (тёмный HUD, riso, бумага, серебряно-желатиновая печать и др.). По словам автора, весь конвейер прогнан моделью DeepSeek Flash, не привязан к модели. Бренд-ролик DeepSeek сделан как демонстрация без аффилиации. Нужны <code>numpy</code> и <code>pillow</code>.</p>
+    <p>Скилл, выпускающий 15-секундный моушн-ролик 1920×1080, 30 fps (450 кадров) целиком кодом: собственный движок с 2× суперсэмплингом векторов и текста, настоящим 3D (параметрические поверхности, облака точек, скрытые линии), печатным конвейером (цветоделение на четыре краски, растр, оттиск) и синтезом саундтрека без сэмплов. Структура: 128 BPM × 8 тактов = ровно 15 секунд, каждая сцена — один такт, монтаж на сильную долю; 15 карт стилей (тёмный HUD, riso, бумага, серебряно-желатиновая печать и др.). По словам автора, весь конвейер прогнан моделью DeepSeek Flash, не привязан к модели. Бренд-ролик DeepSeek сделан как демонстрация без аффилиации.</p>
   </div></div>
   <div class="item"><span class="stars">★ 37</span><div>
     <h4><a href="https://github.com/minosdevs/copycat-skill">minosdevs/copycat-skill</a><span class="tag">клонирование сайтов</span></h4>
-    <p>Скилл «URL в пиксель-точный клон сайта»: Playwright снимает три вьюпорта, фолды и секции, состояния hover, затем скрипт вынимает из браузера шрифты, переменные, палитру, типографику, брейкпоинты и тексты; клон собирается по измеренным значениям секция за секцией (статический HTML/CSS/JS или Next.js). Проверка в цикле: попиксельный diff по вьюпортам, карта худших зон по секциям, дифф дизайна и консоль клона; оценка A–D, цель — расхождение менее 2% и ноль ошибок консоли. Автор оговаривает юридическое: клонировать можно для обучения и своего сайта, чужие логотипы, фото и тексты в продакшене нельзя; логины и пейволлы скилл не обходит, cookie-баннеры скрывает, не принимая. Ставится клонированием в <code>~/.claude/skills</code> и <code>npm install</code> в scripts.</p>
+    <p>Скилл «URL в пиксель-точный клон сайта»: Playwright снимает три вьюпорта, фолды и секции, состояния hover, затем скрипт вынимает из браузера шрифты, переменные, палитру, типографику, брейкпоинты и тексты; клон собирается по измеренным значениям секция за секцией (статический HTML/CSS/JS или Next.js). Проверка в цикле: попиксельный diff по вьюпортам, карта худших зон по секциям, дифф дизайна и консоль клона; оценка A–D, цель — расхождение менее 2% и ноль ошибок консоли. Автор оговаривает юридическое: клонировать можно для обучения и своего сайта, чужие логотипы, фото и тексты в продакшене нельзя; логины и пейволлы скилл не обходит, cookie-баннеры скрывает, не принимая.</p>
   </div></div>
   <div class="item"><span class="stars">★ 36</span><div>
     <h4><a href="https://github.com/farhan-syah/motion-video-skill">farhan-syah/motion-video-skill</a><span class="tag">видео</span></h4>

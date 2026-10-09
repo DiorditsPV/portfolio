@@ -608,6 +608,106 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
   });
 })();
 </script>
+<style>
+/* Оформление выпусков Agents Weekly в журнале.
+   Журнал подставляет этот блок в <head> каждого выпуска при публикации, после
+   собственных стилей выпуска, поэтому правила здесь их перекрывают. Разметку и
+   порядок блоков выпуска он не трогает: меняются ширина, кегль, цвета и число
+   колонок. Так все выпуски, прошлые и будущие, одеты одинаково, а формат самого
+   дайджеста остаётся в его макете. */
+
+@font-face{
+  font-family:"Golos Text";src:url(fonts/golos-text.woff2) format("woff2");
+  font-weight:400 900;font-display:swap;
+}
+
+/* Цвета светлой темы — те же, что на странице журнала. Тёмная тема выпуска
+   остаётся его собственной. */
+html:not([data-theme="dark"]){
+  --page:#ffffff; --surface:#ffffff; --surface-soft:#f4f5f6;
+  --ink:#14171c; --muted:#5a616c; --subtle:#737a85; --line:#e3e5e8;
+  --accent:#1d4ed8; --accent-soft:#e8eefc; --accent-ink:#1d4ed8;
+  --badge-bg:#f4f5f6; --badge-fg:#2f353d;
+}
+
+/* Кегль растёт вместе с экраном, все размеры выпуска заданы в rem и em и растут
+   за ним: на мониторе 27 дюймов текст был 14 пикселей в колонке на 46% ширины. */
+html{font-size:clamp(14.7px,calc(9.9px + .315vw),17px)}
+body{
+  font:1rem/1.55 "Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;overflow-x:clip;
+}
+::selection{background:var(--accent);color:#fff}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+/* Ширина: страница занимает экран с теми же полями, что и журнал. */
+main,.topbar-inner,.sitebar-inner{
+  width:min(126rem,100% - 2*clamp(1.25rem,4vw,5.6rem));
+}
+
+/* Шапка: сплошной фон вместо размытого стекла. */
+.topbar,.sitebar{background:var(--page);backdrop-filter:none;-webkit-backdrop-filter:none}
+nav.toc a{font-size:.9rem;border-radius:6px}
+.controls button{border-radius:8px}
+
+/* Первый экран выпуска. */
+.masthead{min-height:0;padding:3rem 0 2.5rem;gap:clamp(2.5rem,6vw,7rem);align-items:end}
+.issue-label{font-size:.9rem;margin-bottom:1rem;color:var(--muted);font-weight:600}
+.issue-label::before{display:none}
+h1{font-size:clamp(2.4rem,4vw,4.25rem);line-height:1;letter-spacing:-.04em;font-weight:750;max-width:18ch;text-wrap:balance}
+.deck{max-width:68ch;margin-top:1.25rem;font-size:1.12rem;line-height:1.5}
+.fact{padding:.75rem 0}
+.fact span,.fact strong{font-size:.95rem}
+
+/* Разделы. Надзаголовок раздела — обычная строка, без капса и разрядки. */
+section{margin:4rem 0}
+.section-kicker{margin-bottom:.4rem;color:var(--muted);font-size:.9rem;font-weight:500;letter-spacing:0;text-transform:none}
+h2{font-size:clamp(1.6rem,2.2vw,2.3rem);letter-spacing:-.035em;font-weight:750;line-height:1.1}
+h2 .count{font-size:.95rem}
+.section-intro,.rank-note{max-width:none;font-size:1rem}
+h3.tail-h{color:var(--ink);font-size:1.05rem;letter-spacing:-.01em;text-transform:none;margin:2.5rem 0 .9rem}
+
+/* Текст блоков занимает всю ширину своей колонки: при ограничении длины строки
+   правая половина колонки оставалась пустой, и страница выглядела скошенной влево. */
+.block h3{font-size:1.2rem}
+.release h3{font-size:1.15rem}
+.release li,.release>p{font-size:.95rem;line-height:1.5}
+.item h4{font-size:1.05rem}
+.item p{font-size:.95rem;line-height:1.5}
+ul.stories li,ul.tail li{font-size:.95rem}
+.official-overview h3{font-size:1.02rem}
+.official-overview p,.official-stat{font-size:.9rem}
+
+/* Метки: звёзды и очки — табличные цифры на спокойной плашке. */
+.item{grid-template-columns:5.2rem minmax(0,1fr);gap:1.1rem;padding:1.1rem 0 1.2rem}
+.stars,.pts{border-radius:6px;font-size:.88rem;padding:.4rem .5rem}
+.tag{border-radius:4px;font-size:.72rem;padding:.15rem .45rem}
+
+/* Широкий экран: списки релизов, сюжетов, исследований и источников идут в
+   несколько колонок. */
+@media(min-width:1500px){
+  .release ul{display:block;columns:2;column-gap:3rem}
+  .release li{break-inside:avoid;margin-bottom:.5rem}
+  ul.stories{columns:2;column-gap:3.5rem;border-top:0}
+  ul.stories li{break-inside:avoid}
+  .catalog-columns{gap:4rem}
+  .flow-2col{columns:3;column-gap:3.5rem}
+  .sources ul{display:block;columns:3;column-gap:3.5rem}
+  .sources li{break-inside:avoid;margin-bottom:.5rem}
+}
+/* Позиции каталога идут по одной в строке на всю ширину своей колонки: широкая
+   строка читается лучше, чем две узкие позиции рядом. */
+
+/* Список в две колонки: колоночный поток вместо сетки. Сетка ставит пункты
+   парами в строку, и рядом с длинным пунктом под коротким остаётся провал. */
+.block ul.list-2col{display:block;columns:2;column-gap:3.5rem}
+.block ul.list-2col>li{break-inside:avoid;margin-bottom:.45rem}
+@media(max-width:900px){.block ul.list-2col{columns:1}}
+
+/* Блок «Ещё по теме», который журнал ставит под выпуском, — той же ширины, что и
+   сам выпуск: узкая полоса посередине под широкой страницей смотрелась чужой. */
+nav.gnrl{max-width:none;width:min(126rem,100% - 2*clamp(1.25rem,4vw,5.6rem));margin-inline:auto;padding-inline:0}
+</style>
 <!--/general:head-->
 </head><body>
 <!--general:top-->
@@ -660,39 +760,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
         <li><mark>Отказы auto mode называют правило</mark> (2.1.268) и просят сначала доделать несвязанную работу.</li>
         <li><mark>Стабильность prompt-кэша</mark> — больше десяти фиксов у сабагентов, тиммейтов и MCP (2.1.261–.267).</li>
       </ul>
-      <details class="method-fold"><summary>Остальные изменения CLI</summary><div class="method-body">
-      <ul>
-        <li>В 2.1.261 auto mode начал считать ссылку, упаковывающую содержимое в URL публичного
-        рендерера диаграмм, выгрузкой на этот сайт — закрыт тихий канал утечки.</li>
-        <li><code>effort:</code> во фронтматтере скиллов, команд и сабагентов игнорировался на моделях с
-        закреплённым effort по умолчанию (Opus 4.7, Opus 4.8, Fable 5) — исправлено (2.1.267); новая
-        настройка <code>maxEffortLevel</code> ограничивает effort на всех провайдерах.</li>
-        <li>Форк-скиллы (<code>context: fork</code>) стримят стартовый промпт как события прогресса
-        (2.1.265); <code>--append-subagent-system-prompt-file</code> для больших промптов сабагентов
-        (2.1.261); <code>bashOutputMaxChars</code> и <code>taskOutputMaxChars</code> до 128K символов
-        (2.1.261). <code>claude plugin install/uninstall/update/enable/disable</code> получили
-        <code>--json</code> (2.1.268).</li>
-        <li>Workflow: вызовы <code>agent()</code> с большой схемой вывода больше не отклоняются в auto
-        mode (2.1.267); возобновление прогона после рестарта контейнера без журнала падает с понятной
-        ошибкой, а не перезапускает всех агентов (2.1.265).</li>
-        <li>Artifact-инструмент, читая чужую страницу, <mark>считает её недоверенным содержимым и
-        помечает встроенные инструкции</mark>, а не пересказывает их (2.1.265).</li>
-        <li>Безопасность: deny-правила на путях через симлинки (<code>/etc</code>, <code>/tmp</code>,
-        <code>/var</code> на macOS) и в строках с <code>env -C</code> / <code>eval</code> теперь
-        применяются (2.1.268); закрыт обход проверки вложенности путей плагинов и маркетплейсов через
-        обратный слэш (2.1.265, 2.1.267); нечитаемые managed-списки <code>allowedHttpHookUrls</code> и
-        <code>allowedChannelPlugins</code> теперь пропускают ничего, а не всё (2.1.267); пересозданный
-        тиммейт больше не подхватывает промпт из одноимённого файла агента в недоверенной папке
-        (2.1.268).</li>
-        <li>Задачные инструменты (TaskCreate…, TodoWrite) предлагаются только на Claude 3.x, Opus
-        4.0–4.7, Sonnet 4.0–4.6 и Haiku 4.5 (2.1.268) — продолжение линии 2.1.233.</li>
-        <li>MCP-серверы типа <code>http</code>, говорящие только на старом HTTP+SSE, подключаются через
-        откат на SSE (2.1.265); исправлен пропуск корневого <code>SKILL.md</code> плагина, который не
-        удалось проверить (2.1.268). Code Review: если агент, проверяющий находку, падает посреди
-        работы, ревью заменяет его и доходит до вердикта (2.1.268).</li>
-      </ul>
-      </div></details>
-    </article>
+      </article>
     <article class="release">
       <h3>Модели <span class="src">— релизов в окне нет</span></h3>
       <p>Последние — Fable 5.1 и Mythos 5.1, они были в выпуске 03. Из платформенного за это окно:
@@ -787,7 +855,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
   </div></div>
   <div class="item"><span class="stars hot">★ 803</span><div>
     <h4><a href="https://github.com/achimala/dream-loop">achimala/dream-loop</a><span class="tag">визуал/цикл критика</span></h4>
-    <p>Замкнутый цикл для игр, приложений и сцен с сильным визуалом: агент сначала «видит во сне» целевой скриншот через генерацию изображений, строит под эту цель, затем <mark>отдельный агент-критик сравнивает живой скриншот с целью</mark> и возвращает замечания — пока не будет удовлетворён; по желанию цель переснится выше. Нужны генерация картинок, зрение и (желательно) сабагенты, для 3D — Blender. Честная оговорка автора: протестировано только с GPT-6 Astra в Codex, Claude Fable 5.1 «вероятно, тоже справится».</p>
+    <p>Замкнутый цикл для игр, приложений и сцен с сильным визуалом: агент сначала «видит во сне» целевой скриншот через генерацию изображений, строит под эту цель, затем <mark>отдельный агент-критик сравнивает живой скриншот с целью</mark> и возвращает замечания — пока не будет удовлетворён; по желанию цель переснится выше. Честная оговорка автора: протестировано только с GPT-6 Astra в Codex, Claude Fable 5.1 «вероятно, тоже справится».</p>
   </div></div>
   <div class="item"><span class="stars hot">★ 239</span><div>
     <h4><a href="https://github.com/alchaincyf/huashu-mac-use">alchaincyf/huashu-mac-use</a><span class="tag">интеграция</span></h4>
@@ -803,7 +871,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
   </div></div>
   <div class="item"><span class="stars hot">★ 132</span><div>
     <h4><a href="https://github.com/Jakeschincariol/linkedin-agent-skill">Jakeschincariol/linkedin-agent-skill</a><span class="tag">маркетинг</span></h4>
-    <p>Одиннадцать скиллов под аккаунт LinkedIn: посты по 21 формуле хука, комментарии, ответы, скоринг профиля из 100, недельный план. Центральный — «хуманайзер»: вычищает длинные тире, slop-лексику и невидимые символы-водяные знаки и прогоняет черновик через пять проверок детекторов. Жёсткое правило — ничего не публикуется без явного «да». Ставится и как плагин-маркетплейс.</p>
+    <p>Одиннадцать скиллов под аккаунт LinkedIn: посты по 21 формуле хука, комментарии, ответы, скоринг профиля из 100, недельный план. Центральный — «хуманайзер»: вычищает длинные тире, slop-лексику и невидимые символы-водяные знаки и прогоняет черновик через пять проверок детекторов. Жёсткое правило — ничего не публикуется без явного «да».</p>
   </div></div>
   <div class="item"><span class="stars hot">★ 130</span><div>
     <h4><a href="https://github.com/feitangyuan/motion-web">feitangyuan/motion-web</a><span class="tag">UI/веб</span></h4>
@@ -860,7 +928,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
   </div></div>
   <div class="item"><span class="stars">★ 37</span><div>
     <h4><a href="https://github.com/yjz211/vivid-figures-skill">yjz211/vivid-figures-skill</a><span class="tag">научная графика</span></h4>
-    <p>Графики для научных работ и матмоделирования: 108 сохранённых рецептов, режимы expressive и restrained, проверщик и хелперы рендера. Лицензия — только личное некоммерческое использование, редкость для скиллов.</p>
+    <p>Графики для научных работ и матмоделирования: 108 сохранённых рецептов, режимы expressive и restrained, проверщик и хелперы рендера.</p>
   </div></div>
   <div class="item"><span class="stars">★ 36</span><div>
     <h4><a href="https://github.com/Raymondhou0917/ai-level-check">Raymondhou0917/ai-level-check</a><span class="tag">наблюдаемость</span></h4>

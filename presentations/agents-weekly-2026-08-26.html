@@ -608,6 +608,106 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
   });
 })();
 </script>
+<style>
+/* Оформление выпусков Agents Weekly в журнале.
+   Журнал подставляет этот блок в <head> каждого выпуска при публикации, после
+   собственных стилей выпуска, поэтому правила здесь их перекрывают. Разметку и
+   порядок блоков выпуска он не трогает: меняются ширина, кегль, цвета и число
+   колонок. Так все выпуски, прошлые и будущие, одеты одинаково, а формат самого
+   дайджеста остаётся в его макете. */
+
+@font-face{
+  font-family:"Golos Text";src:url(fonts/golos-text.woff2) format("woff2");
+  font-weight:400 900;font-display:swap;
+}
+
+/* Цвета светлой темы — те же, что на странице журнала. Тёмная тема выпуска
+   остаётся его собственной. */
+html:not([data-theme="dark"]){
+  --page:#ffffff; --surface:#ffffff; --surface-soft:#f4f5f6;
+  --ink:#14171c; --muted:#5a616c; --subtle:#737a85; --line:#e3e5e8;
+  --accent:#1d4ed8; --accent-soft:#e8eefc; --accent-ink:#1d4ed8;
+  --badge-bg:#f4f5f6; --badge-fg:#2f353d;
+}
+
+/* Кегль растёт вместе с экраном, все размеры выпуска заданы в rem и em и растут
+   за ним: на мониторе 27 дюймов текст был 14 пикселей в колонке на 46% ширины. */
+html{font-size:clamp(14.7px,calc(9.9px + .315vw),17px)}
+body{
+  font:1rem/1.55 "Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;overflow-x:clip;
+}
+::selection{background:var(--accent);color:#fff}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+/* Ширина: страница занимает экран с теми же полями, что и журнал. */
+main,.topbar-inner,.sitebar-inner{
+  width:min(126rem,100% - 2*clamp(1.25rem,4vw,5.6rem));
+}
+
+/* Шапка: сплошной фон вместо размытого стекла. */
+.topbar,.sitebar{background:var(--page);backdrop-filter:none;-webkit-backdrop-filter:none}
+nav.toc a{font-size:.9rem;border-radius:6px}
+.controls button{border-radius:8px}
+
+/* Первый экран выпуска. */
+.masthead{min-height:0;padding:3rem 0 2.5rem;gap:clamp(2.5rem,6vw,7rem);align-items:end}
+.issue-label{font-size:.9rem;margin-bottom:1rem;color:var(--muted);font-weight:600}
+.issue-label::before{display:none}
+h1{font-size:clamp(2.4rem,4vw,4.25rem);line-height:1;letter-spacing:-.04em;font-weight:750;max-width:18ch;text-wrap:balance}
+.deck{max-width:68ch;margin-top:1.25rem;font-size:1.12rem;line-height:1.5}
+.fact{padding:.75rem 0}
+.fact span,.fact strong{font-size:.95rem}
+
+/* Разделы. Надзаголовок раздела — обычная строка, без капса и разрядки. */
+section{margin:4rem 0}
+.section-kicker{margin-bottom:.4rem;color:var(--muted);font-size:.9rem;font-weight:500;letter-spacing:0;text-transform:none}
+h2{font-size:clamp(1.6rem,2.2vw,2.3rem);letter-spacing:-.035em;font-weight:750;line-height:1.1}
+h2 .count{font-size:.95rem}
+.section-intro,.rank-note{max-width:none;font-size:1rem}
+h3.tail-h{color:var(--ink);font-size:1.05rem;letter-spacing:-.01em;text-transform:none;margin:2.5rem 0 .9rem}
+
+/* Текст блоков занимает всю ширину своей колонки: при ограничении длины строки
+   правая половина колонки оставалась пустой, и страница выглядела скошенной влево. */
+.block h3{font-size:1.2rem}
+.release h3{font-size:1.15rem}
+.release li,.release>p{font-size:.95rem;line-height:1.5}
+.item h4{font-size:1.05rem}
+.item p{font-size:.95rem;line-height:1.5}
+ul.stories li,ul.tail li{font-size:.95rem}
+.official-overview h3{font-size:1.02rem}
+.official-overview p,.official-stat{font-size:.9rem}
+
+/* Метки: звёзды и очки — табличные цифры на спокойной плашке. */
+.item{grid-template-columns:5.2rem minmax(0,1fr);gap:1.1rem;padding:1.1rem 0 1.2rem}
+.stars,.pts{border-radius:6px;font-size:.88rem;padding:.4rem .5rem}
+.tag{border-radius:4px;font-size:.72rem;padding:.15rem .45rem}
+
+/* Широкий экран: списки релизов, сюжетов, исследований и источников идут в
+   несколько колонок. */
+@media(min-width:1500px){
+  .release ul{display:block;columns:2;column-gap:3rem}
+  .release li{break-inside:avoid;margin-bottom:.5rem}
+  ul.stories{columns:2;column-gap:3.5rem;border-top:0}
+  ul.stories li{break-inside:avoid}
+  .catalog-columns{gap:4rem}
+  .flow-2col{columns:3;column-gap:3.5rem}
+  .sources ul{display:block;columns:3;column-gap:3.5rem}
+  .sources li{break-inside:avoid;margin-bottom:.5rem}
+}
+/* Позиции каталога идут по одной в строке на всю ширину своей колонки: широкая
+   строка читается лучше, чем две узкие позиции рядом. */
+
+/* Список в две колонки: колоночный поток вместо сетки. Сетка ставит пункты
+   парами в строку, и рядом с длинным пунктом под коротким остаётся провал. */
+.block ul.list-2col{display:block;columns:2;column-gap:3.5rem}
+.block ul.list-2col>li{break-inside:avoid;margin-bottom:.45rem}
+@media(max-width:900px){.block ul.list-2col{columns:1}}
+
+/* Блок «Ещё по теме», который журнал ставит под выпуском, — той же ширины, что и
+   сам выпуск: узкая полоса посередине под широкой страницей смотрелась чужой. */
+nav.gnrl{max-width:none;width:min(126rem,100% - 2*clamp(1.25rem,4vw,5.6rem));margin-inline:auto;padding-inline:0}
+</style>
 <!--/general:head-->
 </head><body>
 <!--general:top-->
@@ -661,63 +761,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
         <li><mark>Частичный результат сабагента</mark> вместо «готово» на упоре в <code>maxTurns</code>.</li>
         <li>Встроенный стиль «Concise», <code>ANTHROPIC_DEFAULT_MODEL</code>, <code>headersHelper</code> для плагин-маркетплейсов и починенная утечка памяти на результатах сабагентов.</li>
       </ul>
-      <details class="method-fold"><summary>Остальные изменения CLI</summary><div class="method-body">
-    <h3>Claude Code CLI 2.1.236 → 2.1.238 <span class="src">выжимка по агент-разработке</span></h3>
-    <ul>
-      <li><b>2.1.238</b> — <code>headersHelper</code> на url-маркетплейсе или записи каталога:
-      команда, выдающая HTTP-заголовки (например, короткоживущий токен) для запросов каталога и
-      архивов; запускается только при install/update и после показа команды, с подтверждением
-      <code>[y/N]</code>. Плюс требование принятого trust-диалога для <code>headersHelper</code>
-      в проектном <code>.mcp.json</code> и запуск без унаследованных credential-переменных
-      окружения — модель доверия для плагинов и MCP подтянули заметно.</li>
-      <li><b>2.1.238</b> — <mark>починена неограниченная утечка памяти в длинных интерактивных
-      сессиях</mark>: результаты инструментов сабагентов освобождаются, как только уходят из окна
-      отображения. Для долгих мульти-агентных прогонов это самое полезное в релизе.</li>
-      <li><b>2.1.238</b> — <code>claude self-hosted-runner --defer-shutdown-max-min</code>: по
-      SIGTERM раннер продолжает обслуживать прикреплённые сессии заданное число минут. Плюс
-      исправление, из-за которого здоровый раннер отбирался сервером после одного медленного поллинга.</li>
-      <li><b>2.1.237</b> — встроенный output style <b>«Concise»</b>: ответ начинается с результата,
-      без преамбул и нарратива, при той же полноте работы.</li>
-      <li><b>2.1.236</b> — <code>ANTHROPIC_DEFAULT_MODEL</code> (модель для новых сессий,
-      <code>/model</code> по-прежнему перебивает); <code>notify_when_idle</code> в кросс-сессионном
-      <code>SendMessage</code> — одноразовое уведомление, когда соседняя сессия освободится, без
-      поллинга; ограничение <code>/recap</code> 400 символами против разрастания рекапов;
-      auth-режим больше не обманывается настройкой <code>status.showUntrackedFiles=no</code>.</li>
-    </ul>
-    <h3>Claude Code CLI 2.1.239 → 2.1.246</h3>
-    <p>Восемь версий за окно, из них 2.1.240 и 2.1.241 — «bug fixes and reliability improvements»
-    без деталей. Существенное для агент-разработки:</p>
-    <ul>
-      <li><b>Многоагентность и сабагенты.</b> Сабагент, упёршийся в лимит <code>maxTurns</code>,
-      теперь возвращает результат с пометкой «частичный» и подсказкой продолжить через
-      <code>SendMessage</code>, а не выглядит завершившимся. В <code>/tasks</code> показываются
-      модель и уровень effort каждого сабагента. <code>←</code> или <code>/background</code> во время
-      динамического workflow больше не перезапускают его законченных сабагентов молча — сначала
-      спрашивают и говорят, сколько будет перезапущено. Починены фоновые сабагенты, не
-      просыпавшиеся после завершения последней фоновой Bash-задачи.</li>
-      <li><b>Кэш и стоимость.</b> Настройки <code>promptCacheTtl</code> и
-      <code>subagentPromptCacheTtl</code> — часовой prompt-кэш на основном диалоге при
-      пятиминутном у сабагентов. Managed-настройка <code>modelPricing</code>: <code>/cost</code>,
-      статус-строка и телеметрия считают по контрактным ставкам организации, а не по прайс-листу.
-      В <code>/usage</code> — разбивка по Loops: число прогонов, токены, токены на прогон и время
-      последнего.</li>
-      <li><b>Плагины и скиллы.</b> <code>/reload-plugins</code> больше не рапортует 0 скиллов для
-      плагинов, объявляющих их как <code>skills/*/SKILL.md</code>. Плагин-скиллы с префиксом
-      <code>&lt;plugin&gt;:</code> в <code>name</code> перестали дублировать его в меню.
-      <code>claude plugin update</code> работает по голому имени. Починены установка при
-      <code>plugin.json</code> с BOM и дубликаты SHA-каталогов в кэше плагинов.</li>
-      <li><b>Модели.</b> Настройка <code>modelPicker</code> — курируемый упорядоченный список
-      моделей в <code>/model</code> с любым написанием id, включая Vertex/Bedrock. Исправлено, что
-      <code>/model</code> молча игнорировал выбор Ultracode.</li>
-      <li><b>Прочее.</b> Неинтерактивные сессии (<code>-p</code>, SDK, облачные) автоматически
-      продолжают ответ, оборванный ошибкой сервера или обрывом связи. <code>/cd</code> применяет
-      настройки, хуки, <code>.mcp.json</code>, скиллы и агентов нового каталога сразу, а не после
-      <code>--resume</code>. Прерванные MCP-вызовы в headless/remote больше не рапортуются модели
-      как «завершились без вывода». Аргументы MCP-инструмента с пустой схемой отправляются в своём
-      настоящем типе, а не строкой JSON.</li>
-    </ul>
-      </div></details>
-    </article>
+      </article>
     <article class="release">
       <h3>Модели <span class="src">— релизов в окне нет</span></h3>
       <p>Новых моделей за 18–26 августа не выходило. Официальная работа шла в другом месте:
@@ -1101,8 +1145,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
       с аргументами обеих сторон. Второй скилл, <code>babysit-pr</code>, ведёт раунды дальше: проверяет
       каждую находку, чинит блокеры, отвечает в треде, резолвит и перезапускает ревью. Оба явно ограничены
       в правах: <mark>не редактируют код, не аппрувят, не реквестят изменения и не публикуют дважды для
-      одного head sha</mark>. Работают через любой уже используемый агент. Ставится через
-      <code>npx skills add</code>, в репозитории есть CI с тестами. MIT.</p>
+      одного head sha</mark>. Работают через любой уже используемый агент. MIT.</p>
     </div>
   </div>
 

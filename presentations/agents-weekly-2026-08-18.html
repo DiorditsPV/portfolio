@@ -608,6 +608,106 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
   });
 })();
 </script>
+<style>
+/* Оформление выпусков Agents Weekly в журнале.
+   Журнал подставляет этот блок в <head> каждого выпуска при публикации, после
+   собственных стилей выпуска, поэтому правила здесь их перекрывают. Разметку и
+   порядок блоков выпуска он не трогает: меняются ширина, кегль, цвета и число
+   колонок. Так все выпуски, прошлые и будущие, одеты одинаково, а формат самого
+   дайджеста остаётся в его макете. */
+
+@font-face{
+  font-family:"Golos Text";src:url(fonts/golos-text.woff2) format("woff2");
+  font-weight:400 900;font-display:swap;
+}
+
+/* Цвета светлой темы — те же, что на странице журнала. Тёмная тема выпуска
+   остаётся его собственной. */
+html:not([data-theme="dark"]){
+  --page:#ffffff; --surface:#ffffff; --surface-soft:#f4f5f6;
+  --ink:#14171c; --muted:#5a616c; --subtle:#737a85; --line:#e3e5e8;
+  --accent:#1d4ed8; --accent-soft:#e8eefc; --accent-ink:#1d4ed8;
+  --badge-bg:#f4f5f6; --badge-fg:#2f353d;
+}
+
+/* Кегль растёт вместе с экраном, все размеры выпуска заданы в rem и em и растут
+   за ним: на мониторе 27 дюймов текст был 14 пикселей в колонке на 46% ширины. */
+html{font-size:clamp(14.7px,calc(9.9px + .315vw),17px)}
+body{
+  font:1rem/1.55 "Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;overflow-x:clip;
+}
+::selection{background:var(--accent);color:#fff}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+/* Ширина: страница занимает экран с теми же полями, что и журнал. */
+main,.topbar-inner,.sitebar-inner{
+  width:min(126rem,100% - 2*clamp(1.25rem,4vw,5.6rem));
+}
+
+/* Шапка: сплошной фон вместо размытого стекла. */
+.topbar,.sitebar{background:var(--page);backdrop-filter:none;-webkit-backdrop-filter:none}
+nav.toc a{font-size:.9rem;border-radius:6px}
+.controls button{border-radius:8px}
+
+/* Первый экран выпуска. */
+.masthead{min-height:0;padding:3rem 0 2.5rem;gap:clamp(2.5rem,6vw,7rem);align-items:end}
+.issue-label{font-size:.9rem;margin-bottom:1rem;color:var(--muted);font-weight:600}
+.issue-label::before{display:none}
+h1{font-size:clamp(2.4rem,4vw,4.25rem);line-height:1;letter-spacing:-.04em;font-weight:750;max-width:18ch;text-wrap:balance}
+.deck{max-width:68ch;margin-top:1.25rem;font-size:1.12rem;line-height:1.5}
+.fact{padding:.75rem 0}
+.fact span,.fact strong{font-size:.95rem}
+
+/* Разделы. Надзаголовок раздела — обычная строка, без капса и разрядки. */
+section{margin:4rem 0}
+.section-kicker{margin-bottom:.4rem;color:var(--muted);font-size:.9rem;font-weight:500;letter-spacing:0;text-transform:none}
+h2{font-size:clamp(1.6rem,2.2vw,2.3rem);letter-spacing:-.035em;font-weight:750;line-height:1.1}
+h2 .count{font-size:.95rem}
+.section-intro,.rank-note{max-width:none;font-size:1rem}
+h3.tail-h{color:var(--ink);font-size:1.05rem;letter-spacing:-.01em;text-transform:none;margin:2.5rem 0 .9rem}
+
+/* Текст блоков занимает всю ширину своей колонки: при ограничении длины строки
+   правая половина колонки оставалась пустой, и страница выглядела скошенной влево. */
+.block h3{font-size:1.2rem}
+.release h3{font-size:1.15rem}
+.release li,.release>p{font-size:.95rem;line-height:1.5}
+.item h4{font-size:1.05rem}
+.item p{font-size:.95rem;line-height:1.5}
+ul.stories li,ul.tail li{font-size:.95rem}
+.official-overview h3{font-size:1.02rem}
+.official-overview p,.official-stat{font-size:.9rem}
+
+/* Метки: звёзды и очки — табличные цифры на спокойной плашке. */
+.item{grid-template-columns:5.2rem minmax(0,1fr);gap:1.1rem;padding:1.1rem 0 1.2rem}
+.stars,.pts{border-radius:6px;font-size:.88rem;padding:.4rem .5rem}
+.tag{border-radius:4px;font-size:.72rem;padding:.15rem .45rem}
+
+/* Широкий экран: списки релизов, сюжетов, исследований и источников идут в
+   несколько колонок. */
+@media(min-width:1500px){
+  .release ul{display:block;columns:2;column-gap:3rem}
+  .release li{break-inside:avoid;margin-bottom:.5rem}
+  ul.stories{columns:2;column-gap:3.5rem;border-top:0}
+  ul.stories li{break-inside:avoid}
+  .catalog-columns{gap:4rem}
+  .flow-2col{columns:3;column-gap:3.5rem}
+  .sources ul{display:block;columns:3;column-gap:3.5rem}
+  .sources li{break-inside:avoid;margin-bottom:.5rem}
+}
+/* Позиции каталога идут по одной в строке на всю ширину своей колонки: широкая
+   строка читается лучше, чем две узкие позиции рядом. */
+
+/* Список в две колонки: колоночный поток вместо сетки. Сетка ставит пункты
+   парами в строку, и рядом с длинным пунктом под коротким остаётся провал. */
+.block ul.list-2col{display:block;columns:2;column-gap:3.5rem}
+.block ul.list-2col>li{break-inside:avoid;margin-bottom:.45rem}
+@media(max-width:900px){.block ul.list-2col{columns:1}}
+
+/* Блок «Ещё по теме», который журнал ставит под выпуском, — той же ширины, что и
+   сам выпуск: узкая полоса посередине под широкой страницей смотрелась чужой. */
+nav.gnrl{max-width:none;width:min(126rem,100% - 2*clamp(1.25rem,4vw,5.6rem));margin-inline:auto;padding-inline:0}
+</style>
 <!--/general:head-->
 </head><body>
 <!--general:top-->
@@ -661,49 +761,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
         <li><mark><code>claude-api</code> подешевел с ~200k+ до ~25k токенов</mark> (2.1.234): reference-доки грузятся по требованию.</li>
         <li><mark>Fan-out воркфлоу стал дешевле</mark> (2.1.229): агенты с общим префиксом запускаются со сдвигом, чтобы читать закэшированный префикс, а не оплачивать его заново.</li>
       </ul>
-      <details class="method-fold"><summary>Остальные изменения CLI</summary><div class="method-body">
-    <ul>
-      <li><mark>Форк-сабагенты включены по умолчанию</mark> (2.1.232): <code>subagent_type: "fork"</code>
-      наследует всю переписку и prompt-кэш, а не-тиммейтные спавны в интерактивных сессиях по
-      умолчанию уходят в фон.</li>
-      <li><mark><code>@</code>-упоминание другой сессии</mark> прямо в промпте (2.1.232) — Claude сам
-      дотягивается до неё через <code>SendMessage</code>; сессии на одной машине получили уникальные имена.</li>
-      <li><mark><code>command</code>-источники плагин-маркетплейсов</mark> (2.1.229): локальная команда
-      печатает директорию плагина, она перерезолвится каждую сессию и применяется без рестарта;
-      <code>mode: "link"</code> использует её на месте.</li>
-      <li><mark>Скиллы, синхронизированные из claude.ai, ужесточены</mark> (2.1.228): больше не затеняют
-      локальные команды и MCP-промпты, описания санируются и помечаются, а их тела на твоей машине
-      не выполняют <code>!</code>-команды и не разворачивают <code>@</code>-файлы.</li>
-      <li><mark>Fan-out воркфлоу стал дешевле</mark> (2.1.229): агенты с общим префиксом запускаются со
-      сдвигом, чтобы последующие читали закэшированный префикс, а не оплачивали его заново
-      (<code>CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS=0</code> отключает).</li>
-      <li><mark><code>claude-api</code> подешевел с ~200k+ до ~25k токенов</mark> (2.1.234) —
-      reference-доки грузятся по требованию.</li>
-      <li><mark>Сессия автоматически продолжается при сбросе usage-лимита</mark> claude.ai (2.1.234,
-      отключается в <code>/config</code>) — важно для длинных автономных прогонов.</li>
-      <li><b>GitLab</b>: MR-бейдж в футере и statusline (2.1.234), поддержка MR-URL в
-      <code>--worktree</code> и <code>claude agents</code> (2.1.233), GitLab-маркетплейсы плагинов и
-      редактирование токенов <code>glpat-</code>/<code>glrt-</code> и родственных (2.1.232).</li>
-      <li><code>claude plugin validate</code> проверяет голую <code>.claude/skills</code> (2.1.233) —
-      сообщает про SKILL.md с непарсящимся frontmatter.</li>
-      <li>Todo-инструменты отключены на Opus 4.8, Sonnet 5, Fable 5, Mythos 5 и новее (2.1.233);
-      вернуть — <code>CLAUDE_CODE_ENABLE_TODO_TOOLS=1</code>.</li>
-      <li><code>/code-review</code> на high/xhigh/max ушёл в фоновый агент (2.1.232).</li>
-      <li><code>/commit-push-pr</code> больше не авто-одобряет git/gh с опасными флагами
-      (<code>--force</code>, <code>--amend</code>, <code>--no-verify</code>) (2.1.229).</li>
-      <li>Убрана настройка «Default teammate model» (2.1.234): тиммейты агент-команд берут модель лида,
-      если спавн не назвал другую.</li>
-      <li><mark>Почта аккаунта — только для идентификации</mark> (2.1.234): Claude теперь
-      инструктирован не отправлять её посторонним сервисам без явной просьбы. Прямой ответ на
-      <a href="https://github.com/anthropics/claude-code/issues/78431">issue #78431</a>, всплывший
-      на HN 11.08 (38 очков): агент подставил реальный адрес пользователя в User-Agent курлу.
-      Issue на момент сбора всё ещё открыт.</li>
-      <li>Безопасность: чтение файлов и workflow-скрипты отклоняют NT-namespace-пути
-      (<code>\??\</code>) — закрыт остаток вектора утечки NTLM-кредов (2.1.234, 2.1.233).</li>
-    </ul>
-  </div>
-      </div></details>
-    </article>
+      </article>
     <article class="release">
       <h3>Модели <span class="src">— релизов в окне нет</span></h3>
       <p>Новых моделей за 11–18 августа не выходило. Официальное за окно — два новых скилла Anthropic

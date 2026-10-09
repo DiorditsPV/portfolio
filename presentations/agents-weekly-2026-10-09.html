@@ -608,6 +608,106 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
   });
 })();
 </script>
+<style>
+/* Оформление выпусков Agents Weekly в журнале.
+   Журнал подставляет этот блок в <head> каждого выпуска при публикации, после
+   собственных стилей выпуска, поэтому правила здесь их перекрывают. Разметку и
+   порядок блоков выпуска он не трогает: меняются ширина, кегль, цвета и число
+   колонок. Так все выпуски, прошлые и будущие, одеты одинаково, а формат самого
+   дайджеста остаётся в его макете. */
+
+@font-face{
+  font-family:"Golos Text";src:url(fonts/golos-text.woff2) format("woff2");
+  font-weight:400 900;font-display:swap;
+}
+
+/* Цвета светлой темы — те же, что на странице журнала. Тёмная тема выпуска
+   остаётся его собственной. */
+html:not([data-theme="dark"]){
+  --page:#ffffff; --surface:#ffffff; --surface-soft:#f4f5f6;
+  --ink:#14171c; --muted:#5a616c; --subtle:#737a85; --line:#e3e5e8;
+  --accent:#1d4ed8; --accent-soft:#e8eefc; --accent-ink:#1d4ed8;
+  --badge-bg:#f4f5f6; --badge-fg:#2f353d;
+}
+
+/* Кегль растёт вместе с экраном, все размеры выпуска заданы в rem и em и растут
+   за ним: на мониторе 27 дюймов текст был 14 пикселей в колонке на 46% ширины. */
+html{font-size:clamp(14.7px,calc(9.9px + .315vw),17px)}
+body{
+  font:1rem/1.55 "Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;overflow-x:clip;
+}
+::selection{background:var(--accent);color:#fff}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+/* Ширина: страница занимает экран с теми же полями, что и журнал. */
+main,.topbar-inner,.sitebar-inner{
+  width:min(126rem,100% - 2*clamp(1.25rem,4vw,5.6rem));
+}
+
+/* Шапка: сплошной фон вместо размытого стекла. */
+.topbar,.sitebar{background:var(--page);backdrop-filter:none;-webkit-backdrop-filter:none}
+nav.toc a{font-size:.9rem;border-radius:6px}
+.controls button{border-radius:8px}
+
+/* Первый экран выпуска. */
+.masthead{min-height:0;padding:3rem 0 2.5rem;gap:clamp(2.5rem,6vw,7rem);align-items:end}
+.issue-label{font-size:.9rem;margin-bottom:1rem;color:var(--muted);font-weight:600}
+.issue-label::before{display:none}
+h1{font-size:clamp(2.4rem,4vw,4.25rem);line-height:1;letter-spacing:-.04em;font-weight:750;max-width:18ch;text-wrap:balance}
+.deck{max-width:68ch;margin-top:1.25rem;font-size:1.12rem;line-height:1.5}
+.fact{padding:.75rem 0}
+.fact span,.fact strong{font-size:.95rem}
+
+/* Разделы. Надзаголовок раздела — обычная строка, без капса и разрядки. */
+section{margin:4rem 0}
+.section-kicker{margin-bottom:.4rem;color:var(--muted);font-size:.9rem;font-weight:500;letter-spacing:0;text-transform:none}
+h2{font-size:clamp(1.6rem,2.2vw,2.3rem);letter-spacing:-.035em;font-weight:750;line-height:1.1}
+h2 .count{font-size:.95rem}
+.section-intro,.rank-note{max-width:none;font-size:1rem}
+h3.tail-h{color:var(--ink);font-size:1.05rem;letter-spacing:-.01em;text-transform:none;margin:2.5rem 0 .9rem}
+
+/* Текст блоков занимает всю ширину своей колонки: при ограничении длины строки
+   правая половина колонки оставалась пустой, и страница выглядела скошенной влево. */
+.block h3{font-size:1.2rem}
+.release h3{font-size:1.15rem}
+.release li,.release>p{font-size:.95rem;line-height:1.5}
+.item h4{font-size:1.05rem}
+.item p{font-size:.95rem;line-height:1.5}
+ul.stories li,ul.tail li{font-size:.95rem}
+.official-overview h3{font-size:1.02rem}
+.official-overview p,.official-stat{font-size:.9rem}
+
+/* Метки: звёзды и очки — табличные цифры на спокойной плашке. */
+.item{grid-template-columns:5.2rem minmax(0,1fr);gap:1.1rem;padding:1.1rem 0 1.2rem}
+.stars,.pts{border-radius:6px;font-size:.88rem;padding:.4rem .5rem}
+.tag{border-radius:4px;font-size:.72rem;padding:.15rem .45rem}
+
+/* Широкий экран: списки релизов, сюжетов, исследований и источников идут в
+   несколько колонок. */
+@media(min-width:1500px){
+  .release ul{display:block;columns:2;column-gap:3rem}
+  .release li{break-inside:avoid;margin-bottom:.5rem}
+  ul.stories{columns:2;column-gap:3.5rem;border-top:0}
+  ul.stories li{break-inside:avoid}
+  .catalog-columns{gap:4rem}
+  .flow-2col{columns:3;column-gap:3.5rem}
+  .sources ul{display:block;columns:3;column-gap:3.5rem}
+  .sources li{break-inside:avoid;margin-bottom:.5rem}
+}
+/* Позиции каталога идут по одной в строке на всю ширину своей колонки: широкая
+   строка читается лучше, чем две узкие позиции рядом. */
+
+/* Список в две колонки: колоночный поток вместо сетки. Сетка ставит пункты
+   парами в строку, и рядом с длинным пунктом под коротким остаётся провал. */
+.block ul.list-2col{display:block;columns:2;column-gap:3.5rem}
+.block ul.list-2col>li{break-inside:avoid;margin-bottom:.45rem}
+@media(max-width:900px){.block ul.list-2col{columns:1}}
+
+/* Блок «Ещё по теме», который журнал ставит под выпуском, — той же ширины, что и
+   сам выпуск: узкая полоса посередине под широкой страницей смотрелась чужой. */
+nav.gnrl{max-width:none;width:min(126rem,100% - 2*clamp(1.25rem,4vw,5.6rem));margin-inline:auto;padding-inline:0}
+</style>
 <!--/general:head-->
 </head><body>
 <!--general:top-->
@@ -660,38 +760,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
         <li><mark><code>claude plugin install --marketplace &lt;source&gt;</code></mark> (2.1.292) — добавляет маркетплейс, если его нет, под теми же проверками политики, и ставит плагин одной командой. <code>claude plugin validate</code> перечисляет hooks мода на «запирающих» точках и показывает, есть ли у каждого <code>.catch</code> (2.1.290).</li>
         <li><mark>Auto mode на длинных сессиях</mark> (2.1.288) — когда разговор не помещается в клиентский классификатор безопасности, он сжимается, а не превращается в запрос разрешения на каждый вызов. Бюджет WebSearch в интерактивной сессии теперь пополняется — 100 вызовов в час — вместо обрыва после 200 (2.1.290).</li>
       </ul>
-      <details class="method-fold"><summary>Остальные изменения CLI</summary><div class="method-body">
-      <h3 class="tail-h">Безопасность и разрешения</h3>
-      <ul>
-        <li>Проектные настройки больше не могут включить Claude in Chrome и выставить <code>CLAUDE_CODE_DISABLE_ATTACHMENTS</code> — только пользовательские, shell и managed (2.1.290).</li>
-        <li><code>pyright</code> перестал считаться командой только для чтения, больше форм <code>ps</code> требуют одобрения (2.1.290); скиллы и пользовательские команды отвергают <code>!</code>-команду с сырыми управляющими символами (2.1.290).</li>
-        <li>Теги <code>&lt;system-reminder&gt;</code> в выводе hook экранируются до того, как попадут к Claude (2.1.292); <code>--tools</code> и <code>--restricted</code> действуют и на встроенные инструменты, которые регистрируются после запуска (2.1.295).</li>
-        <li>Предупреждения: managed-настройки, ведущие ссылкой за пределы своей папки; managed-настройки, которые игнорируют пользовательские пути и домены песочницы (2.1.290); маркетплейс в настройках с именем, похожим на официальный (2.1.292).</li>
-        <li>Артефакты закрепляют библиотеки на точных версиях возрастом от двух недель (2.1.293).</li>
-      </ul>
-      <h3 class="tail-h">Субагенты, фон и воркфлоу</h3>
-      <ul>
-        <li>Исправлено: после сжатия контекста Claude иногда считал свои последние действия невыполненными и переделывал или откатывал готовую работу (2.1.293).</li>
-        <li>Лимит времени фоновой команды действует только в сессиях без человека (<code>-p</code>, Agent SDK, CI, облако); в терминале, desktop и VS Code лимита нет (2.1.288).</li>
-        <li>Фоновые сессии, ждущие пробуждения <code>/loop</code>, переживают обновления и нехватку памяти (2.1.290); <code>claude attach &lt;name&gt;</code> и <code>claude logs &lt;name&gt;</code> принимают часть имени сессии (2.1.290).</li>
-        <li>Субагент в собственном worktree больше не видит ветку, статус и commit'ы родительской сессии; результат форкнутого скилла из субагента воркфлоу возвращается вызвавшему агенту, а не в главный разговор (2.1.295).</li>
-        <li><code>/code-review --max-findings &lt;n&gt;|all</code> (2.1.288); на среднем effort ревью сообщает и о находках по уборке и соглашениям CLAUDE.md, включая Opus 5.5 и Sonnet 5.5 (2.1.290).</li>
-      </ul>
-      <h3 class="tail-h">MCP и контекст</h3>
-      <ul>
-        <li>Локальные stdio-серверы и коннекторы claude.ai по умолчанию согласуют версию протокола MCP 2026-07-28; <code>MCP_PROTOCOL_NEGOTIATION=legacy</code> возвращает прежнее поведение (2.1.292, 2.1.295).</li>
-        <li>Описания MCP-инструментов, подгружаемые через tool search, режутся на 16 384 символах вместо 2 048 (2.1.295); когда сервер во время вызова просит больший OAuth scope, CLI предлагает переавторизоваться (2.1.288).</li>
-        <li><code>/autocompact</code> хранит окно автосжатия отдельно для каждой модели (2.1.288); первый ход <code>claude -p</code> и SDK не ждёт ответа HTTP- и SSE-серверов на <code>resources/list</code> (2.1.292).</li>
-      </ul>
-      <h3 class="tail-h">Скиллы и плагины</h3>
-      <ul>
-        <li>Исправлено: <code>allowed-tools</code> и <code>effort</code> скилла терялись, если Skill tool завершался раньше потока ответа, — в <code>-p</code> это отклоняло Bash-команды скилла (2.1.295).</li>
-        <li><code>claude plugin test</code> проваливает тест, если <code>expect</code> внутри зарегистрированного тестом hook не выполнился (2.1.292); <code>claude plugin validate</code> подсказывает строку установки для README (2.1.295).</li>
-        <li>Имена агентов — не длиннее 256 символов; более длинное <code>name</code> скилла или файла плагина игнорируется (2.1.292). Синхронизация скиллов claude.ai в простое — раз в 40 минут вместо 10 (2.1.293).</li>
-        <li><code>claude project purge</code> переименована в <code>claude purge</code> (2.1.288); терминалы с Program Status Protocol (OSC 7501) показывают, работает Claude Code, ждёт вас или закончил (2.1.295).</li>
-      </ul>
-      </div></details>
-    </article>
+      </article>
     <article class="release">
       <h3>Модели <span class="src">— Claude Haiku 5.5, GPT-6 Luna и Mistral Large 4</span></h3>
       <p><b><a href="https://www.anthropic.com/claude-haiku-5-5">Claude Haiku 5.5</a></b> (07.10) — $0.10 / $0.50 за Mtok до 100 тыс. токенов промпта и $0.50 / $2.50 выше; чтение кэша $0.01. Первая Haiku с настраиваемым effort; рассуждение, по наблюдению Саймона Уиллисона, отключить нельзя. По данным Anthropic: Terminal-Bench 4.0 — 39,2% (GPT-6 Luna 16,4%, Sonnet 5.5 70,6%), OSWorld 2.1 — 72,4%; в среднем на 75% дешевле Haiku 4.5. Новый токенизатор: тот же длинный промпт у Уиллисона занял примерно в 1,25 раза больше токенов (<a href="https://simonwillison.net/2026/Oct/7/claude-haiku-5-5/">пост</a>). Anthropic позиционирует модель как субагента при Opus 5.5 и Sonnet 5.5; в Claude Code она стала Haiku по умолчанию с контекстом 1M (2.1.293).</p>
@@ -766,7 +835,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 
   <div class="item"><span class="stars hot">★ 662</span><div>
     <h4><a href="https://github.com/ythx-101/live-panel-skill">ythx-101/live-panel-skill</a><span class="tag">диаграммы</span></h4>
-    <p>Превращает один JSON в анимированную архитектурную диаграмму в терминальном стиле или светлую движущуюся инфографику: пакеты бегут по проводам, лог прокручивается, счётчики и бары меняют состояние. Выдаёт H.264 mp4 или живую веб-страницу, работает и как скилл с SKILL.md. Всё детерминировано (каждый кадр — чистая функция времени), check_frames.py проверяет переполнение текста и повторяемость кадров. Нужны Python, Chrome/Chromium, ffmpeg; Windows только через WSL.</p>
+    <p>Превращает один JSON в анимированную архитектурную диаграмму в терминальном стиле или светлую движущуюся инфографику: пакеты бегут по проводам, лог прокручивается, счётчики и бары меняют состояние. Выдаёт H.264 mp4 или живую веб-страницу, работает и как скилл с SKILL.md. Всё детерминировано (каждый кадр — чистая функция времени), check_frames.py проверяет переполнение текста и повторяемость кадров.</p>
   </div></div>
 
   <div class="item"><span class="stars hot">★ 251</span><div>
@@ -776,7 +845,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 
   <div class="item"><span class="stars hot">★ 233</span><div>
     <h4><a href="https://github.com/cth9191/animate">cth9191/animate</a><span class="tag">анимация</span></h4>
-    <p>Делает короткие анимированные видео целиком в коде: один canvas, рисуется и озвучивается процедурно, детерминированно по кадрам, рендер через headless-браузер и ffmpeg. Семь встроенных стилей (вырезанная бумага, штриховка, ризограф и др.) или новый стиль, снятый с ваших референсов; одобрение сюжета, стиля и раскадровки до рендера. Проверяет себя измерениями: попадание склеек в бит, привязка героя, тишина перед кульминацией, темп озвучки. Нужны Claude Code, Node 18+, Playwright с Chromium, ffmpeg.</p>
+    <p>Делает короткие анимированные видео целиком в коде: один canvas, рисуется и озвучивается процедурно, детерминированно по кадрам, рендер через headless-браузер и ffmpeg. Семь встроенных стилей (вырезанная бумага, штриховка, ризограф и др.) или новый стиль, снятый с ваших референсов; одобрение сюжета, стиля и раскадровки до рендера. Проверяет себя измерениями: попадание склеек в бит, привязка героя, тишина перед кульминацией, темп озвучки.</p>
   </div></div>
 
   <div class="item"><span class="stars">★ 155</span><div>
@@ -817,7 +886,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 
   <div class="item"><span class="stars">★ 111</span><div>
     <h4><a href="https://github.com/fatihaydost/brand-identity-skill">fatihaydost/brand-identity-skill</a><span class="tag">бренд</span></h4>
-    <p>Проектирует фирменный стиль как единую систему: логотип, типографика и палитра выводятся из одного механизма, даётся три-четыре варианта карточками для сравнения. Решения измеряются, а не декларируются: контраст (WCAG 2 и APCA), симуляция дальтонизма, покрытие глифов под языки бренда, лицензии шрифтов, логотип в 16 и 32 px — провал метрики это гейт. На выходе kit гайдлайнов: 8-страничный PDF, файлы логотипа (SVG/PNG), дизайн-токены (CSS, SCSS, Tailwind, DTCG). Нужны Python 3.10+, Chromium, желательно uv.</p>
+    <p>Проектирует фирменный стиль как единую систему: логотип, типографика и палитра выводятся из одного механизма, даётся три-четыре варианта карточками для сравнения. Решения измеряются, а не декларируются: контраст (WCAG 2 и APCA), симуляция дальтонизма, покрытие глифов под языки бренда, лицензии шрифтов, логотип в 16 и 32 px — провал метрики это гейт. На выходе kit гайдлайнов: 8-страничный PDF, файлы логотипа (SVG/PNG), дизайн-токены (CSS, SCSS, Tailwind, DTCG).</p>
   </div></div>
 
   <div class="item"><span class="stars">★ 109</span><div>
@@ -842,7 +911,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 
   <div class="item"><span class="stars">★ 66</span><div>
     <h4><a href="https://github.com/Miftahul-Islam-Efaz/Motion-graphics-skill">Miftahul-Islam-Efaz/Motion-graphics-skill</a><span class="tag">видео</span></h4>
-    <p>Скилл Motion Video Director: агент ведёт производство ролика по фиксированному процессу — бриф, сценарий озвучки под ElevenLabs, раскадровка по таймингам слов, анимация кодом (Canvas, SVG, Three.js, GSAP), монтаж присланного материала, звук с нормализацией до −14 LUFS и рендер через headless Chrome и ffmpeg. Перед полным рендером собирает contact sheets по сценам, а пользователь утверждает сценарий, план и превью. Прогресс пишется в PROGRESS.md, чтобы новая сессия продолжила с того же места. Нужны Node.js 18+, ffmpeg и Playwright.</p>
+    <p>Скилл Motion Video Director: агент ведёт производство ролика по фиксированному процессу — бриф, сценарий озвучки под ElevenLabs, раскадровка по таймингам слов, анимация кодом (Canvas, SVG, Three.js, GSAP), монтаж присланного материала, звук с нормализацией до −14 LUFS и рендер через headless Chrome и ffmpeg. Перед полным рендером собирает contact sheets по сценам, а пользователь утверждает сценарий, план и превью. Прогресс пишется в PROGRESS.md, чтобы новая сессия продолжила с того же места.</p>
   </div></div>
 
   <div class="item"><span class="stars">★ 64</span><div>
@@ -897,7 +966,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 
   <div class="item"><span class="stars">★ 37</span><div>
     <h4><a href="https://github.com/lemomo-ai/lemo-wake">lemomo-ai/lemo-wake</a><span class="tag">анимация</span></h4>
-    <p>Скилл в обёртке плагина Claude Code: из одной картинки делает бесшовный цикл примерно на 5 секунд (MP4, GIF, WebP, Live Photo). Claude разбирает изображение на текст, фигуры, объекты и свет, воссоздаёт их кодом, покадрово рендерит в headless-браузере и проверяет стык конца с началом. Без генерации изображений и API-ключей; локальные модели вырезания и глубины (около 600 МБ) скачиваются только после согласия и сверяются по sha256. Лицензия CC BY-NC 4.0 — некоммерческая; проверено на macOS.</p>
+    <p>Скилл в обёртке плагина Claude Code: из одной картинки делает бесшовный цикл примерно на 5 секунд (MP4, GIF, WebP, Live Photo). Claude разбирает изображение на текст, фигуры, объекты и свет, воссоздаёт их кодом, покадрово рендерит в headless-браузере и проверяет стык конца с началом. Без генерации изображений и API-ключей; локальные модели вырезания и глубины (около 600 МБ) скачиваются только после согласия и сверяются по sha256.</p>
   </div></div>
 
   <div class="item"><span class="stars">★ 30</span><div>
@@ -963,7 +1032,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 
   <div class="item"><span class="stars hot">★ 523</span><div>
     <h4><a href="https://github.com/shinshin86/mesh-avatar-studio">shinshin86/mesh-avatar-studio</a><span class="tag">аватары</span></h4>
-    <p>Делает из одной иллюстрации анимированный 2D-mesh-аватар, который моргает, говорит, поворачивает голову и дышит. Кодинг-агент (Claude Code или Codex) готовит риг по docs/agent-guide.md, а тонкая настройка — перетаскиванием точек в локальном редакторе с живым превью. Режим Live: веб-камера и микрофон управляют аватаром для OBS, при этом видео и звук остаются на машине, наружу идут только числовые значения движения. Нужен Node.js 22.17+.</p>
+    <p>Делает из одной иллюстрации анимированный 2D-mesh-аватар, который моргает, говорит, поворачивает голову и дышит. Кодинг-агент (Claude Code или Codex) готовит риг по docs/agent-guide.md, а тонкая настройка — перетаскиванием точек в локальном редакторе с живым превью. Режим Live: веб-камера и микрофон управляют аватаром для OBS, при этом видео и звук остаются на машине, наружу идут только числовые значения движения.</p>
   </div></div>
 
   <div class="item"><span class="stars hot">★ 476</span><div>
@@ -993,7 +1062,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 
   <div class="item"><span class="stars">★ 163</span><div>
     <h4><a href="https://github.com/hamzafer/claude-code-mods">hamzafer/claude-code-mods</a><span class="tag">моды CLI</span></h4>
-    <p>Набор модов Claude Code на function hooks, ставятся по одному из маркетплейса: context-bar (стек-бар заполнения контекста), token-weather и usage-meter (лимиты и prompt cache), where-am-i и mission-control (цель, агенты и трогаемые файлы), review-watch (живые строки идущих ревью Codex), blast-radius (удерживает rm -rf и показывает, что удалится), md-preview, now-playing, игры и ленты. switchboard выбирает модель субагенту через OpenAI Decisions API или Jev. Нужен Claude Code 2.1.287+.</p>
+    <p>Набор модов Claude Code на function hooks, ставятся по одному из маркетплейса: context-bar (стек-бар заполнения контекста), token-weather и usage-meter (лимиты и prompt cache), where-am-i и mission-control (цель, агенты и трогаемые файлы), review-watch (живые строки идущих ревью Codex), blast-radius (удерживает rm -rf и показывает, что удалится), md-preview, now-playing, игры и ленты. switchboard выбирает модель субагенту через OpenAI Decisions API или Jev.</p>
   </div></div>
 
   <div class="item"><span class="stars">★ 159</span><div>
@@ -1014,7 +1083,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
   <details class="method-fold"><summary>Показать остальные 35 позиций и 55 строк ★ 10–30</summary><div class="method-body">
   <div class="item"><span class="stars">★ 108</span><div>
     <h4><a href="https://github.com/jarrodwatts/intermission">jarrodwatts/intermission</a><span class="tag">моды CLI</span></h4>
-    <p>Плагин Claude Code, открывающий рядом с транскриптом панель с Doom-deathmatch, пока Claude работает, и возвращающий управление, как только он закончил или запросил разрешение. Это Odamex без окна (кадры через разделяемую память в панель терминала) с картами Freedoom на общем сервере. Нужны macOS 15+, Ghostty или kitty, Claude Code 2.1.287+. При первом запуске тянет движок ~20 МБ.</p>
+    <p>Плагин Claude Code, открывающий рядом с транскриптом панель с Doom-deathmatch, пока Claude работает, и возвращающий управление, как только он закончил или запросил разрешение. Это Odamex без окна (кадры через разделяемую память в панель терминала) с картами Freedoom на общем сервере. При первом запуске тянет движок ~20 МБ.</p>
   </div></div>
 
   <div class="item"><span class="stars">★ 100</span><div>
@@ -1029,7 +1098,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 
   <div class="item"><span class="stars">★ 77</span><div>
     <h4><a href="https://github.com/luoluo-121/neural-creator-dashboard">luoluo-121/neural-creator-dashboard</a><span class="tag">заметки</span></h4>
-    <p>Локальный веб-дашборд для автора контента: работы, заметки, темы и черновики показываются как граф с пятью модулями и панелью анализа по каждой записи. Связи выводятся в браузере из данных — папки, двойные ссылки [[…]], теги, общие понятия; поиск по графу идёт по локальным правилам без вызова модели. В комплекте скилл, которым агент ставит проект и импортирует хранилище Obsidian или Markdown; скрипт импорта только читает заметки и не ходит в сеть. Нужен Node.js 20.19+, интерфейс на китайском и английском.</p>
+    <p>Локальный веб-дашборд для автора контента: работы, заметки, темы и черновики показываются как граф с пятью модулями и панелью анализа по каждой записи. Связи выводятся в браузере из данных — папки, двойные ссылки [[…]], теги, общие понятия; поиск по графу идёт по локальным правилам без вызова модели. В комплекте скилл, которым агент ставит проект и импортирует хранилище Obsidian или Markdown; скрипт импорта только читает заметки и не ходит в сеть.</p>
   </div></div>
 
   <div class="item"><span class="stars">★ 76</span><div>
@@ -1039,7 +1108,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 
   <div class="item"><span class="stars">★ 73</span><div>
     <h4><a href="https://github.com/cablate/ctx-handoff-mod">cablate/ctx-handoff-mod</a><span class="tag">моды CLI</span></h4>
-    <p>Мод Claude Code для долгих сессий. На пороге 600k токенов дожидается завершения агента и субагентов, пишет сводку с разделением проверенной работы и непроверенных правок, делает /clear и продолжает в новом разговоре (handoff). Пока пользователя нет, подогревает prompt cache примерно до четырёх часов; повторяющиеся указания превращает в заметки проекта, а после трёх повторов предлагает строку в CLAUDE.md. Есть одностроковые подсказки при повторе упавшей команды и «готово» без проверки. Нужен Claude Code 2.1.287+.</p>
+    <p>Мод Claude Code для долгих сессий. На пороге 600k токенов дожидается завершения агента и субагентов, пишет сводку с разделением проверенной работы и непроверенных правок, делает /clear и продолжает в новом разговоре (handoff). Пока пользователя нет, подогревает prompt cache примерно до четырёх часов; повторяющиеся указания превращает в заметки проекта, а после трёх повторов предлагает строку в CLAUDE.md. Есть одностроковые подсказки при повторе упавшей команды и «готово» без проверки.</p>
   </div></div>
 
   <div class="item"><span class="stars">★ 72</span><div>
@@ -1069,7 +1138,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 
   <div class="item"><span class="stars">★ 64</span><div>
     <h4><a href="https://github.com/theRizwan/FlagshipRouter">theRizwan/FlagshipRouter</a><span class="tag">прокси</span></h4>
-    <p>Локальный OpenAI-совместимый шлюз для Claude Code, Codex, Cursor, Cline и OpenCode, который показывает только провайдеров с бесплатным предложением: Kiro, OpenCode Free, бесплатные модели OpenRouter, NVIDIA NIM, Groq, Cloudflare Workers AI, Ollama. Вместо списка провайдеров — общая таблица моделей со статусом готовности и тестом в один клик; название продукта, команда CLI и политика провайдеров задаются в brand.json. Автор оговаривает, что набор тестов несёт известные падения и сверять его надо с прошлым прогоном. Нужен Node.js 20.9+.</p>
+    <p>Локальный OpenAI-совместимый шлюз для Claude Code, Codex, Cursor, Cline и OpenCode, который показывает только провайдеров с бесплатным предложением: Kiro, OpenCode Free, бесплатные модели OpenRouter, NVIDIA NIM, Groq, Cloudflare Workers AI, Ollama. Вместо списка провайдеров — общая таблица моделей со статусом готовности и тестом в один клик; название продукта, команда CLI и политика провайдеров задаются в brand.json. Автор оговаривает, что набор тестов несёт известные падения и сверять его надо с прошлым прогоном.</p>
   </div></div>
 
   <div class="item"><span class="stars">★ 61</span><div>
@@ -1079,12 +1148,12 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 
   <div class="item"><span class="stars">★ 60</span><div>
     <h4><a href="https://github.com/NahumLitvin/prismantis">NahumLitvin/prismantis</a><span class="tag">моды CLI</span></h4>
-    <p>Мод Claude Code, перерисовывающий ответы в терминале: таблицы с цветными заголовками, код с подсветкой Prism, блоки mermaid как текстовые диаграммы и графики, сжатые строки вызовов инструментов, кнопки копирования, 15 тем. Сетевых вызовов не делает, файлов не читает и команд не запускает; при включённой опции diagramHints добавляет к промптам короткую заметку для модели. Нужен Claude Code 2.1.287+. Вручную проверено в терминале на macOS, тесты идут в CI на трёх ОС; десктоп-приложение, VS Code и мобильное автор не проверял.</p>
+    <p>Мод Claude Code, перерисовывающий ответы в терминале: таблицы с цветными заголовками, код с подсветкой Prism, блоки mermaid как текстовые диаграммы и графики, сжатые строки вызовов инструментов, кнопки копирования, 15 тем. Сетевых вызовов не делает, файлов не читает и команд не запускает; при включённой опции diagramHints добавляет к промптам короткую заметку для модели. Вручную проверено в терминале на macOS, тесты идут в CI на трёх ОС; десктоп-приложение, VS Code и мобильное автор не проверял.</p>
   </div></div>
 
   <div class="item"><span class="stars">★ 60</span><div>
     <h4><a href="https://github.com/SaM-runtime/claude-console">SaM-runtime/claude-console</a><span class="tag">оркестрация</span></h4>
-    <p>Мод Claude Code для ведения нескольких проектов: панель с таблицей проектов, их состоянием и шестишаговым конвейером от spec до release, карточки решений, на которые отвечают цифровыми клавишами, и запуск проверки, синхронизации STATUS и ревью одной кнопкой. Исполнитель — фоновые агенты Claude Code или Codex с откатом на Claude при нехватке квоты. Рядом показаны Git, PR, CI, лимиты и состояние prompt cache; есть guards на необратимые команды и на третью попытку после двух одинаковых ошибок. Нужен Claude Code 2.1.289+, Windows или macOS.</p>
+    <p>Мод Claude Code для ведения нескольких проектов: панель с таблицей проектов, их состоянием и шестишаговым конвейером от spec до release, карточки решений, на которые отвечают цифровыми клавишами, и запуск проверки, синхронизации STATUS и ревью одной кнопкой. Исполнитель — фоновые агенты Claude Code или Codex с откатом на Claude при нехватке квоты. Рядом показаны Git, PR, CI, лимиты и состояние prompt cache; есть guards на необратимые команды и на третью попытку после двух одинаковых ошибок.</p>
   </div></div>
 
   <div class="item"><span class="stars">★ 58</span><div>
@@ -1104,7 +1173,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 
   <div class="item"><span class="stars">★ 51</span><div>
     <h4><a href="https://github.com/efim0v/brow">efim0v/brow</a><span class="tag">расход и лимиты</span></h4>
-    <p>Приложение для macOS, которое показывает в вырезе экрана MacBook лимиты нескольких аккаунтов Claude Code сразу: пятичасовой, недельный и по моделям, время до сброса, календарь сбросов. Копирует команду запуска Claude Code под выбранным аккаунтом и открывает вход в отдельном профиле браузера для каждого. Автор предупреждает: токен читается из Keychain и уходит только на недокументированные эндпоинты Anthropic, которые могут измениться; запасное обновление токена включено по умолчанию и тратит немного лимита. Нужны macOS 26 и Apple silicon.</p>
+    <p>Приложение для macOS, которое показывает в вырезе экрана MacBook лимиты нескольких аккаунтов Claude Code сразу: пятичасовой, недельный и по моделям, время до сброса, календарь сбросов. Копирует команду запуска Claude Code под выбранным аккаунтом и открывает вход в отдельном профиле браузера для каждого. Автор предупреждает: токен читается из Keychain и уходит только на недокументированные эндпоинты Anthropic, которые могут измениться; запасное обновление токена включено по умолчанию и тратит немного лимита.</p>
   </div></div>
 
   <div class="item"><span class="stars">★ 45</span><div>
@@ -1129,22 +1198,22 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 
   <div class="item"><span class="stars">★ 40</span><div>
     <h4><a href="https://github.com/zycck/claude-mods">zycck/claude-mods</a><span class="tag">моды CLI</span></h4>
-    <p>Мод plan-progress для Claude Code: полосы прогресса над промптом, по строке на задачу, с этапами, шагами и списком субагентов под каждой (модель, effort, текущий инструмент, время). Работает через зарегистрированный инструмент plan_progress: Claude один раз отправляет план и затем короткие обновления, неизвестное имя шага отклоняется; план, одобренный в plan mode, сам становится полосой. Строки агентов берутся из событий движка и токенов не стоят. Нужен Claude Code 2.1.286+; тесты гоняют модуль на заглушке движка.</p>
+    <p>Мод plan-progress для Claude Code: полосы прогресса над промптом, по строке на задачу, с этапами, шагами и списком субагентов под каждой (модель, effort, текущий инструмент, время). Работает через зарегистрированный инструмент plan_progress: Claude один раз отправляет план и затем короткие обновления, неизвестное имя шага отклоняется; план, одобренный в plan mode, сам становится полосой. Строки агентов берутся из событий движка и токенов не стоят.</p>
   </div></div>
 
   <div class="item"><span class="stars">★ 40</span><div>
     <h4><a href="https://github.com/edrisranjbar/lifeos">edrisranjbar/lifeos</a><span class="tag">MCP · личные данные</span></h4>
-    <p>Самостоятельно размещаемая личная панель на PHP и MySQL — фокус, привычки, цели, финансы, Kanban — со встроенным MCP-сервером на 26 инструментов: Claude и другие ассистенты читают панель, планируют цели, отмечают привычки и записывают расходы. Ставится через Docker или на обычный shared-хостинг, данные остаются у владельца. Найден через Show HN (34 очка), создан 5 сентября; в поиске по скиллам такие проекты не видны, потому что описывают себя через MCP.</p>
+    <p>Самостоятельно размещаемая личная панель на PHP и MySQL — фокус, привычки, цели, финансы, Kanban — со встроенным MCP-сервером на 26 инструментов: Claude и другие ассистенты читают панель, планируют цели, отмечают привычки и записывают расходы. Найден через Show HN (34 очка), создан 5 сентября; в поиске по скиллам такие проекты не видны, потому что описывают себя через MCP.</p>
   </div></div>
 
   <div class="item"><span class="stars">★ 39</span><div>
     <h4><a href="https://github.com/achammah/claude-chat-clean">achammah/claude-chat-clean</a><span class="tag">моды CLI</span></h4>
-    <p>Мод Claude Code, меняющий только вид чата: остаются ваши сообщения и ответы Claude, а все вызовы инструментов за ход сворачиваются в одну раскрываемую строку вида «5 steps this turn». Субагенты, фоновые запуски, вопросы и ошибки тоже сжимаются до одной строки с подсказкой, что делать. Три режима — clean, normal и raw — переключаются командой /feed на лету; ctrl+o по-прежнему показывает полный transcript. Нужен Claude Code 2.1.289+, работает в терминале и desktop-приложении.</p>
+    <p>Мод Claude Code, меняющий только вид чата: остаются ваши сообщения и ответы Claude, а все вызовы инструментов за ход сворачиваются в одну раскрываемую строку вида «5 steps this turn». Субагенты, фоновые запуски, вопросы и ошибки тоже сжимаются до одной строки с подсказкой, что делать. Три режима — clean, normal и raw — переключаются командой /feed на лету; ctrl+o по-прежнему показывает полный transcript.</p>
   </div></div>
 
   <div class="item"><span class="stars">★ 37</span><div>
     <h4><a href="https://github.com/hellosverre/claude-skins">hellosverre/claude-skins</a><span class="tag">моды CLI</span></h4>
-    <p>Мод Claude Code, перерисовывающий transcript: вызовы инструментов с иконками и временем, правки как diff-карточки, таблицы, код и вывод shell в карточках, спиннер по фазам и полоса над промптом с контекстом, лимитами плана и кнопкой Compact. Семь скинов, светлые и тёмные, переключаются командой /skin; агент получает инструмент design и может собрать скин по описанию. Меняется только отрисовка — сохранённый диалог и то, что читает модель, не трогаются. Нужен Claude Code 2.1.287+.</p>
+    <p>Мод Claude Code, перерисовывающий transcript: вызовы инструментов с иконками и временем, правки как diff-карточки, таблицы, код и вывод shell в карточках, спиннер по фазам и полоса над промптом с контекстом, лимитами плана и кнопкой Compact. Семь скинов, светлые и тёмные, переключаются командой /skin; агент получает инструмент design и может собрать скин по описанию. Меняется только отрисовка — сохранённый диалог и то, что читает модель, не трогаются.</p>
   </div></div>
 
   <div class="item"><span class="stars">★ 35</span><div>
@@ -1164,7 +1233,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 
   <div class="item"><span class="stars">★ 34</span><div>
     <h4><a href="https://github.com/alan890104/claude-code-paste-preview">alan890104/claude-code-paste-preview</a><span class="tag">моды CLI</span></h4>
-    <p>Мод Claude Code для вставленных картинок: миниатюры над промптом и в transcript вместо голых [Image #N] и редактор, который открывается в момент вставки — перо, эллипс, рамка, стрелка, текст, обрезка. По Enter исходная вставка выбрасывается из сообщения, а Claude получает указание прочитать размеченный файл. На macOS редактор — нативная панель, компилируемая при первом запуске через Xcode Command Line Tools; на Linux и Windows — окно браузера. Нужен Claude Code 2.1.291+ и терминал с kitty graphics для миниатюр; в tmux их нет.</p>
+    <p>Мод Claude Code для вставленных картинок: миниатюры над промптом и в transcript вместо голых [Image #N] и редактор, который открывается в момент вставки — перо, эллипс, рамка, стрелка, текст, обрезка. По Enter исходная вставка выбрасывается из сообщения, а Claude получает указание прочитать размеченный файл. На macOS редактор — нативная панель, компилируемая при первом запуске через Xcode Command Line Tools; на Linux и Windows — окно браузера.</p>
   </div></div>
 
   <div class="item"><span class="stars">★ 33</span><div>
@@ -1174,7 +1243,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 
   <div class="item"><span class="stars">★ 33</span><div>
     <h4><a href="https://github.com/whyashthakker/awesome-claude-code-mods">whyashthakker/awesome-claude-code-mods</a><span class="tag">моды CLI</span></h4>
-    <p>Коллекция из 70 самостоятельных модов Claude Code под MIT — 50 общих и 20 для вкладки Code в desktop-приложении: счётчик контекста, квоты, инспектор кэша, тайминги инструментов, просмотр веток, stash, worktree и конфликтов, доски задач и заметок. У каждого мода исходник, тесты, описание доступа и скриншот; ставятся по одному из общего marketplace. Автор оговаривает, что скриншоты — рендер из тестового набора на фикстурах, а не снимки приложения. Нужен Claude Code 2.1.287+, проверено на 2.1.288.</p>
+    <p>Коллекция из 70 самостоятельных модов Claude Code под MIT — 50 общих и 20 для вкладки Code в desktop-приложении: счётчик контекста, квоты, инспектор кэша, тайминги инструментов, просмотр веток, stash, worktree и конфликтов, доски задач и заметок. У каждого мода исходник, тесты, описание доступа и скриншот; ставятся по одному из общего marketplace. Автор оговаривает, что скриншоты — рендер из тестового набора на фикстурах, а не снимки приложения.</p>
   </div></div>
 
   <div class="item"><span class="stars">★ 33</span><div>

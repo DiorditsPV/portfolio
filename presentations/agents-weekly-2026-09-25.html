@@ -608,6 +608,106 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
   });
 })();
 </script>
+<style>
+/* Оформление выпусков Agents Weekly в журнале.
+   Журнал подставляет этот блок в <head> каждого выпуска при публикации, после
+   собственных стилей выпуска, поэтому правила здесь их перекрывают. Разметку и
+   порядок блоков выпуска он не трогает: меняются ширина, кегль, цвета и число
+   колонок. Так все выпуски, прошлые и будущие, одеты одинаково, а формат самого
+   дайджеста остаётся в его макете. */
+
+@font-face{
+  font-family:"Golos Text";src:url(fonts/golos-text.woff2) format("woff2");
+  font-weight:400 900;font-display:swap;
+}
+
+/* Цвета светлой темы — те же, что на странице журнала. Тёмная тема выпуска
+   остаётся его собственной. */
+html:not([data-theme="dark"]){
+  --page:#ffffff; --surface:#ffffff; --surface-soft:#f4f5f6;
+  --ink:#14171c; --muted:#5a616c; --subtle:#737a85; --line:#e3e5e8;
+  --accent:#1d4ed8; --accent-soft:#e8eefc; --accent-ink:#1d4ed8;
+  --badge-bg:#f4f5f6; --badge-fg:#2f353d;
+}
+
+/* Кегль растёт вместе с экраном, все размеры выпуска заданы в rem и em и растут
+   за ним: на мониторе 27 дюймов текст был 14 пикселей в колонке на 46% ширины. */
+html{font-size:clamp(14.7px,calc(9.9px + .315vw),17px)}
+body{
+  font:1rem/1.55 "Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;overflow-x:clip;
+}
+::selection{background:var(--accent);color:#fff}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+/* Ширина: страница занимает экран с теми же полями, что и журнал. */
+main,.topbar-inner,.sitebar-inner{
+  width:min(126rem,100% - 2*clamp(1.25rem,4vw,5.6rem));
+}
+
+/* Шапка: сплошной фон вместо размытого стекла. */
+.topbar,.sitebar{background:var(--page);backdrop-filter:none;-webkit-backdrop-filter:none}
+nav.toc a{font-size:.9rem;border-radius:6px}
+.controls button{border-radius:8px}
+
+/* Первый экран выпуска. */
+.masthead{min-height:0;padding:3rem 0 2.5rem;gap:clamp(2.5rem,6vw,7rem);align-items:end}
+.issue-label{font-size:.9rem;margin-bottom:1rem;color:var(--muted);font-weight:600}
+.issue-label::before{display:none}
+h1{font-size:clamp(2.4rem,4vw,4.25rem);line-height:1;letter-spacing:-.04em;font-weight:750;max-width:18ch;text-wrap:balance}
+.deck{max-width:68ch;margin-top:1.25rem;font-size:1.12rem;line-height:1.5}
+.fact{padding:.75rem 0}
+.fact span,.fact strong{font-size:.95rem}
+
+/* Разделы. Надзаголовок раздела — обычная строка, без капса и разрядки. */
+section{margin:4rem 0}
+.section-kicker{margin-bottom:.4rem;color:var(--muted);font-size:.9rem;font-weight:500;letter-spacing:0;text-transform:none}
+h2{font-size:clamp(1.6rem,2.2vw,2.3rem);letter-spacing:-.035em;font-weight:750;line-height:1.1}
+h2 .count{font-size:.95rem}
+.section-intro,.rank-note{max-width:none;font-size:1rem}
+h3.tail-h{color:var(--ink);font-size:1.05rem;letter-spacing:-.01em;text-transform:none;margin:2.5rem 0 .9rem}
+
+/* Текст блоков занимает всю ширину своей колонки: при ограничении длины строки
+   правая половина колонки оставалась пустой, и страница выглядела скошенной влево. */
+.block h3{font-size:1.2rem}
+.release h3{font-size:1.15rem}
+.release li,.release>p{font-size:.95rem;line-height:1.5}
+.item h4{font-size:1.05rem}
+.item p{font-size:.95rem;line-height:1.5}
+ul.stories li,ul.tail li{font-size:.95rem}
+.official-overview h3{font-size:1.02rem}
+.official-overview p,.official-stat{font-size:.9rem}
+
+/* Метки: звёзды и очки — табличные цифры на спокойной плашке. */
+.item{grid-template-columns:5.2rem minmax(0,1fr);gap:1.1rem;padding:1.1rem 0 1.2rem}
+.stars,.pts{border-radius:6px;font-size:.88rem;padding:.4rem .5rem}
+.tag{border-radius:4px;font-size:.72rem;padding:.15rem .45rem}
+
+/* Широкий экран: списки релизов, сюжетов, исследований и источников идут в
+   несколько колонок. */
+@media(min-width:1500px){
+  .release ul{display:block;columns:2;column-gap:3rem}
+  .release li{break-inside:avoid;margin-bottom:.5rem}
+  ul.stories{columns:2;column-gap:3.5rem;border-top:0}
+  ul.stories li{break-inside:avoid}
+  .catalog-columns{gap:4rem}
+  .flow-2col{columns:3;column-gap:3.5rem}
+  .sources ul{display:block;columns:3;column-gap:3.5rem}
+  .sources li{break-inside:avoid;margin-bottom:.5rem}
+}
+/* Позиции каталога идут по одной в строке на всю ширину своей колонки: широкая
+   строка читается лучше, чем две узкие позиции рядом. */
+
+/* Список в две колонки: колоночный поток вместо сетки. Сетка ставит пункты
+   парами в строку, и рядом с длинным пунктом под коротким остаётся провал. */
+.block ul.list-2col{display:block;columns:2;column-gap:3.5rem}
+.block ul.list-2col>li{break-inside:avoid;margin-bottom:.45rem}
+@media(max-width:900px){.block ul.list-2col{columns:1}}
+
+/* Блок «Ещё по теме», который журнал ставит под выпуском, — той же ширины, что и
+   сам выпуск: узкая полоса посередине под широкой страницей смотрелась чужой. */
+nav.gnrl{max-width:none;width:min(126rem,100% - 2*clamp(1.25rem,4vw,5.6rem));margin-inline:auto;padding-inline:0}
+</style>
 <!--/general:head-->
 </head><body>
 <!--general:top-->
@@ -660,19 +760,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
         <li>Headless-оркестрация (2.1.281): <code>--agents</code> вместе с <code>-p</code> принимает путь к JSON-файлу с определениями субагентов, а <code>--setting-sources</code> наследуется дочерними сессиями — teammates, <code>/bg</code>, <code>--worktree --tmux</code>. Набор агентов можно держать в git.</li>
         <li>Классификатор auto mode работает на сервере и не тарифицируется отдельными запросами (2.1.278) — автономные прогоны перестают платить за проверку каждого действия; <code>CLAUDE_CODE_AUTO_MODE_SERVER=0</code> возвращает локальный.</li>
       </ul>
-      <details class="method-fold"><summary>Остальные изменения CLI</summary><div class="method-body">
-      <ul>
-        <li>Ломающие изменения: инструмент TaskOutput удалён — вывод фоновой задачи читается через Read (2.1.277); hook типа <code>agent</code> больше не запускается на <code>PermissionRequest</code>, нужны command- или http-hooks (2.1.280); обёртки self-hosted runners, дописывающие <code>--system-prompt</code>, должны перейти на <code>--system-prompt-file</code> (2.1.281).</li>
-        <li>Защита от инъекций: результат субагента приходит главному агенту под заголовком и с отступом, чтобы текст из результата не выдавал себя за инструкции сессии (2.1.277).</li>
-        <li>Автономные прогоны: опасный <code>rm</code> в <code>--dangerously-skip-permissions</code> и auto mode ждёт ответа две минуты, затем отклоняется; auto mode останавливает ход после десяти отказов подряд; запись через symlink оценивается по реальному месту назначения (2.1.280, 2.1.281).</li>
-        <li>Кэш: возобновлённые субагенты и teammates больше не пересобирают определения MCP-инструментов, продолжение после <code>/clear</code> не даёт полного промаха; <code>/cost</code> называет смену режима thinking среди причин промаха (2.1.277, 2.1.280).</li>
-        <li>MCP: <code>CLAUDE_CODE_MAX_MCP_DESCRIPTION_LENGTH</code> меняет лимит в 2048 символов на описания инструментов (2.1.280); hooks <code>mcp_tool</code> на блокирующих событиях ждут подключения своего сервера, а не пропускаются; URL-mode elicitation для протокола 2026-07-28 (2.1.281).</li>
-        <li>Управляемые политики: при <code>allowManagedPermissionRulesOnly</code> скиллы, команды и плагины из репозитория и пользователя больше не выдают себе инструменты через <code>allowed-tools</code> (2.1.282).</li>
-        <li>Прочее: <code>"attribution": false</code> скрывает атрибуцию в коммитах и PR (2.1.281); скиллы из <code>~/.claude/skills/</code> больше не уезжают в <code>.trash/</code> из-за постороннего <code>manifest.json</code> (2.1.280); compaction при отказе модели повторяется на fallback-модели (2.1.282).</li>
-        <li>Номера 2.1.279 нет ни в changelog, ни среди тегов.</li>
-      </ul>
-      </div></details>
-    </article>
+      </article>
     <article class="release">
       <h3>Модели <span class="src">— Claude Opus 5.5, GPT-6 Sol и Luna, Grok 4.7</span></h3>
       <p><a href="https://www.anthropic.com/claude-opus-5-5">Claude Opus 5.5</a> (22.09) — по заявлению Anthropic, на большинстве задач на уровне Fable 5.1 и примерно на 40% дешевле Opus 5 на типичной нагрузке: $4/$20 за Mtok, чтение кэша $0.20, 1M контекста, до 128k выходных токенов. В Claude Code 2.1.280 он сразу стал Opus по умолчанию, а на Pro и Team Standard моделью по умолчанию вместо Sonnet стал Opus. В API <a href="https://platform.claude.com/docs/en/models/opus-5-5/whats-new-opus-5-5">есть ограничения</a>: thinking не выключается (глубина задаётся через effort), <code>tool_choice</code> <code>any</code> и <code>tool</code> возвращают 400. Simon Willison <a href="https://simonwillison.net/2026/Sep/22/opus-and-sol-and-luna/">упёрся в лимит 128k</a> на уровне max: два прогона по $2.56 закончились, не дописав ответ.</p>
@@ -799,7 +887,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
   </div></div>
   <div class="item"><span class="stars">★ 77</span><div>
     <h4><a href="https://github.com/socai-io/jev-social">socai-io/jev-social</a><span class="tag">соцсети</span></h4>
-    <p>Исследование Instagram, TikTok и LinkedIn: Jev на каждом шаге выбирает следующую операцию — поиск, открыть пост, прочитать комментарии, закончить, — а CLI <code>socai</code> выполняет её в настоящем Chrome пользователя; на выходе отчёт со ссылками. Нужен ключ Jev. Установка <code>socai</code> идёт через <code>curl | sh</code> из релизов другого репозитория, её мы не проверяли; агент работает в браузере с залогиненными аккаунтами.</p>
+    <p>Исследование Instagram, TikTok и LinkedIn: Jev на каждом шаге выбирает следующую операцию — поиск, открыть пост, прочитать комментарии, закончить, — а CLI <code>socai</code> выполняет её в настоящем Chrome пользователя; на выходе отчёт со ссылками. Установка <code>socai</code> идёт через <code>curl | sh</code> из релизов другого репозитория, её мы не проверяли; агент работает в браузере с залогиненными аккаунтами.</p>
   </div></div>
   <div class="item"><span class="stars">★ 66</span><div>
     <h4><a href="https://github.com/unicodef1wn/lauren-poteto-rules">unicodef1wn/lauren-poteto-rules</a><span class="tag">правила</span></h4>

@@ -39,6 +39,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { coverSvg } from './cover.mjs';
+import { extractCatalog } from './catalog-extract.mjs';
+import { libraryPage } from './library-page.mjs';
+import { filterDigest } from './digest-filter.mjs';
 import { journalPage, humanDate, plural, JOURNAL_TITLE, JOURNAL_ABOUT } from './journal-page.mjs';
 import { rssFeed } from './rss.mjs';
 
@@ -185,6 +188,13 @@ const cut = (html, a, b) => {
   return html.slice(0, i) + html.slice(j + b.length).replace(/^\n/, '');
 };
 
+// Оформление серии: журнал одевает выпуски серии в общие стили, подставляя их
+// после собственных стилей выпуска. Формат выпуска при этом остаётся в макете
+// дайджеста, а вид всех выпусков, прошлых и будущих, меняется одной правкой здесь.
+const SERIES_THEME = { 'Agents Weekly': 'digest-theme.css' };
+const themeOf = p => SERIES_THEME[p.series]
+  ? `<style>\n${fs.readFileSync(path.join(ROOT, 'tools', SERIES_THEME[p.series]), 'utf8')}</style>` : '';
+
 function headBlock(p, ogImage) {
   return `${HEAD_A}
 <meta property="og:type" content="article">
@@ -200,6 +210,7 @@ function headBlock(p, ogImage) {
 <link rel="canonical" href="${BASE}${p.slug}.html">
 <link rel="alternate" type="application/rss+xml" title="${esc(JOURNAL_TITLE)}" href="${BASE}rss.xml">
 ${CONTRAST_OFF}
+${themeOf(p)}
 ${HEAD_B}`;
 }
 
@@ -322,6 +333,14 @@ ${TOP_B}`;
 
 function writeCopy(p, all, srcHtml) {
   let html = cut(cut(cut(srcHtml, HEAD_A, HEAD_B), TOP_A, TOP_B), FOOT_A, FOOT_B);
+  // Выпуск серии проходит отсев шума: хвост журнала изменений и предложения-требования
+  // в описаниях журнал не хранит. Что именно убрано — печатается, чтобы отсев был виден.
+  if (SERIES_THEME[p.series]) {
+    const r = filterDigest(html);
+    html = r.html;
+    if (r.report.folds || r.report.sentences)
+      console.log(`отсев шума: ${p.slug} — блоков «Остальные изменения CLI»: ${r.report.folds}, предложений-требований: ${r.report.sentences}`);
+  }
   const ogImage = fs.existsSync(path.join(COVERS, `${p.slug}.png`))
     ? `${BASE}covers/${p.slug}.png`
     : `${SITE}og.png`;
@@ -459,10 +478,11 @@ function rewriteManifest(reg) {
       + 'Верни её перед этими путями — без неё блок не переписать, а второй блок дал бы дубли.');
 
   const head = (at === -1 ? text : text.slice(0, at)).replace(/\s+$/, '');
-  const lines = reg.presentations.length ? ['presentations/index.html', 'presentations/rss.xml'] : [];
+  const lines = reg.presentations.length
+    ? ['presentations/index.html', 'presentations/library.html', 'presentations/rss.xml', 'presentations/fonts/golos-text.woff2'] : [];
   for (const p of reg.presentations) {
     lines.push(`presentations/${p.slug}.html`);
-    for (const e of ['svg', 'png'])
+    for (const e of ['svg', 'png', 'webp'])
       if (fs.existsSync(path.join(COVERS, `${p.slug}.${e}`))) lines.push(`presentations/covers/${p.slug}.${e}`);
   }
   fs.writeFileSync(MANIFEST, `${head}\n\n${MARK}\n${lines.join('\n')}${lines.length ? '\n' : ''}`);
@@ -505,19 +525,6 @@ function writeHomeBlock(entries) {
 }
 
 // ── сборка ───────────────────────────────────────────────────────────────────
-// Токены оформления не копируются, а вынимаются из index.html при каждой сборке:
-// три набора света × две темы живут в одном месте, и журнал не может разъехаться
-// с главной — тот же приём, что у tools/build-assets.mjs с резюме.
-function designTokens() {
-  const site = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
-  const from = site.indexOf('/* ─────────────────────────── tokens');
-  const to = site.indexOf('*,*::before,*::after{box-sizing:border-box}');
-  if (from === -1 || to === -1 || to < from)
-    die('в index.html не нашлись границы блока токенов — раскладка страницы изменилась,\n'
-      + 'поправь якоря в designTokens() внутри publish-presentation.mjs');
-  return site.slice(from, to).trim();
-}
-
 function rebuild(reg) {
   const all = reg.presentations;
   for (const p of all) {
@@ -533,8 +540,6 @@ function rebuild(reg) {
   }
 
   const listed = all.filter(p => p.status !== 'unlisted');
-  const feature = listed.find(p => p.feature) || listed[0];
-
   // Лента: всё подряд от новых к старым. Реестр и так хранится в этом порядке,
   // но сортируем ещё раз — запись могли поправить руками, а хронология здесь
   // не оформление, а сама подача.
@@ -559,16 +564,23 @@ function rebuild(reg) {
   if (rest.length) groups.push({ ru: 'Прочее', note: '', items: rest });
 
   fs.mkdirSync(DIR, { recursive: true });
+  // Обложка записи: лист-набросок, если он уже нарисован, иначе прежняя заглушка.
+  const coverOf = slug => `covers/${slug}.${fs.existsSync(path.join(COVERS, `${slug}.webp`)) ? 'webp' : 'svg'}`;
+
+  // Библиотека собирается из уже записанных выпусков: каталог вынимается из их
+  // разметки заново при каждой сборке, отдельного файла данных у неё нет.
+  const catalog = extractCatalog(ROOT);
+  fs.writeFileSync(path.join(DIR, 'library.html'),
+    libraryPage({ catalog, base: BASE, author: AUTHOR, ogImage: `${SITE}og.png` }));
+
   fs.writeFileSync(path.join(DIR, 'index.html'), journalPage({
+    library: catalog.items.length,
+    coverOf,
     entries,
     groups,
-    feature,
-    topics: TOPICS,
-    tokens: designTokens(),
     base: BASE,
     author: AUTHOR,
-    ogImage: feature && fs.existsSync(path.join(COVERS, `${feature.slug}.png`))
-      ? `${BASE}covers/${feature.slug}.png` : `${SITE}og.png`,
+    ogImage: `${SITE}og.png`,
   }));
 
   fs.writeFileSync(path.join(DIR, 'rss.xml'), rssFeed({
