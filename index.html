@@ -335,8 +335,9 @@ section{scroll-margin-top:5rem}
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
   margin-top:.35rem;font-size:.8125rem;color:var(--muted);
 }
+.jrn-links{display:flex;flex-wrap:wrap;gap:.25rem 2rem;margin:1.5rem 0 0}
 .jrn-all{
-  display:inline-flex;align-items:center;gap:.45rem;margin-top:1.5rem;
+  display:inline-flex;align-items:center;gap:.45rem;
   font-family:var(--font-mono);font-size:.75rem;letter-spacing:.05em;color:var(--muted);
   transition:color .2s ease;
 }
@@ -433,7 +434,10 @@ footer{border-top:1px solid var(--border);padding:2rem 0;margin-top:1rem}
       <h2 data-k="sec.journal"></h2><span class="rule"></span><span class="idx">04</span>
     </div>
     <div class="jrn-list" id="jrn-list"></div>
-    <a class="jrn-all reveal" id="jrn-all" href="/presentations/"></a>
+    <p class="jrn-links reveal">
+      <a class="jrn-all" id="jrn-all" href="/presentations/"></a>
+      <a class="jrn-all" id="jrn-lib" href="/presentations/library.html"></a>
+    </p>
   </section>
 
   <section id="contact" class="wrap reveal">
@@ -479,6 +483,7 @@ const T = {
   "sec.opensource": { en:"Open Source", ru:"Open Source" },
   "sec.journal":    { en:"Journal",     ru:"Журнал" },
   "journal.all":    { en:"All entries", ru:"Все записи" },
+  "journal.lib":    { en:"Library of skills and plugins", ru:"Библиотека скиллов и плагинов" },
   "contact.title":  { en:"Get in Touch", ru:"Связаться" },
   "contact.lead": {
     en:"Open to conversations about data platforms, pipeline architecture and high-load data services.",
@@ -600,6 +605,18 @@ const T = {
       source:"https://github.com/DiorditsPV/ladder",
       live:"https://ladder.paveldiordits.site/" },
 
+    { feature:true, viz:"journal",
+      name:"journal",
+      sub:{en:"Write-ups that publish themselves — and a library built from them",
+           ru:"Разборы, которые публикуются сами, — и библиотека, собранная из них"},
+      desc:{
+        en:"The journal of this site: teardowns of tools and agent practices, plus Agents Weekly, a digest a scheduled agent writes and publishes every Friday with no hand in between. One script keeps the registry and rebuilds the index and the RSS feed; covers are typeset in code from each entry's own numbers and snapped by a headless browser. Every issue is filtered for changelog noise on the way in, and the catalogue items of all issues are extracted into one library with search, topic filters and sorting. Each entry is a single self-contained HTML page with no external requests.",
+        ru:"Журнал этого сайта: разборы инструментов и агентных практик и Agents Weekly — дайджест, который агент по расписанию пишет и публикует каждую пятницу без участия человека. Один скрипт ведёт реестр и пересобирает указатель и ленту RSS; обложки набираются кодом из цифр самой записи и снимаются безголовым браузером. Каждый выпуск при публикации проходит отсев шума из журнала изменений, а позиции каталога из всех выпусков вынимаются в одну библиотеку с поиском, фильтром по темам и сортировкой. Каждая запись — одна самодостаточная html-страница без внешних запросов.",
+      },
+      tags:["Node.js","static HTML","Playwright","cron agent","RSS","GitHub Actions"],
+      source:"https://github.com/DiorditsPV/portfolio",
+      live:"https://paveldiordits.site/presentations/" },
+
     { name:"loop-feature",
       sub:{en:"One feature per branch, start to finish", ru:"Одна фича на ветку, от начала до конца"},
       desc:{
@@ -693,6 +710,9 @@ const VIZ = {
   ladder: { img:"ladder",
             alt:{en:"A ladder board: data engineering questions in columns, ranked by rungs of difficulty",
                  ru:"Доска ladder: вопросы по дата-инженерии в колонках, по ступеням сложности"} },
+  journal: { img:"journal",
+             alt:{en:"The journal index: the latest Agents Weekly issue on top, the row of earlier issues below",
+                  ru:"Указатель журнала: свежий выпуск Agents Weekly сверху, под ним ряд прежних выпусков"} },
 };
 const vizHtml = k => {
   const v = VIZ[k];
@@ -782,7 +802,8 @@ function render() {
   // к непереведённому тексту было бы обманом.
   $('#jrn-list').innerHTML = JOURNAL.map(j => `
     <a class="jrn-item reveal" href="/presentations/${esc(j.slug)}.html">
-      <img src="presentations/covers/${esc(j.slug)}.svg" alt="" loading="lazy" width="1200" height="675">
+      <img src="presentations/covers/${esc(j.slug)}.webp" alt="" loading="lazy" width="1600" height="900"
+           onerror="this.onerror=null;this.src='presentations/covers/${esc(j.slug)}.svg'">
       <span class="jrn-body">
         <span class="jrn-meta">${esc(L(j.date))} · ${esc(L(j.read))}</span>
         <span class="jrn-title">${esc(j.title)}</span>
@@ -790,6 +811,7 @@ function render() {
       </span>
     </a>`).join('');
   $('#jrn-all').innerHTML = `${esc(L(T['journal.all']))}${ICON_ARROW}`;
+  $('#jrn-lib').innerHTML = `${esc(L(T['journal.lib']))}${ICON_ARROW}`;
 
   // контакты
   const mail = $('#mail-link');

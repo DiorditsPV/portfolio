@@ -10,6 +10,8 @@ lexis-light.webp
 lexis-dark.webp
 ladder-light.webp
 ladder-dark.webp
+journal-light.webp
+journal-dark.webp
 
 # ─── holo-cards: демо github.com/DiorditsPV/holo-cards, собирается там `vite build --base=/holo-cards/` ───
 holo-cards/assets/brushed-CpdKUBXa.webp
