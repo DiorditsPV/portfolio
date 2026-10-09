@@ -8,6 +8,20 @@
   <language>ru</language>
   <managingEditor>diordic@gmail.com (Павел Диордиц)</managingEditor>
   <item>
+    <title>Неделя агентной экосистемы — 02–09.10.2026</title>
+    <link>https://paveldiordits.site/presentations/agents-weekly-2026-10-09.html</link>
+    <guid isPermaLink="true">https://paveldiordits.site/presentations/agents-weekly-2026-10-09.html</guid>
+    <pubDate>Fri, 09 Oct 2026 00:00:00 GMT</pubDate>
+    <description>Guard-hooks в Claude Code теперь можно сделать fail-closed, вышла Claude Haiku 5.5 по $0.10/$0.50, а около сорока позиций каталога — моды, которыми сообщество за неделю обжило CLI.</description>
+  </item>
+  <item>
+    <title>Неделя агентной экосистемы — 25.09–02.10.2026</title>
+    <link>https://paveldiordits.site/presentations/agents-weekly-2026-10-02.html</link>
+    <guid isPermaLink="true">https://paveldiordits.site/presentations/agents-weekly-2026-10-02.html</guid>
+    <pubDate>Fri, 02 Oct 2026 00:00:00 GMT</pubDate>
+    <description>Плагины Claude Code научились менять саму CLI: в 2.1.287 появились моды, а в каталоге около трети позиций — скиллы, где Opus 5.5 рисует и монтирует видео кодом.</description>
+  </item>
+  <item>
     <title>Неделя агентной экосистемы — 18–25.09.2026</title>
     <link>https://paveldiordits.site/presentations/agents-weekly-2026-09-25.html</link>
     <guid isPermaLink="true">https://paveldiordits.site/presentations/agents-weekly-2026-09-25.html</guid>

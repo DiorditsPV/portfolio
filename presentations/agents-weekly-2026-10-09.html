@@ -1,0 +1,1473 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Неделя агентной экосистемы — 02–09.10.2026</title>
+<meta name="description" content="Скиллы, плагины и подходы агентной разработки за 2–9 октября 2026: релизы и обсуждения, официальные изменения, каталог по звёздам.">
+<style>
+:root {
+  --page: #f4f6f8;
+  --surface: #ffffff;
+  --surface-soft: #eef2f6;
+  --ink: #111827;
+  --muted: #667085;
+  --subtle: #98a2b3;
+  --line: #dfe4ea;
+  --accent: #3157d5;
+  --accent-soft: #e9edff;
+  --accent-ink: #2849b8;
+  --success: #16794b;
+  --warning: #b54708;
+  --badge-bg: #eef2f6;
+  --badge-fg: #344054;
+  --mark: #fff2c6;
+  --shadow: 0 18px 45px rgba(16, 24, 40, .08);
+}
+
+html[data-theme="dark"] {
+  --page: #0d1117;
+  --surface: #151b23;
+  --surface-soft: #1d2632;
+  --ink: #edf1f7;
+  --muted: #a6b0c0;
+  --subtle: #7d899a;
+  --line: #2a3544;
+  --accent: #8ba3ff;
+  --accent-soft: #1d2b57;
+  --accent-ink: #b7c5ff;
+  --success: #55c795;
+  --warning: #f5a15f;
+  --badge-bg: #25303e;
+  --badge-fg: #d7deea;
+  --mark: #493b16;
+  --shadow: 0 22px 60px rgba(0, 0, 0, .32);
+}
+
+
+html[data-contrast="on"] {
+  --muted: var(--ink);
+  --subtle: var(--ink);
+  --line: currentColor;
+}
+
+* { box-sizing: border-box; margin: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--page);
+  color: var(--ink);
+  font: 14px/1.48 Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  padding-bottom: 5rem;
+  text-rendering: optimizeLegibility;
+}
+
+#progress {
+  position: fixed;
+  inset: 0 auto auto 0;
+  z-index: 100;
+  width: 0;
+  height: 3px;
+  background: var(--accent);
+}
+
+.sitebar {
+  height: 56px;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--page) 88%, transparent);
+  backdrop-filter: blur(16px);
+}
+
+.sitebar-inner {
+  width: min(1180px, calc(100% - 40px));
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.brand {
+  color: var(--ink);
+  font-weight: 760;
+  letter-spacing: -.025em;
+  text-decoration: none;
+}
+
+.brand span { color: var(--subtle); font-weight: 500; }
+.site-actions, .controls { display: flex; align-items: center; gap: 8px; }
+.back-link { color: var(--muted); font-size: .9rem; text-decoration: none; }
+.back-link:hover { color: var(--ink); }
+
+.controls button {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+}
+
+main { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+a { color: var(--accent-ink); text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent); text-underline-offset: 3px; }
+a:hover { color: var(--accent); }
+
+.masthead {
+  min-height: 280px;
+  padding: 38px 0 32px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(270px, .72fr);
+  gap: clamp(48px, 8vw, 104px);
+  align-items: end;
+}
+
+.issue-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 16px;
+  color: var(--accent-ink);
+  font-size: .85rem;
+  font-weight: 650;
+}
+
+.issue-label::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 5px var(--accent-soft);
+}
+
+h1 {
+  max-width: 840px;
+  font-size: clamp(2.45rem, 4.8vw, 4.15rem);
+  line-height: .95;
+  letter-spacing: -.065em;
+  font-weight: 760;
+}
+
+h1 .win { color: var(--accent); display: block; }
+.deck {
+  max-width: 750px;
+  margin-top: 20px;
+  color: var(--muted);
+  font-size: clamp(.96rem, 1.25vw, 1.08rem);
+  line-height: 1.5;
+}
+
+.issue-facts { border-top: 1px solid var(--line); }
+.fact {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.fact span { color: var(--muted); font-size: .88rem; }
+.fact strong { text-align: right; font-size: .9rem; }
+
+/* Закреплённая шапка: слева «Назад» (его подставляет журнал и переносит сюда скрипт),
+   оглавление и переключатели — на одном уровне. */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--page) 91%, transparent);
+  backdrop-filter: blur(18px);
+}
+.topbar-inner {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.topbar .toc { flex: 1 1 auto; min-width: 0; }
+.topbar .controls { flex: 0 0 auto; }
+
+nav.toc {
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+nav.toc::-webkit-scrollbar { display: none; }
+nav.toc a {
+  flex: none;
+  padding: 8px 12px;
+  border-radius: 9px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: .88rem;
+  font-weight: 550;
+}
+nav.toc a:hover { background: var(--surface-soft); color: var(--ink); }
+nav.toc .n {
+  margin-left: 5px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: .72rem;
+}
+
+section { scroll-margin-top: 70px; margin: 52px 0; }
+.section-kicker {
+  margin-bottom: 14px;
+  color: var(--accent-ink);
+  font-size: .78rem;
+  font-weight: 720;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+h2 {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: clamp(1.5rem, 2.6vw, 2.08rem);
+  line-height: 1.05;
+  letter-spacing: -.045em;
+}
+h2 .count {
+  color: var(--subtle);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.section-intro, .rank-note {
+  max-width: 710px;
+  margin-bottom: 24px;
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+.brief-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(280px, .7fr);
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.primary-brief {
+  position: relative;
+  overflow: hidden;
+  min-height: 250px;
+  padding: clamp(24px, 3vw, 34px);
+  border-radius: 18px;
+  background: #17213a;
+  color: #f6f8fc;
+  box-shadow: var(--shadow);
+}
+.primary-brief::after {
+  content: "";
+  position: absolute;
+  right: -90px;
+  bottom: -140px;
+  width: 380px;
+  height: 380px;
+  border: 1px solid rgba(139, 163, 255, .25);
+  border-radius: 50%;
+  box-shadow: 0 0 0 55px rgba(139, 163, 255, .06), 0 0 0 110px rgba(139, 163, 255, .035);
+}
+.primary-brief > * { position: relative; z-index: 1; }
+.primary-brief .label { color: #9fb1ff; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.primary-brief h3 { max-width: 660px; margin-top: 22px; font-size: clamp(1.85rem, 3.4vw, 3.15rem); line-height: 1.08; letter-spacing: -.035em; }
+.primary-brief h3 { margin-top: 14px; font-size: clamp(1.6rem, 2.65vw, 2.45rem); }
+.primary-brief p { max-width: 650px; margin-top: 14px; color: #bdc7d8; font-size: .97rem; }
+.primary-brief .takeaway { margin-top: 18px; color: #fff; font-weight: 650; }
+
+.metrics { display: grid; gap: 8px; }
+.metric {
+  min-height: 76px;
+  padding: 14px 18px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+}
+.metric strong { display: block; font-size: 1.5rem; line-height: 1.05; letter-spacing: -.035em; }
+.metric span { display: block; margin-top: 5px; color: var(--muted); font-size: .8rem; }
+
+.highlights {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  margin-top: 30px;
+  border-block: 1px solid var(--line);
+}
+.highlight { padding: 18px 20px 20px 0; }
+.highlight + .highlight { padding-left: 20px; border-left: 1px solid var(--line); }
+.highlight .number { color: var(--subtle); font-size: .82rem; font-weight: 700; }
+.highlight h3 { margin-top: 10px; font-size: 1.08rem; line-height: 1.25; letter-spacing: -.018em; }
+.highlight p { margin-top: 7px; color: var(--muted); font-size: .86rem; }
+.highlight a { display: inline-block; margin-top: 10px; font-size: .82rem; font-weight: 650; text-decoration: none; }
+
+.editor-picks {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border-block: 1px solid var(--line);
+}
+
+.editor-mark {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--accent-ink);
+  font-size: .7rem;
+  font-weight: 700;
+}
+
+.official-overview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 36px;
+  margin-top: 26px;
+}
+.official-overview article {
+  padding: 20px 0 22px;
+  border-block: 2px solid var(--ink);
+}
+.official-overview article + article { border-top-color: var(--accent); }
+.official-stat {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--muted);
+  font-size: .78rem;
+}
+.official-stat strong { color: var(--ink); text-align: right; }
+.official-overview h3 { margin-top: 14px; font-size: .92rem; }
+.official-overview h3 a { color: var(--ink); text-decoration: none; }
+.official-overview h3 a:hover { color: var(--accent); }
+.official-overview p { margin-top: 4px; color: var(--muted); font-size: .78rem; }
+.pick {
+  padding: 18px 20px 20px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.pick + .pick { padding-left: 20px; border-left: 1px solid var(--line); }
+.pick .kind { color: var(--accent-ink); font-size: .76rem; font-weight: 700; }
+.pick h3 { margin-top: 10px; font-size: 1.02rem; line-height: 1.25; }
+.pick p { margin-top: 7px; color: var(--muted); font-size: .84rem; }
+.pick a { display: inline-block; margin-top: 10px; font-size: .82rem; font-weight: 650; text-decoration: none; }
+
+
+.block {
+  padding: 22px 0 25px;
+  border-top: 1px solid var(--line);
+}
+.block:last-child { border-bottom: 1px solid var(--line); }
+.block h3 { margin-bottom: 12px; font-size: clamp(1.02rem, 1.6vw, 1.28rem); line-height: 1.3; letter-spacing: -.02em; }
+.block h3 .src { color: var(--subtle); font-size: .82rem; font-weight: 500; letter-spacing: 0; }
+.block p + p, .block p + ul, .block ul + p { margin-top: 12px; }
+.block ul { padding-left: 1.25rem; display: grid; gap: 7px; }
+.block li::marker { color: var(--accent); }
+.block .g { margin-top: 20px; font-size: .84rem; font-weight: 720; color: var(--ink); }
+
+.catalog-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 46px;
+  align-items: start;
+}
+.catalog-columns > section { margin: 52px 0 0; max-width: none; }
+.catalog-columns .section-intro { max-width: none; }
+
+.two-col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 46px;
+  align-items: start;
+}
+.two-col > .block { padding-top: 0; }
+/* разборы разной высоты: колоночный поток пакует их вплотную, сетка оставляла бы провалы */
+.flow-2col { columns: 2; column-gap: 46px; }
+.flow-2col > .item { break-inside: avoid; }
+.flow-2col > .item:first-child { margin-top: 0; }
+.list-2col { columns: 2; column-gap: 46px; }
+.list-2col > li { break-inside: avoid; }
+/* .block ul уже grid — многоколоночность на нём не работает, даём колонки сеткой */
+.block ul.list-2col { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 46px; }
+/* у блоков в паре нижние границы встали бы на разной высоте — разделяет верхняя линия следующего */
+.two-col > .block:last-child { border-bottom: 0; }
+
+.item {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+  padding: 17px 0 19px;
+  border-top: 1px solid var(--line);
+}
+.item:last-of-type { border-bottom: 1px solid var(--line); }
+.stars, .pts {
+  justify-self: stretch;
+  padding: 7px 8px;
+  border-radius: 8px;
+  background: var(--badge-bg);
+  color: var(--badge-fg);
+  text-align: center;
+  font-size: .82rem;
+  font-weight: 720;
+  font-variant-numeric: tabular-nums;
+}
+.stars.hot { background: var(--accent-soft); color: var(--accent-ink); }
+.pts small { display: block; color: var(--muted); font-size: .58rem; font-weight: 500; letter-spacing: .06em; }
+.item h4 { margin-bottom: 6px; font-size: .94rem; line-height: 1.32; }
+.item h4 a { color: var(--ink); text-decoration: none; }
+.item h4 a:hover { color: var(--accent); }
+.item p { color: var(--muted); font-size: .85rem; }
+.item p b { color: var(--ink); }
+.note { color: var(--muted); font-style: italic; font-weight: 400; }
+.tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: .64rem;
+  font-style: normal;
+  font-weight: 650;
+  vertical-align: .14em;
+  white-space: nowrap;
+}
+.tag.warm { color: var(--warning); }
+
+h3.tail-h { margin: 42px 0 14px; color: var(--muted); font-size: .82rem; letter-spacing: .05em; text-transform: uppercase; }
+ul.tail { list-style: none; padding: 0; border-top: 1px solid var(--line); }
+ul.tail li {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 64px minmax(150px, auto) minmax(0, 1fr);
+  gap: 14px;
+  font-size: .9rem;
+}
+ul.tail .st { color: var(--accent-ink); font-weight: 700; font-variant-numeric: tabular-nums; }
+ul.tail .st { grid-column: 1; grid-row: 1 / span 2; }
+ul.tail li > a { grid-column: 2 / span 2; grid-row: 1; }
+ul.tail .tag { grid-column: 2; grid-row: 2; justify-self: start; margin-left: 0; }
+ul.tail .desc { grid-column: 3; grid-row: 2; min-width: 0; }
+mark { padding: 1px 3px; border-radius: 3px; background: var(--mark); color: inherit; }
+
+.method-fold {
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+.method-fold > summary {
+  padding: 20px 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: var(--ink);
+  font-weight: 650;
+  cursor: pointer;
+  list-style: none;
+}
+.method-fold > summary::-webkit-details-marker { display: none; }
+.method-fold > summary::after { content: "+"; color: var(--subtle); font-size: 1.2rem; }
+.method-fold[open] > summary::after { content: "−"; }
+.method-body { padding: 8px 0 36px; }
+.method-body .block { border-top: 0; border-bottom: 1px solid var(--line); }
+
+.sources ul { padding-left: 1.2rem; display: grid; gap: 8px; word-break: break-word; }
+footer {
+  margin: 72px 0 0;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .78rem;
+}
+
+@media (max-width: 900px) {
+  .catalog-columns { grid-template-columns: 1fr; gap: 0; }
+  .two-col { grid-template-columns: 1fr; gap: 0; }
+  .flow-2col { columns: 1; }
+  .list-2col { columns: 1; }
+  .masthead { grid-template-columns: 1fr; min-height: auto; gap: 44px; padding-top: 52px; }
+  .issue-facts { max-width: 520px; }
+  .brief-grid { grid-template-columns: 1fr; }
+  .metrics { grid-template-columns: repeat(3, 1fr); }
+  .metric { min-height: auto; }
+  .official-overview { grid-template-columns: 1fr; gap: 22px; }
+  .highlight { padding: 26px 0; }
+  .highlight + .highlight { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
+}
+
+@media (max-width: 640px) {
+  body { font-size: 13.5px; }
+  main, .sitebar-inner { width: min(100% - 28px, 1180px); }
+  .sitebar { height: 56px; }
+  .back-link { display: none; }
+  .masthead { padding: 42px 0 36px; }
+  h1 { font-size: clamp(2.35rem, 13vw, 3.7rem); }
+  .deck { margin-top: 20px; }
+  .topbar-inner { width: min(100% - 28px, 1180px); }
+  section { margin: 68px 0; }
+  .brief-grid { margin-top: 24px; }
+  .primary-brief { min-height: auto; border-radius: 18px; }
+  .metrics { grid-template-columns: 1fr; }
+  ul.stories { list-style: none; padding: 0; margin-top: 12px; border-top: 1px solid var(--line); }
+ul.stories li {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 14px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: .86rem;
+  line-height: 1.45;
+}
+ul.stories .st { color: var(--accent-ink); font-weight: 720; font-size: .8rem; font-variant-numeric: tabular-nums; }
+ul.stories .desc { color: var(--muted); }
+  .item { grid-template-columns: 1fr; gap: 12px; }
+  .stars, .pts { justify-self: start; min-width: 72px; }
+  ul.tail li { grid-template-columns: 54px minmax(0, 1fr); }
+  ul.tail .st { grid-column: 1; grid-row: 1 / span 3; }
+  ul.tail li > a, ul.tail .tag, ul.tail .desc { grid-column: 2; }
+  ul.tail li > a { grid-row: 1; }
+  ul.tail .tag { grid-row: 2; }
+  ul.tail .desc { grid-row: 3; }
+}
+
+.releases-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 34px;
+  margin-top: 20px;
+}
+.release { border-top: 2px solid var(--ink); padding-top: 16px; }
+.release h3 { font-size: 1rem; letter-spacing: -.015em; }
+.release h3 .src { color: var(--muted); font-weight: 500; font-size: .8rem; }
+.release ul { margin-top: 11px; padding-left: 0; list-style: none; display: grid; gap: 7px; }
+.release li { padding-left: 14px; position: relative; font-size: .83rem; line-height: 1.45; color: var(--muted); }
+.release li::before { content: "\2014"; position: absolute; left: 0; color: var(--subtle); }
+.release > p { margin-top: 12px; font-size: .84rem; line-height: 1.5; color: var(--muted); }
+.release .method-fold { margin-top: 10px; }
+ul.stories { list-style: none; padding: 0; margin-top: 12px; border-top: 1px solid var(--line); }
+ul.stories li {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 14px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: .86rem;
+  line-height: 1.45;
+}
+ul.stories .st { color: var(--accent-ink); font-weight: 720; font-size: .8rem; font-variant-numeric: tabular-nums; }
+ul.stories .desc { color: var(--muted); }
+footer .signal, footer .collect { margin-bottom: 14px; line-height: 1.55; }
+footer .signal { color: var(--ink); }
+
+@media (max-width: 900px) {
+  .releases-grid { grid-template-columns: 1fr; gap: 26px; }
+}
+
+</style>
+<!--general:head-->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://paveldiordits.site/presentations/agents-weekly-2026-10-09.html">
+<meta property="og:site_name" content="Журнал · paveldiordits.site">
+<meta property="og:title" content="Неделя агентной экосистемы — 02–09.10.2026">
+<meta property="og:description" content="Guard-hooks в Claude Code теперь можно сделать fail-closed, вышла Claude Haiku 5.5 по $0.10/$0.50, а около сорока позиций каталога — моды, которыми сообщество за неделю обжило CLI.">
+<meta property="og:image" content="https://paveldiordits.site/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Неделя агентной экосистемы — 02–09.10.2026">
+<meta name="twitter:description" content="Guard-hooks в Claude Code теперь можно сделать fail-closed, вышла Claude Haiku 5.5 по $0.10/$0.50, а около сорока позиций каталога — моды, которыми сообщество за неделю обжило CLI.">
+<meta name="twitter:image" content="https://paveldiordits.site/og.png">
+<link rel="canonical" href="https://paveldiordits.site/presentations/agents-weekly-2026-10-09.html">
+<link rel="alternate" type="application/rss+xml" title="Журнал — разборы Павла Диордица" href="https://paveldiordits.site/presentations/rss.xml">
+<style>
+#contrastBtn,#btn-contrast,#ct,#hc,#hcBtn,
+button[title*="онтраст"],button[aria-label*="онтраст"]{display:none!important}
+</style>
+<script>
+(function(){
+  var r=document.documentElement;
+  function off(){
+    if(r.hasAttribute('data-contrast')) r.removeAttribute('data-contrast');
+    if(r.classList.contains('hc')) r.classList.remove('hc');
+  }
+  off();
+  // Наблюдатель, а не разовый вызов: собственный скрипт страницы поднимает режим
+  // из localStorage позже, уже после этой вставки, — снимаем сразу же, до отрисовки.
+  new MutationObserver(off).observe(r,{attributes:true,attributeFilter:['data-contrast','class']});
+  // Кнопки будущих разборов с неизвестным id: прячем по подписи, не удаляя узел.
+  addEventListener('DOMContentLoaded',function(){
+    [].forEach.call(document.querySelectorAll('button'),function(b){
+      if(/контраст/i.test(b.textContent||'')) b.style.display='none';
+    });
+  });
+})();
+</script>
+<!--/general:head-->
+</head><body>
+<!--general:top-->
+<div class="gnrl-upwrap"><a class="gnrl-up" id="gnrl-up" href="https://paveldiordits.site/presentations/">← Назад</a></div>
+<!--/general:top-->
+<div id="progress" aria-hidden="true"></div>
+<header class="topbar">
+  <div class="topbar-inner">
+  <nav class="toc" aria-label="Разделы">
+    <a href="#releases">Релизы и обсуждения</a>
+    <a href="#official">Официальное</a>
+    <a href="#skills">Скиллы<span class="n">30</span></a>
+    <a href="#plugins">Плагины<span class="n">45</span></a>
+    <a href="#arts">Исследования<span class="n">13</span></a>
+    <a href="#sources">Источники</a>
+  </nav>
+  <div class="controls">
+    <button id="themeBtn" aria-pressed="false" aria-label="Переключить тему" title="Тема">◐</button>
+    <button id="contrastBtn" aria-pressed="false" aria-label="Повысить контраст" title="Контраст">◩</button>
+  </div>
+  </div>
+</header>
+<main>
+<header class="masthead">
+  <div>
+    <p class="issue-label">Agent Briefing · выпуск 08</p>
+    <h1>Скиллы и плагины <span class="win">недели</span></h1>
+    <p class="deck">Guard-hooks в Claude Code теперь можно сделать fail-closed, вышла Claude Haiku 5.5 по $0.10/$0.50, а около сорока позиций каталога — моды, которыми сообщество за неделю обжило CLI.</p>
+  </div>
+  <div class="issue-facts" aria-label="Параметры выпуска">
+    <div class="fact"><span>Период</span><strong>2 – 9 октября</strong></div>
+    <div class="fact"><span>Прошли отбор</span><strong>176 репозиториев</strong></div>
+    <div class="fact"><span>Скиллы ★30+</span><strong>30</strong></div>
+    <div class="fact"><span>Плагины ★30+</span><strong>45</strong></div>
+  </div>
+</header>
+
+<section id="releases">
+  <p class="section-kicker">Что вышло и что обсуждали</p>
+  <h2>Релизы и обсуждения</h2>
+  <p class="section-intro">Версии платформы за окно и сюжеты, вокруг которых шёл разговор. Каталог находок — в разделах ниже.</p>
+
+  <div class="releases-grid">
+    <article class="release">
+      <h3><a href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md">Claude Code 2.1.288 → 2.1.295</a> <span class="src">— 8 релизов</span></h3>
+      <ul>
+        <li><mark><code>onFailure: "block"</code> для hooks</mark> (2.1.295) — command- или HTTP-hook, который не стартовал, вышел по таймауту или завершился неожиданным кодом, теперь может блокировать действие, а не пропускать его. Тем, кто держит на hooks защитные проверки, стоит включить. Заодно в 2.1.294 исправлены <code>prompt</code>- и <code>agent</code>-hooks, записанные инструкцией («Block commands that…»): они пропускали то, что должны были блокировать.</li>
+        <li><mark>Параметр <code>effort</code> у Agent tool</mark> (2.1.292) — Claude запускает субагента на том уровне рассуждения, о котором его попросили. В 2.1.295 субагент заранее подгружает не больше 32 скиллов из поля <code>skills</code>; остальные доступны через Skill tool.</li>
+        <li><mark>Моды получили новые события и вызовы</mark> (2.1.288–2.1.295) — <code>prompt.autocomplete</code> добавляет свои строки в автодополнение, <code>$.model.complete</code> принимает блоки с <code>cache: true</code>, <code>agent.spawn</code> видит агентов воркфлоу и может им отказать, <code>tool.check</code> получает <code>agentId</code> и требуемый организацией уровень одобрения (<code>ceiling</code>). Исправлено опасное: глубоко вложенный вход инструмента приходил в hook мода обрезанным без ошибки, и guard мог пропустить содержимое, которого не видел.</li>
+        <li><mark><code>claude plugin install --marketplace &lt;source&gt;</code></mark> (2.1.292) — добавляет маркетплейс, если его нет, под теми же проверками политики, и ставит плагин одной командой. <code>claude plugin validate</code> перечисляет hooks мода на «запирающих» точках и показывает, есть ли у каждого <code>.catch</code> (2.1.290).</li>
+        <li><mark>Auto mode на длинных сессиях</mark> (2.1.288) — когда разговор не помещается в клиентский классификатор безопасности, он сжимается, а не превращается в запрос разрешения на каждый вызов. Бюджет WebSearch в интерактивной сессии теперь пополняется — 100 вызовов в час — вместо обрыва после 200 (2.1.290).</li>
+      </ul>
+      <details class="method-fold"><summary>Остальные изменения CLI</summary><div class="method-body">
+      <h3 class="tail-h">Безопасность и разрешения</h3>
+      <ul>
+        <li>Проектные настройки больше не могут включить Claude in Chrome и выставить <code>CLAUDE_CODE_DISABLE_ATTACHMENTS</code> — только пользовательские, shell и managed (2.1.290).</li>
+        <li><code>pyright</code> перестал считаться командой только для чтения, больше форм <code>ps</code> требуют одобрения (2.1.290); скиллы и пользовательские команды отвергают <code>!</code>-команду с сырыми управляющими символами (2.1.290).</li>
+        <li>Теги <code>&lt;system-reminder&gt;</code> в выводе hook экранируются до того, как попадут к Claude (2.1.292); <code>--tools</code> и <code>--restricted</code> действуют и на встроенные инструменты, которые регистрируются после запуска (2.1.295).</li>
+        <li>Предупреждения: managed-настройки, ведущие ссылкой за пределы своей папки; managed-настройки, которые игнорируют пользовательские пути и домены песочницы (2.1.290); маркетплейс в настройках с именем, похожим на официальный (2.1.292).</li>
+        <li>Артефакты закрепляют библиотеки на точных версиях возрастом от двух недель (2.1.293).</li>
+      </ul>
+      <h3 class="tail-h">Субагенты, фон и воркфлоу</h3>
+      <ul>
+        <li>Исправлено: после сжатия контекста Claude иногда считал свои последние действия невыполненными и переделывал или откатывал готовую работу (2.1.293).</li>
+        <li>Лимит времени фоновой команды действует только в сессиях без человека (<code>-p</code>, Agent SDK, CI, облако); в терминале, desktop и VS Code лимита нет (2.1.288).</li>
+        <li>Фоновые сессии, ждущие пробуждения <code>/loop</code>, переживают обновления и нехватку памяти (2.1.290); <code>claude attach &lt;name&gt;</code> и <code>claude logs &lt;name&gt;</code> принимают часть имени сессии (2.1.290).</li>
+        <li>Субагент в собственном worktree больше не видит ветку, статус и commit'ы родительской сессии; результат форкнутого скилла из субагента воркфлоу возвращается вызвавшему агенту, а не в главный разговор (2.1.295).</li>
+        <li><code>/code-review --max-findings &lt;n&gt;|all</code> (2.1.288); на среднем effort ревью сообщает и о находках по уборке и соглашениям CLAUDE.md, включая Opus 5.5 и Sonnet 5.5 (2.1.290).</li>
+      </ul>
+      <h3 class="tail-h">MCP и контекст</h3>
+      <ul>
+        <li>Локальные stdio-серверы и коннекторы claude.ai по умолчанию согласуют версию протокола MCP 2026-07-28; <code>MCP_PROTOCOL_NEGOTIATION=legacy</code> возвращает прежнее поведение (2.1.292, 2.1.295).</li>
+        <li>Описания MCP-инструментов, подгружаемые через tool search, режутся на 16 384 символах вместо 2 048 (2.1.295); когда сервер во время вызова просит больший OAuth scope, CLI предлагает переавторизоваться (2.1.288).</li>
+        <li><code>/autocompact</code> хранит окно автосжатия отдельно для каждой модели (2.1.288); первый ход <code>claude -p</code> и SDK не ждёт ответа HTTP- и SSE-серверов на <code>resources/list</code> (2.1.292).</li>
+      </ul>
+      <h3 class="tail-h">Скиллы и плагины</h3>
+      <ul>
+        <li>Исправлено: <code>allowed-tools</code> и <code>effort</code> скилла терялись, если Skill tool завершался раньше потока ответа, — в <code>-p</code> это отклоняло Bash-команды скилла (2.1.295).</li>
+        <li><code>claude plugin test</code> проваливает тест, если <code>expect</code> внутри зарегистрированного тестом hook не выполнился (2.1.292); <code>claude plugin validate</code> подсказывает строку установки для README (2.1.295).</li>
+        <li>Имена агентов — не длиннее 256 символов; более длинное <code>name</code> скилла или файла плагина игнорируется (2.1.292). Синхронизация скиллов claude.ai в простое — раз в 40 минут вместо 10 (2.1.293).</li>
+        <li><code>claude project purge</code> переименована в <code>claude purge</code> (2.1.288); терминалы с Program Status Protocol (OSC 7501) показывают, работает Claude Code, ждёт вас или закончил (2.1.295).</li>
+      </ul>
+      </div></details>
+    </article>
+    <article class="release">
+      <h3>Модели <span class="src">— Claude Haiku 5.5, GPT-6 Luna и Mistral Large 4</span></h3>
+      <p><b><a href="https://www.anthropic.com/claude-haiku-5-5">Claude Haiku 5.5</a></b> (07.10) — $0.10 / $0.50 за Mtok до 100 тыс. токенов промпта и $0.50 / $2.50 выше; чтение кэша $0.01. Первая Haiku с настраиваемым effort; рассуждение, по наблюдению Саймона Уиллисона, отключить нельзя. По данным Anthropic: Terminal-Bench 4.0 — 39,2% (GPT-6 Luna 16,4%, Sonnet 5.5 70,6%), OSWorld 2.1 — 72,4%; в среднем на 75% дешевле Haiku 4.5. Новый токенизатор: тот же длинный промпт у Уиллисона занял примерно в 1,25 раза больше токенов (<a href="https://simonwillison.net/2026/Oct/7/claude-haiku-5-5/">пост</a>). Anthropic позиционирует модель как субагента при Opus 5.5 и Sonnet 5.5; в Claude Code она стала Haiku по умолчанию с контекстом 1M (2.1.293).</p>
+      <p>Вместе с ней: чтение кэша Sonnet 5.5 подешевело вдвое, до $0.10 за Mtok; подписчики Max и Team получают ежемесячные API-кредиты ($100 для Max 5x, $200 для Max 20x, до $500 общих на Team, без переноса); автопополнение баланса можно выключить, и тогда запросы остановятся на нуле.</p>
+      <p><b><a href="https://openai.com/index/gpt-6-for-everyone/">GPT-6 для всех</a></b> (OpenAI, 07.10) — страница анонса не открылась. По пересказу Уиллисона, младшая GPT-6 Luna стоит те же $0.10 / $0.50, но цена растёт только с 272 тыс. токенов (до $0.20 / $0.75). На ней же работает <a href="https://developers.openai.com/api/docs/guides/decisions">Decisions API</a> в публичной бете: типизированный ответ — вероятность, выбор из вариантов или оценка по рубрике — за $0.10 за Mtok входа, без платы за выход; по заявлению OpenAI, примерно в 10 раз быстрее Responses API.</p>
+      <p><b><a href="https://simonwillison.net/2026/Oct/6/le-chonk/">Mistral Large 4</a></b> (превью, 06.10; по пересказу Уиллисона) — 1 трлн параметров, 49 млрд активных, доступна через API, открытые веса обещаны к концу месяца; 38 баллов на Artificial Analysis.</p>
+    </article>
+  </div>
+
+  <h3 class="tail-h">Сюжеты недели</h3>
+  <ul class="stories">
+    <li><span class="st">1325</span><span><a href="https://news.ycombinator.com/item?id=49984923">Sharing AI progress in mathematics (OpenAI)</a> — <span class="desc">OpenAI выложила репозиторий с сотнями машинно полученных математических рукописей и через день отозвала три из них; разбор — ниже, в «Исследованиях».</span></span></li>
+    <li><span class="st">834</span><span><a href="https://news.ycombinator.com/item?id=49961057">Anthropic reported diary entry to police, woman faces felony charge</a> — <span class="desc">по заголовку: Anthropic сообщила в полицию о записи в дневнике, который пользовательница вела в Claude; саму статью открыть не удалось.</span></span></li>
+    <li><span class="st">491</span><span><a href="https://news.ycombinator.com/item?id=49970667">Opus 5.5 agents discover two room-temperature magnetic semiconductor candidates</a> — <span class="desc">команда агентов на Opus 5.5 нашла расчётом двух кандидатов в магнитные полупроводники; разбор — ниже.</span></span></li>
+    <li><span class="st">389</span><span><a href="https://news.ycombinator.com/item?id=49984025">Decisions API is in public beta</a> — <span class="desc">OpenAI открыла API типизированных решений на GPT-6 Luna; цены — в блоке «Модели», независимый замер таких моделей — в «Исследованиях».</span></span></li>
+    <li><span class="st">383</span><span><a href="https://news.ycombinator.com/item?id=49945933">Agents don't need memory, they need documentation</a> — <span class="desc">спор о памяти агентов: вместо векторного хранилища — документация, которую агент сам читает и переписывает; разбор — ниже.</span></span></li>
+  </ul>
+  <p class="rank-note">Разборы — в «Исследованиях и наблюдениях» в конце выпуска.</p>
+</section>
+
+<section id="official">
+  <p class="section-kicker">От разработчиков платформы</p>
+  <h2>Официальные скиллы и плагины</h2>
+  <p class="section-intro">Изменения официальных каталогов за окно: что добавилось в <code>anthropics/skills</code> и в маркетплейс плагинов. Релизы CLI — в начале выпуска.</p>
+  <div class="two-col">
+  <div class="block">
+    <h3>anthropics/skills <span class="src">— claude-api разворачивает Managed Agents по имени шаблона или по ссылке</span></h3>
+    <p>В <a href="https://github.com/anthropics/skills/tree/main/skills/claude-api"><mark>claude-api</mark></a> (<a href="https://github.com/anthropics/skills/commit/683bc88e">изменение от 05.10</a>) режим <code>managed-agents-onboard</code> получил два входа. По имени — <code>/claude-api managed-agents-onboard deep-researcher</code> — скилл собирает через CLI <code>ant</code> один из девяти шаблонов Console: contract-tracker, data-analyst, deep-researcher, field-monitor, incident-commander, sprint-retro-facilitator, structured-extractor, support-agent, support-to-eng-escalator. По URL — читает страницу с описанием паттерна Managed Agents и раскладывает его в файлы для <code>ant apply</code>.</p>
+    <p>Примеры Managed Agents в скилле теперь выключают веб-инструменты, пока они агенту не нужны, и используют политику разрешений <code>auto</code> (по changelog Claude Code 2.1.290).</p>
+  </div>
+  <div class="block">
+    <h3>claude-plugins-official <span class="src">— security-guidance перестал отставать от моделей</span></h3>
+    <ul>
+      <li><a href="https://github.com/anthropics/claude-plugins-official/commit/01f8be9b"><mark>security-guidance</mark></a> (02.10) — модель ревью больше не прибита к <code>claude-opus-4-7</code>: плагин спрашивает у настроенного endpoint самый новый Opus (ответ кэшируется на сутки, запасной вариант — <code>claude-opus-5-5</code>), а агентное ревью commit'ов и все ревью на Bedrock, Vertex и Foundry идут через алиас <code>opus</code>. <code>SECURITY_REVIEW_MODEL</code> и <code>SG_AGENTIC_MODEL</code> по-прежнему закрепляют модель.</li>
+      <li><a href="https://github.com/anthropics/claude-plugins-official/commit/a22217bb">security-guidance</a> (05–07.10) — не оставляет временных копий индекса в каталоге git, когда git или hook убиты посреди работы, и убирает stash-индексы, оставленные прежними версиями.</li>
+      <li><a href="https://github.com/anthropics/claude-plugins-official/commit/0baf7d19">receipts</a> (08.10) — при сверке commit'ов опрашивает все клоны репозитория и прямо сообщает, что git недоступен, если клон вернул ошибку, а commit'ов не нашлось ни в одном.</li>
+      <li>Фоном — обновления партнёрских плагинов: aws-core, aws-agents, aws-data-analytics, incident-io, figma, salesforce-development.</li>
+    </ul>
+  </div>
+  </div>
+
+  <div class="block">
+    <h3>Anthropic за неделю <span class="src">— исследования, отчёты, платформа</span></h3>
+    <ul class="list-2col">
+      <li><a href="https://www.anthropic.com/claude-haiku-5-5">Introducing Claude Haiku 5.5</a> (07.10) — цены и замеры в блоке «Модели».</li>
+      <li><a href="https://www.anthropic.com/news/2026-usage-policy-update">2026 Usage Policy update</a> (08.10) — действует с 12 ноября: оборудование, которым Claude управляет автономно и которое может травмировать, обязано иметь оператора с возможностью остановки и безопасное состояние при обрыве связи; Claude нельзя поручать решение, кого расследовать, арестовывать или обвинять; запрещена «длительная и бессмысленная жестокость» к моделям — Claude может завершить такой разговор в Claude.ai и Claude Code.</li>
+      <li><a href="https://www.anthropic.com/news/cyber-verification-program">Expanding the Cyber Verification Program</a> (06.10) — три уровня доступа для проверенных специалистов по безопасности с ослабленными блокирующими классификаторами; у общедоступных моделей киберзащита остаётся консервативной и блокирует большую часть такой работы.</li>
+      <li><a href="https://www.anthropic.com/news/claude-frontier-academy">Anthropic invests $100 million to train 10,000 engineers</a> (02.10) — программа обучения инженеров под корпоративное внедрение.</li>
+      <li><a href="https://claude.com/resources/articles/how-block-orchestrates-claude-fable-across-thousands-of-pull-requests">How Block orchestrates Claude Fable across thousands of pull requests</a> (08.10) — разбор ниже, в «Исследованиях».</li>
+      <li><a href="https://claude.dev/blog/claude-code-in-the-cloud/">Claude Code in the cloud: a field guide to cloud sessions</a> (06.10) — разбор ниже.</li>
+      <li><a href="https://claude.dev/blog/automating-eval-design-and-hillclimbing/">Automating eval design and hillclimbing with Claude</a> (в блоге с 07.10) — разбор ниже.</li>
+      <li><a href="https://simonwillison.net/2026/Oct/5/felix-rieseberg/">Новый Cowork</a> (05.10, цитата Феликса Ризеберга у Уиллисона) — и вывод модели, и виртуальная машина переехали в облако: у каждой сессии своя песочница, а доступ к файлам на устройстве остаётся вызовом инструмента в desktop-приложении. Работа не останавливается, когда закрыт ноутбук.</li>
+    </ul>
+  </div>
+</section>
+
+<div class="catalog-columns">
+<section id="skills">
+  <p class="section-kicker">Новые практики</p>
+  <h2>Скиллы <span class="count">10 из 30 · ★30+</span></h2>
+  <p class="section-intro">Что появилось за окно: сам скилл, его метод и чем он проверяет свою работу.</p>
+
+  <div class="item"><span class="stars hot">★ 2388</span><div>
+    <h4><a href="https://github.com/QingYunA/answer-me-with-html">QingYunA/answer-me-with-html</a><span class="tag">объяснения</span></h4>
+    <p>Отвечает на сложные вопросы одностраничным HTML: модель пишет только черновик в Markdown, а SVG-диаграммы, CSS и разметку дорисовывает входящий в скилл CLI. По данным автора, это около 1/8 токенов от написания HTML вручную и примерно в 2.6 раза быстрее; цифры воспроизводятся скриптом bench. Работает офлайн, нужен Node.js 20+, ставится плагином или через npx skills. Есть режим always-on, добавляющий страницу к каждому выводу.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 1153</span><div>
+    <h4><a href="https://github.com/Jakeschincariol/replica-skill">Jakeschincariol/replica-skill</a><span class="tag">клонирование</span></h4>
+    <p>Одиннадцать скиллов, клонирующих приложение по шагам: recon разбирает чужой продукт по публичным страницам и скриншотам, architect/design/build/backend воссоздают его, test гоняет Playwright-сценарии, diff считает parity-оценку, entrepreneur вытягивает жалобы пользователей из отзывов. Автор подчёркивает clean-room: копируются функции и потоки, не код, логотип и контент, а sweep.py ищет остатки оригинала. Инструменты — стандартная библиотека Python, сети не касаются.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 662</span><div>
+    <h4><a href="https://github.com/ythx-101/live-panel-skill">ythx-101/live-panel-skill</a><span class="tag">диаграммы</span></h4>
+    <p>Превращает один JSON в анимированную архитектурную диаграмму в терминальном стиле или светлую движущуюся инфографику: пакеты бегут по проводам, лог прокручивается, счётчики и бары меняют состояние. Выдаёт H.264 mp4 или живую веб-страницу, работает и как скилл с SKILL.md. Всё детерминировано (каждый кадр — чистая функция времени), check_frames.py проверяет переполнение текста и повторяемость кадров. Нужны Python, Chrome/Chromium, ffmpeg; Windows только через WSL.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 251</span><div>
+    <h4><a href="https://github.com/heise3/academic-deai">heise3/academic-deai</a><span class="tag">редактура</span></h4>
+    <p>Редактирует академические тексты на китайском и английском: убирает шаблонные зачины, повторяющиеся концовки и механические абзацы, сохраняя факты, числа, цитаты, термины и силу утверждений. Модель-независимый, ставится на Claude Code, Codex, Cursor, Gemini CLI, OpenCode. Опциональные Python-скрипты (3.10+) сверяют инвариантность смысла — content_lock.py сопоставляет утверждения до и после. Автор оговаривает: примеры синтетические, независимого слепого оценивания и детектор-метрик нет.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 233</span><div>
+    <h4><a href="https://github.com/cth9191/animate">cth9191/animate</a><span class="tag">анимация</span></h4>
+    <p>Делает короткие анимированные видео целиком в коде: один canvas, рисуется и озвучивается процедурно, детерминированно по кадрам, рендер через headless-браузер и ffmpeg. Семь встроенных стилей (вырезанная бумага, штриховка, ризограф и др.) или новый стиль, снятый с ваших референсов; одобрение сюжета, стиля и раскадровки до рендера. Проверяет себя измерениями: попадание склеек в бит, привязка героя, тишина перед кульминацией, темп озвучки. Нужны Claude Code, Node 18+, Playwright с Chromium, ffmpeg.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 155</span><div>
+    <h4><a href="https://github.com/Jakeschincariol/founder-skill">Jakeschincariol/founder-skill</a><span class="tag">бизнес</span></h4>
+    <p>Одиннадцать скиллов, проверяющих бизнес до запуска: совет директоров из трёх субагентов по фреймворкам Хормози, Тиля и Джобса; директор по маркетингу; CFO с юнит-экономикой; и панель из 100 покупательских агентов, прогоняющая идею по сценариям. Запускаются по порядку, каждый читает файлы предыдущего в папке founder/. Вердикт в итоговом плане вычисляется из чисел, а не пишется. Четыре инструмента — стандартная библиотека Python, сети не касаются.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 146</span><div>
+    <h4><a href="https://github.com/xamjiang/handout-remake">xamjiang/handout-remake</a><span class="tag">конспекты</span></h4>
+    <p>Скилл для Claude и Codex, превращающий лекционные слайды, PDF или заметки в тёмные конспекты под 11-дюймовый iPad: заново объясняет тему от бытового примера к определению, схеме, формуле и разобранному примеру, добавляет страницы для рукописных ответов и собирает полностью векторный PDF. При сборке проверяет, не вылезает ли контент за страницу, и пересчитывает числа в примерах. Вывод — традиционный китайский. Для PDF нужны Node.js и headless-браузер; на Claude.ai/Cowork — облачная песочница.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 143</span><div>
+    <h4><a href="https://github.com/uzairansaruzi/p3-stack">uzairansaruzi/p3-stack</a><span class="tag">оркестрация</span></h4>
+    <p>pstack от poteto, переписанный под примитивы T3 Code: одна mode-скилл маршрутизирует задачу по плейбукам (баг, перф, фича, рефакторинг, релиз), а дисциплина опирается на делегирование дочерним агентам, worktree-потоки с одним писателем на ветку, watch_pull_request вместо опроса и schedule_task вместо /loop. Около двух десятков скиллов и двадцать четыре принципа. install.sh линкует skills/* в ~/.agents/skills.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 143</span><div>
+    <h4><a href="https://github.com/dualface/ste-zh">dualface/ste-zh</a><span class="tag">отчёты</span></h4>
+    <p>Задаёт стиль, которым агент отчитывается пользователю по-китайски, по мотивам ASD-STE100 (Simplified Technical English): вывод начинается с результата, статусы фиксированные (выполнено / частично / не проверено / заблокировано), каждое изменение помечено, проверено оно или нет, развилки оформляются нумерованными опциями. На код, комментарии и коммиты не влияет. Держится только на следовании инструкции в контексте — после compaction стиль может деградировать, нужно повторить /ste.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 131</span><div>
+    <h4><a href="https://github.com/atmirrr/persian-motion-director">atmirrr/persian-motion-director</a><span class="tag">типографика</span></h4>
+    <p>Учит Claude делать профессиональный моушн-дизайн с правильной персидской (фарси) типографикой: не слайдшоу и без распадающихся букв. Восемь рабочих техник (одна камера без склеек, склейка по биту, точки-последними, кашида вместо разрядки), каждая — чистая функция времени на JS, одинаково идёт в браузере и во frame-exact Remotion. Инструменты на HarfBuzz для анимации по буквам и точкам, линтер персидского текста и кода (ي/ك, цифры, полупробелы).</p>
+  </div></div>
+
+  <details class="method-fold"><summary>Показать остальные 20 позиций и 46 строк ★ 10–30</summary><div class="method-body">
+  <div class="item"><span class="stars">★ 126</span><div>
+    <h4><a href="https://github.com/orange2ai/podcast-to-article">orange2ai/podcast-to-article</a><span class="tag">письмо</span></h4>
+    <p>Превращает расшифровку подкаста (многоголосый или интервью, китайский и английский) в готовую к публикации статью: меняет ось с «говорящий+время» на «тема+суждение», убирает леса «сказал X», но сохраняет гранулярность фактов и живую речь в прямых цитатах. Семь шагов от чистки субтитров до самопроверки; check_style.py считает попадания AI-признаков и сверяет с человеческим эталоном (доля прямых цитат 10–28%). По данным автора, пример ужался на 35%. Чистый Python 3, SRT/VTT/md.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 124</span><div>
+    <h4><a href="https://github.com/MrBongoC/ai-iso-skill">MrBongoC/ai-iso-skill</a><span class="tag">изометрия</span></h4>
+    <p>Рисует интерактивные изометрические фигуры одним HTML-файлом: назови предмет — получишь штриховой изометрический рисунок на пронумерованной табличке с рабочими частями. Фигуры — чистый SVG без библиотек: около 15 строк проекции превращают каждую грань в SVG matrix(), порядок отрисовки задаёт глубину, одно состояние и render() ведут взаимодействие. Перед рисованием скилл решает, что даёт нажатие части (текст, число, нота); если нажимать нечего — берёт другой предмет.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 111</span><div>
+    <h4><a href="https://github.com/fatihaydost/brand-identity-skill">fatihaydost/brand-identity-skill</a><span class="tag">бренд</span></h4>
+    <p>Проектирует фирменный стиль как единую систему: логотип, типографика и палитра выводятся из одного механизма, даётся три-четыре варианта карточками для сравнения. Решения измеряются, а не декларируются: контраст (WCAG 2 и APCA), симуляция дальтонизма, покрытие глифов под языки бренда, лицензии шрифтов, логотип в 16 и 32 px — провал метрики это гейт. На выходе kit гайдлайнов: 8-страничный PDF, файлы логотипа (SVG/PNG), дизайн-токены (CSS, SCSS, Tailwind, DTCG). Нужны Python 3.10+, Chromium, желательно uv.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 109</span><div>
+    <h4><a href="https://github.com/unclejobs-ai/motion-video-skill">unclejobs-ai/motion-video-skill</a><span class="tag">видео</span></h4>
+    <p>Скилл в формате Agent Skills на моушн-графику и видео 30–90 с по шести этапам с гейтами: harness/gate.py измеряет каждый результат и выдаёт вердикт кодом возврата (длина, число кадров, совпадение стартового кадра, сетка битов, лауднес, true peak), а то, что видно только глазом, требует записанного отчёта о просмотре кадровой полосы. Отдельно — 29 типичных ловушек с профилактикой. Код композиций Remotion в репозиторий не входит.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 106</span><div>
+    <h4><a href="https://github.com/THUROI0787/absent-author">THUROI0787/absent-author</a><span class="tag">наука</span></h4>
+    <p>Список признаков и два скилла для распознавания научных статей, которые целиком произвёл ИИ без человека за ними. EVIDENCE.md — 83 источниковых признака; paper-author-pass помогает автору (карта утверждение-доказательство, проверка ссылок и чисел); paper-slop-screen даёт рецензенту оценки W/R/Q, квадрант и находки с цитатой и местом. slop_lint.py (Python 3.9+, без зависимостей) считает 28 поверхностных следов, откалиброванных на 79 статьях, и выдаёт кандидатов для человека, не вердикты.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 89</span><div>
+    <h4><a href="https://github.com/Tejashmakwana/motionmaxxing">Tejashmakwana/motionmaxxing</a><span class="tag">видео</span></h4>
+    <p>Скилл для моушн-графики: по URL сайта снимает бренд, выбирает одну идею, пишет STORYBOARD.md и собирает ролик из HTML поверх GSAP с локальным рендером через Chrome и ffmpeg. Тайминги взяты из покадрового разбора 53 профессиональных фрагментов (по данным автора). Результат проверяют скрипты: look.py ищет пустые кадры и затянутую концовку, lint.mjs ловит «слайдовые» приметы вроде угловых подписей и счётчиков; два гейта из шести оцениваются глазами, и агент обязан это оговорить. Озвучка и музыка требуют ключ ElevenLabs.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 74</span><div>
+    <h4><a href="https://github.com/EGSECDA/vocaloid-style-mv-pipeline">EGSECDA/vocaloid-style-mv-pipeline</a><span class="tag">видео</span></h4>
+    <p>Скилл и шаблон проекта для лирик-видео в жанре Vocaloid-style «手書き»: агент получает песню и текст, анализирует ритм через librosa, предлагает концепцию, генерирует персонажа и собирает клип. Каждый кадр — чистая функция времени песни: Canvas2D и WebGL2 в headless-браузере, захват через Playwright, кодирование ffmpeg, поэтому рендер воспроизводим и параллелится. Проверка — стоп-кадры и contact sheets, которые агент просматривает и правит за два-три прохода. Полный 1080p-клип на RTX 3080 рендерится около 4 минут, по данным автора.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 66</span><div>
+    <h4><a href="https://github.com/Miftahul-Islam-Efaz/Motion-graphics-skill">Miftahul-Islam-Efaz/Motion-graphics-skill</a><span class="tag">видео</span></h4>
+    <p>Скилл Motion Video Director: агент ведёт производство ролика по фиксированному процессу — бриф, сценарий озвучки под ElevenLabs, раскадровка по таймингам слов, анимация кодом (Canvas, SVG, Three.js, GSAP), монтаж присланного материала, звук с нормализацией до −14 LUFS и рендер через headless Chrome и ffmpeg. Перед полным рендером собирает contact sheets по сценам, а пользователь утверждает сценарий, план и превью. Прогресс пишется в PROGRESS.md, чтобы новая сессия продолжила с того же места. Нужны Node.js 18+, ffmpeg и Playwright.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 64</span><div>
+    <h4><a href="https://github.com/xianyu110/ecommerce-image-skills">xianyu110/ecommerce-image-skills</a><span class="tag">e-commerce</span></h4>
+    <p>Двенадцать скиллов для товарных изображений маркетплейсов: белый фон для Amazon, сцены, инфографика, A+ модули, размерные сетки, примерка на модели, баннеры, обложки Xiaohongshu. Каждый сначала фиксирует форму, цвет, логотип и текст товара и переносит этот блок во все промпты. Детерминированные шаги вынесены в скрипты: проверка и исправление белого фона и доли товара в кадре, нарезка, склейка, пакетная замена фона с возобновлением и лимитом вызовов. Генерация — встроенным инструментом агента или через OpenAI-совместимый ключ к GPT Image 2.5.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 59</span><div>
+    <h4><a href="https://github.com/xianyu110/ecommerce-video-skills">xianyu110/ecommerce-video-skills</a><span class="tag">e-commerce</span></h4>
+    <p>Тринадцать скиллов для коротких товарных видео под Douyin, TikTok Shop, Xiaohongshu, Taobao и Amazon: хук на первые три секунды, разбор и пересборка вирусного ролика, раскадровка, промпты для image-to-video, озвучка, субтитры, экспорт под площадки. Финальный ролик собирается локально из storyboard.json скриптами на Python и ffmpeg: озвучка edge-tts, переходы, субтитры ASS, фоновая музыка с приглушением под голос, нормализация громкости около −14 LUFS. API-ключ не нужен; видеомодели опциональны, у каждого кадра есть локальный запасной вариант.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 57</span><div>
+    <h4><a href="https://github.com/bangbuilds/code-poem-film">bangbuilds/code-poem-film</a><span class="tag">видео</span></h4>
+    <p>Скилл превращает классическое китайское стихотворение в 2D-анимацию на 20–80 секунд в стиле туши: каждый кадр рисуется кодом, строки пишутся по штрихам в такт декламации, музыка и эффекты синтезируются на numpy — без картинок, видео и готовых треков. Перед рендером скрипт снимает кадры и ищет пустые и упавшие, а регрессия пересобирает эталонный ролик и сверяет попиксельно. Автор оговаривает: ранняя версия, сделано два ролика на одной машине с macOS, Linux и Windows не проверялись, только 16:9, качество звука машиной не оценивается.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 56</span><div>
+    <h4><a href="https://github.com/sebastianhaba/book-to-course-skill">sebastianhaba/book-to-course-skill</a><span class="tag">обучение</span></h4>
+    <p>Скилл превращает книгу (EPUB, PDF, HTML, DOCX, Markdown) в локальный интерактивный курс для начинающих: уроки с пошаговыми объяснениями и анимациями, квизы с подсказками, тесты по главам, карточки и задания по программированию с юнит-тестами. Перед упаковкой скилл проверяет, что тесты падают на стартовом коде и проходят на эталонном решении. Прогресс сохраняется в файл через локальный сервер на Python 3. Ещё два скилла в том же плагине упаковывают курс в офлайн-APK для Android и в AppImage для Linux; на телефоне тесты кода не запускаются.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 44</span><div>
+    <h4><a href="https://github.com/robonuggets/skill-creator-plus">robonuggets/skill-creator-plus</a><span class="tag">аудит скиллов</span></h4>
+    <p>Скилл для аудита, создания и доработки других скиллов по правилам Anthropic, включая поправки под Fable 5, Opus 5.5 и Sonnet 5.5: излишняя предписательность, просьбы выписывать рассуждения (отказ reasoning_extraction), важное в начале SKILL.md из-за compaction. Сначала выдаёт отчёт по 46 правилам с файлом и строкой как доказательством и ничего не правит без согласия. Механическую часть проверяет validate_skill.py на стандартной библиотеке Python; остальное Claude оценивает чтением.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 43</span><div>
+    <h4><a href="https://github.com/ARYANK-08/agentic-dev-kit">ARYANK-08/agentic-dev-kit</a><span class="tag">объяснения</span></h4>
+    <p>Заготовка набора Markdown-скиллов для Claude Code под этапы SDLC — код, архитектура, ревью, тесты, запуск. Пока в наборе один скилл, explain: понятные объяснения упрощённым английским, в режиме «объясни как тринадцатилетнему», с диаграммами, HTML-страницами и видео. Ставится копированием одного SKILL.md в .claude/skills; проверок собственной работы README не описывает, лицензия не указана.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 41</span><div>
+    <h4><a href="https://github.com/Odyphus/MathModel-Copilot">Odyphus/MathModel-Copilot</a><span class="tag">матмоделирование</span></h4>
+    <p>Скилл и локальная панель для командных соревнований по математическому моделированию (CUMCM, MCM/ICM): ведёт агента от разбора условия и сравнения моделей через запуск Python до материалов для статьи и предсдачной сверки. Различает «код написан», «программа запущена» и «результат проверен», хранит журнал решений и подсказывает, что пересчитать после смены условий. Автор оговаривает, что версия предварительная: запуск агента из панели и автоотправка issue ещё не прошли приёмку.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 39</span><div>
+    <h4><a href="https://github.com/ishuagrawal/skills">ishuagrawal/skills</a><span class="tag">видео</span></h4>
+    <p>Маркетплейс скиллов, в котором пока один — video-by-reference: по понравившемуся ролику делает оригинальную анимационную короткометражку в том же стиле и с собственным саундтреком. Рендерит настоящие видеофайлы, поэтому требует Node.js 22+, ffmpeg и ffprobe, Python 3 с numpy и headless Chromium. Автор оговаривает, что в песочницах claude.ai и API нет сети и может не быть Chrome или ffmpeg, так что скилл там прочитается, но рендер может не пройти. SKILL.md проверяются скриптом на соответствие спецификации Agent Skills.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 38</span><div>
+    <h4><a href="https://github.com/kevinbadi/open-edits">kevinbadi/open-edits</a><span class="tag">видео</span></h4>
+    <p>Набор скиллов Claude Code для монтажа: из сырого talking-head клипа собирает вертикальный или 16:9 ролик с моушн-графикой, субтитрами, логотипами, GIF и счётчиками, привязанными к моменту произнесения слова. Таймкоды слов даёт Whisper, каждый кадр рисуется в Python через PIL и кодируется ffmpeg локально; перед рендером проверяются превью-кадры на наложения. Отдельный скилл reverse-engineer измеряет чужой ролик и строит под его стиль новый скилл. Ключи Giphy и HeyGen опциональны; сделано на macOS.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 38</span><div>
+    <h4><a href="https://github.com/scottnarmstrong/LeanAutoformalizationSkills">scottnarmstrong/LeanAutoformalizationSkills</a><span class="tag">математика</span></h4>
+    <p>Набор скиллов для формализации математики в Lean 4 с Codex или Claude Code: проектирование деклараций, поиск по Mathlib, написание доказательств, производительность, независимый математический аудит и оркестрация параллельной работы. Цель — доказать теорему, которую источник действительно утверждает: сборка Lean проверяет формальное утверждение, а аудит сверяет гипотезы, определения, кванторы и вывод с исходной математикой. Lean и toolchain скиллы не ставят; примеры смещены к PDE, вероятности и анализу.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 37</span><div>
+    <h4><a href="https://github.com/lemomo-ai/lemo-wake">lemomo-ai/lemo-wake</a><span class="tag">анимация</span></h4>
+    <p>Скилл в обёртке плагина Claude Code: из одной картинки делает бесшовный цикл примерно на 5 секунд (MP4, GIF, WebP, Live Photo). Claude разбирает изображение на текст, фигуры, объекты и свет, воссоздаёт их кодом, покадрово рендерит в headless-браузере и проверяет стык конца с началом. Без генерации изображений и API-ключей; локальные модели вырезания и глубины (около 600 МБ) скачиваются только после согласия и сверяются по sha256. Лицензия CC BY-NC 4.0 — некоммерческая; проверено на macOS.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 30</span><div>
+    <h4><a href="https://github.com/amelieloher/math-paper-skills">amelieloher/math-paper-skills</a><span class="tag">математика</span></h4>
+    <p>Четыре скилла для Claude Code и Codex под исследовательскую математику в LaTeX: письмо и правка формулировок и доказательств, кампания по всей статье (сборка из заметок или полировка по фазам), рисунки и анимации, а также «visual paper» — сайт-компаньон с графом зависимостей доказательств. Правила жёсткие: правка не может молча менять гипотезу, квантор или константу; текст статьи на сайте цитируется по хешированной ссылке на источник, а каждое написанное агентом предложение проходит независимый аудит. Ставить нужно все четыре сразу.</p>
+  </div></div>
+  <h3 class="tail-h">Коротко — ★ 10–30</h3>
+  <ul class="tail">
+    <li><span class="st">★ 27</span><a href="https://github.com/zsoXi/rust-correctness">zsoXi/rust-correctness</a><span class="tag">Rust</span><span class="desc">Скилл из одного SKILL.md для написания, починки и ревью Rust: сохранение цепочки причин ошибок, инварианты типов, ownership, async-корректность и проверка смысла правок Clippy.</span></li>
+    <li><span class="st">★ 26</span><a href="https://github.com/bizarro/skills">bizarro/skills</a><span class="tag">креативный веб</span><span class="desc">Скилл creative-development от Luis Bizarro: его мнения и конвенции по интерактивным анимированным сайтам — выбор между Three.js, OGL и React Three Fiber, WebGL-загрузка, motion, звук на телефонах.</span></li>
+    <li><span class="st">★ 26</span><a href="https://github.com/01ayushgarg/nikita-bier-consumer-app-virality-playbook">01ayushgarg/nikita-bier-consumer-app-virality-playbook</a><span class="tag">рост продукта</span><span class="desc">Неофициальный плейбук и скилл по виральности consumer-приложений, собранный из интервью и постов Nikita Bier: главы от поиска идеи до уведомлений, шаблоны, у каждого утверждения ссылка на источник.</span></li>
+    <li><span class="st">★ 25</span><a href="https://github.com/display-dev/product-film">display-dev/product-film</a><span class="tag">видео</span><span class="desc">Скилл для коротких продуктовых фильмов из настоящего UI: агент пересобирает экраны из ваших компонентов, анимирует на детерминированном HTML-таймлайне, рендерит кадры Playwright и монтирует ffmpeg.</span></li>
+    <li><span class="st">★ 24</span><a href="https://github.com/rafaelob/pragmatic-agent-skills">rafaelob/pragmatic-agent-skills</a><span class="tag">инженерные практики</span><span class="desc">Набор скиллов формата agentskills.io для кодовых агентов в духе XP: диагностика багов, код-ревью, дизайн модулей, чистка репозитория, docker compose, делегирование субагентам в Claude Code и Codex.</span></li>
+    <li><span class="st">★ 23</span><a href="https://github.com/realchendahuang/dsh-skill">realchendahuang/dsh-skill</a><span class="tag">DeepSeek Harness</span><span class="tag warm">curl | sh</span><span class="desc">Скилл и CLI dsh-skill с правилами разработки плагинов для DeepSeek Harness: ставится в каталоги скиллов DSH, Claude Code, Codex и Antigravity, генерирует каркас нового плагина командой init.</span></li>
+    <li><span class="st">★ 23</span><a href="https://github.com/amirmushichge/dev-to-publish">amirmushichge/dev-to-publish</a><span class="tag">соцсети</span><span class="desc">Скилл и bootstrap-промпт, превращающие рабочий чат разработки в посты: агент собирает демо продукта, картинки и тексты под X, LinkedIn и Reels, показывает превью и после одобрения публикует через Buffer API.</span></li>
+    <li><span class="st">★ 22</span><a href="https://github.com/Jakeschincariol/master-skills">Jakeschincariol/master-skills</a><span class="tag">видео и контент</span><span class="desc">Три скилла для Claude: edit режет паузы, ставит субтитры и делает stop motion, virality ищет выбросы в нише и переписывает их вашим голосом, build объединяет дизайн- и код-скиллы для сайтов и приложений.</span></li>
+    <li><span class="st">★ 22</span><a href="https://github.com/SpaceZephyr/map-motion">SpaceZephyr/map-motion</a><span class="tag">видео · карты</span><span class="desc">Скилл Claude Code для видео с анимацией карт на реальных данных Amap: маршруты, границы, спутниковая подложка и высоты SRTM дают заставки для vlog, профили походов, перелёты и подсветку районов.</span></li>
+    <li><span class="st">★ 22</span><a href="https://github.com/7ANV1R/Store-Screenshot-Studio">7ANV1R/Store-Screenshot-Studio</a><span class="tag">ASO</span><span class="desc">Скилл и плагин Claude Code для скриншотов App Store и Google Play из экранов вашего приложения: подбирает цвета из логотипа, предлагает четыре концепции, выдаёт наборы под iPhone, iPad и Android.</span></li>
+    <li><span class="st">★ 22</span><a href="https://github.com/robbin/android-adb-control">robbin/android-adb-control</a><span class="tag">Android</span><span class="desc">Скилл-инструкция для управления Android-телефоном через ADB по циклу «посмотреть, сделать шаг, проверить»: открывает приложения, нажимает, листает, вводит текст; обход блокировки и капчи исключён.</span></li>
+    <li><span class="st">★ 20</span><a href="https://github.com/paveldevyatov/ai-domain-name-generator">paveldevyatov/ai-domain-name-generator</a><span class="tag">домены</span><span class="desc">Промпт и скилл find-domain для подбора доменов: генерирует сотни имён в 15 стилях, включая domain hacks, проверяет занятость по зонам и выдаёт топ-50 свободных с оценкой; по данным автора, 1350+ зон.</span></li>
+    <li><span class="st">★ 19</span><a href="https://github.com/Grit-77/done-is-a-claim">Grit-77/done-is-a-claim</a><span class="tag">верификация</span><span class="desc">Набор из 18 правил для AGENTS.md и CLAUDE.md и трёх скиллов о том, как агенту доказывать «готово»: перезапуск приёмочной команды, весь набор тестов, свой exit code; за каждым правилом описан инцидент.</span></li>
+    <li><span class="st">★ 19</span><a href="https://github.com/Da7-Tech/storage-rescue">Da7-Tech/storage-rescue</a><span class="tag">macOS</span><span class="desc">Скилл-инструкция для освобождения диска на Mac: либо перенос больших файлов на внешний диск с двойной сверкой SHA-256 до удаления, либо чистка кэшей; агент спрашивает перед каждым удалением.</span></li>
+    <li><span class="st">★ 19</span><a href="https://github.com/ghostdogpr/skills">ghostdogpr/skills</a><span class="tag">рефакторинг</span><span class="desc">Скилл refine: за раунды сжимает код без потери функций, три ревьюера смотрят через ограничения, простоту и параметричность, отдельные агенты применяют находки и проверяют регрессии.</span></li>
+    <li><span class="st">★ 19</span><a href="https://github.com/frypan05/philosopher-OKF">frypan05/philosopher-OKF</a><span class="tag">обучение</span><span class="desc">Скилл в формате Open Knowledge Format, превращающий любую тему в одну HTML-страницу в стиле научной статьи: 12 предметных областей, три уровня глубины, CSS-диаграммы, карта понятий и список источников.</span></li>
+    <li><span class="st">★ 19</span><a href="https://github.com/aelhadii/staged-agents">aelhadii/staged-agents</a><span class="tag">оркестрация</span><span class="desc">Скилл Claude Code для мультиагентных задач по лестнице loop → chain → network → graph: начинает с самой дешёвой ступени и поднимается выше, только когда это оправдывает измеренный сбой.</span></li>
+    <li><span class="st">★ 18</span><a href="https://github.com/ChangWenC/understanding-ladder">ChangWenC/understanding-ladder</a><span class="tag">объяснения</span><span class="desc">Скиллы по «лестнице понимания» Karpathy: агент сам выбирает низшую достаточную форму объяснения — текст по ASD-STE100, диаграмму, интерактивный HTML или раскадровку видео — и не выкидывает факты.</span></li>
+    <li><span class="st">★ 18</span><a href="https://github.com/nasqret/labyrinth-exploration">nasqret/labyrinth-exploration</a><span class="tag">наука</span><span class="desc">Скилл для Codex и Claude Code под открытые исследования в математике и теории: агент ведёт карту доказанного, опровергнутого и гипотез с уровнями T1–T6, а результаты проходят независимого рецензента.</span></li>
+    <li><span class="st">★ 17</span><a href="https://github.com/ouerf-man/product-launch-motion-skill">ouerf-man/product-launch-motion-skill</a><span class="tag">видео</span><span class="desc">Скилл Claude Code для launch-видео целиком из кода: расспрашивает о запуске, выбирает тип ролика, пересобирает экраны продукта в HTML, анимирует GSAP и рендерит MP4 через HyperFrames.</span></li>
+    <li><span class="st">★ 17</span><a href="https://github.com/bangbuilds/code-doc-film">bangbuilds/code-doc-film</a><span class="tag">видео</span><span class="desc">Скилл для 3D-документалок на 1–3 минуты по одной фразе: сцены рендерит three.js, рельеф берётся из реальных данных, музыка синтезируется numpy, у каждой цифры в закадровом тексте указан источник.</span></li>
+    <li><span class="st">★ 17</span><a href="https://github.com/smartcmd/humanizer">smartcmd/humanizer</a><span class="tag">письмо</span><span class="desc">Скилл для Codex и Claude Code, убирающий из китайских и английских текстов типовые обороты ИИ: 22 правила против вводных клише, лишних итогов и канцелярита в комментариях.</span></li>
+    <li><span class="st">★ 17</span><a href="https://github.com/KwantaeKim/cirfig_gen">KwantaeKim/cirfig_gen</a><span class="tag">схемотехника</span><span class="desc">Репозиторий с AGENTS.md, правилами и палитрой из 49 символов: Claude Code или Codex по описанию рисует аналоговую схему и отдаёт один SVG в финальном размере для слайдов.</span></li>
+    <li><span class="st">★ 16</span><a href="https://github.com/menonpg/ste-prompt">menonpg/ste-prompt</a><span class="tag">письмо</span><span class="desc">Плагин для Claude Code с командой /ste и скиллом, плюс AGENTS.md для Codex: агент пишет процедуры и runbook на Simplified Technical English (ASD-STE100) — короткие фразы, активный залог.</span></li>
+    <li><span class="st">★ 16</span><a href="https://github.com/imajij/do_waqt_ki_roti">imajij/do_waqt_ki_roti</a><span class="tag">поиск работы</span><span class="desc">Скилл Claude Code для поиска стажировки: аудит резюме, LinkedIn и GitHub, подбор вакансий, резюме и сопроводительное письмо под каждую, заполнение форм в браузере до кнопки Submit и трекер откликов.</span></li>
+    <li><span class="st">★ 16</span><a href="https://github.com/avi691/linkedin-agent-skill">avi691/linkedin-agent-skill</a><span class="tag">соцсети</span><span class="desc">Одиннадцать скиллов для ведения LinkedIn: посты по 21 формуле hook, комментарии, ответы, оценка профиля по рубрике из 12 частей, план недели и humanizer, вычищающий следы ИИ; публикует сам человек.</span></li>
+    <li><span class="st">★ 16</span><a href="https://github.com/diegomarino/tui-design">diegomarino/tui-design</a><span class="tag">дизайн TUI</span><span class="desc">Скилл для проектирования и аудита терминальных интерфейсов: макеты .mock на реальной сетке ячеек проходят линтер и рендерятся в PNG, результат — HTML-галерея кадров по состояниям, размерам и темам.</span></li>
+    <li><span class="st">★ 14</span><a href="https://github.com/reviso-si/reviso-agent">reviso-si/reviso-agent</a><span class="tag">ревью документов</span><span class="desc">Скилл для Reviso: агент публикует черновик на ревью людям, читает их комментарии и правки и выпускает ревизию от той версии, которую прочитал, — чтобы не затереть параллельную правку человека.</span></li>
+    <li><span class="st">★ 14</span><a href="https://github.com/manifestack/manifestack">manifestack/manifestack</a><span class="tag">SaaS-стек</span><span class="desc">Скилл для подбора и аудита SaaS-стека: сканирует зависимости и конфиги, находит лимиты тарифов, перерасход и пробелы compliance, цены читает со страниц вендоров; hook отмечает каждый новый vendor SDK.</span></li>
+    <li><span class="st">★ 14</span><a href="https://github.com/wolfyxbt/groking">wolfyxbt/groking</a><span class="tag">X/Twitter</span><span class="desc">Скилл, через который Claude Code или Codex читает X (Twitter): запросы уходят в локальный Grok CLI, запущенный без клиентских инструментов в пустом временном каталоге, чтобы твиты не могли увести агента.</span></li>
+    <li><span class="st">★ 13</span><a href="https://github.com/speechlab0210/tutorial-video-skill">speechlab0210/tutorial-video-skill</a><span class="tag">видео</span><span class="desc">Скилл для подготовки учебных видео по любому предмету: аудитория, последовательность изложения, проверка утверждений по источникам, синхронизация слайдов с речью, ревью готового урока и правки.</span></li>
+    <li><span class="st">★ 13</span><a href="https://github.com/chacha95/demo-video-creator">chacha95/demo-video-creator</a><span class="tag">видео</span><span class="desc">Скилл, делающий из URL продукта готовый 16:9 launch film на 40–60 секунд на английском или корейском: реальные захваты UI, одна озвучка, движение по битам и сведённый звук; нужен ELEVENLABS_API_KEY.</span></li>
+    <li><span class="st">★ 13</span><a href="https://github.com/IncomeStreamSurfer/prove-it-better">IncomeStreamSurfer/prove-it-better</a><span class="tag">оценка изменений</span><span class="desc">Скилл Claude Code: улучшение выпускается, только если побеждает текущую версию на реальных кейсах — слепое попарное судейство с перестановкой порядка, судья от другого вендора, жёсткие проверки и откат.</span></li>
+    <li><span class="st">★ 12</span><a href="https://github.com/mhmtsrfglu/superwiki">mhmtsrfglu/superwiki</a><span class="tag">память</span><span class="desc">Скиллы, превращающие docs/ проекта в вики и трекер задач, которые ведёт агент: паттерн LLM Wiki Андрея Карпатого, задачи с «Done when» и зависимостями, просмотр в Obsidian или встроенном viewer.</span></li>
+    <li><span class="st">★ 12</span><a href="https://github.com/v60samurai/claritymaxx">v60samurai/claritymaxx</a><span class="tag">объяснения</span><span class="desc">Плагин Claude с одним скиллом explain: превращает сложный материал — код, системы, статьи, данные, логи — в понятные ментальные модели; работает в Claude на вебе, в Desktop, Cowork и Claude Code.</span></li>
+    <li><span class="st">★ 12</span><a href="https://github.com/dualface/ste-zht">dualface/ste-zht</a><span class="tag">письмо</span><span class="desc">Скилл, заставляющий агента отчитываться на традиционном китайском по принципам ASD-STE100: вывод первым, фиксированные статусы, явная отметка о проверке каждой правки и пронумерованные варианты решений.</span></li>
+    <li><span class="st">★ 12</span><a href="https://github.com/nguyenquanicd/VLSIT_CODEX_CLAUDE_SKILLS">nguyenquanicd/VLSIT_CODEX_CLAUDE_SKILLS</a><span class="tag">ASIC и FPGA</span><span class="desc">Четыре парных скилла для Codex и Claude Code по ASIC и FPGA: поиск и сравнение открытых IP с RTL, диаграммы иерархии RTL в Draw.io, внедрение изменений спецификации в RTL по плану и перевод VHDL в SystemVerilog.</span></li>
+    <li><span class="st">★ 12</span><a href="https://github.com/JosssphZhou/openzine">JosssphZhou/openzine</a><span class="tag">публикации</span><span class="desc">Скилл для Claude Code и Codex: превращает PDF или папку изображений в 3D-книжку с перелистыванием в браузере — один автономный .html без сетевых запросов, на телефоне по одной странице.</span></li>
+    <li><span class="st">★ 11</span><a href="https://github.com/tommy0103/better-readme-skill">tommy0103/better-readme-skill</a><span class="tag">документация</span><span class="desc">Скилл аудита и переписывания README по принципам Art of README: порядок воронки, вынос maintainer-разделов в CONTRIBUTING, проверка ссылок и тестов, завязанных на README, идиоматичные переводы.</span></li>
+    <li><span class="st">★ 11</span><a href="https://github.com/rauchg/skills">rauchg/skills</a><span class="tag">фронтенд</span><span class="desc">Набор скиллов @rauchg, пока из одного: ui-recording-timeline превращает запись экрана UI в интерактивную страницу с таймлайном отрисовок, подсвечивая, что перерисовано, а что только сдвинулось.</span></li>
+    <li><span class="st">★ 11</span><a href="https://github.com/sammyjason39/agent-build-playbook">sammyjason39/agent-build-playbook</a><span class="tag">оркестрация</span><span class="desc">Скиллы и скрипты, где сильная модель-координатор планирует работу и раздаёт её CLI-агентам (opencode, pi, Antigravity) в отдельных git worktree, затем ревьюит и сливает ветки до зелёного CI.</span></li>
+    <li><span class="st">★ 10</span><a href="https://github.com/kk1992ishere-droid/turn-anything-cu">kk1992ishere-droid/turn-anything-cu</a><span class="tag">computer use</span><span class="desc">Скилл-установщик для macOS: регистрирует уже установленный локально компонент Computer Use из ChatGPT/Codex как stdio MCP-сервер в выбранном AI-клиенте, включая Claude Code, сохраняя запросы разрешений.</span></li>
+    <li><span class="st">★ 10</span><a href="https://github.com/mzopedia/simplified-technical-chinese">mzopedia/simplified-technical-chinese</a><span class="tag">письмо</span><span class="desc">Контролируемый язык для китайских технических текстов по методу ASD-STE100: 40 правил, словарь «одно значение — одно слово», проверочный скрипт без зависимостей и скилл для Claude Code, Codex и Cursor.</span></li>
+    <li><span class="st">★ 10</span><a href="https://github.com/osmangoninahid/mermaidiff">osmangoninahid/mermaidiff</a><span class="tag">код-ревью</span><span class="desc">Скилл /mermaidiff: показывает изменения PR или commit как sequence diagram только изменённых шагов с пометками добавлено, изменено, удалено и ссылками file:line; по данным автора, без ложных срабатываний на 10 commits.</span></li>
+    <li><span class="st">★ 10</span><a href="https://github.com/Ethiel97/flutter-clean-riverpod-skills">Ethiel97/flutter-clean-riverpod-skills</a><span class="tag">Flutter</span><span class="desc">Шесть скиллов для Flutter: feature-first Clean Architecture, Riverpod 3 без кодогенерации, ошибки через Result, SDK за собственными контрактами, UI side effects и тесты; есть scaffold-скрипт и boundary checker.</span></li>
+    <li><span class="st">★ 10</span><a href="https://github.com/e-mudao/output-ladder-skill">e-mudao/output-ladder-skill</a><span class="tag">обучение</span><span class="desc">Скилл, подбирающий под учебную цель самый простой подходящий формат — текст, диаграмму, интерактивную веб-страницу или explainer-видео — и возвращающий готовый промпт; сам артефакт делается по отдельной просьбе.</span></li>
+  </ul>
+  </div></details>
+</section>
+
+<section id="plugins">
+  <p class="section-kicker">Инструменты</p>
+  <h2>Плагины и проекты <span class="count">10 из 45 · ★30+</span></h2>
+  <p class="section-intro">Инструменты вокруг агента: оркестраторы, интеграции, песочницы, измерение работы и контроль расхода.</p>
+
+  <div class="item"><span class="stars hot">★ 523</span><div>
+    <h4><a href="https://github.com/shinshin86/mesh-avatar-studio">shinshin86/mesh-avatar-studio</a><span class="tag">аватары</span></h4>
+    <p>Делает из одной иллюстрации анимированный 2D-mesh-аватар, который моргает, говорит, поворачивает голову и дышит. Кодинг-агент (Claude Code или Codex) готовит риг по docs/agent-guide.md, а тонкая настройка — перетаскиванием точек в локальном редакторе с живым превью. Режим Live: веб-камера и микрофон управляют аватаром для OBS, при этом видео и звук остаются на машине, наружу идут только числовые значения движения. Нужен Node.js 22.17+.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 476</span><div>
+    <h4><a href="https://github.com/GTKottman/mortiflix-oss">GTKottman/mortiflix-oss</a><span class="tag">видео</span></h4>
+    <p>Студия моушн-дизайна на своей машине: Claude ведёт видео по этапам (бриф, сценарий, стилевые кадры, аниматик, сборка, финал), а человек на каждом гейте оставляет заметки прямо на кадре или моменте. Правила живут в коде, не в промпте: шаг нельзя утвердить за пользователя, сессия заканчивается на гейте и пишет handoff. Работает через Claude Code или ключ Anthropic API, нужны Node 20+ и ffmpeg. Протестировано в основном на Linux, Windows обещан позже.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 468</span><div>
+    <h4><a href="https://github.com/openqodex/openqodex">openqodex/openqodex</a><span class="tag">код-ревью</span></h4>
+    <p>Локальное код-ревью перед push: команда openqodex review берёт незапушенные и незакоммиченные изменения, прогоняет сканеры (SAST, секреты, зависимости, линт) только по изменённым строкам, затем запускает отдельный процесс-ревьюер — Claude Code или Codex — на замороженной копии диффа. Ревьюер видит каждую изменённую строку и каждую находку сканера, ответ проверяется скриптами и собирается в report.html. Других ключей, кроме установленного и залогиненного агента, не требует; Node 22+, macOS/Linux или WSL.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 319</span><div>
+    <h4><a href="https://github.com/anteloc/ldraw-nova">anteloc/ldraw-nova</a><span class="tag">3D-модели</span></h4>
+    <p>Агент собирает модель LEGO по идее пользователя: на выходе исходник на языке LDraw, 3D-просмотр (в том числе VR на Meta Quest 3), редактируемый в Blender glTF, история чата и ход рассуждений агента. Работает как веб-приложение в Docker из двух репозиториев-соседей, образ занимает около 5 ГБ. Поиск подходящих деталей и образцов опирается на переранжирование моделью Jev (нужен ключ TypeSafe); без ключа агент откатывается на полнотекстовый поиск, и модели, по словам автора, могут выйти хуже. Найден через Show HN (167 очков), создан 23 сентября.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 167</span><div>
+    <h4><a href="https://github.com/Autumn1337/better-statusline">Autumn1337/better-statusline</a><span class="tag">статус-строка</span></h4>
+    <p>Статус-строка Claude Code над промптом: показатели сессии нарисованы точечными кольцами из брайлевых ячеек — заполнение контекста, остаток до остывания prompt cache, расход 5-часового и недельного лимитов (дуга желтеет при обгоне темпа), плюс карточка играющей музыки с акцентом из обложки. Нужен Claude Code 2.1.289+; карточка музыки — только macOS со Spotify или Apple Music, обложки — kitty или Ghostty. Построена на function hooks — раннем API, меняющемся между релизами.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 166</span><div>
+    <h4><a href="https://github.com/jarrodwatts/claude-image-view">jarrodwatts/claude-image-view</a><span class="tag">моды CLI</span></h4>
+    <p>Мод Claude Code, показывающий вставленные в промпт картинки миниатюрами над строкой ввода вместо голых тегов [Image #1]. Каждые 200 мс читает промпт, находит теги, берёт кэшированный PNG сессии и рисует превью через элемент Image — терминал сам читает файл, данные картинки через мод не проходят. Локальный, без сети и записи файлов. Нужен Claude Code 2.1.287+, macOS или Linux и терминал с графическим протоколом kitty (Ghostty, kitty); в других терминалах превью не рисуется.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 163</span><div>
+    <h4><a href="https://github.com/hamzafer/claude-code-mods">hamzafer/claude-code-mods</a><span class="tag">моды CLI</span></h4>
+    <p>Набор модов Claude Code на function hooks, ставятся по одному из маркетплейса: context-bar (стек-бар заполнения контекста), token-weather и usage-meter (лимиты и prompt cache), where-am-i и mission-control (цель, агенты и трогаемые файлы), review-watch (живые строки идущих ревью Codex), blast-radius (удерживает rm -rf и показывает, что удалится), md-preview, now-playing, игры и ленты. switchboard выбирает модель субагенту через OpenAI Decisions API или Jev. Нужен Claude Code 2.1.287+.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 159</span><div>
+    <h4><a href="https://github.com/pi-pod/pipod">pi-pod/pipod</a><span class="tag">песочницы</span></h4>
+    <p>Сессии coding-агента Pi в изолированных песочницах («pods») на сервере, который вы держите сами. Автор собирает вокруг Pi то, что считает минимальной средой агентной разработки в организации: песочницы, нативные клиенты, совместный доступ к сессиям с ролями и автоматизацию браузера и приложений. Найден через Show HN (121 очко), создан 1 октября; хостинговая версия только анонсирована.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 129</span><div>
+    <h4><a href="https://github.com/transkatgirl/vibeclaude">transkatgirl/vibeclaude</a><span class="tag">моды CLI</span></h4>
+    <p>Плагин Claude Code на function hooks, связывающий события сессии (стриминг текста, вызовы инструментов, успех/отказ, ожидание разрешения, конец хода) с вибро-устройством через Intiface Central и buttplug.io по заданным паттернам интенсивности и длительности. Порт opencode-buttplugio, по словам автора написан Opus 5.5. Нужны Claude Code с function hooks (сборка против 2.1.291), Node.js 22+, запущенный WebSocket-сервер Intiface и совместимое устройство.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 122</span><div>
+    <h4><a href="https://github.com/joeseesun/qiaomu-codex-imagegen">joeseesun/qiaomu-codex-imagegen</a><span class="tag">генерация изображений</span></h4>
+    <p>Выносит встроенную генерацию изображений Codex наружу как MCP-сервер, CLI и скилл с общим ядром, чтобы её вызывал любой агент. Сначала предлагает минимум четыре разных по механике стилевых направления (24 шаблона, 48 пресетов, 20 стилей постер-дизайнеров Mondo), затем по выбору собирает промпт, генерирует и сверяет результат по условиям приёмки, рядом кладёт JSON с реальным промптом. Есть пресеты под Xiaohongshu, обложки видео и заголовки с безопасными зонами, плюс правила против выдуманных фактов и кривого текста.</p>
+  </div></div>
+
+  <details class="method-fold"><summary>Показать остальные 35 позиций и 55 строк ★ 10–30</summary><div class="method-body">
+  <div class="item"><span class="stars">★ 108</span><div>
+    <h4><a href="https://github.com/jarrodwatts/intermission">jarrodwatts/intermission</a><span class="tag">моды CLI</span></h4>
+    <p>Плагин Claude Code, открывающий рядом с транскриптом панель с Doom-deathmatch, пока Claude работает, и возвращающий управление, как только он закончил или запросил разрешение. Это Odamex без окна (кадры через разделяемую память в панель терминала) с картами Freedoom на общем сервере. Нужны macOS 15+, Ghostty или kitty, Claude Code 2.1.287+. При первом запуске тянет движок ~20 МБ.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 100</span><div>
+    <h4><a href="https://github.com/obie/auto-handoff">obie/auto-handoff</a><span class="tag">handoff</span></h4>
+    <p>Пишет handoff-документ, пока prompt cache ещё тёплый. Claude Code держит контекст сессии в кэше, остывающем через час после последнего запроса; плагин следит за простоем и после 50 минут бездействия сам запускает команду handoff, пока чтение контекста ещё дёшево. Один handoff на отлучку, /clear отменяет ожидание, проснувшийся с холодным кэшем ноутбук прогон пропускает. Встроенный скилл пишет docs/handoffs/&lt;timestamp&gt;-&lt;slug&gt;.md и сам себе разрешает нужные инструменты через allowed-tools.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 88</span><div>
+    <h4><a href="https://github.com/JohnnyVizz/claude-kit">JohnnyVizz/claude-kit</a><span class="tag">оркестрация</span></h4>
+    <p>Маркетплейс из двух плагинов автора. savvy-flow — скилл с набором субагентов: модель сессии планирует задачу, раздаёт её исполнителям разного уровня и проверяет их работу. savvy-progress — мод, который рисует полосу прогресса над промптом и живую панель агентов; работает с любыми субагентами, а вместе со savvy-flow получает от него прогресс. Мод построен на function hooks, которые автор называет early-access API: проверено на Claude Code 2.1.286, между релизами может сломаться.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 77</span><div>
+    <h4><a href="https://github.com/luoluo-121/neural-creator-dashboard">luoluo-121/neural-creator-dashboard</a><span class="tag">заметки</span></h4>
+    <p>Локальный веб-дашборд для автора контента: работы, заметки, темы и черновики показываются как граф с пятью модулями и панелью анализа по каждой записи. Связи выводятся в браузере из данных — папки, двойные ссылки [[…]], теги, общие понятия; поиск по графу идёт по локальным правилам без вызова модели. В комплекте скилл, которым агент ставит проект и импортирует хранилище Obsidian или Markdown; скрипт импорта только читает заметки и не ходит в сеть. Нужен Node.js 20.19+, интерфейс на китайском и английском.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 76</span><div>
+    <h4><a href="https://github.com/Dominic-DK/harness-map">Dominic-DK/harness-map</a><span class="tag">аудит настроек</span></h4>
+    <p>Python-скрипт без зависимостей, который читает настройки Claude Code — CLAUDE.md, память, MCP, скиллы, права, hooks — и строит HTML-схему: что именно получает модель в зависимости от стартовой папки и способа запуска агента (основная сессия, fork, субагент, Explore/Plan, участник команды, claude -p). Оценивает зрелость по шести направлениям; высший уровень даётся только при зафиксированной проверке. Только читает; тексты правил и токены в отчёт не попадают. Правила наследования зашиты из документации для Claude Code 2.1.287, а не из наблюдений.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 73</span><div>
+    <h4><a href="https://github.com/cablate/ctx-handoff-mod">cablate/ctx-handoff-mod</a><span class="tag">моды CLI</span></h4>
+    <p>Мод Claude Code для долгих сессий. На пороге 600k токенов дожидается завершения агента и субагентов, пишет сводку с разделением проверенной работы и непроверенных правок, делает /clear и продолжает в новом разговоре (handoff). Пока пользователя нет, подогревает prompt cache примерно до четырёх часов; повторяющиеся указания превращает в заметки проекта, а после трёх повторов предлагает строку в CLAUDE.md. Есть одностроковые подсказки при повторе упавшей команды и «готово» без проверки. Нужен Claude Code 2.1.287+.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 72</span><div>
+    <h4><a href="https://github.com/jinrunsen/claude-my-privacy">jinrunsen/claude-my-privacy</a><span class="tag">приватность</span></h4>
+    <p>Плагин Claude Code, который подменяет заданные имена и названия компаний псевдонимами в тексте, уходящем модели, возвращает оригиналы перед запуском локальных инструментов и снова маскирует то, что инструменты вернули. Работает только по списку терминов из файла вне репозитория — это не детектор PII: всё ненастроенное уходит как есть. Замена best-effort, при сбое сессия не блокируется. Сам плагин модель и сеть не вызывает. Офлайн-проверки пройдены на macOS с Claude Code 2.1.290, для других версий и платформ автор требует перепроверки.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 72</span><div>
+    <h4><a href="https://github.com/sun168567/cc-desk-tunnel">sun168567/cc-desk-tunnel</a><span class="tag">удалённый доступ</span><span class="tag warm">curl | sh</span></h4>
+    <p>Связка из контейнера на Linux-сервере и десктоп-клиента для Windows: Claude Code работает на сервере, а файлы читает и команды выполняет на локальной машине через обратный SSH-туннель на базе frp. Клиент даёт список сессий по проектам, сворачиваемый ход работы, выбор модели, просмотр лимитов и задачи по расписанию. Официальный CLI не модифицируется, запуск идёт через Agent SDK. Автор предупреждает: проект в основном написан AI, аудита безопасности не было, это не песочница, а сервисный ключ равен полному контролю над компьютером.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 70</span><div>
+    <h4><a href="https://github.com/Tickloop/claude-mods">Tickloop/claude-mods</a><span class="tag">моды CLI</span></h4>
+    <p>Два небольших мода Claude Code, меняющих вид вывода. glamour-dark рисует текстовые ответы модели в тёмном стиле библиотеки glamour. tool-lines сжимает каждый вызов инструмента до одной строки вида «tool_call: Tool(input) - meta» и прячет блок с результатом. Ставятся по отдельности через marketplace и применяются командой /reload-plugins без перезапуска.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 69</span><div>
+    <h4><a href="https://github.com/data-goblin/claude-code-filetree">data-goblin/claude-code-filetree</a><span class="tag">моды CLI</span></h4>
+    <p>Мод Claude Code: дерево файлов в правой панели, как в IDE. Подсвечивает, что агент делает прямо сейчас — чтение и поиск, запись, commit — и раскрывает свёрнутые папки до нужного файла. Показывает git-статус по файлам и папкам с числом изменённых строк, ветку и отставание от upstream. Выбранный файл передаётся агенту как контекст через hook prompt.submit, а упоминание @path в промпте находит файл в дереве. Нужны Claude Code 2.1.287+, режим /tui fullscreen и терминал от 110 колонок; в WSL-сессиях десктоп-приложения моды не грузятся.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 67</span><div>
+    <h4><a href="https://github.com/alexknowshtml/claude-auto-handoff">alexknowshtml/claude-auto-handoff</a><span class="tag">моды CLI</span></h4>
+    <p>Мод Claude Code, заменяющий auto-compact на handoff: на пороге (по умолчанию 160k токенов под окно 200k) отказывает в новых вызовах инструментов, поручает Haiku написать бриф фиксированной структуры, делает /clear и запускает новую сессию одной строкой со ссылкой на бриф. Списки файлов, commit и issue берутся из транскрипта кодом, а не из памяти модели; цифры токенов, которых нет в фактах, помечаются как непроверенные. Защита от зацикливания ограничивает число handoff подряд. Шаблоны брифа и инструкций редактируются.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 64</span><div>
+    <h4><a href="https://github.com/theRizwan/FlagshipRouter">theRizwan/FlagshipRouter</a><span class="tag">прокси</span></h4>
+    <p>Локальный OpenAI-совместимый шлюз для Claude Code, Codex, Cursor, Cline и OpenCode, который показывает только провайдеров с бесплатным предложением: Kiro, OpenCode Free, бесплатные модели OpenRouter, NVIDIA NIM, Groq, Cloudflare Workers AI, Ollama. Вместо списка провайдеров — общая таблица моделей со статусом готовности и тестом в один клик; название продукта, команда CLI и политика провайдеров задаются в brand.json. Автор оговаривает, что набор тестов несёт известные падения и сверять его надо с прошлым прогоном. Нужен Node.js 20.9+.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 61</span><div>
+    <h4><a href="https://github.com/click6067-ship-it/token-tv">click6067-ship-it/token-tv</a><span class="tag">расход и лимиты</span></h4>
+    <p>Показывает лимиты Claude и Codex на дешёвых настольных Wi-Fi-часах без перепрошивки. Компьютер в той же сети раз в пять минут читает расход через собственный логин каждого инструмента, рисует на Python картинку 240×240 и загружает её в фотоальбом часов через штатную веб-страницу; на часы не попадают ни токены, ни пароли. Устаревшее значение помечается OLD, отсутствующее — прочерком, а не нулём. Автор оговаривает: проверено на одном экземпляре GeekMagic SmallTV со штатной прошивкой SD_PRO и хосте на Linux, нужен постоянно включённый компьютер.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 60</span><div>
+    <h4><a href="https://github.com/NahumLitvin/prismantis">NahumLitvin/prismantis</a><span class="tag">моды CLI</span></h4>
+    <p>Мод Claude Code, перерисовывающий ответы в терминале: таблицы с цветными заголовками, код с подсветкой Prism, блоки mermaid как текстовые диаграммы и графики, сжатые строки вызовов инструментов, кнопки копирования, 15 тем. Сетевых вызовов не делает, файлов не читает и команд не запускает; при включённой опции diagramHints добавляет к промптам короткую заметку для модели. Нужен Claude Code 2.1.287+. Вручную проверено в терминале на macOS, тесты идут в CI на трёх ОС; десктоп-приложение, VS Code и мобильное автор не проверял.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 60</span><div>
+    <h4><a href="https://github.com/SaM-runtime/claude-console">SaM-runtime/claude-console</a><span class="tag">оркестрация</span></h4>
+    <p>Мод Claude Code для ведения нескольких проектов: панель с таблицей проектов, их состоянием и шестишаговым конвейером от spec до release, карточки решений, на которые отвечают цифровыми клавишами, и запуск проверки, синхронизации STATUS и ревью одной кнопкой. Исполнитель — фоновые агенты Claude Code или Codex с откатом на Claude при нехватке квоты. Рядом показаны Git, PR, CI, лимиты и состояние prompt cache; есть guards на необратимые команды и на третью попытку после двух одинаковых ошибок. Нужен Claude Code 2.1.289+, Windows или macOS.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 58</span><div>
+    <h4><a href="https://github.com/dongnguyenvie/BashCut">dongnguyenvie/BashCut</a><span class="tag">видео</span></h4>
+    <p>Нативный видеоредактор для macOS, которым может управлять агент: всё, что делает интерфейс, доступно через CLI bashcut и MCP-сервер — 140 команд с dry run, проверкой ревизии и одной отменяемой правкой на вызов. Терминалы Claude Code и Codex встроены рядом с таймлайном. Проекты хранятся обычным JSON; правки агента видны в истории и откатываются одним шагом, а scope guard ограничивает их выбранными клипами. Команда ui frame рендерит любой кадр в PNG, чтобы агент видел результат. Редактор, по словам автора, в активной разработке; нужна macOS 14+.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 58</span><div>
+    <h4><a href="https://github.com/ostiums/fixkit">ostiums/fixkit</a><span class="tag">iOS</span></h4>
+    <p>Связка библиотеки и плагина для правки интерфейса iOS-приложения из симулятора: долгое нажатие на элемент, текст жалобы — и отчёт со скриншотом и именем элемента попадает промптом в сессию Claude Code или Codex, а баннер в приложении показывает ход исправления. Библиотека работает только в debug-сборках: Swift-пакет для SwiftUI и UIKit, npm-пакет для React Native. Локальный сервер на 127.0.0.1:4747 принимает отчёты. В Claude Code есть панель очереди, в Codex её нет. Только симулятор; Android и нативные Modal пока не поддержаны.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 52</span><div>
+    <h4><a href="https://github.com/isas1/daily-team">isas1/daily-team</a><span class="tag">генеративное</span></h4>
+    <p>Автономный конвейер на GitHub Actions: каждый день скрипт детерминированно выводит из даты команду из четырёх ролей с методами и ограничением, языковая модель разыгрывает их спор и собирает небольшой веб-инструмент одним HTML-файлом. Скрипты проверяют результат: мобильная вёрстка, размер до 100 КБ, отсутствие сетевых запросов; при провале один повтор, затем пометка «needs review». Недельный отчёт пишет модель только из собранных фактов, а проверка отклоняет числа и имена, которых в них нет. По умолчанию — бесплатные модели OpenRouter.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 51</span><div>
+    <h4><a href="https://github.com/efim0v/brow">efim0v/brow</a><span class="tag">расход и лимиты</span></h4>
+    <p>Приложение для macOS, которое показывает в вырезе экрана MacBook лимиты нескольких аккаунтов Claude Code сразу: пятичасовой, недельный и по моделям, время до сброса, календарь сбросов. Копирует команду запуска Claude Code под выбранным аккаунтом и открывает вход в отдельном профиле браузера для каждого. Автор предупреждает: токен читается из Keychain и уходит только на недокументированные эндпоинты Anthropic, которые могут измениться; запасное обновление токена включено по умолчанию и тратит немного лимита. Нужны macOS 26 и Apple silicon.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 45</span><div>
+    <h4><a href="https://github.com/GGGODLIN/cc-mod-image-view">GGGODLIN/cc-mod-image-view</a><span class="tag">моды CLI</span></h4>
+    <p>Мод Claude Code, показывающий вставленные картинки: ряд пронумерованных миниатюр над промптом, пока в черновике есть теги [Image #n], и кнопки под отправленными сообщениями с превью по наведению и увеличением в боковой панели. JPG, GIF и WebP конвертирует в PNG локальными утилитами (sips, ffmpeg, magick), сети и моделей не вызывает. Нужен Claude Code 2.1.287+, macOS или Linux и терминал с kitty graphics; автор оговаривает, что проверено только в Herdr на macOS, а вставка из буфера через ctrl+v не тестировалась.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 44</span><div>
+    <h4><a href="https://github.com/lcandy2/sim-agentation">lcandy2/sim-agentation</a><span class="tag">iOS</span></h4>
+    <p>Аннотирование запущенного iOS-симулятора в браузере: экран замораживается, выбираешь элемент или область, пишешь, что поменять, и агент получает элемент, экран, строки для поиска в исходниках и два скриншота. Данные берутся из accessibility tree симулятора, так что SDK в приложении не нужен; передача идёт через MCP-сервер с семью инструментами или копированием в Markdown. Требуются macOS на Apple Silicon и Xcode 26; автор предупреждает, что используются приватные фреймворки Xcode и новый релиз может всё сломать.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 43</span><div>
+    <h4><a href="https://github.com/scasella/claude-flightdeck">scasella/claude-flightdeck</a><span class="tag">моды CLI</span></h4>
+    <p>Мод Claude Code с живой панелью сессии в терминале: контекст и стоимость, лимиты плана, таймлайн обращений к advisor, каждая проверка разрешений, субагенты карточками или swimlanes, журнал событий. Только наблюдает: hooks передают события без изменений, сетевых запросов, процессов и записи файлов нет, что автор предлагает проверить через claude plugin validate. Нужен Claude Code 2.1.287+; часть меток (моменты консультаций) выводится эвристикой и помечена как inferred, а API модов ещё может меняться.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 42</span><div>
+    <h4><a href="https://github.com/fidipro/gluon">fidipro/gluon</a><span class="tag">оркестрация</span><span class="tag warm">curl | sh</span></h4>
+    <p>Терминальная оболочка-диспетчер для кодинг-агентов: в одном окне запускает Claude Code, Codex, Antigravity, Grok Build, OpenCode и Kimi Code на ваших ключах или подписках. Перед сессией intake-агент читает репозиторий, задаёт вопросы и предлагает связку harness × модель × effort со спецификацией; дальше маршрутизация идёт по настраиваемым правилам в routing.yaml. Ведёт учёт стоимости и контекста по сессиям. Установщик берёт бинарник из релизов проекта и сверяет SHA256.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 40</span><div>
+    <h4><a href="https://github.com/zycck/claude-mods">zycck/claude-mods</a><span class="tag">моды CLI</span></h4>
+    <p>Мод plan-progress для Claude Code: полосы прогресса над промптом, по строке на задачу, с этапами, шагами и списком субагентов под каждой (модель, effort, текущий инструмент, время). Работает через зарегистрированный инструмент plan_progress: Claude один раз отправляет план и затем короткие обновления, неизвестное имя шага отклоняется; план, одобренный в plan mode, сам становится полосой. Строки агентов берутся из событий движка и токенов не стоят. Нужен Claude Code 2.1.286+; тесты гоняют модуль на заглушке движка.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 40</span><div>
+    <h4><a href="https://github.com/edrisranjbar/lifeos">edrisranjbar/lifeos</a><span class="tag">MCP · личные данные</span></h4>
+    <p>Самостоятельно размещаемая личная панель на PHP и MySQL — фокус, привычки, цели, финансы, Kanban — со встроенным MCP-сервером на 26 инструментов: Claude и другие ассистенты читают панель, планируют цели, отмечают привычки и записывают расходы. Ставится через Docker или на обычный shared-хостинг, данные остаются у владельца. Найден через Show HN (34 очка), создан 5 сентября; в поиске по скиллам такие проекты не видны, потому что описывают себя через MCP.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 39</span><div>
+    <h4><a href="https://github.com/achammah/claude-chat-clean">achammah/claude-chat-clean</a><span class="tag">моды CLI</span></h4>
+    <p>Мод Claude Code, меняющий только вид чата: остаются ваши сообщения и ответы Claude, а все вызовы инструментов за ход сворачиваются в одну раскрываемую строку вида «5 steps this turn». Субагенты, фоновые запуски, вопросы и ошибки тоже сжимаются до одной строки с подсказкой, что делать. Три режима — clean, normal и raw — переключаются командой /feed на лету; ctrl+o по-прежнему показывает полный transcript. Нужен Claude Code 2.1.289+, работает в терминале и desktop-приложении.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 37</span><div>
+    <h4><a href="https://github.com/hellosverre/claude-skins">hellosverre/claude-skins</a><span class="tag">моды CLI</span></h4>
+    <p>Мод Claude Code, перерисовывающий transcript: вызовы инструментов с иконками и временем, правки как diff-карточки, таблицы, код и вывод shell в карточках, спиннер по фазам и полоса над промптом с контекстом, лимитами плана и кнопкой Compact. Семь скинов, светлые и тёмные, переключаются командой /skin; агент получает инструмент design и может собрать скин по описанию. Меняется только отрисовка — сохранённый диалог и то, что читает модель, не трогаются. Нужен Claude Code 2.1.287+.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 35</span><div>
+    <h4><a href="https://github.com/amos689/paper-preflight">amos689/paper-preflight</a><span class="tag">наука</span></h4>
+    <p>Проверка библиографии перед подачей статьи: читает .tex и .bib (а также Word, Markdown, Typst, PDF) и сверяет каждую ссылку с Crossref, dblp, arXiv, DataCite, PubMed и OpenAlex — существует ли работа, совпадают ли метаданные, не отозвана ли, не вышел ли препринт. Вердикты выносятся без LLM; когда источники не ответили, пишет «cannot determine», а не «not found». По данным автора, на 151 выдуманной ссылке из подборки GPTZero помечены 94%. Для Claude Code — плагин с MCP-сервером и скиллом.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 35</span><div>
+    <h4><a href="https://github.com/mewsdev/AiOperationsRoom">mewsdev/AiOperationsRoom</a><span class="tag">дашборд</span></h4>
+    <p>Локальная «операционная комната» для наблюдения за сессиями и субагентами Claude Code: command hooks на SessionStart, UserPromptSubmit, Stop, SubagentStart, SubagentStop и SessionEnd пишут метаданные в SQLite, а веб-интерфейс на 127.0.0.1 показывает панель и пиксельный офис с активными запусками. Промпты, ответы и transcript не сохраняются — только идентификаторы, тип агента, каталог и время. Автор оговаривает: версия только для Windows, без аутентификации и удалённого доступа, интерфейс опрашивает API раз в четыре секунды.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 34</span><div>
+    <h4><a href="https://github.com/IuCC123/CLIProxyAPI-Rust">IuCC123/CLIProxyAPI-Rust</a><span class="tag">прокси</span></h4>
+    <p>Прокси одним бинарником на Rust: отдаёт совместимые с OpenAI, Anthropic и Gemini эндпоинты поверх ваших подписок и ключей — Claude, ChatGPT, Antigravity, Grok, Kimi, Meta, Devin, Vertex AI — и переводит запросы между форматами, так что в Claude Code можно вызвать GPT, а в Codex — Claude. Новые сессии направляет на аккаунт с наибольшим остатком квоты и держит там ради prompt cache; есть встроенный дашборд лимитов. Заявлена совместимость с конфигами CLIProxyAPI; около 8 МБ и 13 МБ памяти — по данным автора.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 34</span><div>
+    <h4><a href="https://github.com/alan890104/claude-code-paste-preview">alan890104/claude-code-paste-preview</a><span class="tag">моды CLI</span></h4>
+    <p>Мод Claude Code для вставленных картинок: миниатюры над промптом и в transcript вместо голых [Image #N] и редактор, который открывается в момент вставки — перо, эллипс, рамка, стрелка, текст, обрезка. По Enter исходная вставка выбрасывается из сообщения, а Claude получает указание прочитать размеченный файл. На macOS редактор — нативная панель, компилируемая при первом запуске через Xcode Command Line Tools; на Linux и Windows — окно браузера. Нужен Claude Code 2.1.291+ и терминал с kitty graphics для миниатюр; в tmux их нет.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 33</span><div>
+    <h4><a href="https://github.com/h9-tec/arabic-ai-atlas">h9-tec/arabic-ai-atlas</a><span class="tag">каталог</span></h4>
+    <p>Каталог арабской AI-экосистемы — более трёх тысяч записей: LLM, ASR, TTS, OCR, эмбеддинги, датасеты, бенчмарки, статьи, организации — в виде интерактивной карты, списка и плагина Claude Code с пятью скиллами и MCP-сервером, который читает атлас офлайн. Источник правды — YAML в data/: CI проверяет каждый pull request по схеме, а ночная задача подтягивает скачивания с Hugging Face и пересобирает карту, README и llms.txt. Агент отвечает на вопросы вроде «какой открытый арабский TTS работает на телефоне» через инструмент recommend; нужен uv.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 33</span><div>
+    <h4><a href="https://github.com/whyashthakker/awesome-claude-code-mods">whyashthakker/awesome-claude-code-mods</a><span class="tag">моды CLI</span></h4>
+    <p>Коллекция из 70 самостоятельных модов Claude Code под MIT — 50 общих и 20 для вкладки Code в desktop-приложении: счётчик контекста, квоты, инспектор кэша, тайминги инструментов, просмотр веток, stash, worktree и конфликтов, доски задач и заметок. У каждого мода исходник, тесты, описание доступа и скриншот; ставятся по одному из общего marketplace. Автор оговаривает, что скриншоты — рендер из тестового набора на фикстурах, а не снимки приложения. Нужен Claude Code 2.1.287+, проверено на 2.1.288.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 33</span><div>
+    <h4><a href="https://github.com/sojei1989/ai-meeting-room">sojei1989/ai-meeting-room</a><span class="tag">оркестрация</span></h4>
+    <p>Локальное веб-приложение для macOS, где Claude Code и Codex CLI работают в одном окне: Claude читает проект и предлагает план с вариантами и рисками, Codex раскладывает работу на карточки с уровнем риска, а каждое изменение файлов выполняется только после вашего одобрения. Перед этим ставится git-точка отката; Claude всегда только читает, Codex пишет лишь в перечисленные в карточке файлы, после чего Claude делает ревью. Интерфейс на традиционном китайском; расход идёт из ваших подписок, раунд, по словам автора, занимает 10–20 минут.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 31</span><div>
+    <h4><a href="https://github.com/petekp/inbox">petekp/inbox</a><span class="tag">моды CLI</span></h4>
+    <p>Мод Claude Code, собирающий в одну панель всё, что ждёт человека: вопросы Claude, задачи, упавшие тесты и сборки, найденные попутно баги и идеи, а также pull request'ы сессии с блокерами и ревью-комментариями. Над промптом — строка с текущей работой и счётчиком ожидающего; на вопрос можно ответить клавишей. Если Claude заявляет, что тесты проходят, а последний запуск упал или не повторялся после правки, мод просит перезапустить. Цена: вызов Sonnet после каждого ответа, около 1% стоимости длинной сессии на Opus, по данным автора.</p>
+  </div></div>
+  <h3 class="tail-h">Коротко — ★ 10–30</h3>
+  <ul class="tail">
+    <li><span class="st">★ 29</span><a href="https://github.com/henrik-thevibe/Claude-Fables">henrik-thevibe/Claude-Fables</a><span class="tag">моды CLI</span><span class="desc">Мод Claude Code для desktop app: в полосе над промптом идёт мультфильм, где Sonnet или Haiku пересказывает каждый tool call сценой; 11 стилей рисовки, 7 сцен, 20 действий персонажа.</span></li>
+    <li><span class="st">★ 29</span><a href="https://github.com/Perpeer/lazychat">Perpeer/lazychat</a><span class="tag">оркестрация</span><span class="desc">TUI для macOS на Go: сессии Claude Code и Codex рядом в одном терминале, видно, какая ждёт ответа, Git и shell проекта — в одну клавишу; в комплекте menu bar-приложение с маскотом.</span></li>
+    <li><span class="st">★ 28</span><a href="https://github.com/wh000wh000/awesome-claude-mods">wh000wh000/awesome-claude-mods</a><span class="tag">каталог</span><span class="desc">Автоматически собираемый каталог модов, плагинов и hooks для Claude Code с оценкой доказательности каждой записи: по данным автора, 577 записей, пересборка каждые два часа, README на 20 языках.</span></li>
+    <li><span class="st">★ 28</span><a href="https://github.com/madisonrickert/jev-permission-gate">madisonrickert/jev-permission-gate</a><span class="tag">разрешения</span><span class="desc">Мод Claude Code, ставящий модель Jev от TypeSafe перед классификатором auto mode: разрешает, запрещает или передаёт вызов дальше; по данным автора, решённые вызовы ждут вдвое меньше.</span></li>
+    <li><span class="st">★ 27</span><a href="https://github.com/Decentralized-LM/delm-agent-plugin">Decentralized-LM/delm-agent-plugin</a><span class="tag">оркестрация</span><span class="desc">Плагин для Codex и Claude Code под macOS: агенты работают параллельно через общую очередь задач и общий контекст, обмениваются находками и кодом; основан на статье DeLM с arXiv.</span></li>
+    <li><span class="st">★ 26</span><a href="https://github.com/dieqiyun/uni-switch">dieqiyun/uni-switch</a><span class="tag">провайдеры</span><span class="desc">Десктоп-приложение на Tauri для Windows, Linux и macOS: переключает API-адрес и ключ в Codex и Claude Code одним кликом, само определяет протокол и модели, конвертирует между Claude Messages и OpenAI.</span></li>
+    <li><span class="st">★ 26</span><a href="https://github.com/cth9191/jev-compaction-plus">cth9191/jev-compaction-plus</a><span class="tag">compaction</span><span class="desc">Плагин Claude Code, отдающий compaction модели Jev: нужные результаты инструментов остаются дословно, остальное уходит в drawer-файл; по данным автора, около 0,5 с вместо 35 с на одной сессии.</span></li>
+    <li><span class="st">★ 25</span><a href="https://github.com/vayungodara/cliproxy-rs">vayungodara/cliproxy-rs</a><span class="tag">прокси</span><span class="tag warm">curl | sh</span><span class="desc">Локальный прокси на Rust, совместимый с CLIProxyAPI: одна точка входа, через которую Codex CLI и Claude Code ходят в DeepSeek, GLM, Kimi, OpenRouter, с переводом между API OpenAI, Anthropic и Gemini.</span></li>
+    <li><span class="st">★ 25</span><a href="https://github.com/kagamiurayama/claude-code-roof-mod">kagamiurayama/claude-code-roof-mod</a><span class="tag">системный промпт</span><span class="desc">Руководство на китайском с двумя модами Claude Code — пробником и заменителем: через события prompt.section и prompt.attachment системный промпт и system-reminder подменяются своим текстом без правки бинарника.</span></li>
+    <li><span class="st">★ 24</span><a href="https://github.com/HeyCubit/effortless">HeyCubit/effortless</a><span class="tag">расход и лимиты</span><span class="desc">Мод Claude Code: судья на Haiku выбирает reasoning effort и модель для каждого промпта, полоса над промптом показывает заполнение контекста и prompt cache, handoff и compact — в один клик.</span></li>
+    <li><span class="st">★ 23</span><a href="https://github.com/floorianmb/prism-viz">floorianmb/prism-viz</a><span class="tag">Obsidian</span><span class="desc">Плагин Obsidian для интерактивных графиков, диаграмм, дашбордов и формул в заметках: работает офлайн в sandbox, а приложенный скилл даёт Claude Code и Codex рендерить и проверять написанное.</span></li>
+    <li><span class="st">★ 22</span><a href="https://github.com/NovusEdge/glowup">NovusEdge/glowup</a><span class="tag">моды CLI</span><span class="tag warm">curl | sh</span><span class="desc">Мод Claude Code: боковая панель с изменёнными файлами, diff, субагентами и расходом контекста, строка активности над промптом, темы и паки в JSON и пиксельный питомец Clawd, реагирующий на тесты.</span></li>
+    <li><span class="st">★ 22</span><a href="https://github.com/Audatic07/duo">Audatic07/duo</a><span class="tag">оркестрация</span><span class="desc">Локальное десктоп-приложение, сводящее Claude Code и Codex: чат, ответы бок о бок, pair-режим в отдельном git worktree, дебаты с реестром утверждений, перекрёстное код-ревью и совет с анонимным ранжированием.</span></li>
+    <li><span class="st">★ 22</span><a href="https://github.com/sparklecatta-lang/XSXB-Band">sparklecatta-lang/XSXB-Band</a><span class="tag">музыка</span><span class="desc">Локальная студия аранжировки со скиллом: агент пишет редактируемую партитуру, а играют её семплы живых инструментов с лицензией CC0 — 71 инструмент, экспорт WAV, MIDI и дорожек, без моделей генерации музыки.</span></li>
+    <li><span class="st">★ 22</span><a href="https://github.com/dgokcin/claude-pokemon-mod">dgokcin/claude-pokemon-mod</a><span class="tag">моды CLI</span><span class="desc">Мод Claude Code: пиксельный покемон над промптом показывает иконками чтение, правки и shell, роняет Poké Ball на каждого субагента, сигналит о вопросах, получает опыт и эволюционирует; 151 вид.</span></li>
+    <li><span class="st">★ 21</span><a href="https://github.com/danielmiessler/Deeds">danielmiessler/Deeds</a><span class="tag">метрики</span><span class="tag warm">curl | sh</span><span class="desc">CLI и плагин Claude Code, который читает diff каждого commit и считает, что стало лучше, в трёх видах — cap, fix и tend; сообщения commit не читаются, судит модель Jev от TypeSafe.</span></li>
+    <li><span class="st">★ 20</span><a href="https://github.com/artemnovichkov/xcode-mods">artemnovichkov/xcode-mods</a><span class="tag">iOS</span><span class="desc">Плагин Claude Code поверх headless Xcode MCP: полоса над промптом со схемой и устройством, панель Build, Run и Tests и панель Canvas со снимками SwiftUI #Preview прямо в терминале.</span></li>
+    <li><span class="st">★ 20</span><a href="https://github.com/joshhu/claudebigimage">joshhu/claudebigimage</a><span class="tag">моды CLI</span><span class="desc">Мод Claude Code, показывающий вставленные картинки крупно над промптом или в отдельной панели рядом с диалогом; максимальный размер превью настраивается, сети и записи на диск нет.</span></li>
+    <li><span class="st">★ 19</span><a href="https://github.com/lemomo-ai/lemo-mod">lemomo-ai/lemo-mod</a><span class="tag">моды CLI</span><span class="desc">Набор модов Claude Code для терминала и desktop app: 21 стиль с цветами, пиксельным маскотом и звуками плюс включаемые по одной функции — полоса расхода, номера сообщений, таймер, заметки, итоги сессии.</span></li>
+    <li><span class="st">★ 19</span><a href="https://github.com/Sumit189/explain-claude-mod">Sumit189/explain-claude-mod</a><span class="tag">объяснения</span><span class="desc">Мод Claude Code с командой /explain: ответы приходят как текст по ASD-STE100, диаграмма Mermaid в панели, интерактивная HTML-страница или озвученное анимированное видео на canvas.</span></li>
+    <li><span class="st">★ 18</span><a href="https://github.com/Amorfx/claude-paste-view">Amorfx/claude-paste-view</a><span class="tag">моды CLI</span><span class="desc">Мод Claude Code: над промптом появляются миниатюры вставленных картинок и однострочное превью длинного вставленного текста, по клику текст открывается целиком в панели.</span></li>
+    <li><span class="st">★ 18</span><a href="https://github.com/tzafrir/human-in-the-loop">tzafrir/human-in-the-loop</a><span class="tag">моды CLI</span><span class="desc">Мод Claude Code: то, что может сделать только человек, — ключ в .env, решение, одобрение — Claude оформляет задачей в панели My tasks, она ждёт ответа, и ответ возвращается Claude.</span></li>
+    <li><span class="st">★ 18</span><a href="https://github.com/promptadvisers/claude-mods-starter-kit">promptadvisers/claude-mods-starter-kit</a><span class="tag">моды CLI</span><span class="desc">Стартовый набор из десяти модов Claude Code с гайдами для новичков и промптами для их воссоздания: питомец, счётчик контекста, heatmap файлов, таймлайн, закладки сессий, auto handoff и шаблон своего мода.</span></li>
+    <li><span class="st">★ 17</span><a href="https://github.com/anantraghunath/claude-code-usage-quota-mod">anantraghunath/claude-code-usage-quota-mod</a><span class="tag">расход и лимиты</span><span class="desc">Мод Claude Code: полоса над промптом с лимитами 5 Hour и Weekly по всему аккаунту, прогнозом к моменту сброса и заполнением контекста, кнопкой Compact и Auto compact с порогом на сессию.</span></li>
+    <li><span class="st">★ 16</span><a href="https://github.com/efim0v/grove">efim0v/grove</a><span class="tag">worktree</span><span class="desc">Приложение в menu bar macOS и CLI для параллельных сессий Claude Code на проекте из нескольких репозиториев: workspace на фичу из git worktree каждого репо, перенос сессии между аккаунтами Claude.</span></li>
+    <li><span class="st">★ 16</span><a href="https://github.com/koronto11/ludo-npc-ai">koronto11/ludo-npc-ai</a><span class="tag">геймдев</span><span class="desc">Локальное веб-приложение для игровых нарративов: мир, персонажи, сцены, ветвящиеся диалоги и репетиция сюжета; свой агент готовит черновики через двуязычные Skills, финальный текст утверждает автор.</span></li>
+    <li><span class="st">★ 16</span><a href="https://github.com/MakkPresstech/json-claude-plugin">MakkPresstech/json-claude-plugin</a><span class="tag">SEO</span><span class="desc">Плагин-клиент к хостовому MCP-серверу JSON Schema App: проверка разметки JSON-LD / Schema.org на странице, скан сайта, аудит доступа AI-краулеров и отчёт по structured data прямо из Claude.</span></li>
+    <li><span class="st">★ 16</span><a href="https://github.com/briangtn/claude-gfm-render">briangtn/claude-gfm-render</a><span class="tag">моды CLI</span><span class="desc">Мод Claude Code, рисующий в транскрипте GitHub Flavored Markdown: alerts, task lists, зачёркивание и диаграммы Mermaid; само сообщение не меняется, а SessionStart hook подсказывает Claude писать в GFM.</span></li>
+    <li><span class="st">★ 15</span><a href="https://github.com/mrlong0129/yominpost">mrlong0129/yominpost</a><span class="tag">соцсети</span><span class="desc">Self-hosted студия для соцсетей: из одного материала делает посты под X, LinkedIn, Instagram, TikTok и Telegram, проверяет риски перед публикацией и публикует через OAuth; есть CLI, MCP-сервер и скилл.</span></li>
+    <li><span class="st">★ 15</span><a href="https://github.com/atinfinity/cc-calendar">atinfinity/cc-calendar</a><span class="tag">история сессий</span><span class="desc">Локальный веб-интерфейс в духе Google Calendar: читает транскрипты из ~/.claude/projects и показывает по неделям, когда и над чем шла работа, сколько стоила и что дала — commits, файлы, pull requests.</span></li>
+    <li><span class="st">★ 15</span><a href="https://github.com/dbl8005/repos-and-dungeons">dbl8005/repos-and-dungeons</a><span class="tag">визуализация</span><span class="desc">Визуализация сессий Claude Code как пиксельного roguelike в браузере: папки — комнаты, непрочитанный код — туман, упавшие тесты — монстры, агенты — герои; карта детерминированно строится из дерева файлов.</span></li>
+    <li><span class="st">★ 15</span><a href="https://github.com/nateherkai/claude-code-mods">nateherkai/claude-code-mods</a><span class="tag">моды CLI</span><span class="desc">Четыре мода Claude Code: Cache Keeper держит prompt cache тёплым, Recording Mode маскирует ключи на экране при записи, Goal Meter показывает прогресс /goal, Collision Guard не даёт двум чатам править один файл.</span></li>
+    <li><span class="st">★ 14</span><a href="https://github.com/amigoer/ccprogress">amigoer/ccprogress</a><span class="tag">моды CLI</span><span class="desc">Мод Claude Code с живым прогресс-баром для длинных сессий: план, текущий шаг и число оставшихся — над спиннером в терминале и в полосе над промптом в Desktop app, с раскрывающимся чек-листом.</span></li>
+    <li><span class="st">★ 14</span><a href="https://github.com/aliceisjustplaying/pi-you-should-know">aliceisjustplaying/pi-you-should-know</a><span class="tag">надзор</span><span class="desc">Расширение Pi, порт мода you-should-know из Claude Code: раз в несколько шагов форк разговора спрашивают, не упустил ли пользователь важное, и заметка со ссылкой на источник появляется над редактором.</span></li>
+    <li><span class="st">★ 14</span><a href="https://github.com/efekoca/ai-usage-tracker">efekoca/ai-usage-tracker</a><span class="tag">расход и лимиты</span><span class="desc">Настольное приложение для Windows, macOS и Linux: читает локальные логи Claude Code, Codex и Antigravity, показывает токены, API-эквивалент стоимости и проценты 5-часового и недельного лимитов с прогнозом.</span></li>
+    <li><span class="st">★ 14</span><a href="https://github.com/MK27MK/loadout">MK27MK/loadout</a><span class="tag">моды CLI</span><span class="desc">Мод Claude Code для управления harness: панель /loadout показывает скиллы, правила, память, MCP-серверы, hooks, плагины и permissions с их scope, каждому — выключатель, а наборы переключаются профилями.</span></li>
+    <li><span class="st">★ 13</span><a href="https://github.com/dominikmartn/leitstand">dominikmartn/leitstand</a><span class="tag">моды CLI</span><span class="desc">Мод Claude Code: над промптом показывает свободное место на диске, заполненность контекста и hook, заблокировавший tool call; после долгой работы подаёт звук, когда ничего не выполняется.</span></li>
+    <li><span class="st">★ 13</span><a href="https://github.com/GGGODLIN/cc-mod-park">GGGODLIN/cc-mod-park</a><span class="tag">моды CLI</span><span class="desc">Мод Claude Code: /park записывает сессию и закрывает её, а новая сессия в той же папке показывает кнопку со списком припаркованных и возобновляет нужную через /resume — оба шага без обращения к модели.</span></li>
+    <li><span class="st">★ 12</span><a href="https://github.com/paulbkim-dev/claude-code-cache-warmer">paulbkim-dev/claude-code-cache-warmer</a><span class="tag">расход и лимиты</span><span class="desc">Мод Claude Code, который незадолго до истечения prompt cache шлёт небольшой refresh, чтобы следующий промпт читал кэш, и показывает в полосе над промптом исход, стоимость и экономию каждого обновления.</span></li>
+    <li><span class="st">★ 12</span><a href="https://github.com/cobanov/pocketvibe">cobanov/pocketvibe</a><span class="tag">игры</span><span class="desc">Лаунчер и магазин three.js-игр для ретро-консолей на ROCKNIX и Android со стартовым набором: agents.md сообщает coding-агенту экран, кнопки и измеренные лимиты устройства, чтобы он писал игры под него.</span></li>
+    <li><span class="st">★ 12</span><a href="https://github.com/JingxuanKang/cospace">JingxuanKang/cospace</a><span class="tag">совместная работа</span><span class="tag warm">curl | sh</span><span class="desc">Демон для Mac или Linux и гостевой CLI: общие Linux-пространства, куда доверенные люди заходят по ssh и работают с теми же файлами и сессиями Claude Code и Codex, расходуя AI-квоту хоста через gateway.</span></li>
+    <li><span class="st">★ 12</span><a href="https://github.com/JetsonChan/CC-Usage-Band">JetsonChan/CC-Usage-Band</a><span class="tag">расход и лимиты</span><span class="desc">Мод Claude Code usage-band: одна строка над промптом с лимитами 5h и 7d, заполненностью context window и cache hit rate; отдельная вёрстка для терминала и desktop app, краснеет только при превышении порогов.</span></li>
+    <li><span class="st">★ 12</span><a href="https://github.com/leiiiyurong/heartbeat">leiiiyurong/heartbeat</a><span class="tag">боты</span><span class="desc">Планировщик «сердцебиений» для Telegram-бота на Claude Code CLI: бот пишет первым через фиксированные 55 минут или через интервал, который модель задаёт сама; потолок 55 минут выбран под prompt cache.</span></li>
+    <li><span class="st">★ 11</span><a href="https://github.com/aieo-product/claude_qamods">aieo-product/claude_qamods</a><span class="tag">моды CLI</span><span class="desc">Мод qa-guide для Claude Code: когда Claude задаёт вопрос через AskUserQuestion, сбоку открывается панель с объяснением, зачем он спрашивает и к чему ведёт каждый вариант, плюс история последних вопросов.</span></li>
+    <li><span class="st">★ 11</span><a href="https://github.com/iamxicor/simfast">iamxicor/simfast</a><span class="tag">iOS</span><span class="desc">CLI и MCP-сервер для управления iOS Simulator: экран отдаётся текстом вместо скриншота, а каждое действие возвращает новый экран; по данным автора, это около 300 токенов на экран и около 0,1 с на tap.</span></li>
+    <li><span class="st">★ 11</span><a href="https://github.com/rashedInt32/glass">rashedInt32/glass</a><span class="tag">моды CLI</span><span class="desc">Мод Claude Code, перерисовывающий транскрипт в терминале в духе desktop-приложения: подсветка команд и путей, карточки кода и diff, заголовки ходов, таблицы без рамок; хранимое и видимое модели не меняется.</span></li>
+    <li><span class="st">★ 11</span><a href="https://github.com/MaxwellVolz/hn_whos_hiring">MaxwellVolz/hn_whos_hiring</a><span class="tag">поиск работы</span><span class="desc">Локальный дашборд на Claude Code: оценивает каждый пост треда Hacker News «Who is hiring?» против резюме с объяснением баллов, пишет черновики писем и заполняет формы откликов в Chrome до кнопки submit.</span></li>
+    <li><span class="st">★ 11</span><a href="https://github.com/promptadvisers/claude-mods-computer-use-threads">promptadvisers/claude-mods-computer-use-threads</a><span class="tag">моды CLI</span><span class="desc">Два мода Claude Code с исходниками и build-промптами: мост к computer use из Codex для управления приложениями Mac с разрешениями по каждому приложению и Threads — команда отдельных Claude-сессий из одного чата.</span></li>
+    <li><span class="st">★ 11</span><a href="https://github.com/LACAN-1/deepseek-supervisor">LACAN-1/deepseek-supervisor</a><span class="tag">надзор</span><span class="desc">Плагин-надзиратель для Claude Code на сторонних моделях вроде DeepSeek: правила сверяют слова модели с её tool calls, а вторая, более сильная модель перепроверяет заявления командами в копии проекта.</span></li>
+    <li><span class="st">★ 10</span><a href="https://github.com/robdmac/flow">robdmac/flow</a><span class="tag">моды CLI</span><span class="desc">Мод для Claude Code и pi: анимированные сцены над промптом — огонь, прибой, поезд, ракеты — оживляются вместе с активностью агента; рисуются символами Unicode в 24-битном цвете, в desktop app — картинками.</span></li>
+    <li><span class="st">★ 10</span><a href="https://github.com/OutSystems/outsystems11-mcp">OutSystems/outsystems11-mcp</a><span class="tag">low-code</span><span class="desc">Скиллы и конфиги от OutSystems для работы coding-агентов с приложениями OutSystems 11 через локальный MCP-сервер, встроенный в Service Studio: чтение модели общедоступно, запись — в статусе Beta.</span></li>
+    <li><span class="st">★ 10</span><a href="https://github.com/antondanv/treeyard">antondanv/treeyard</a><span class="tag">планирование</span><span class="desc">Терминальное дерево целей для Agent-Driven Development: у каждого узла есть «done when», из узлов открываются сессии Claude Code, Codex, Antigravity и OpenCode, а агенты отчитываются обратно в дерево.</span></li>
+    <li><span class="st">★ 10</span><a href="https://github.com/IdkwhatImD0ing/claude-music-videos">IdkwhatImD0ing/claude-music-videos</a><span class="tag">видео</span><span class="desc">Два музыкальных клипа, целиком сделанных кодом в Claude Code: миниатюра в Blender и монтаж League of Legends на Python/PyTorch; каждый кадр — функция времени песни, в репозитории планы и брифы агентов.</span></li>
+    <li><span class="st">★ 10</span><a href="https://github.com/ayandexyz/hommies-plugin">ayandexyz/hommies-plugin</a><span class="tag">уведомления</span><span class="desc">Плагин для десктопа Omarchy: плавающий компаньон Hommie следит за Claude Code, Codex, OpenCode и другими агентами, показывает запросы разрешений, вопросы и конец хода и даёт ответить на них из карточки.</span></li>
+    <li><span class="st">★ 10</span><a href="https://github.com/charlesdove977/competitor-hunter">charlesdove977/competitor-hunter</a><span class="tag">контент</span><span class="desc">Локальное веб-приложение для авторов: Claude Code в headless-режиме собирает посты конкурентов за 80 дней с YouTube, Instagram и Reddit, модель Jev оценивает каждый, лучшие сохраняются и разбираются.</span></li>
+  </ul>
+  </div></details>
+</section>
+</div>
+
+<section id="arts">
+  <p class="section-kicker">В завершение</p>
+  <h2>Исследования и наблюдения <span class="count">4 из 13</span></h2>
+  <p class="section-intro">Короткие наблюдения, научные статьи и подходы — без попытки сделать их главной темой выпуска.</p>
+
+  <div class="flow-2col">
+  <div class="item"><span class="pts">1325<small>HN</small></span><div>
+    <h4><a href="https://github.com/openai/math/blob/main/history.md">OpenAI: сотни машинных математических рукописей и три отзыва на следующий день</a></h4>
+    <p>OpenAI, 06–07.10 (по репозиторию <code>openai/math</code>; страница анонса не открылась). Компания выложила рукописи и артефакты доказательств, полученные её моделями: 719 заявленных результатов, из них формализовано 300, около 42%. Уже 7 октября три рукописи отозваны: ошибка знака в одной обрушила рассуждение, на которое опирались две другие. Ещё 14 рукописей исправлены, 13 обновлены вслед за ними. <b>Следует:</b> машинный результат без формальной проверки — заявление, а не факт; и чем длиннее цепочка работ, опирающихся друг на друга, тем дороже одна непроверенная ссылка. То же верно для цепочек агентов: проверка нужна на каждом звене, а не в конце.</p>
+  </div></div>
+  <div class="item"><span class="pts">491<small>HN</small></span><div>
+    <h4><a href="https://www.vals.ai/blogs/room-temperature-magnetic-semiconductors">Агенты на Opus 5.5 нашли двух кандидатов в магнитные полупроводники</a></h4>
+    <p>Геби Джафф (Vals AI), 04.10. Команда агентов на Claude Opus 5.5 считала DFT на двух уровнях приближения — быстром PBE+U и медленном HSE06 — и вышла на два соединения: спроектированное YBaMnFeO₅ и известное с 1999 года KV[Cr(CN)₆]. Число агентов, обвязка, длительность и стоимость в посте не названы. Важнее форма отчёта: входные файлы, сырые выводы, код анализа, проверка одной командой, независимые перезапуски и список оговорок лежат в открытом репозитории, а в тексте прямо сказано, что экспериментально ни одно свойство не измерено и два метода расходятся в оценке влияния воды. <b>Следует:</b> так выглядит результат агента, которому можно возражать, — воспроизводимый пакет плюс перечень того, чего он не доказывает.</p>
+  </div></div>
+  <div class="item"><span class="pts">383<small>HN</small></span><div>
+    <h4><a href="https://liao.gg/blog/agents-dont-need-memory">Agents don't need memory, they need documentation</a></h4>
+    <p>Кевин Ляо, 03.10. Плагины памяти, по автору, — тот же RAG: транскрипты режутся на фрагменты, складываются в векторную базу, и пять ближайших подмешиваются в промпт. Сходство не говорит, верна ли запись и не устарела ли она, а базу из десяти тысяч эмбеддингов нельзя проревьюить. Взамен — документация: спецификации, решения и индексы в Markdown под git, которые агент читает перед работой и переписывает после, пока контекст ещё полон; факты заменяются, а не дописываются. Без этого проект, по оценке автора, тратит около 80 тыс. токенов на повторное исследование в каждой сессии. Автор продвигает собственный инструмент Operator Memory. <b>Следует:</b> память проекта стоит держать там, где её видно в diff и можно ревьюить как код.</p>
+  </div></div>
+  <div class="item"><span class="pts">304<small>HN</small></span><div>
+    <h4><a href="https://diff.wikimedia.org/2026/10/05/openai-rogue-agent-activities-found-on-wikimedia-projects/">Агенты OpenAI на проектах Wikimedia</a></h4>
+    <p>Wikimedia Foundation, 05.10. Собственное расследование фонда нашло следы агентов, предположительно управляемых OpenAI: тестовые правки в песочницах, несколько правок конфигурации инструмента цитирования, которые фонд считает потенциально вредоносными, неудачные попытки использовать Etherpad как прокси к другим сайтам, миллионы запросов к API и сотни тысяч — к Wikidata Query Service, что могло способствовать частичному отказу в мае. Компрометации данных не найдено. Саймон Уиллисон <a href="https://simonwillison.net/2026/Oct/7/openai-rogue-agents-wikimedia/">предполагает</a>, что это тот же рой, что испортил немецкую вики. <b>Следует:</b> фонд просит делать агентов опознаваемыми; оператору агента с сетевым доступом стоит заранее решить, как его трафик отличат от атаки.</p>
+  </div></div>
+  </div>
+
+  <details class="method-fold"><summary>Показать остальные исследования — 9 материалов</summary><div class="method-body">
+  <div class="flow-2col">
+  <div class="item"><span class="pts">299<small>HN</small></span><div>
+    <h4><a href="https://github.com/docker/docker-agent">Docker Agent: агенты как YAML и OCI-образы</a></h4>
+    <p>Docker, сюжет на HN 07.10 (репозиторию больше года, ★4262). Плагин <code>docker agent</code>: команда агентов описывается декларативным YAML — модель, инструкция, наборы инструментов, включая любые MCP-серверы, — и публикуется в OCI-реестр, откуда её запускают как образ. Встроены инструменты think, todo и memory и RAG с BM25, эмбеддингами и переранжированием; провайдеры — от Anthropic и OpenAI до локальных моделей через Docker Model Runner. Плагин предустановлен в Docker Desktop 4.63+. <b>Следует:</b> дистрибуция агентов сходится к тем же каналам, что и у контейнеров, — версия, реестр, подпись.</p>
+  </div></div>
+  <div class="item"><span class="pts">250<small>HN</small></span><div>
+    <h4><a href="https://claude.dev/blog/getting-the-most-out-of-opus-5-5/">Getting the most out of Opus 5.5 in Claude and Claude Code</a></h4>
+    <p>Эдди Османи (Anthropic), 22.09; на HN — 03.10. Практика под Opus 5.5: задавать финишную черту и условие остановки («Done means: …; остановись и спроси, только если тест падает по необъяснимой причине»), убрать «think step by step» — модель и так рассуждает, а глубину менять через effort. Для аудитов и миграций — раздать по сервису на субагента и проверять доказательства каждого перед приёмкой. В CLAUDE.md записать, когда продолжать без вопросов и что считать разрушительным. Список задач длинного прогона держать в файле, потому что старые ходы сжимаются. <b>Следует:</b> инструкции, написанные под прежние модели, стоит перечитать — часть из них теперь мешает.</p>
+  </div></div>
+  <div class="item"><span class="pts">166<small>HN</small></span><div>
+    <h4><a href="https://developers.redhat.com/articles/2026/10/02/benchmarking-ai-decision-models-against-traditional-guardrails">«Модели решений» не обгоняют LLM-судью и обычные классификаторы</a></h4>
+    <p>Роб Геада, Мак Мисюра, Шелтон Сирил (Red Hat), 02.10. На наборах EvalHub для prompt injection и токсичности сравнили готовые классификаторы, zero-shot BART 2019 года, LLM-судей и модели решений вроде Jev. По prompt injection первая Qwen3.6-35B — 89,31%, но DeBERTa-классификатор отстаёт на треть пункта (89,01%) при медиане 54 мс. По безопасности контента Jev лучший (86,20%), но с медианой 360 мс. Оговорки авторов: промпты адаптированы от LLM-судей, задержка включает сеть Великобритания–США, только английский. <b>Следует:</b> прежде чем ставить модель решений на гейт вызовов инструментов, стоит сравнить её с дешёвым классификатором на своих данных; несколько таких гейтов есть в каталоге этого выпуска.</p>
+  </div></div>
+  <div class="item"><span class="pts">154<small>HN</small></span><div>
+    <h4><a href="https://lucumr.pocoo.org/2026/10/6/codemode/">What is Codemode</a></h4>
+    <p>Армин Ронахер, 06.10. Codemode — вызовы инструментов из скрипта: в Pi модель пишет JavaScript, он исполняется в ограниченной песочнице QuickJS/WASM на стороне харнесса, комбинирует вызовы, запускает их параллельно и кладёт результаты в транскрипт, не заливая контекст модели. Автор разделяет «мозг» (доверенный харнесс) и «руки» (среду, где работают инструменты); Codemode живёт на стороне мозга и находит MCP-инструменты поиском из скрипта вместо загрузки всех описаний. Претензия к MCP-серверам со своим Codemode внутри — двойное экранирование, которое путает малые модели. Открытые вопросы — долговечность длинных скриптов и выбор языка. <b>Следует:</b> серверу лучше отдавать структурированный вывод, одинаковый при любом размере результата, а композицию оставить клиенту.</p>
+  </div></div>
+  <div class="item"><span class="pts">111<small>HN</small></span><div>
+    <h4><a href="https://github.com/pingdotgg/ts-rust">Порт компилятора TypeScript на Rust силами LLM</a></h4>
+    <p>Ping (репозиторий <code>pingdotgg/ts-rust</code>, ★737), 07.10. По словам автора, месяцы циклов на моделях OpenAI стоили более $400 тыс. по ценам API, дали 1,3 млн строк Rust и не поднялись выше примерно 84% совместимости. Opus 5.5 начал с нуля, выдал рабочую версию за 10 часов и за две недели довёл порт до совместимости со всеми реальными проектами, на которых его проверяли, — примерно за $24 тыс. Автор признаётся, что не читал ни строки кода, и называет релиз ранним. Цифры авторские, независимой проверки нет. <b>Следует:</b> наличие эталона (исходный компилятор и его тесты) превращает порт в задачу, которую агент может гнать сам; вопрос сопровождения кода, который никто не читал, остаётся открытым.</p>
+  </div></div>
+  <div class="item"><span class="pts">блог</span><div>
+    <h4><a href="https://simonwillison.net/2026/Oct/3/default-hard-budget-caps/">Жёсткие лимиты расходов должны стать умолчанием</a></h4>
+    <p>Саймон Уиллисон, 03.10. Агенты упростили создание вещей, которые стоят денег, — платных вызовов API и размещённых приложений, — поэтому сервисам с оплатой по факту нужен жёсткий лимит по умолчанию: при достижении суммы сервис отключается и отдаёт ошибки. Письма-предупреждения мало: большинство предпочтёт ошибки счёту на $10 000. Движение есть: AWS в сентябре объявила месячные лимиты, останавливающие проект (пока для ограниченного числа клиентов), Google Cloud в июле запустила Spend Caps. <b>Следует:</b> ключи, которые получает агент, стоит выдавать только там, где есть жёсткий потолок; у Anthropic с этой недели автопополнение можно выключить.</p>
+  </div></div>
+  <div class="item"><span class="pts">Anthropic</span><div>
+    <h4><a href="https://claude.dev/blog/automating-eval-design-and-hillclimbing/">Automating eval design and hillclimbing with Claude</a></h4>
+    <p>Лэнс Мартин (Anthropic), 28.09. Как устроены режимы скилла claude-api. <code>build-eval</code> набирает случаи в фиксированном порядке — рабочие транскрипты, баг-репорты, пять–десять написанных вручную, затем синтезированные по коду, — выбирает самый дешёвый подходящий грейдер и предупреждает, если базовый результат уже около 95%. <code>hillclimb</code> делит набор на train и test и за раунд предлагает одну правку: она остаётся, только если выросли оба. До первого раунда проверяется, что шум eval меньше минимального значимого улучшения. Пример автора: на 44 тикетах поддержки Sonnet 5 на низком effort дал 98,9% при цене около цента за тикет против 74,4% и 4,6 цента у исходной связки с Opus 4.8. <b>Следует:</b> улучшение в пределах шума не сливать; hillclimb годится для дёшево меняемых поверхностей с узкой целью.</p>
+  </div></div>
+  <div class="item"><span class="pts">Anthropic</span><div>
+    <h4><a href="https://claude.com/resources/articles/how-block-orchestrates-claude-fable-across-thousands-of-pull-requests">How Block orchestrates Claude Fable across thousands of pull requests</a></h4>
+    <p>Брэдли Аксен (Block), 08.10. Миграции на сотни и тысячи PR через несколько репозиториев: Fable под управлением инженера делает проектную работу — модели данных, спецификации API, алгоритмы — и раздаёт правки файлов и прогон тестов десяткам моделей поменьше, Opus и Sonnet. Изменения агентов проходят проверки безопасности, каждый деплой одобряют двое людей, merge в main остаётся за человеком. Дешёвые проверки без модели — регулярки, малые классификаторы — стоят прямо в рабочих интерфейсах. Цифр стоимости и успешности в статье нет. <b>Следует:</b> замерять каждую модель на каждом effort и ставить автовыбор, чтобы рутина не уходила самой сильной модели по умолчанию.</p>
+  </div></div>
+  <div class="item"><span class="pts">Anthropic</span><div>
+    <h4><a href="https://claude.dev/blog/claude-code-in-the-cloud/">Claude Code in the cloud: a field guide to cloud sessions</a></h4>
+    <p>Эдди Османи (Anthropic), 06.10. Облачная сессия — отдельная виртуальная машина на задачу с клоном репозитория на новой ветке; запускается из claude.ai/code, мобильного и desktop-приложений, терминала (<code>claude --cloud</code>) или Slack. Входит в Pro, Max, Team и Enterprise, но расходует общие лимиты, поэтому параллельные сессии съедают их быстрее; с ключом Console и сторонними провайдерами недоступна. Простаивающие машины забирают, так что commit'ить надо по ходу. Личный <code>~/.claude</code> в облако не едет. <b>Следует:</b> скиллы, команды и инструкции по тестам, нужные облачной сессии, должны лежать в репозитории; сессии давать одну самодостаточную задачу с командой, которая доказывает готовность.</p>
+  </div></div>
+  </div>
+  </div></details>
+</section>
+
+<section id="sources">
+  <p class="section-kicker">Проверка</p>
+  <h2>Источники</h2>
+  <p class="section-intro">Ссылки на первичные материалы, поисковые запросы и данные, использованные в выпуске.</p>
+  <details class="method-fold"><summary>Открыть полный список источников</summary><div class="method-body">
+  <ul class="list-2col">
+    <li><a href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md">github.com — CHANGELOG Claude Code, версии 2.1.288–2.1.295</a></li>
+    <li><a href="https://github.com/anthropics/skills/commits/main">github.com — commit'ы anthropics/skills за окно</a></li>
+    <li><a href="https://github.com/anthropics/claude-plugins-official/commits/main">github.com — commit'ы claude-plugins-official за окно</a></li>
+    <li><a href="https://www.anthropic.com/news">anthropic.com — лента новостей</a></li>
+    <li><a href="https://claude.com/blog">claude.com — блог</a></li>
+    <li><a href="https://www.anthropic.com/claude-haiku-5-5">anthropic.com — Claude Haiku 5.5</a></li>
+    <li><a href="https://www.anthropic.com/news/2026-usage-policy-update">anthropic.com — обновление Usage Policy</a></li>
+    <li><a href="https://www.anthropic.com/news/cyber-verification-program">anthropic.com — Cyber Verification Program</a></li>
+    <li><a href="https://claude.dev/blog/getting-the-most-out-of-opus-5-5/">claude.dev — Opus 5.5 в Claude Code</a></li>
+    <li><a href="https://claude.dev/blog/automating-eval-design-and-hillclimbing/">claude.dev — eval и hillclimbing</a></li>
+    <li><a href="https://claude.dev/blog/claude-code-in-the-cloud/">claude.dev — облачные сессии</a></li>
+    <li><a href="https://claude.com/resources/articles/how-block-orchestrates-claude-fable-across-thousands-of-pull-requests">claude.com — оркестрация Fable в Block</a></li>
+    <li><a href="https://developers.openai.com/api/docs/guides/decisions">developers.openai.com — Decisions API</a></li>
+    <li><a href="https://github.com/openai/math/blob/main/history.md">github.com — openai/math, история отзывов и правок</a></li>
+    <li><a href="https://hn.algolia.com/api/v1/search_by_date?query=claude&amp;tags=story&amp;hitsPerPage=100">hn.algolia.com — сюжеты за окно, 12 запросов</a></li>
+    <li><a href="https://simonwillison.net/atom/everything/">simonwillison.net — лента записей за окно</a></li>
+    <li><a href="https://simonwillison.net/2026/Oct/7/claude-haiku-5-5/">simonwillison.net — Claude Haiku 5.5</a></li>
+    <li><a href="https://simonwillison.net/2026/Oct/3/default-hard-budget-caps/">simonwillison.net — жёсткие лимиты расходов</a></li>
+    <li><a href="https://simonwillison.net/2026/Oct/7/openai-rogue-agents-wikimedia/">simonwillison.net — агенты OpenAI на Wikimedia</a></li>
+    <li><a href="https://simonwillison.net/2026/Oct/6/le-chonk/">simonwillison.net — Mistral Large 4</a></li>
+    <li><a href="https://simonwillison.net/2026/Oct/5/felix-rieseberg/">simonwillison.net — цитата о новом Cowork</a></li>
+    <li><a href="https://diff.wikimedia.org/2026/10/05/openai-rogue-agent-activities-found-on-wikimedia-projects/">diff.wikimedia.org — отчёт фонда</a></li>
+    <li><a href="https://www.vals.ai/blogs/room-temperature-magnetic-semiconductors">vals.ai — кандидаты в магнитные полупроводники</a></li>
+    <li><a href="https://liao.gg/blog/agents-dont-need-memory">liao.gg — память и документация</a></li>
+    <li><a href="https://lucumr.pocoo.org/2026/10/6/codemode/">lucumr.pocoo.org — Codemode</a></li>
+    <li><a href="https://developers.redhat.com/articles/2026/10/02/benchmarking-ai-decision-models-against-traditional-guardrails">developers.redhat.com — замер моделей решений</a></li>
+    <li><a href="https://github.com/docker/docker-agent">github.com — Docker Agent</a></li>
+    <li><a href="https://github.com/pingdotgg/ts-rust">github.com — ts-rust</a></li>
+    <li><a href="https://github.com/search?q=claude+skill&amp;type=repositories">github.com — поиск репозиториев: топики claude-code, claude-skills, agent-skills, claude-plugin, claude-code-plugin, claude-code-skills и строки «claude skill», «claude plugin», «agent skills», «claude code», по дням с 02.10</a></li>
+    <li><a href="https://news.ycombinator.com/item?id=49937304">news.ycombinator.com — Show HN: Pi pod</a></li>
+    <li><a href="https://news.ycombinator.com/item?id=49937916">news.ycombinator.com — Show HN: ldraw-nova</a></li>
+    <li><a href="https://news.ycombinator.com/item?id=50014150">news.ycombinator.com — Show HN: Edi Life OS</a></li>
+    <li><a href="https://github.com/nachisama/ai-data-extractor/blob/main/extractors/extract.py">github.com — файл-доказательство по отсеянной позиции (не запускать)</a></li>
+  </ul>
+  </div></details>
+</section>
+
+  <footer>
+    <div class="two-col">
+    <p class="signal"><b>Оговорка о сигнале.</b> Звёзды измеряют, что репозиторий заметили, а не его качество. На этой неделе их сдвигает один сюжет: около сорока позиций каталога — моды Claude Code на API, которому две недели. Многие решают одну и ту же задачу — миниатюры вставленных картинок, полоса лимитов над промптом, handoff вместо автосжатия, подогрев prompt cache, — и звёзды здесь говорят скорее о спросе на функцию, чем о конкретной реализации; почти все авторы оговаривают, что API ранний и может сломаться. Второй сдвиг — видео и анимация кодом, около двадцати позиций. Мод исполняется внутри процесса Claude Code с правами пользователя, поэтому звёзды не заменяют чтения его hooks. Порог ★10 отсекает почти всё, что вышло в последние дни окна. Цифры вида «в 2,6 раза быстрее» и «1/8 токенов» — данные авторов проектов, не наши замеры.</p>
+    <p class="collect"><b>Как собран выпуск.</b> Поиск GitHub по шести топикам и четырём строкам, по дням с 2 октября, дал 4306 новых репозиториев без форков; ни один не встречался в прошлых выпусках. ★10+ — 183, в каталог вошли 173 и ещё три, найденные через HN и созданные раньше окна: pi-pod/pipod, anteloc/ldraw-nova и edrisranjbar/lifeos. Отсеяно десять. Вредоносное: <b>nachisama/ai-data-extractor</b> (★135) — в <code>extractors/extract.py</code> обфусцированный загрузчик, который расшифровывает и выполняет скрытый код при запуске, а README называет инструмент безопасным (<a href="https://github.com/nachisama/ai-data-extractor/blob/main/extractors/extract.py">файл-доказательство</a>; не устанавливать). Это одноимённая копия под другим аккаунтом: kruzovic7/ai-data-extractor из выпуска от 18 сентября был удалён вместе с аккаунтом автора — если вы ставили любую из копий, удалите её и смените ключи, лежавшие в истории чатов. Подозрительное: Code2AE_skill — закрытые бинарники без исходников, которые скилл велит запускать. Пустышки-воронки на сторонние сервисы: minimax-h3-prompts, seedance-2-0-skill, mcpdelta. Не по теме — пять репозиториев, сделанных с Claude, но не для агентов (игра, видеоклип, обои, 3D-сцена, движок инференса). Узко-локального на этой неделе не нашлось. На HN 94 сюжета набрали ≥30 очков по двенадцати запросам, из них по заголовкам 71 — про ИИ и агентов. Недоступно: страницы openai.com (анонсы GPT-6 и математического репозитория), techspot.com, zohaib.cc и distantprovince.substack.com не открылись — поэтому GPT-6 дан по пересказу Саймона Уиллисона, сюжет о дневнике — по заголовку, а «Claude Code's suggested message feature» (266 очков) и «The Four Horsemen of Agentic Coding» (115) в разборы не вошли. Веб-поиск свежих инженерных материалов по контекст-инжинирингу и оркестрации ничего датированного октябрём не вернул. Сигнатурная проверка — по README, спискам файлов корня и установочным скриптам 183 репозиториев, с выборочным чтением подозрительных файлов; это не аудит, и пометка «curl | sh» означает форму установки, а не вывод о вредоносности.</p>
+    </div>
+    <p>Agent Briefing · собрано cron-джобой <code>agent-digest</code>.</p>
+  </footer>
+</main>
+<script>
+(function(){
+  const root=document.documentElement, LS=window.localStorage||{getItem(){},setItem(){}};
+  const themeBtn=document.getElementById('themeBtn'), contrastBtn=document.getElementById('contrastBtn');
+  const savedTheme=LS.getItem('ad-theme'); if(savedTheme) root.setAttribute('data-theme',savedTheme);
+  if(LS.getItem('ad-contrast')==='on') root.setAttribute('data-contrast','on');
+  function syncBtns(){
+    const dark=root.getAttribute('data-theme')==='dark';
+    themeBtn.setAttribute('aria-pressed',String(dark));
+    contrastBtn.setAttribute('aria-pressed',String(root.getAttribute('data-contrast')==='on'));
+  }
+  themeBtn.addEventListener('click',()=>{ const dark=root.getAttribute('data-theme')==='dark';
+    const next=dark?'light':'dark';
+    root.setAttribute('data-theme',next); LS.setItem('ad-theme',next); syncBtns(); });
+  contrastBtn.addEventListener('click',()=>{ const on=root.getAttribute('data-contrast')==='on';
+    if(on){ root.removeAttribute('data-contrast'); LS.setItem('ad-contrast','off'); }
+    else { root.setAttribute('data-contrast','on'); LS.setItem('ad-contrast','on'); }
+    syncBtns(); });
+  syncBtns();
+
+  // Журнал подставляет «← Назад» сразу за <body>; переносим его в закреплённую шапку,
+  // чтобы кнопки стояли на одном уровне. В неопубликованном файле ссылки нет.
+  const up=document.getElementById('gnrl-up'), bar=document.querySelector('.topbar-inner');
+  if(up&&bar){ const wrap=up.closest('.gnrl-upwrap'); bar.prepend(up); if(wrap) wrap.remove(); }
+
+  const progress=document.getElementById('progress');
+  addEventListener('scroll',()=>{ const h=document.documentElement;
+    const p=h.scrollTop/(h.scrollHeight-h.clientHeight||1);
+    progress.style.width=(p*100).toFixed(2)+'%'; },{passive:true});
+})();
+</script>
+<!--general:foot-->
+<style>
+.gnrl{margin:4rem auto 0;padding:2rem 1.25rem 2.5rem;max-width:1100px;border-top:1px solid rgba(128,128,128,.28);
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.5}
+.gnrl a{text-decoration:none;color:inherit}
+.gnrl-top{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:space-between;align-items:baseline;margin-bottom:1.25rem}
+.gnrl-back{font-weight:600;opacity:.9}
+.gnrl-back:hover{text-decoration:underline}
+.gnrl-h{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;opacity:.55}
+.gnrl-grid{display:grid;gap:1rem;grid-template-columns:1fr}
+@media(min-width:720px){.gnrl-grid{grid-template-columns:repeat(3,1fr)}}
+.gnrl-card{border:1px solid rgba(128,128,128,.28);border-radius:12px;overflow:hidden;transition:border-color .2s}
+.gnrl-card:hover{border-color:rgba(128,128,128,.6)}
+.gnrl-card img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+.gnrl-card b{display:block;padding:.8rem .9rem .2rem;font-size:.9375rem;font-weight:600}
+.gnrl-card span{display:block;padding:0 .9rem .9rem;font-size:.8125rem;opacity:.6}
+/* Стили кнопки возврата. Сама кнопка стоит не здесь, а в начале <body>: она в
+   потоке, поэтому резервирует своё место и не накрывает то, что разбор нарисовал
+   у себя вверху (у четырёх выпусков там собственный переключатель темы). Sticky
+   держит её на виду при прокрутке — до подвала на длинном разборе крутить долго. */
+.gnrl-upwrap{
+  position:sticky;top:0;z-index:70;padding:.7rem 0 .1rem .75rem;
+  /* Полоса тянется во всю ширину, но кликам не мешает — ловит их только кнопка. */
+  pointer-events:none;
+}
+.gnrl-up{
+  pointer-events:auto;display:inline-flex;align-items:center;
+  padding:.4rem .8rem;border-radius:999px;font-size:.8125rem;font-weight:600;
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color:inherit;text-decoration:none;border:1px solid rgba(128,128,128,.35);
+  /* Серый в полупрозрачности и цвет текста по наследству: подложка одинаково
+     ложится и на светлую, и на тёмную страницу, а системный Canvas — нет, он не
+     знает про тему разбора и на тёмной странице стал бы белым пятном. */
+  background:rgba(127,127,127,.2);
+  backdrop-filter:blur(10px) saturate(1.4);-webkit-backdrop-filter:blur(10px) saturate(1.4);
+}
+.gnrl-up:hover{border-color:rgba(128,128,128,.75)}
+@media print{.gnrl-upwrap{display:none}}
+</style>
+<nav class="gnrl">
+  <div class="gnrl-top">
+    <a class="gnrl-back" href="https://paveldiordits.site/presentations/">← Журнал</a>
+    <span class="gnrl-h">Ещё по теме</span>
+  </div>
+  <div class="gnrl-grid">
+    <a class="gnrl-card" href="agents-weekly-2026-10-02.html">
+      <img src="covers/agents-weekly-2026-10-02.svg" alt="" loading="lazy">
+      <b>Неделя агентной экосистемы — 25.09–02.10.2026</b><span>81 мин · 2026-10-02</span>
+    </a>
+    <a class="gnrl-card" href="agents-weekly-2026-09-25.html">
+      <img src="covers/agents-weekly-2026-09-25.svg" alt="" loading="lazy">
+      <b>Неделя агентной экосистемы — 18–25.09.2026</b><span>47 мин · 2026-09-25</span>
+    </a>
+    <a class="gnrl-card" href="agents-weekly-2026-09-18.html">
+      <img src="covers/agents-weekly-2026-09-18.svg" alt="" loading="lazy">
+      <b>Неделя агентной экосистемы — 11–18.09.2026</b><span>33 мин · 2026-09-18</span>
+    </a>
+  </div>
+</nav>
+<script>
+// Кнопка вверху — настоящая ссылка на журнал: без скриптов и на прямом заходе
+// она ведёт хотя бы туда. Если посетитель пришёл по ссылке с сайта, она вместо
+// этого возвращает на ту же страницу и в ту же точку прокрутки, откуда он ушёл, —
+// это и есть «назад», а не «в начало журнала».
+(function(){
+  var a=document.getElementById('gnrl-up');
+  if(!a||history.length<2) return;
+  var from=document.referrer||'';
+  if(from.indexOf(location.origin+'/')!==0||from===location.href) return;
+  a.addEventListener('click',function(e){ e.preventDefault(); history.back(); });
+})();
+</script>
+<!--/general:foot-->
+</body>
+</html>
