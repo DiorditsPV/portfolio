@@ -1,6 +1,6 @@
 // Публикует html-разбор в Журнал и пересобирает его ленту.
 //
-// Скилл present-html кладёт пару <name>.md + <name>.html в ~/dev/docs/<тема>/ —
+// Пара <name>.md + <name>.html разбора лежит в ~/dev/docs/<тема>/ —
 // там источник правды содержания и всё, что публиковать не нужно. На сайт файл
 // попадает только этой командой: публикация — осознанный шаг, а не побочный
 // эффект генерации. Иначе рабочие документы из ~/dev/docs/rabota/ однажды уехали
@@ -42,6 +42,7 @@ import { coverSvg } from './cover.mjs';
 import { extractCatalog } from './catalog-extract.mjs';
 import { libraryPage } from './library-page.mjs';
 import { filterDigest } from './digest-filter.mjs';
+import { paletteStyle } from './article-palette.mjs';
 import { journalPage, humanDate, plural, JOURNAL_TITLE, JOURNAL_ABOUT } from './journal-page.mjs';
 import { rssFeed } from './rss.mjs';
 
@@ -207,7 +208,11 @@ box.insertBefore(el,box.firstChild)});var up=box.querySelector('.ts');if(up&&up.
 const themeOf = p => SERIES_THEME[p.series]
   ? `<style>\n${fs.readFileSync(path.join(ROOT, 'tools', SERIES_THEME[p.series]), 'utf8')}</style>\n${SCALE_JS}` : '';
 
-function headBlock(p, ogImage) {
+// Статья, собранная по общему шаблону (tools/article-build.mjs), получает цвета
+// подборки своей обложки: шаблон у всех статей один, отличает их цвет.
+const isTemplate = html => /<html[^>]*data-article-template/i.test(html);
+
+function headBlock(p, ogImage, template) {
   return `${HEAD_A}
 <meta property="og:type" content="article">
 <meta property="og:url" content="${BASE}${p.slug}.html">
@@ -223,6 +228,7 @@ function headBlock(p, ogImage) {
 <link rel="alternate" type="application/rss+xml" title="${esc(JOURNAL_TITLE)}" href="${BASE}rss.xml">
 ${CONTRAST_OFF}
 ${themeOf(p)}
+${template ? paletteStyle(p.slug) : ''}
 ${HEAD_B}`;
 }
 
@@ -315,7 +321,7 @@ function footBlock(p, all) {
   </div>
   ${rel.length ? `<div class="gnrl-grid">
 ${rel.map(x => `    <a class="gnrl-card" href="${esc(x.slug)}.html">
-      <img src="covers/${esc(x.slug)}.svg" alt="" loading="lazy">
+      <img src="covers/${esc(x.slug)}.webp" alt="" loading="lazy" onerror="this.onerror=null;this.src='covers/${esc(x.slug)}.svg'">
       <b>${esc(x.title)}</b><span>${x.minutes} мин · ${esc(x.date)}</span>
     </a>`).join('\n')}
   </div>` : ''}
@@ -357,10 +363,16 @@ function writeCopy(p, all, srcHtml) {
     ? `${BASE}covers/${p.slug}.png`
     : `${SITE}og.png`;
 
-  const head = headBlock(p, ogImage);
+  const head = headBlock(p, ogImage, isTemplate(html));
   html = /<\/head>/i.test(html)
     ? html.replace(/<\/head>/i, `${head}\n</head>`)
     : html.replace(/<body[^>]*>/i, m => `${m}\n${head}`);
+
+  // Шаблон статьи оставляет в шапке место под обложку записи: карточка в журнале и
+  // первый экран страницы показывают одну и ту же картинку.
+  if (isTemplate(html) && fs.existsSync(path.join(COVERS, `${p.slug}.webp`)))
+    html = html.replace('<!--article:cover-->',
+      `<img class="hero-cover" src="covers/${p.slug}.webp" alt="" width="1600" height="900">`);
 
   // Кнопка — сразу за <body>. Тега может не быть (браузер его дорисует, а
   // предполётный контроль требует только <html>), тогда кладём в начало файла.
@@ -491,7 +503,8 @@ function rewriteManifest(reg) {
 
   const head = (at === -1 ? text : text.slice(0, at)).replace(/\s+$/, '');
   const lines = reg.presentations.length
-    ? ['presentations/index.html', 'presentations/library.html', 'presentations/rss.xml', 'presentations/fonts/golos-text.woff2'] : [];
+    ? ['presentations/index.html', 'presentations/library.html', 'presentations/rss.xml', 'presentations/fonts/golos-text.woff2',
+      ...['cyrillic', 'latin'].flatMap(s => ['normal', 'italic'].map(i => `presentations/fonts/source-serif-4-${s}-${i}.woff2`))] : [];
   for (const p of reg.presentations) {
     lines.push(`presentations/${p.slug}.html`);
     for (const e of ['svg', 'png', 'webp'])

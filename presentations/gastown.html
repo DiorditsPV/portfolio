@@ -1,160 +1,220 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-article-template="1">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gas Town: разбор оркестратора кодящих агентов</title>
-<script>(function(){try{var t=localStorage.getItem('gt-theme');if(t)document.documentElement.dataset.theme=t;if(localStorage.getItem('gt-contrast')==='on')document.documentElement.dataset.contrast='on';}catch(e){}})();</script>
+<script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme');if(t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches)d.dataset.theme='dark';var s=+localStorage.getItem('text-scale');if(s)d.style.setProperty('--ts',s)}catch(e){}})()</script>
 <style>
-@font-face{
-  font-family:"Golos Text";src:url(fonts/golos-text.woff2) format("woff2");
-  font-weight:400 900;font-display:swap;
-}
+/* Шаблон статьи журнала. Требования — docs/journal-article-requirements.md.
+   Страницу собирает tools/article-build.mjs; цвет (--hero-*, --accent*) подставляет при
+   публикации tools/publish-presentation.mjs из tools/article-palette.mjs.
+
+   Форма снята с трёх образцов, выбранных автором: Anthropic Engineering, GitHub
+   Engineering, The Pudding. От них — текст антиквой при заголовках гротеском, картинка
+   на первом экране, оглавление справа и ровный текст без цветных выделений. Колонка
+   текста, в отличие от образцов, широкая: так удобнее автору. */
+
+@font-face{font-family:"Golos Text";src:url(fonts/golos-text.woff2) format("woff2");font-weight:400 900;font-display:swap}
+@font-face{font-family:"Source Serif 4";src:url(fonts/source-serif-4-cyrillic-normal.woff2) format("woff2");font-weight:200 900;font-style:normal;font-display:swap;
+  unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:"Source Serif 4";src:url(fonts/source-serif-4-latin-normal.woff2) format("woff2");font-weight:200 900;font-style:normal;font-display:swap;
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Source Serif 4";src:url(fonts/source-serif-4-cyrillic-italic.woff2) format("woff2");font-weight:200 900;font-style:italic;font-display:swap;
+  unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:"Source Serif 4";src:url(fonts/source-serif-4-latin-italic.woff2) format("woff2");font-weight:200 900;font-style:italic;font-display:swap;
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 :root{
-  --bg:#ffffff; --soft:#f4f5f6; --ink:#14171c; --mute:#5a616c; --line:#e3e5e8;
-  --accent:#1d4ed8; --accent-soft:#e8eefc; --accent-ink:#ffffff;
-  --code-bg:#f4f5f6; --code-ink:#14171c;
+  color-scheme:light;
+  --bg:#ffffff; --field:#f4f5f6; --fg:#14171c; --muted:#5a616c; --rule:#e3e5e8; --edge:#cfd3d9;
+  --hero-bg:#e2e8f0; --hero-fg:#1e293b; --hero-muted:#1e293b;
+  --accent:#475569; --accent-soft:#f8fafc; --on-accent:#ffffff;
   --sans:"Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --serif:"Source Serif 4",Charter,Georgia,serif;
   --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  /* Колонка текста широкая: автор читает с монитора 27 дюймов, и узкая колонка ему
+     неудобна. Рисунки уже колонки и стоят по её центру. */
+  --text-col:76rem; --fig-col:76rem; --toc-col:13rem; --gutter:clamp(1rem,4vw,3rem);
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#111418; --soft:#1a1e24; --ink:#e6e8eb; --mute:#9aa1ab; --line:#2a2f37;
-    --accent:#8ab0ff; --accent-soft:#1b2740; --accent-ink:#0d1220;
-    --code-bg:#1a1e24; --code-ink:#e6e8eb;
-  }
+html[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121316; --field:#1b1d21; --fg:#eceef1; --muted:#a3a9b3; --rule:#2c2f36; --edge:#3d414a;
+  --hero-bg:#1e293b; --hero-fg:#ffffff; --hero-muted:#e2e8f0;
+  --accent:#e2e8f0; --accent-soft:#1e293b; --on-accent:#1e293b;
 }
-:root[data-theme="dark"]{
-  --bg:#111418; --soft:#1a1e24; --ink:#e6e8eb; --mute:#9aa1ab; --line:#2a2f37;
-  --accent:#8ab0ff; --accent-soft:#1b2740; --accent-ink:#0d1220;
-  --code-bg:#1a1e24; --code-ink:#e6e8eb;
-}
-:root[data-contrast="on"]{ --bg:#ffffff; --soft:#ffffff; --ink:#000000; --mute:#1c1c1c; --line:#000000; --accent:#0a2a8a; --accent-soft:#ffffff; --accent-ink:#ffffff; --code-bg:#ffffff; --code-ink:#000000; }
-@media (prefers-color-scheme: dark){
-  :root[data-contrast="on"]:not([data-theme="light"]){ --bg:#000000; --soft:#000000; --ink:#ffffff; --mute:#ededed; --line:#ffffff; --accent:#c3d6ff; --accent-soft:#000000; --accent-ink:#000000; --code-bg:#000000; --code-ink:#ffffff; }
-}
-:root[data-contrast="on"][data-theme="dark"]{ --bg:#000000; --soft:#000000; --ink:#ffffff; --mute:#ededed; --line:#ffffff; --accent:#c3d6ff; --accent-soft:#000000; --accent-ink:#000000; --code-bg:#000000; --code-ink:#ffffff; }
-:root[data-contrast="on"][data-theme="light"]{ --bg:#ffffff; --soft:#ffffff; --ink:#000000; --mute:#1c1c1c; --line:#000000; --accent:#0a2a8a; --accent-soft:#ffffff; --accent-ink:#ffffff; --code-bg:#ffffff; --code-ink:#000000; }
 
 *{box-sizing:border-box}
-/* Кегль растёт вместе с экраном: на мониторе 27 дюймов текст 16 пикселей мелок. */
-html{font-size:clamp(16px,calc(11px + .42vw),20px);scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:1rem/1.65 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
-a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:.2em}
-::selection{background:var(--accent);color:var(--accent-ink)}
+/* Кегль растёт вместе с экраном: 17 px на 1440, 20 px на 2560. --ts — множитель,
+   который читатель задаёт кнопками A− и A+; ключ localStorage общий с журналом. */
+html{font-size:calc(clamp(16px,calc(11px + .42vw),20px)*var(--ts,1));scroll-behavior:smooth;
+  -webkit-text-size-adjust:100%;scrollbar-color:var(--rule) var(--bg)}
+body{margin:0;background:var(--bg);color:var(--fg);font:1rem/1.6 var(--sans);
+  -webkit-font-smoothing:antialiased;overflow-x:clip;caret-color:var(--accent)}
+::selection{background:var(--accent);color:var(--on-accent)}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
-/* Колонка текста — 65.25rem; ширина задана в rem и растёт с кеглем. */
-.wrap{width:min(83.75rem,100% - 2*clamp(1rem,4vw,3rem));margin:0 auto}
-.progress{position:fixed;inset:0 0 auto 0;height:3px;background:var(--accent);transform:scaleX(0);transform-origin:0 50%;z-index:30}
-.tools{position:absolute;top:.9rem;right:1rem;display:flex;gap:.5rem;z-index:20}
-.tools button{font:500 .8rem/1 var(--sans);padding:.55rem .8rem;background:var(--bg);color:var(--mute);border:1px solid var(--line);border-radius:8px;cursor:pointer}
-.tools button:hover{color:var(--ink);border-color:var(--mute)}
-.tools button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 
-.hero{padding:5.5rem 0 2.75rem;border-bottom:1px solid var(--line)}
-.kicker{font-size:.9rem;font-weight:500;color:var(--mute);margin:0 0 1rem}
-h1{font-size:clamp(2.1rem,4.2vw,3.5rem);line-height:1.05;letter-spacing:-.035em;font-weight:750;margin:0 0 1.4rem;max-width:20ch;text-wrap:balance}
-.lead{font-size:1.1rem;line-height:1.6;color:var(--mute);margin:0;max-width:46rem}
-.lead code{color:var(--ink)}
+.progress{position:fixed;inset:0 0 auto 0;height:3px;background:var(--accent);transform:scaleX(0);transform-origin:0 50%;z-index:40}
 
-.layout{display:grid;grid-template-columns:15rem minmax(0,1fr);gap:3.5rem;padding:2.75rem 0 6rem}
-.toc{position:sticky;top:1.25rem;align-self:start;max-height:calc(100vh - 2.5rem);overflow:auto;font-size:.88rem;line-height:1.35}
-.toc-h{font-weight:600;color:var(--ink);margin:0 0 .6rem;font-size:.88rem}
-.toc a{display:block;padding:.4rem 0 .4rem .85rem;color:var(--mute);text-decoration:none;border-left:2px solid var(--line)}
-.toc a span{display:none}
-.toc a:hover{color:var(--ink)}
-.toc a.on{color:var(--ink);font-weight:600;border-left-color:var(--accent)}
+/* Верхняя полоса: возврат в журнал слева, масштаб и тема справа. Она в потоке и
+   прилипает, поэтому текст под собой не закрывает. */
+.bar{position:sticky;top:0;z-index:30;background:var(--bg);color:var(--fg);border-bottom:1px solid var(--rule)}
+.bar-in{display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  width:min(100% - 2*var(--gutter),var(--fig-col) + 2*var(--toc-col) + 5rem);margin-inline:auto;padding:.6rem 0}
+.bar a{color:inherit;text-decoration:none;font-size:.88rem;font-weight:600;display:inline-flex;align-items:center;gap:.4rem;padding:.35rem 0}
+.bar a:hover{text-decoration:underline}
+.bar svg{width:1em;height:1em;flex:none}
+.controls{display:flex;gap:.35rem}
+.controls button{font:500 .8rem/1 var(--sans);min-width:2.4rem;padding:.5rem .6rem;background:transparent;color:inherit;
+  border:1px solid color-mix(in srgb,currentColor 28%,transparent);border-radius:8px;cursor:pointer}
+.controls button:hover{border-color:currentColor}
+/* Вставки публикатора: его кнопку возврата заменяет полоса шаблона. */
+.gnrl-upwrap{display:none}
 
-main{min-width:0}
-main > p:first-child{color:var(--mute);font-size:.95rem;padding:1rem 1.2rem;background:var(--soft);border-radius:10px;margin-bottom:2.5rem}
-:root[data-contrast="on"] main > p:first-child{border:1px solid var(--line)}
-section{padding:0 0 2.75rem;scroll-margin-top:1.25rem}
-section + section{padding-top:.5rem}
-h2{font-size:clamp(1.5rem,2.3vw,1.95rem);line-height:1.15;letter-spacing:-.03em;font-weight:750;margin:0 0 1.1rem;text-wrap:balance}
-h2 .num{display:block;font-size:.85rem;font-weight:500;letter-spacing:0;color:var(--mute);margin-bottom:.4rem;font-variant-numeric:tabular-nums}
-h3{font-size:1.15rem;line-height:1.3;font-weight:650;letter-spacing:-.01em;margin:1.8rem 0 .6rem}
+/* Первый экран — разворот на цветной полосе: слева заголовок и вводный абзац,
+   справа обложка записи, та же картинка, что на карточке в журнале. Под полосой
+   строка о предмете статьи. */
+.hero{background:var(--hero-bg);color:var(--hero-fg);padding:3.25rem 0 3.5rem}
+.hero ::selection{background:var(--hero-fg);color:var(--hero-bg)}
+.hero-in,.under{width:min(var(--text-col),100% - 2*var(--gutter));margin-inline:auto}
+.hero-in{display:grid;grid-template-columns:minmax(0,1fr);gap:2rem 4rem;align-items:center}
+.hero-in:has(.hero-cover){grid-template-columns:minmax(0,1fr) minmax(0,.8fr)}
+h1{font-size:clamp(2rem,3vw,2.75rem);line-height:1.08;letter-spacing:-.03em;font-weight:750;margin:0 0 1.1rem;text-wrap:balance}
+.lead{font-size:1.15rem;line-height:1.5;margin:0;color:var(--hero-fg)}
+.hero code{font-size:.9em}
+.hero-cover{display:block;width:100%;height:auto;border-radius:10px}
+.meta{font:500 .85rem/1.4 var(--sans);color:var(--muted);margin:0;padding:1.4rem 0 1.1rem;border-bottom:1px solid var(--rule);font-variant-numeric:tabular-nums}
+.meta a{color:var(--fg)}
+
+/* Сетка статьи: колонка текста по центру страницы, оглавление — справа, за краем
+   рисунков, чтобы широкая схема его не задевала. */
+.page{display:grid;grid-template-columns:minmax(0,1fr) min(var(--text-col),100% - 2*var(--gutter)) minmax(0,1fr);padding:2.25rem 0 5rem}
+.col{grid-column:2;min-width:0;font-family:var(--serif);font-size:1rem;line-height:1.6}
+.toc{grid-column:3;grid-row:1;position:sticky;top:5rem;align-self:start;width:var(--toc-col);
+  margin-left:calc((var(--fig-col) - var(--text-col))/2 + 2.5rem);font-size:.8rem;line-height:1.3}
+.toc-h{font-weight:600;font-size:.88rem;margin:0 0 .7rem;padding-bottom:.6rem;border-bottom:1px solid var(--rule)}
+.toc a{display:block;padding:.45rem .7rem;border-radius:8px;color:var(--muted);text-decoration:none}
+.toc a:hover{color:var(--fg)}
+.toc a.on{background:var(--field);color:var(--fg);font-weight:600}
+
+/* Текст ровный: ссылки подчёркнуты и набраны цветом текста, код отличается только
+   моноширинным шрифтом. */
+.col a{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.18em}
+.col a:hover{color:var(--accent);text-decoration-thickness:2px}
+section{scroll-margin-top:4.5rem}
+h2{font:700 1.6rem/1.2 var(--sans);letter-spacing:-.02em;margin:3.2rem 0 1.1rem;text-wrap:balance}
+section:first-of-type h2{margin-top:0}
+h3{font:650 1.2rem/1.3 var(--sans);letter-spacing:-.01em;margin:2rem 0 .5rem}
 p{margin:0 0 1rem}
 ul,ol{margin:0 0 1.15rem;padding-left:1.25em}
-li{margin:0 0 .45rem;padding-left:.15em}
-li > ul,li > ol{margin:.45rem 0 0}
-li::marker{color:var(--mute)}
+li{margin:0 0 .5rem;padding-left:.15em}
+li > ul,li > ol{margin:.5rem 0 0}
+li::marker{color:var(--muted);font-variant-numeric:tabular-nums}
 strong{font-weight:650}
-code{font:.86em/1.4 var(--mono);background:var(--code-bg);color:var(--code-ink);padding:.12em .36em;border-radius:5px;overflow-wrap:anywhere}
-:root[data-contrast="on"] code{border:1px solid var(--line)}
-pre{background:var(--code-bg);color:var(--code-ink);padding:1rem 1.2rem;border-radius:10px;overflow:auto;margin:0 0 1.25rem;border:1px solid var(--line)}
-pre code{background:none;border:0!important;padding:0;font-size:.84rem;line-height:1.6;overflow-wrap:normal}
-blockquote{margin:0 0 1.25rem;padding:.9rem 1.2rem;border-left:3px solid var(--accent);background:var(--soft);border-radius:0 10px 10px 0}
-.tbl{overflow-x:auto;margin:0 0 1.4rem}
-table{border-collapse:collapse;width:100%;font-size:.93rem;line-height:1.45}
-th{font-size:.82rem;font-weight:600;text-align:left;color:var(--mute);border-bottom:1px solid var(--ink);padding:.5rem .9rem .5rem 0;vertical-align:bottom}
-td{border-bottom:1px solid var(--line);padding:.6rem .9rem .6rem 0;vertical-align:top}
+code{font:.86em/1.4 var(--mono);overflow-wrap:anywhere}
+pre{background:var(--field);color:var(--fg);padding:1rem 1.2rem;border-radius:10px;overflow:auto;margin:1.5rem 0;border:1px solid var(--edge)}
+pre code{font-size:.8rem;line-height:1.6;overflow-wrap:normal}
+blockquote{margin:1.5rem 0;padding:0 0 0 1.4rem;font-style:italic;color:var(--muted)}
+blockquote > :last-child{margin-bottom:0}
+main > p.note{font:400 .88rem/1.5 var(--sans);color:var(--muted)}
+.tbl{overflow-x:auto;margin:1.5rem 0;font-family:var(--sans)}
+table{border-collapse:collapse;width:100%;font-size:.86rem;line-height:1.45;font-variant-numeric:tabular-nums}
+th{font-size:.8rem;font-weight:600;text-align:left;color:var(--muted);border-bottom:1px solid var(--fg);padding:.5rem .9rem .5rem 0;vertical-align:bottom}
+td{border-bottom:1px solid var(--rule);padding:.6rem .9rem .6rem 0;vertical-align:top}
 td:first-child{font-weight:600}
+img{max-width:100%;height:auto}
 
-/* ── схемы ── */
-figure{margin:1.75rem 0 2rem;padding:1.25rem;background:var(--soft);border-radius:14px}
-:root[data-contrast="on"] figure{border:1px solid var(--line)}
-figcaption{font-size:.86rem;line-height:1.5;color:var(--mute);margin-top:1rem}
-figcaption b{color:var(--ink);font-weight:600}
-.fg-label{font-size:.78rem;font-weight:600;color:var(--mute)}
-.box{border:1px solid var(--line);border-radius:10px;padding:.75rem .9rem;background:var(--bg);min-width:0}
-.box.hot{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
-.box.dash{border-style:dashed;border-color:var(--mute)}
-.box h4{font-size:1rem;line-height:1.2;font-weight:650;letter-spacing:-.01em;margin:0 0 .25rem}
-.box h4:last-child{margin-bottom:0}
-.box p{font-size:.86rem;line-height:1.45;margin:0;color:var(--mute)}
+/* ── схемы ──
+   Словарь блоков для figures-файла статьи: .box (узел; название — .t, не заголовок:
+   схема не должна ломать порядок заголовков страницы), .zone (группа с подписью),
+   .grid.g2/.g3/.g4 и .stack (раскладка), .down (связь сверху вниз), .flow > .step
+   (шаги по порядку), .bars > .bar-row (столбцы из данных). Главное на схеме
+   отмечается классом .hot — заливкой и рамкой акцента. */
+/* Рисунок занимает столько, сколько нужно его содержимому, а не всю колонку: блоки
+   с короткими подписями на ширине текста зияют пустыми полями. .wide — во всю колонку,
+   .narrow — для схемы из двух-трёх блоков. */
+figure{max-width:50rem;margin:2.5rem auto 2.75rem;padding:1.5rem;background:var(--field);border-radius:14px;font-family:var(--sans);
+  /* Поле схемы почти не отличается от белого листа, поэтому край держит тонкая линия. */
+  border:1px solid var(--edge)}
+figure.wide{max-width:none}
+figure.narrow{max-width:34rem}
+figure.shot{padding:0;background:none;border:0}
+figure.shot img{display:block;width:100%;border:1px solid var(--rule);border-radius:10px}
+figcaption{font-size:.82rem;line-height:1.5;color:var(--muted);margin-top:1rem}
+figure.shot figcaption{margin-top:.7rem}
+figcaption b{color:var(--fg);font-weight:600}
+.fg-label{font-size:.85rem;font-weight:600;color:var(--muted)}
+.box{border:1px solid var(--edge);border-radius:10px;padding:.75rem .9rem;background:var(--bg);min-width:0}
+.box.hot{border-color:var(--accent);background:var(--accent-soft)}
+.box.dash{border-style:dashed;border-color:var(--muted)}
+.box .t{font-size:1rem;line-height:1.2;font-weight:650;letter-spacing:-.01em;margin:0 0 .25rem}
+.box .t:last-child{margin-bottom:0}
+.box p{font-size:.88rem;line-height:1.45;margin:0}
 .box p code{font-size:.92em}
-.box .tag{display:inline-block;font-size:.7rem;line-height:1;font-weight:600;padding:.28rem .45rem;margin:0 0 .45rem;background:var(--soft);color:var(--mute);border-radius:5px}
-.box.hot .tag{background:var(--accent-soft);color:var(--accent)}
-:root[data-contrast="on"] .box .tag{border:1px solid var(--line);color:var(--ink)}
+.box .tag{display:inline-block;font-size:.85rem;line-height:1.2;font-weight:500;margin:0 0 .3rem;color:var(--muted)}
+.box.hot .tag{color:var(--accent)}
 .grid{display:grid;gap:.6rem}
 .g2{grid-template-columns:repeat(2,minmax(0,1fr))}
 .g3{grid-template-columns:repeat(3,minmax(0,1fr))}
 .g4{grid-template-columns:repeat(4,minmax(0,1fr))}
-.stack{display:grid;gap:.6rem}
-.zone{border:1px dashed var(--mute);border-radius:12px;padding:.75rem;display:grid;gap:.6rem;align-content:start}
+.stack{display:grid;gap:.6rem;align-content:start}
+.zone{border:1px dashed var(--muted);border-radius:12px;padding:.75rem;display:grid;gap:.6rem;align-content:start}
 figure > .zone{border:0;padding:0}
-.down{text-align:center;font-size:.78rem;font-weight:500;color:var(--mute);padding:.05rem 0}
-.down::before{content:"↓ "}
+.down{display:flex;justify-content:center;align-items:center;gap:.4rem;font-size:.85rem;font-weight:500;color:var(--muted)}
+.down::before{content:"";width:.9em;height:.9em;background:currentColor;flex:none;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 2.5v11M3.5 9 8 13.5 12.5 9'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 2.5v11M3.5 9 8 13.5 12.5 9'/%3E%3C/svg%3E") center/contain no-repeat}
 .flow{display:grid;gap:.5rem;counter-reset:st}
-.step{display:grid;grid-template-columns:1.6rem 12.5rem minmax(0,1fr);gap:.2rem .9rem;align-items:baseline;padding:.7rem .9rem;border:1px solid var(--line);border-radius:10px;background:var(--bg);counter-increment:st}
-.step::before{content:counter(st);font-size:.86rem;font-weight:600;color:var(--mute);font-variant-numeric:tabular-nums}
-.step .who{font-size:.9rem;font-weight:650;line-height:1.3}
-.step .who small{display:inline-block;font:500 .78rem/1 var(--mono);color:var(--accent);background:var(--accent-soft);padding:.22rem .4rem;border-radius:5px;margin-left:.4rem}
-.step p{font-size:.88rem;line-height:1.45;margin:0;color:var(--mute)}
-.step.hot{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.step{display:grid;grid-template-columns:1.6rem 14rem minmax(0,1fr);gap:.2rem .9rem;align-items:baseline;padding:.7rem .9rem;
+  border:1px solid var(--edge);border-radius:10px;background:var(--bg);counter-increment:st}
+.step::before{content:counter(st);font-size:.88rem;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+.step .who{font-size:.92rem;font-weight:650;line-height:1.3}
+.step .who small{display:inline-block;font:500 .85rem/1 var(--mono);color:var(--accent);margin-left:.4rem}
+.step p{font-size:.9rem;line-height:1.45;margin:0}
+.step.hot{border-color:var(--accent);background:var(--accent-soft)}
+.bars{display:grid;gap:.4rem}
+.bar-row{display:grid;grid-template-columns:minmax(0,14rem) minmax(0,1fr) auto;gap:.8rem;align-items:center;font-size:.9rem;font-variant-numeric:tabular-nums}
+.bar-row .track{height:.9rem;border-radius:4px;background:var(--bg);overflow:hidden}
+.bar-row .fill{display:block;height:100%;width:calc(var(--v,0)*1%);background:var(--muted);border-radius:4px}
+.bar-row.hot .fill{background:var(--accent)}
 
-/* Широкий экран: по центру страницы стоит колонка текста, а не блок «оглавление +
-   текст». Оглавление уходит в левое поле, справа под него оставлено такое же место;
-   шапка выровнена по колонке текста. */
-@media (min-width:2200px){
-  .wrap{width:min(102.25rem,100% - 2*clamp(1rem,4vw,3rem))}
-  .layout{grid-template-columns:15rem minmax(0,1fr) 15rem}
-  .hero .wrap{padding-inline:18.5rem}
-  .lead{max-width:none}
+/* Блок «Ещё по теме», который публикатор ставит под статьёй, — по ширине рисунков. */
+nav.gnrl{max-width:none;width:min(var(--fig-col),100% - 2*var(--gutter));margin:0 auto;padding:2rem 0 3rem;
+  font-family:var(--sans);font-size:.9rem;border-top:1px solid var(--rule)}
+nav.gnrl .gnrl-h{font-size:.9rem;letter-spacing:0;text-transform:none;opacity:1;color:var(--muted)}
+nav.gnrl .gnrl-card{border-color:var(--rule)}
+nav.gnrl .gnrl-card b{font-size:.95rem}
+nav.gnrl .gnrl-card span{font-size:.85rem;opacity:1;color:var(--muted)}
+
+/* Пока справа от широкой колонки нет места, оглавление стоит над текстом. */
+@media (max-width:2199px){
+  .toc{grid-column:2;position:static;width:auto;margin:0 0 2rem;padding:1rem 1.1rem;background:var(--field);border-radius:10px}
+  .toc-h{border:0;padding:0;margin-bottom:.4rem}
+  .toc a{padding:.3rem 0}
+  .toc a.on{background:none}
+  .col{grid-row:2}
 }
 @media (max-width:1000px){
-  .layout{grid-template-columns:1fr;gap:1.5rem;padding-top:1.75rem}
-  .toc{position:static;max-height:none;background:var(--soft);border-radius:10px;padding:1rem;columns:2;column-gap:1.5rem}
-  .toc-h{column-span:all}
-  .toc a{break-inside:avoid;border-left:0;padding-left:0}
+  .hero-in:has(.hero-cover){grid-template-columns:1fr}
+  .hero-cover{max-width:34rem}
   .g4{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media (max-width:680px){
-  .hero{padding-top:4.75rem}
-  .toc{columns:1}
+  .hero{padding:2rem 0 2rem}
   .g2,.g3,.g4{grid-template-columns:1fr}
   .g3 > .stack{grid-column:auto!important}
   .step{grid-template-columns:1.4rem minmax(0,1fr)}
   .step p{grid-column:2}
+  .bar-row{grid-template-columns:minmax(0,1fr) auto}
+  .bar-row .track{grid-column:1/-1;grid-row:2}
   figure{padding:.85rem}
   table,thead,tbody,tr,td{display:block}
   thead{display:none}
-  tr{border-bottom:1px solid var(--line);padding:.5rem 0}
+  tr{border-bottom:1px solid var(--rule);padding:.5rem 0}
   td{border:0;padding:.2rem 0}
-  td[data-h]:not(:first-child)::before{content:attr(data-h) ": ";font-size:.78rem;font-weight:600;color:var(--mute)}
+  td[data-h]:not(:first-child)::before{content:attr(data-h) ": ";font-size:.85rem;font-weight:600;color:var(--muted)}
 }
-@media print{.tools,.toc,.progress{display:none}.layout{display:block}}
-
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{.bar,.toc,.progress,nav.gnrl{display:none}.page{display:block}.hero{background:none;color:inherit}}
 </style>
 <!--general:head-->
 <meta property="og:type" content="article">
@@ -193,6 +253,10 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 })();
 </script>
 
+<style id="article-palette" data-palette="teal">
+:root{--hero-bg:#99F6E4;--hero-fg:#134E4A;--hero-muted:#134E4A;--accent:#134E4A;--accent-soft:#F0FDFA;--on-accent:#FFFFFF}
+html[data-theme="dark"]{--hero-bg:#134E4A;--hero-fg:#FFFFFF;--hero-muted:#99F6E4;--accent:#99F6E4;--accent-soft:#134E4A;--on-accent:#134E4A}
+</style>
 <!--/general:head-->
 </head>
 <body>
@@ -200,35 +264,29 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 <div class="gnrl-upwrap"><a class="gnrl-up" id="gnrl-up" href="https://paveldiordits.site/presentations/">← Назад</a></div>
 <!--/general:top-->
 <div class="progress" id="progress"></div>
-<div class="tools">
-  <button id="themeBtn" type="button" aria-label="Переключить тему">Тема</button>
-  <button id="contrastBtn" type="button" aria-label="Повышенный контраст" aria-pressed="false">Контраст</button>
+<div class="bar">
+  <div class="bar-in">
+    <a href="./" id="back"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 8h-11M7 3.5 2.5 8 7 12.5"/></svg>Журнал</a>
+    <div class="controls">
+      <button type="button" id="ts-down" aria-label="Уменьшить текст">A−</button>
+      <button type="button" id="ts-up" aria-label="Увеличить текст">A+</button>
+      <button type="button" id="theme" aria-label="Переключить тему">Тема</button>
+    </div>
+  </div>
 </div>
 <header class="hero">
-  <div class="wrap">
-    <p class="kicker">Разбор репозитория · gastownhall/gastown · слепок на 9 октября 2026</p>
-    <h1>Gas Town: разбор оркестратора кодящих агентов</h1>
-    <p class="lead">Слепок на 2026-10-09 по коммиту <code>649b832</code> ветки <code>main</code> репозитория <code>github.com/gastownhall/gastown</code> (версия в коде — 1.2.1). Текст объясняет, какую проблему решает Gas Town, из каких сущностей и ролей он состоит, как задача проходит путь от постановки до слияния, на чём всё держится технически, чего стоит эксплуатация и какие идеи можно забрать без установки. Читатель — инженер, который работает с Claude Code или Codex и знает git и tmux. За рамками остались пошаговая установка, полный справочник команд и устройство трекера задач Beads. Утверждения о проекте проверены по клону, исключения оговорены на месте; код не запускался, поэтому поведение под нагрузкой здесь не оценивается.</p>
+  <div class="hero-in">
+    <div class="hero-text">
+      <h1>Gas Town: разбор оркестратора кодящих агентов</h1>
+      <p class="lead">Оркестратор для случая, когда кодящих агентов больше, чем человек успевает вести вручную. В разборе — роли и цепочка надзора, путь задачи от постановки до слияния, хранилище на Dolt и git, расхождения документации с кодом и идеи, которые стоит забрать себе без установки.</p>
+    </div>
+    <img class="hero-cover" src="covers/gastown.webp" alt="" width="1600" height="900">
   </div>
 </header>
-<div class="wrap layout">
-  <nav class="toc" aria-label="Содержание">
-    <p class="toc-h">Содержание</p>
-<a href="#s1"><span>01</span>Какую проблему решает Gas Town</a>
-<a href="#s2"><span>02</span>Словарь проекта: Town, Rig, Bead, Hook, Convoy, Formula</a>
-<a href="#s3"><span>03</span>Роли: кто работает и кто за кем следит</a>
-<a href="#s4"><span>04</span>Путь одной задачи от постановки до слияния</a>
-<a href="#s5"><span>05</span>Хранилище: Dolt, git и файлы</a>
-<a href="#s6"><span>06</span>tmux, хуки и рантаймы</a>
-<a href="#s7"><span>07</span>Wasteland и Gas City: федерация и планы</a>
-<a href="#s8"><span>08</span>Где документация расходится с кодом</a>
-<a href="#s9"><span>09</span>Чего это стоит и кому нужно</a>
-<a href="#s10"><span>10</span>Что забрать себе</a>
-<a href="#s11"><span>11</span>Источники</a>
-  </nav>
-  <main>
-<p>О слепке. Коммит <code>649b832</code> совпадает с вершиной <code>main</code> в удалённом репозитории на дату слепка и датирован 2026-07-23. По GitHub API у репозитория около 18,3 тысячи звёзд и последний push 2026-10-08. В какую ветку шёл этот push, по клону установить нельзя; число звёзд и история появления проекта по клону тоже не подтверждаются. Модуль Go и часть инструкций установки ссылаются на прежний адрес <code>github.com/steveyegge/gastown</code>.</p>
-<section id="s1"><h2><span class="num">01</span>Какую проблему решает Gas Town</h2>
+<div class="under"><p class="meta">Разбор репозитория · <a href="https://github.com/gastownhall/gastown">gastownhall/gastown</a> · версия 1.2.1</p></div>
+<div class="page">
+  <main class="col">
+<section id="s1"><h2>Какую проблему решает Gas Town</h2>
 <p>Gas Town — программа командной строки <code>gt</code>, которая запускает много сессий кодящих агентов и следит за ними. Она отвечает на вопрос, что делать, когда агентов больше, чем человек успевает вести вручную.</p>
 <p>README называет четыре трудности:</p>
 <ul><li>агент теряет контекст при перезапуске;</li><li>человек координирует агентов вручную;</li><li>4–10 агентов превращаются в хаос;</li><li>состояние работы живёт в памяти агента и пропадает вместе с ней.</li></ul>
@@ -236,7 +294,7 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 <p>Второй довод — подотчётность. Каждый агент получает имя вида <code>gastown/polecats/toast</code>, и этим именем подписаны его коммиты и записи в базе. По <code>why-these-features.md</code> это нужно, чтобы найти агента, который внёс ошибку, и сравнивать модели на похожих задачах.</p>
 <p>Тот же документ помечает автоматический подбор исполнителя по навыкам как запланированный. Сейчас исполнителя выбирает тот, кто вызывает команду назначения <code>gt sling</code>: координирующий агент или человек.</p>
 </section>
-<section id="s2"><h2><span class="num">02</span>Словарь проекта: Town, Rig, Bead, Hook, Convoy, Formula</h2>
+<section id="s2"><h2>Словарь проекта: Town, Rig, Bead, Hook, Convoy, Formula</h2>
 <p>Gas Town использует собственные названия, часть — из «Безумного Макса». Ниже каждое объяснено через его функцию. «Рантаймом» в проекте и в этом тексте называется консольный агент, который исполняет работу: Claude Code, Codex и другие.</p>
 <ul><li><strong>Town</strong> — рабочий каталог, по умолчанию <code>~/gt/</code>. В нём лежат настройки, каталоги общегородских агентов и все проекты.</li><li><strong>Rig</strong> — контейнер одного проекта внутри Town. Он оборачивает один git-репозиторий и содержит каталоги агентов этого проекта. Сам Rig git-клоном не является: клон лежит внутри него, в <code>mayor/rig/</code>.</li><li><strong>Bead</strong> — запись в трекере задач Beads (команда <code>bd</code>): задача, ошибка, группа задач, письмо, запрос на слияние или карточка агента. Карточка агента хранит его роль, состояние и текущее назначение. Идентификатор состоит из префикса проекта и короткого кода: <code>gt-abc12</code>, <code>hq-x7k2m</code>. Префикс <code>hq-</code> означает уровень Town.</li><li><strong>Hook</strong> — отметка «эта работа назначена этому агенту». Технически это поле <code>hook_bead</code> в карточке агента и статус <code>hooked</code> у задачи. Назначение переживает перезапуск сессии и сжатие контекста; на этом свойстве держится вся система.</li><li><strong>GUPP</strong> (Gas Town Universal Propulsion Principle) — правило для агентов: «если на твоём Hook есть работа, выполняй её сразу». Агент не ждёт подтверждения: в системе нет звена, которое его даст, и ожидание останавливает всех, кто зависит от результата.</li><li><strong>Convoy</strong> — запись, которая отслеживает группу задач, возможно из разных Rig. Когда закрыты все задачи, Convoy закрывается и уведомляет подписчиков. <code>gt sling</code> создаёт Convoy автоматически даже для одной задачи.</li><li><strong>Formula</strong> — шаблон процедуры в TOML: шаги с зависимостями. В бинарь встроено 47 формул.</li><li><strong>Molecule</strong> — экземпляр формулы, привязанный к конкретной работе.</li><li><strong>Wisp</strong> — экземпляр формулы, который не хранится долго: старые Wisp удаляет уборка базы. Так оформляются обходы и работа исполнителей. По умолчанию создаётся одна корневая запись, а шаги агент читает из встроенной формулы. Причина по документации: запись каждого шага давала больше 6000 строк в день, с корневой записью выходит около 400.</li><li><strong>Sling</strong> — команда назначения: <code>gt sling &lt;задача&gt; &lt;rig&gt;</code> вешает задачу на Hook и запускает исполнителя.</li></ul>
 <p>Слово «hook» в репозитории значит три разные вещи, и их легко спутать:</p>
@@ -245,39 +303,39 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
   <div class="zone">
     <span class="fg-label">Town · ~/gt/</span>
     <div class="grid g4">
-      <div class="box hot"><span class="tag">один на Town</span><h4>Mayor</h4><p>Координатор, собеседник человека</p></div>
-      <div class="box hot"><span class="tag">один на Town</span><h4>Deacon</h4><p>Общий надзиратель</p></div>
-      <div class="box"><span class="tag">помощники</span><h4>Dogs · Boot</h4><p>Служебные задания Deacon</p></div>
-      <div class="box steel dash"><span class="tag">не LLM</span><h4>Daemon</h4><p>Процесс Go</p></div>
+      <div class="box hot"><span class="tag">один на Town</span><div class="t">Mayor</div><p>Координатор, собеседник человека</p></div>
+      <div class="box hot"><span class="tag">один на Town</span><div class="t">Deacon</div><p>Общий надзиратель</p></div>
+      <div class="box"><span class="tag">помощники</span><div class="t">Dogs · Boot</div><p>Служебные задания Deacon</p></div>
+      <div class="box dash"><span class="tag">не LLM</span><div class="t">Daemon</div><p>Процесс Go</p></div>
     </div>
     <div class="grid g2">
       <div class="zone">
         <span class="fg-label">Rig · проект A</span>
         <div class="grid g2">
-          <div class="box"><span class="tag">один на Rig</span><h4>Witness</h4><p>Надзор за Polecat</p></div>
-          <div class="box"><span class="tag">один на Rig</span><h4>Refinery</h4><p>Очередь слияния</p></div>
-          <div class="box hot"><span class="tag">много</span><h4>Polecats</h4><p>У каждого свой worktree</p></div>
-          <div class="box"><span class="tag">человек</span><h4>Crew</h4><p>Полный клон</p></div>
+          <div class="box"><span class="tag">один на Rig</span><div class="t">Witness</div><p>Надзор за Polecat</p></div>
+          <div class="box"><span class="tag">один на Rig</span><div class="t">Refinery</div><p>Очередь слияния</p></div>
+          <div class="box hot"><span class="tag">много</span><div class="t">Polecats</div><p>У каждого свой worktree</p></div>
+          <div class="box"><span class="tag">человек</span><div class="t">Crew</div><p>Полный клон</p></div>
         </div>
         <div class="box dash"><p><code>mayor/rig</code> — канонический клон</p></div>
       </div>
       <div class="zone">
         <span class="fg-label">Rig · проект B</span>
         <div class="grid g2">
-          <div class="box"><h4>Witness</h4></div>
-          <div class="box"><h4>Refinery</h4></div>
-          <div class="box hot"><h4>Polecats</h4></div>
-          <div class="box"><h4>Crew</h4></div>
+          <div class="box"><div class="t">Witness</div></div>
+          <div class="box"><div class="t">Refinery</div></div>
+          <div class="box hot"><div class="t">Polecats</div></div>
+          <div class="box"><div class="t">Crew</div></div>
         </div>
         <div class="box dash"><p><code>mayor/rig</code></p></div>
       </div>
     </div>
-    <div class="box steel"><span class="tag">hq-cv-…</span><h4>Convoy</h4><p>Живёт на уровне Town и отслеживает задачи из разных Rig</p></div>
+    <div class="box"><span class="tag"><code>hq-cv-…</code></span><div class="t">Convoy</div><p>Живёт на уровне Town и отслеживает задачи из разных Rig</p></div>
   </div>
   <figcaption><b>Карта сущностей.</b> Town вмещает общегородских агентов и проекты; у каждого Rig свой набор ролей.</figcaption>
 </figure>
 </section>
-<section id="s3"><h2><span class="num">03</span>Роли: кто работает и кто за кем следит</h2>
+<section id="s3"><h2>Роли: кто работает и кто за кем следит</h2>
 <p>В Gas Town восемь ролей агентов — по числу шаблонов ролей в бинаре — и один процесс без LLM. Роли делятся на исполнителей и надзор.</p>
 <p>Исполнители делают работу в проекте:</p>
 <ul><li><strong>Polecat</strong> — исполнитель одной задачи. Работает в отдельном git worktree на своей ветке и в основную ветку сам не пишет.</li><li><strong>Crew</strong> — долгоживущее рабочее место с полным клоном репозитория. Им управляет человек; за Crew никто не следит, и он пишет в основную ветку напрямую.</li></ul>
@@ -290,29 +348,29 @@ button[title*="онтраст"],button[aria-label*="онтраст"]{display:non
 <figure>
   <div class="grid g3" style="align-items:start">
     <div class="stack" style="grid-column:span 2">
-      <div class="box steel dash"><span class="tag">единственный без LLM</span><h4>Daemon</h4><p>Проверка каждые 3 минуты</p></div>
+      <div class="box dash"><span class="tag">единственный без LLM</span><div class="t">Daemon</div><p>Проверка каждые 3 минуты</p></div>
       <div class="down">следит за · при сбое зовёт Boot</div>
-      <div class="box hot"><h4>Deacon</h4><p>Обход всего Town, 26 шагов</p></div>
+      <div class="box hot"><div class="t">Deacon</div><p>Обход всего Town, 26 шагов</p></div>
       <div class="down">следит за</div>
       <div class="grid g2">
-        <div class="box"><span class="tag">на каждый Rig</span><h4>Witness</h4><p>↑ Проверяет отметку Deacon, порог 5 минут</p></div>
-        <div class="box"><span class="tag">на каждый Rig</span><h4>Refinery</h4></div>
+        <div class="box"><span class="tag">на каждый Rig</span><div class="t">Witness</div><p>Сам проверяет отметку Deacon, порог 5 минут</p></div>
+        <div class="box"><span class="tag">на каждый Rig</span><div class="t">Refinery</div></div>
       </div>
       <div class="down">Witness следит за</div>
-      <div class="box hot"><h4>Polecats</h4></div>
+      <div class="box hot"><div class="t">Polecats</div></div>
     </div>
     <div class="stack">
-      <div class="box"><span class="tag">сбоку</span><h4>Boot</h4><p>Решает судьбу неотвечающего Deacon</p></div>
-      <div class="box"><span class="tag">эскалации</span><h4>Mayor</h4><p>Получает их от Deacon и Witness</p></div>
+      <div class="box"><span class="tag">сбоку</span><div class="t">Boot</div><p>Решает судьбу неотвечающего Deacon</p></div>
+      <div class="box"><span class="tag">эскалации</span><div class="t">Mayor</div><p>Получает их от Deacon и Witness</p></div>
       <div class="down">эскалация</div>
-      <div class="box steel"><h4>Человек</h4><p>Overseer</p></div>
-      <div class="box dash"><span class="tag">вне цепочки</span><h4>Crew</h4><p>Никто не следит</p></div>
+      <div class="box"><div class="t">Человек</div><p>Overseer</p></div>
+      <div class="box dash"><span class="tag">вне цепочки</span><div class="t">Crew</div><p>Никто не следит</p></div>
     </div>
   </div>
   <figcaption><b>Цепочка надзора.</b> Кто кого проверяет и куда уходят обращения за помощью.</figcaption>
 </figure>
 </section>
-<section id="s4"><h2><span class="num">04</span>Путь одной задачи от постановки до слияния</h2>
+<section id="s4"><h2>Путь одной задачи от постановки до слияния</h2>
 <p>Задача проходит восемь этапов, и на каждом всё нужное для продолжения записано вне контекста модели.</p>
 <ol><li><strong>Постановка.</strong> Человек подключается к Mayor командой <code>gt mayor attach</code> и описывает цель словами. Mayor создаёт задачи в Beads и объединяет их в Convoy.</li><li><strong>Назначение.</strong> Mayor вызывает <code>gt sling</code>. Команда выделяет имя из пула, создаёт worktree с новой веткой, запускает сессию tmux с агентом, вешает задачу на Hook и прикрепляет формулу <code>mol-polecat-work</code>.</li><li><strong>Вход в контекст.</strong> Хук начала сессии вызывает <code>gt prime</code>. Команда определяет роль по текущему каталогу и печатает шаблон роли, чек-лист формулы и назначенную задачу.</li><li><strong>Работа.</strong> Polecat идёт по чек-листу из восьми шагов.</li><li><strong>Сдача.</strong> Polecat выполняет <code>gt done</code>. Команда отправляет ветку в удалённый репозиторий, создаёт Bead запроса на слияние, записывает итог в карточку агента, будит Refinery и Witness и завершает сессию.</li><li><strong>Оформление.</strong> Witness находит завершение по карточке агента, создаёт запись об уборке и повторно сообщает Refinery о готовности ветки. Сигнал от <code>gt done</code> и сигнал от Witness дублируют друг друга.</li><li><strong>Слияние.</strong> Refinery проверяет, что ветка сливается с целевой, запускает проверки, просматривает разницу, сливает и отправляет результат, затем уведомляет Witness.</li><li><strong>Закрытие.</strong> Когда закрыты все задачи Convoy, Convoy закрывается и уведомляет подписчиков.</li></ol>
 <p>Команды первых этапов из README:</p>
@@ -340,7 +398,7 @@ gt convoy list</code></pre>
   <figcaption><b>Путь одной задачи.</b> Кто кому передаёт ход и какой командой.</figcaption>
 </figure>
 </section>
-<section id="s5"><h2><span class="num">05</span>Хранилище: Dolt, git и файлы</h2>
+<section id="s5"><h2>Хранилище: Dolt, git и файлы</h2>
 <p>Состояние Gas Town разложено по четырём хранилищам.</p>
 <p><strong>Dolt</strong> — SQL-база с версионированием в духе git. В ней лежит всё, что является Bead. Один сервер Dolt обслуживает весь Town по протоколу MySQL на порту 3307; данные лежат в <code>~/gt/.dolt-data/</code>, по отдельной базе на Rig и одна база <code>hq</code> для уровня Town. Встроенного режима нет: если сервер недоступен, <code>bd</code> сразу сообщает об ошибке и указывает на <code>gt dolt start</code>. Все агенты пишут в ветку <code>main</code> базы, и каждая запись оборачивается в транзакцию с коммитом Dolt. Поэтому изменение одного агента сразу видят остальные.</p>
 <p><strong>Git</strong> хранит код. В Rig лежит голый репозиторий <code>.repo.git/</code> и канонический клон <code>mayor/rig/</code>. Каталоги Polecat и Refinery — worktree от канонического клона, поэтому новый исполнитель создаётся быстро и делит объекты с остальными. У Crew полные клоны.</p>
@@ -353,8 +411,8 @@ gt convoy list</code></pre>
   <div class="grid g2" style="align-items:start">
     <div class="zone">
       <span class="fg-label">Dolt · порт 3307</span>
-      <div class="box hot"><h4>hq</h4><p>Карточки Mayor и Deacon, Convoy, почта, эскалации</p></div>
-      <div class="box hot"><span class="tag">на каждый Rig</span><h4>База Rig</h4><p>Задачи, запросы на слияние, карточки агентов, Wisp</p></div>
+      <div class="box hot"><div class="t">hq</div><p>Карточки Mayor и Deacon, Convoy, почта, эскалации</p></div>
+      <div class="box hot"><span class="tag">на каждый Rig</span><div class="t">База Rig</div><p>Задачи, запросы на слияние, карточки агентов, Wisp</p></div>
     </div>
     <div class="zone">
       <span class="fg-label">Git</span>
@@ -370,13 +428,13 @@ gt convoy list</code></pre>
       <span class="fg-label">tmux</span>
       <div class="box dash"><span class="tag">теряемое</span><p>Живые сессии агентов</p></div>
       <span class="fg-label">Бинарь gt</span>
-      <div class="box steel"><p>Шаблоны ролей, 47 формул, проверки <code>gt doctor</code></p></div>
+      <div class="box"><p>Шаблоны ролей, 47 формул, проверки <code>gt doctor</code></p></div>
     </div>
   </div>
   <figcaption><b>Что где хранится.</b> Нужное для продолжения работы лежит в Dolt и Git; <code>.beads/redirect</code> сводит рабочие каталоги к одной базе на Rig.</figcaption>
 </figure>
 </section>
-<section id="s6"><h2><span class="num">06</span>tmux, хуки и рантаймы</h2>
+<section id="s6"><h2>tmux, хуки и рантаймы</h2>
 <p>Gas Town не обращается к API моделей. Он запускает готовые консольные агенты в сессиях tmux и управляет ими снаружи. Отсюда три механизма.</p>
 <p><strong>Хуки рантайма вносят контекст.</strong> Gas Town генерирует файл настроек Claude Code в родительском каталоге роли, например <code>&lt;rig&gt;/polecats/.claude/settings.json</code>, и передаёт его флагом <code>--settings</code>. Клиентский репозиторий при этом остаётся без служебных файлов Gas Town. Реестр хуков содержит семь записей. Три из них — защитные проверки перед вызовом инструмента, остальные четыре переносят состояние:</p>
 <ul><li><code>session-prime</code> на событии <code>SessionStart</code> вызывает <code>gt prime</code>;</li><li><code>pre-compact-prime</code> на событии <code>PreCompact</code> повторяет контекст перед сжатием;</li><li><code>mail-check</code> на событии <code>UserPromptSubmit</code> подмешивает непрочитанную почту;</li><li><code>costs-record</code> на событии <code>Stop</code> записывает стоимость сессии.</li></ul>
@@ -387,7 +445,7 @@ gt convoy list</code></pre>
 <p>Предустановки запускают агентов без запросов подтверждения. У Claude Code это флаг <code>--dangerously-skip-permissions</code>, у Codex — <code>--dangerously-bypass-approvals-and-sandbox</code>, у Copilot — <code>--yolo</code>.</p>
 <p>Смена сессии встроена в обычную работу. <code>gt handoff</code> завершает сессию и стартует новую с чистым контекстом; новая находит ту же работу на Hook.</p>
 </section>
-<section id="s7"><h2><span class="num">07</span>Wasteland и Gas City: федерация и планы</h2>
+<section id="s7"><h2>Wasteland и Gas City: федерация и планы</h2>
 <p>Wasteland — общая доска заказов между разными Town, построенная на DoltHub. Участник делает форк общей базы <code>hop/wl-commons</code>, берёт заказ, сдаёт ссылку на результат и получает от проверяющего «штамп» — оценку по нескольким измерениям.</p>
 <pre><code>gt wl join hop/wl-commons
 gt wl browse
@@ -397,12 +455,12 @@ gt wl done w-abc123 --evidence &lt;url&gt;</code></pre>
 <ul><li>заявка на заказ пишется только в локальный форк, поэтому два участника могут взять один заказ;</li><li>уровни доверия есть в схеме, но никто их не проверяет;</li><li>команды выхода из Wasteland нет — конфигурацию удаляют вручную.</li></ul>
 <p>Gas City в клоне существует только как проектный документ <code>docs/gas-city/crew-specialization-design.md</code>. Он описывает планируемый декларативный слой: роли, зашитые сейчас в код, превращаются в переносимые схемы, а задачи распределяются по заявленным способностям агентов. Кода под этим названием в репозитории нет.</p>
 </section>
-<section id="s8"><h2><span class="num">08</span>Где документация расходится с кодом</h2>
+<section id="s8"><h2>Где документация расходится с кодом</h2>
 <p>Документация проекта описывает сразу несколько поколений системы. Ниже расхождения, которые меняют понимание.</p>
 <ul><li><strong>Очередь слияния.</strong> README описывает очередь как пакетную: Refinery собирает запросы в пачку и при падении тестов делит её пополам в поисках виновника. Функции <code>ProcessBatch</code> и <code>bisectBatch</code> есть в <code>internal/refinery/batch.go</code>, но вне этого файла и тестов их никто не вызывает. <code>architecture.md</code> помечает этот этап как заблокированный. Формула обхода Refinery обрабатывает ветки по одной.</li><li><strong>Команды из README.</strong> <code>gt hooks repair</code>, <code>gt convoy refresh</code>, <code>gt convoy show</code> и <code>gt mayor detach</code> в коде не определены.</li><li><strong>Судьба Polecat после сдачи.</strong> По <code>polecat-lifecycle.md</code> сдавший работу Polecat повторно не используется, а песочницу убирают. Формула обхода Witness, которую агент получает как инструкцию, говорит обратное: Polecat переходит в ожидание, песочница сохраняется для следующей задачи.</li><li><strong>Федерация.</strong> <code>why-these-features.md</code> называет Gas Town системой одного Town с запланированной федерацией, а Wasteland уже работает.</li><li><strong>Учёт стоимости.</strong> Справка <code>gt costs digest</code> говорит, что суточную сводку запускает Deacon. В формуле Deacon этот шаг помечен <code>[DISABLED]</code>.</li><li><strong>Защитные хуки.</strong> <code>docs/HOOKS.md</code> помечает защиту от опасных команд включённой и там же пишет, что её команды ещё не существует.</li><li><strong>Масштаб.</strong> README обещает комфортную работу с 20–30 агентами, а проектный документ об изоляции пишет, что ноутбук не выдерживает 10–20 одновременных сессий Claude.</li><li><strong>Мелочи.</strong> Overview ссылается на отсутствующий <code>docs/design/watchdog-chain.md</code>. README перечисляет 11 предустановок рантаймов при 13 в коде.</li></ul>
 <p>Вывод: README годится для знакомства, а факты лежат в <code>docs/design/</code>, встроенной справке команд и формулах.</p>
 </section>
-<section id="s9"><h2><span class="num">09</span>Чего это стоит и кому нужно</h2>
+<section id="s9"><h2>Чего это стоит и кому нужно</h2>
 <p>Gas Town оправдан, когда есть поток однородных, хорошо описанных задач и человек, готовый стать оператором системы. Для одного-двух агентов расходы на надзор превышают выгоду.</p>
 <p><strong>Масштаб кода.</strong> По подсчёту на клоне:</p>
 <ul><li>663 файла Go без тестов, около 249 тысяч строк;</li><li>568 файлов тестов, около 226 тысяч строк;</li><li>111 команд верхнего уровня у <code>gt</code>;</li><li>47 формул, 13 плагинов, 8 шаблонов ролей;</li><li>27 версий в <code>CHANGELOG.md</code> — от 0.1.0 (2026-01-02) до 1.2.1 (2026-06-06).</li></ul>
@@ -414,32 +472,63 @@ gt wl done w-abc123 --evidence &lt;url&gt;</code></pre>
 <p>Кому Gas Town не нужен:</p>
 <ul><li>тем, кто ведёт одного-двух агентов и читает каждый дифф;</li><li>командам, где запуск агентов без подтверждений на рабочей машине недопустим;</li><li>проектам без автоматических тестов: очередь слияния опирается на проверки.</li></ul>
 </section>
-<section id="s10"><h2><span class="num">10</span>Что забрать себе</h2>
+<section id="s10"><h2>Что забрать себе</h2>
 <p>Пять идей и три мелких приёма переносятся в обычную работу с агентами без установки Gas Town.</p>
 <ol><li><strong>Держите состояние задачи вне контекста.</strong> Заведите файл или запись в трекере с назначением, шагами и заметками. Требуйте от агента записывать находки туда до завершения сессии. В Gas Town это правило звучит как <code>bd update &lt;задача&gt; --notes "..."</code>.</li><li><strong>Восстанавливайте контекст хуком.</strong> Хук <code>SessionStart</code> в Claude Code может печатать текущую задачу и чек-лист, а <code>PreCompact</code> — повторять их перед сжатием.</li><li><strong>Разделите личность, песочницу и сессию.</strong> Одна задача — один worktree и одна ветка; сессий на эту ветку может быть сколько угодно. Тогда сбой или переполнение контекста стоят одного перезапуска.</li><li><strong>Запретите агентам писать в основную ветку.</strong> Пусть агент сдаёт ветку, а сливает её отдельный шаг с проверками. Из <code>gt done</code> стоит взять порядок: сначала отправить ветку, потом создавать запрос на слияние.</li><li><strong>Давайте процедуру чек-листом.</strong> Формула из шагов с зависимостями, показанная агенту целиком, дешевле записи каждого шага в базу. Отдельные записи шагов оставьте для долгих процедур, где потерять прогресс после сбоя дорого.</li></ol>
 <p>Три приёма помельче:</p>
 <ul><li>ограничивайте число перезапусков одной задачи, как делает <code>gt sling</code> с пределом в три попытки;</li><li>по умолчанию доставляйте агенту сообщение, когда он ждёт ввода, а прерывание оставьте для аварий;</li><li>подписывайте коммиты именем конкретного агента, чтобы сравнивать исполнителей и модели.</li></ul>
 <p>Оговорка к заимствованию: надзор из LLM-сессий расходует токены постоянно. При малом числе агентов его заменяет детерминированный скрипт, который проверяет, что сессия жива и в ветке появляются коммиты.</p>
 </section>
-<section id="s11"><h2><span class="num">11</span>Источники</h2>
+<section id="s11"><h2>Источники</h2>
+<p>Разбор сделан по коммиту <code>649b832</code> ветки <code>main</code>; версия в коде — 1.2.1. Утверждения о проекте проверены по клону, исключения оговорены на месте. Код не запускался, поэтому поведение под нагрузкой здесь не оценивается. За рамками остались пошаговая установка, полный справочник команд и устройство трекера задач Beads.</p>
+<p>Коммит <code>649b832</code> совпадает с вершиной <code>main</code> в удалённом репозитории на дату слепка и датирован 2026-07-23. По GitHub API у репозитория около 18,3 тысячи звёзд и последний push 2026-10-08. В какую ветку шёл этот push, по клону установить нельзя; число звёзд и история появления проекта по клону тоже не подтверждаются. Модуль Go и часть инструкций установки ссылаются на прежний адрес <code>github.com/steveyegge/gastown</code>.</p>
 <ul><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/README.md">README.md</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/docs/overview.md">docs/overview.md</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/docs/glossary.md">docs/glossary.md</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/docs/why-these-features.md">docs/why-these-features.md</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/docs/design/architecture.md">docs/design/architecture.md</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/docs/design/dolt-storage.md">docs/design/dolt-storage.md</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/docs/concepts/polecat-lifecycle.md">docs/concepts/polecat-lifecycle.md</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/docs/concepts/molecules.md">docs/concepts/molecules.md</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/docs/HOOKS.md">docs/HOOKS.md</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/docs/design/escalation.md">docs/design/escalation.md</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/docs/design/sandboxed-polecat-execution.md">docs/design/sandboxed-polecat-execution.md</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/docs/WASTELAND.md">docs/WASTELAND.md</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/docs/gas-city/crew-specialization-design.md">docs/gas-city/crew-specialization-design.md</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/CHANGELOG.md">CHANGELOG.md</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/CONTRIBUTING.md">CONTRIBUTING.md</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/internal/cmd/done.go">internal/cmd/done.go</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/internal/config/agents.go">internal/config/agents.go</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/internal/config/operational.go">internal/config/operational.go</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/internal/refinery/batch.go">internal/refinery/batch.go</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/internal/witness/handlers.go">internal/witness/handlers.go</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/internal/formula/formulas/mol-polecat-work.formula.toml">internal/formula/formulas/mol-polecat-work.formula.toml</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/internal/formula/formulas/mol-witness-patrol.formula.toml">internal/formula/formulas/mol-witness-patrol.formula.toml</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/internal/formula/formulas/mol-refinery-patrol.formula.toml">internal/formula/formulas/mol-refinery-patrol.formula.toml</a></li><li><a href="https://github.com/gastownhall/gastown/blob/649b832b7672bc7a2dbef26f5983aba6198b819b/internal/formula/formulas/mol-deacon-patrol.formula.toml">internal/formula/formulas/mol-deacon-patrol.formula.toml</a></li></ul>
 </section>
   </main>
+  <nav class="toc" aria-label="Содержание">
+    <p class="toc-h">Содержание</p>
+    <a href="#s1">Какую проблему решает Gas Town</a>
+    <a href="#s2">Словарь проекта: Town, Rig, Bead, Hook, Convoy, Formula</a>
+    <a href="#s3">Роли: кто работает и кто за кем следит</a>
+    <a href="#s4">Путь одной задачи от постановки до слияния</a>
+    <a href="#s5">Хранилище: Dolt, git и файлы</a>
+    <a href="#s6">tmux, хуки и рантаймы</a>
+    <a href="#s7">Wasteland и Gas City: федерация и планы</a>
+    <a href="#s8">Где документация расходится с кодом</a>
+    <a href="#s9">Чего это стоит и кому нужно</a>
+    <a href="#s10">Что забрать себе</a>
+    <a href="#s11">Источники</a>
+  </nav>
 </div>
 <script>
 (function(){
-  var root=document.documentElement, tb=document.getElementById('themeBtn'), cb=document.getElementById('contrastBtn');
-  function cur(){return root.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');}
-  function save(k,v){try{localStorage.setItem(k,v);}catch(e){}}
-  tb.addEventListener('click',function(){var n=cur()==='dark'?'light':'dark';root.dataset.theme=n;save('gt-theme',n);});
-  cb.addEventListener('click',function(){var on=root.dataset.contrast==='on';if(on)delete root.dataset.contrast;else root.dataset.contrast='on';cb.setAttribute('aria-pressed',String(!on));save('gt-contrast',on?'off':'on');});
-  cb.setAttribute('aria-pressed',String(root.dataset.contrast==='on'));
-  var bar=document.getElementById('progress'), links=[].slice.call(document.querySelectorAll('.toc a')), secs=links.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});
+  var d=document.documentElement, STEPS=[.9,1,1.1,1.2,1.35];
+  function save(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+  document.getElementById('theme').addEventListener('click',function(){
+    var dark=d.dataset.theme!=='dark';
+    if(dark)d.dataset.theme='dark';else delete d.dataset.theme;
+    save('theme',dark?'dark':'light');save('ad-theme',dark?'dark':'light');
+  });
+  function step(n){
+    var cur=+d.style.getPropertyValue('--ts')||1,at=0;
+    STEPS.forEach(function(v,i){if(Math.abs(v-cur)<Math.abs(STEPS[at]-cur))at=i});
+    var v=STEPS[Math.max(0,Math.min(STEPS.length-1,at+n))];
+    d.style.setProperty('--ts',v);save('text-scale',v);
+  }
+  document.getElementById('ts-down').addEventListener('click',function(){step(-1)});
+  document.getElementById('ts-up').addEventListener('click',function(){step(1)});
+  // «Журнал» — настоящая ссылка; если читатель пришёл со страницы сайта, она
+  // возвращает его в ту же точку прокрутки, откуда он ушёл.
+  var back=document.getElementById('back'),from=document.referrer||'';
+  if(history.length>1&&from.indexOf(location.origin+'/')===0&&from!==location.href)
+    back.addEventListener('click',function(e){e.preventDefault();history.back()});
+  var bar=document.getElementById('progress'),links=[].slice.call(document.querySelectorAll('.toc a')),
+      secs=links.map(function(a){return document.getElementById(a.getAttribute('href').slice(1))});
   function onScroll(){
-    var h=document.documentElement.scrollHeight-innerHeight;
+    var h=d.scrollHeight-innerHeight;
     bar.style.transform='scaleX('+(h>0?Math.min(1,scrollY/h):0)+')';
-    var act=0;for(var i=0;i<secs.length;i++){if(secs[i].getBoundingClientRect().top<innerHeight*0.3)act=i;}
-    links.forEach(function(a,i){a.classList.toggle('on',i===act);});
+    var act=0;for(var i=0;i<secs.length;i++){if(secs[i].getBoundingClientRect().top<innerHeight*.3)act=i}
+    links.forEach(function(a,i){a.classList.toggle('on',i===act)});
   }
   addEventListener('scroll',onScroll,{passive:true});onScroll();
 })();
@@ -490,15 +579,15 @@ gt wl done w-abc123 --evidence &lt;url&gt;</code></pre>
   </div>
   <div class="gnrl-grid">
     <a class="gnrl-card" href="headcount.html">
-      <img src="covers/headcount.svg" alt="" loading="lazy">
+      <img src="covers/headcount.webp" alt="" loading="lazy" onerror="this.onerror=null;this.src='covers/headcount.svg'">
       <b>headcount — «компания из агентов» для Claude Code: разбор</b><span>15 мин · 2026-09-05</span>
     </a>
     <a class="gnrl-card" href="yingzao-skill.html">
-      <img src="covers/yingzao-skill.svg" alt="" loading="lazy">
+      <img src="covers/yingzao-skill.webp" alt="" loading="lazy" onerror="this.onerror=null;this.src='covers/yingzao-skill.svg'">
       <b>Yingzao: скилл-постер Guizang под микроскопом</b><span>40 мин · 2026-09-05</span>
     </a>
     <a class="gnrl-card" href="agents-weekly-2026-10-09.html">
-      <img src="covers/agents-weekly-2026-10-09.svg" alt="" loading="lazy">
+      <img src="covers/agents-weekly-2026-10-09.webp" alt="" loading="lazy" onerror="this.onerror=null;this.src='covers/agents-weekly-2026-10-09.svg'">
       <b>Неделя агентной экосистемы — 02–09.10.2026</b><span>79 мин · 2026-10-09</span>
     </a>
   </div>
