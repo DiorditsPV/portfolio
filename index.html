@@ -593,14 +593,15 @@ const T = {
       tags:["Claude Code","git hooks","marketplace","Bash"],
       source:"https://github.com/DiorditsPV/claude-skills" },
 
-    { name:"ClawdIcons",
-      sub:{en:"VS Code icon theme", ru:"Icon-тема для VS Code"},
+    { name:"agent-team",
+      sub:{en:"One manager, permanent roles, disposable sessions — state in git and the tracker",
+           ru:"Менеджер, постоянные роли, одноразовые сессии — состояние в git и трекере"},
       desc:{
-        en:"File and folder icons for Claude Code artifacts, merged on top of whatever icon theme is already in use, with path-aware badges — only the paths the tool actually reads from get painted.",
-        ru:"Иконки файлов и папок Claude Code поверх текущей icon-темы, с бейджами по путям: подсвечиваются только те каталоги, откуда инструмент реально читает.",
+        en:"A Python CLI over tmux and Claude Code that raises a project's team from its agents/ folder: a role is one file with instructions, a zone and a restricted tool list, and every role works in its own git worktree. The manager hands out tasks and merges; the approach is borrowed from Gas Town without its stack, and a library of nine ready-made roles ships with it.",
+        ru:"CLI на Python поверх tmux и Claude Code поднимает команду проекта по описанию в agents/: роль — один файл с инструкцией, зоной и ограниченным списком инструментов, у каждой роли свой git worktree. Менеджер раздаёт задачи и сливает ветки; подход взят у Gas Town без его стека, в комплекте — библиотека из девяти готовых ролей.",
       },
-      tags:["VS Code","TypeScript","icon theme"],
-      source:"https://github.com/DiorditsPV/vscode-clawdicons" },
+      tags:["Python","tmux","Claude Code"],
+      source:"https://github.com/DiorditsPV/agent-team" },
 
     { feature:true, viz:"ladder",
       name:"ladder",
@@ -625,6 +626,15 @@ const T = {
       tags:["Node.js","static HTML","Playwright","cron agent","RSS","GitHub Actions"],
       source:"https://github.com/DiorditsPV/portfolio",
       live:"https://paveldiordits.site/presentations/" },
+
+    { name:"ClawdIcons",
+      sub:{en:"VS Code icon theme", ru:"Icon-тема для VS Code"},
+      desc:{
+        en:"File and folder icons for Claude Code artifacts, merged on top of whatever icon theme is already in use, with path-aware badges — only the paths the tool actually reads from get painted.",
+        ru:"Иконки файлов и папок Claude Code поверх текущей icon-темы, с бейджами по путям: подсвечиваются только те каталоги, откуда инструмент реально читает.",
+      },
+      tags:["VS Code","TypeScript","icon theme"],
+      source:"https://github.com/DiorditsPV/vscode-clawdicons" },
 
   ],
 
