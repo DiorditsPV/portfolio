@@ -18,6 +18,7 @@
 // «Предметные области».
 
 import { BASE_CSS, siteHeader, plural, THEME_BOOT, SHELL_JS } from './journal-page.mjs';
+import { STATS_SNIPPET } from './stats-snippet.mjs';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -143,6 +144,7 @@ ${BASE_CSS}
 footer{border-top:1px solid var(--rule);padding-block:1.5rem 2.5rem;color:var(--muted);font-size:.85rem}
 footer a{color:var(--link)}
 </style>
+${STATS_SNIPPET}
 </head>
 <body>
 ${siteHeader()}

@@ -22,6 +22,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { STATS_SNIPPET } from './stats-snippet.mjs';
 
 const TOOLS = path.dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
@@ -147,7 +148,8 @@ const html = `<!DOCTYPE html>
 <script>(function(){try{var d=document.documentElement,t=localStorage.getItem('theme');if(t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches)d.dataset.theme='dark';var s=+localStorage.getItem('text-scale');if(s)d.style.setProperty('--ts',s)}catch(e){}})()</script>
 <style>
 ${css}</style>
-${palette}</head>
+${palette}${STATS_SNIPPET}
+</head>
 <body>
 <div class="progress" id="progress"></div>
 <div class="bar">

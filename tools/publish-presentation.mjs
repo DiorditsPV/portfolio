@@ -45,6 +45,7 @@ import { filterDigest } from './digest-filter.mjs';
 import { paletteStyle } from './article-palette.mjs';
 import { journalPage, humanDate, plural, JOURNAL_TITLE, JOURNAL_ABOUT } from './journal-page.mjs';
 import { rssFeed } from './rss.mjs';
+import { STATS_SNIPPET } from './stats-snippet.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIR = path.join(ROOT, 'presentations');
@@ -212,7 +213,7 @@ const themeOf = p => SERIES_THEME[p.series]
 // подборки своей обложки: шаблон у всех статей один, отличает их цвет.
 const isTemplate = html => /<html[^>]*data-article-template/i.test(html);
 
-function headBlock(p, ogImage, template) {
+function headBlock(p, ogImage, template, hasStats) {
   return `${HEAD_A}
 <meta property="og:type" content="article">
 <meta property="og:url" content="${BASE}${p.slug}.html">
@@ -229,6 +230,7 @@ function headBlock(p, ogImage, template) {
 ${CONTRAST_OFF}
 ${themeOf(p)}
 ${template ? paletteStyle(p.slug) : ''}
+${hasStats ? '' : STATS_SNIPPET}
 ${HEAD_B}`;
 }
 
@@ -363,7 +365,7 @@ function writeCopy(p, all, srcHtml) {
     ? `${BASE}covers/${p.slug}.png`
     : `${SITE}og.png`;
 
-  const head = headBlock(p, ogImage, isTemplate(html));
+  const head = headBlock(p, ogImage, isTemplate(html), html.includes(STATS_SNIPPET));
   html = /<\/head>/i.test(html)
     ? html.replace(/<\/head>/i, `${head}\n</head>`)
     : html.replace(/<body[^>]*>/i, m => `${m}\n${head}`);

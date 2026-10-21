@@ -22,6 +22,7 @@
 // Оформление у журнала своё и с главной не связано: белый лист, один цвет для
 // ссылок и отметки свежести, одна гарнитура. Цвет на странице дают обложки.
 
+import { STATS_SNIPPET } from './stats-snippet.mjs';
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 // Русские месяцы в родительном падеже: «4 сентября 2026».
@@ -340,6 +341,7 @@ footer{border-top:1px solid var(--rule);padding-block:1.5rem 2.5rem;color:var(--
 footer a{color:var(--link)}
 footer a:hover{text-decoration:underline;text-underline-offset:.25em}
 </style>
+${STATS_SNIPPET}
 </head>
 <body>
 ${siteHeader()}
