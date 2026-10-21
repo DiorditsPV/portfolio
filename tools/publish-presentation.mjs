@@ -365,7 +365,7 @@ function writeCopy(p, all, srcHtml) {
     ? `${BASE}covers/${p.slug}.png`
     : `${SITE}og.png`;
 
-  const head = headBlock(p, ogImage, isTemplate(html), html.includes(STATS_SNIPPET));
+  const head = headBlock(p, ogImage, isTemplate(html), html.includes('/stats/count.js'));
   html = /<\/head>/i.test(html)
     ? html.replace(/<\/head>/i, `${head}\n</head>`)
     : html.replace(/<body[^>]*>/i, m => `${m}\n${head}`);
