@@ -1,0 +1,1414 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Неделя агентной экосистемы — 09–23.10.2026</title>
+<meta name="description" content="Скиллы, плагины и подходы агентной разработки за 9–23 октября 2026: релизы и обсуждения, официальные изменения, каталог по звёздам.">
+<style>
+:root {
+  --page: #f4f6f8;
+  --surface: #ffffff;
+  --surface-soft: #eef2f6;
+  --ink: #111827;
+  --muted: #667085;
+  --subtle: #98a2b3;
+  --line: #dfe4ea;
+  --accent: #3157d5;
+  --accent-soft: #e9edff;
+  --accent-ink: #2849b8;
+  --success: #16794b;
+  --warning: #b54708;
+  --badge-bg: #eef2f6;
+  --badge-fg: #344054;
+  --mark: #fff2c6;
+  --shadow: 0 18px 45px rgba(16, 24, 40, .08);
+}
+
+html[data-theme="dark"] {
+  --page: #0d1117;
+  --surface: #151b23;
+  --surface-soft: #1d2632;
+  --ink: #edf1f7;
+  --muted: #a6b0c0;
+  --subtle: #7d899a;
+  --line: #2a3544;
+  --accent: #8ba3ff;
+  --accent-soft: #1d2b57;
+  --accent-ink: #b7c5ff;
+  --success: #55c795;
+  --warning: #f5a15f;
+  --badge-bg: #25303e;
+  --badge-fg: #d7deea;
+  --mark: #493b16;
+  --shadow: 0 22px 60px rgba(0, 0, 0, .32);
+}
+
+
+html[data-contrast="on"] {
+  --muted: var(--ink);
+  --subtle: var(--ink);
+  --line: currentColor;
+}
+
+* { box-sizing: border-box; margin: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--page);
+  color: var(--ink);
+  font: 14px/1.48 Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  padding-bottom: 5rem;
+  text-rendering: optimizeLegibility;
+}
+
+#progress {
+  position: fixed;
+  inset: 0 auto auto 0;
+  z-index: 100;
+  width: 0;
+  height: 3px;
+  background: var(--accent);
+}
+
+.sitebar {
+  height: 56px;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--page) 88%, transparent);
+  backdrop-filter: blur(16px);
+}
+
+.sitebar-inner {
+  width: min(1180px, calc(100% - 40px));
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.brand {
+  color: var(--ink);
+  font-weight: 760;
+  letter-spacing: -.025em;
+  text-decoration: none;
+}
+
+.brand span { color: var(--subtle); font-weight: 500; }
+.site-actions, .controls { display: flex; align-items: center; gap: 8px; }
+.back-link { color: var(--muted); font-size: .9rem; text-decoration: none; }
+.back-link:hover { color: var(--ink); }
+
+.controls button {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+}
+
+main { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+a { color: var(--accent-ink); text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent); text-underline-offset: 3px; }
+a:hover { color: var(--accent); }
+
+.masthead {
+  min-height: 280px;
+  padding: 38px 0 32px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(270px, .72fr);
+  gap: clamp(48px, 8vw, 104px);
+  align-items: end;
+}
+
+.issue-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 16px;
+  color: var(--accent-ink);
+  font-size: .85rem;
+  font-weight: 650;
+}
+
+.issue-label::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 5px var(--accent-soft);
+}
+
+h1 {
+  max-width: 840px;
+  font-size: clamp(2.45rem, 4.8vw, 4.15rem);
+  line-height: .95;
+  letter-spacing: -.065em;
+  font-weight: 760;
+}
+
+h1 .win { color: var(--accent); display: block; }
+.deck {
+  max-width: 750px;
+  margin-top: 20px;
+  color: var(--muted);
+  font-size: clamp(.96rem, 1.25vw, 1.08rem);
+  line-height: 1.5;
+}
+
+.issue-facts { border-top: 1px solid var(--line); }
+.fact {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.fact span { color: var(--muted); font-size: .88rem; }
+.fact strong { text-align: right; font-size: .9rem; }
+
+/* Закреплённая шапка: слева «Назад» (его подставляет журнал и переносит сюда скрипт),
+   оглавление и переключатели — на одном уровне. */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--page) 91%, transparent);
+  backdrop-filter: blur(18px);
+}
+.topbar-inner {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.topbar .toc { flex: 1 1 auto; min-width: 0; }
+.topbar .controls { flex: 0 0 auto; }
+
+nav.toc {
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+nav.toc::-webkit-scrollbar { display: none; }
+nav.toc a {
+  flex: none;
+  padding: 8px 12px;
+  border-radius: 9px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: .88rem;
+  font-weight: 550;
+}
+nav.toc a:hover { background: var(--surface-soft); color: var(--ink); }
+nav.toc .n {
+  margin-left: 5px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: .72rem;
+}
+
+section { scroll-margin-top: 70px; margin: 52px 0; }
+.section-kicker {
+  margin-bottom: 14px;
+  color: var(--accent-ink);
+  font-size: .78rem;
+  font-weight: 720;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+h2 {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: clamp(1.5rem, 2.6vw, 2.08rem);
+  line-height: 1.05;
+  letter-spacing: -.045em;
+}
+h2 .count {
+  color: var(--subtle);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.section-intro, .rank-note {
+  max-width: 710px;
+  margin-bottom: 24px;
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+.brief-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(280px, .7fr);
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.primary-brief {
+  position: relative;
+  overflow: hidden;
+  min-height: 250px;
+  padding: clamp(24px, 3vw, 34px);
+  border-radius: 18px;
+  background: #17213a;
+  color: #f6f8fc;
+  box-shadow: var(--shadow);
+}
+.primary-brief::after {
+  content: "";
+  position: absolute;
+  right: -90px;
+  bottom: -140px;
+  width: 380px;
+  height: 380px;
+  border: 1px solid rgba(139, 163, 255, .25);
+  border-radius: 50%;
+  box-shadow: 0 0 0 55px rgba(139, 163, 255, .06), 0 0 0 110px rgba(139, 163, 255, .035);
+}
+.primary-brief > * { position: relative; z-index: 1; }
+.primary-brief .label { color: #9fb1ff; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.primary-brief h3 { max-width: 660px; margin-top: 22px; font-size: clamp(1.85rem, 3.4vw, 3.15rem); line-height: 1.08; letter-spacing: -.035em; }
+.primary-brief h3 { margin-top: 14px; font-size: clamp(1.6rem, 2.65vw, 2.45rem); }
+.primary-brief p { max-width: 650px; margin-top: 14px; color: #bdc7d8; font-size: .97rem; }
+.primary-brief .takeaway { margin-top: 18px; color: #fff; font-weight: 650; }
+
+.metrics { display: grid; gap: 8px; }
+.metric {
+  min-height: 76px;
+  padding: 14px 18px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+}
+.metric strong { display: block; font-size: 1.5rem; line-height: 1.05; letter-spacing: -.035em; }
+.metric span { display: block; margin-top: 5px; color: var(--muted); font-size: .8rem; }
+
+.highlights {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  margin-top: 30px;
+  border-block: 1px solid var(--line);
+}
+.highlight { padding: 18px 20px 20px 0; }
+.highlight + .highlight { padding-left: 20px; border-left: 1px solid var(--line); }
+.highlight .number { color: var(--subtle); font-size: .82rem; font-weight: 700; }
+.highlight h3 { margin-top: 10px; font-size: 1.08rem; line-height: 1.25; letter-spacing: -.018em; }
+.highlight p { margin-top: 7px; color: var(--muted); font-size: .86rem; }
+.highlight a { display: inline-block; margin-top: 10px; font-size: .82rem; font-weight: 650; text-decoration: none; }
+
+.editor-picks {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border-block: 1px solid var(--line);
+}
+
+.editor-mark {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--accent-ink);
+  font-size: .7rem;
+  font-weight: 700;
+}
+
+.official-overview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 36px;
+  margin-top: 26px;
+}
+.official-overview article {
+  padding: 20px 0 22px;
+  border-block: 2px solid var(--ink);
+}
+.official-overview article + article { border-top-color: var(--accent); }
+.official-stat {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--muted);
+  font-size: .78rem;
+}
+.official-stat strong { color: var(--ink); text-align: right; }
+.official-overview h3 { margin-top: 14px; font-size: .92rem; }
+.official-overview h3 a { color: var(--ink); text-decoration: none; }
+.official-overview h3 a:hover { color: var(--accent); }
+.official-overview p { margin-top: 4px; color: var(--muted); font-size: .78rem; }
+.pick {
+  padding: 18px 20px 20px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.pick + .pick { padding-left: 20px; border-left: 1px solid var(--line); }
+.pick .kind { color: var(--accent-ink); font-size: .76rem; font-weight: 700; }
+.pick h3 { margin-top: 10px; font-size: 1.02rem; line-height: 1.25; }
+.pick p { margin-top: 7px; color: var(--muted); font-size: .84rem; }
+.pick a { display: inline-block; margin-top: 10px; font-size: .82rem; font-weight: 650; text-decoration: none; }
+
+
+.block {
+  padding: 22px 0 25px;
+  border-top: 1px solid var(--line);
+}
+.block:last-child { border-bottom: 1px solid var(--line); }
+.block h3 { margin-bottom: 12px; font-size: clamp(1.02rem, 1.6vw, 1.28rem); line-height: 1.3; letter-spacing: -.02em; }
+.block h3 .src { color: var(--subtle); font-size: .82rem; font-weight: 500; letter-spacing: 0; }
+.block p + p, .block p + ul, .block ul + p { margin-top: 12px; }
+.block ul { padding-left: 1.25rem; display: grid; gap: 7px; }
+.block li::marker { color: var(--accent); }
+.block .g { margin-top: 20px; font-size: .84rem; font-weight: 720; color: var(--ink); }
+
+.catalog-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 46px;
+  align-items: start;
+}
+.catalog-columns > section { margin: 52px 0 0; max-width: none; }
+.catalog-columns .section-intro { max-width: none; }
+
+.two-col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 46px;
+  align-items: start;
+}
+.two-col > .block { padding-top: 0; }
+/* разборы разной высоты: колоночный поток пакует их вплотную, сетка оставляла бы провалы */
+.flow-2col { columns: 2; column-gap: 46px; }
+.flow-2col > .item { break-inside: avoid; }
+.flow-2col > .item:first-child { margin-top: 0; }
+.list-2col { columns: 2; column-gap: 46px; }
+.list-2col > li { break-inside: avoid; }
+/* .block ul уже grid — многоколоночность на нём не работает, даём колонки сеткой */
+.block ul.list-2col { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 46px; }
+/* у блоков в паре нижние границы встали бы на разной высоте — разделяет верхняя линия следующего */
+.two-col > .block:last-child { border-bottom: 0; }
+
+.item {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+  padding: 17px 0 19px;
+  border-top: 1px solid var(--line);
+}
+.item:last-of-type { border-bottom: 1px solid var(--line); }
+.stars, .pts {
+  justify-self: stretch;
+  padding: 7px 8px;
+  border-radius: 8px;
+  background: var(--badge-bg);
+  color: var(--badge-fg);
+  text-align: center;
+  font-size: .82rem;
+  font-weight: 720;
+  font-variant-numeric: tabular-nums;
+}
+.stars.hot { background: var(--accent-soft); color: var(--accent-ink); }
+.pts small { display: block; color: var(--muted); font-size: .58rem; font-weight: 500; letter-spacing: .06em; }
+.item h4 { margin-bottom: 6px; font-size: .94rem; line-height: 1.32; }
+.item h4 a { color: var(--ink); text-decoration: none; }
+.item h4 a:hover { color: var(--accent); }
+.item p { color: var(--muted); font-size: .85rem; }
+.item p b { color: var(--ink); }
+.note { color: var(--muted); font-style: italic; font-weight: 400; }
+.tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: .64rem;
+  font-style: normal;
+  font-weight: 650;
+  vertical-align: .14em;
+  white-space: nowrap;
+}
+.tag.warm { color: var(--warning); }
+
+h3.tail-h { margin: 42px 0 14px; color: var(--muted); font-size: .82rem; letter-spacing: .05em; text-transform: uppercase; }
+ul.tail { list-style: none; padding: 0; border-top: 1px solid var(--line); }
+ul.tail li {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 64px minmax(150px, auto) minmax(0, 1fr);
+  gap: 14px;
+  font-size: .9rem;
+}
+ul.tail .st { color: var(--accent-ink); font-weight: 700; font-variant-numeric: tabular-nums; }
+ul.tail .st { grid-column: 1; grid-row: 1 / span 2; }
+ul.tail li > a { grid-column: 2 / span 2; grid-row: 1; }
+ul.tail .tag { grid-column: 2; grid-row: 2; justify-self: start; margin-left: 0; }
+ul.tail .desc { grid-column: 3; grid-row: 2; min-width: 0; }
+mark { padding: 1px 3px; border-radius: 3px; background: var(--mark); color: inherit; }
+
+.method-fold {
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+.method-fold > summary {
+  padding: 20px 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: var(--ink);
+  font-weight: 650;
+  cursor: pointer;
+  list-style: none;
+}
+.method-fold > summary::-webkit-details-marker { display: none; }
+.method-fold > summary::after { content: "+"; color: var(--subtle); font-size: 1.2rem; }
+.method-fold[open] > summary::after { content: "−"; }
+.method-body { padding: 8px 0 36px; }
+.method-body .block { border-top: 0; border-bottom: 1px solid var(--line); }
+
+.sources ul { padding-left: 1.2rem; display: grid; gap: 8px; word-break: break-word; }
+footer {
+  margin: 72px 0 0;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .78rem;
+}
+
+@media (max-width: 900px) {
+  .catalog-columns { grid-template-columns: 1fr; gap: 0; }
+  .two-col { grid-template-columns: 1fr; gap: 0; }
+  .flow-2col { columns: 1; }
+  .list-2col { columns: 1; }
+  .masthead { grid-template-columns: 1fr; min-height: auto; gap: 44px; padding-top: 52px; }
+  .issue-facts { max-width: 520px; }
+  .brief-grid { grid-template-columns: 1fr; }
+  .metrics { grid-template-columns: repeat(3, 1fr); }
+  .metric { min-height: auto; }
+  .official-overview { grid-template-columns: 1fr; gap: 22px; }
+  .highlight { padding: 26px 0; }
+  .highlight + .highlight { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
+}
+
+@media (max-width: 640px) {
+  body { font-size: 13.5px; }
+  main, .sitebar-inner { width: min(100% - 28px, 1180px); }
+  .sitebar { height: 56px; }
+  .back-link { display: none; }
+  .masthead { padding: 42px 0 36px; }
+  h1 { font-size: clamp(2.35rem, 13vw, 3.7rem); }
+  .deck { margin-top: 20px; }
+  .topbar-inner { width: min(100% - 28px, 1180px); }
+  section { margin: 68px 0; }
+  .brief-grid { margin-top: 24px; }
+  .primary-brief { min-height: auto; border-radius: 18px; }
+  .metrics { grid-template-columns: 1fr; }
+  ul.stories { list-style: none; padding: 0; margin-top: 12px; border-top: 1px solid var(--line); }
+ul.stories li {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 14px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: .86rem;
+  line-height: 1.45;
+}
+ul.stories .st { color: var(--accent-ink); font-weight: 720; font-size: .8rem; font-variant-numeric: tabular-nums; }
+ul.stories .desc { color: var(--muted); }
+  .item { grid-template-columns: 1fr; gap: 12px; }
+  .stars, .pts { justify-self: start; min-width: 72px; }
+  ul.tail li { grid-template-columns: 54px minmax(0, 1fr); }
+  ul.tail .st { grid-column: 1; grid-row: 1 / span 3; }
+  ul.tail li > a, ul.tail .tag, ul.tail .desc { grid-column: 2; }
+  ul.tail li > a { grid-row: 1; }
+  ul.tail .tag { grid-row: 2; }
+  ul.tail .desc { grid-row: 3; }
+}
+
+.releases-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 34px;
+  margin-top: 20px;
+}
+.release { border-top: 2px solid var(--ink); padding-top: 16px; }
+.release h3 { font-size: 1rem; letter-spacing: -.015em; }
+.release h3 .src { color: var(--muted); font-weight: 500; font-size: .8rem; }
+.release ul { margin-top: 11px; padding-left: 0; list-style: none; display: grid; gap: 7px; }
+.release li { padding-left: 14px; position: relative; font-size: .83rem; line-height: 1.45; color: var(--muted); }
+.release li::before { content: "\2014"; position: absolute; left: 0; color: var(--subtle); }
+.release > p { margin-top: 12px; font-size: .84rem; line-height: 1.5; color: var(--muted); }
+.release .method-fold { margin-top: 10px; }
+ul.stories { list-style: none; padding: 0; margin-top: 12px; border-top: 1px solid var(--line); }
+ul.stories li {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 14px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: .86rem;
+  line-height: 1.45;
+}
+ul.stories .st { color: var(--accent-ink); font-weight: 720; font-size: .8rem; font-variant-numeric: tabular-nums; }
+ul.stories .desc { color: var(--muted); }
+footer .signal, footer .collect { margin-bottom: 14px; line-height: 1.55; }
+footer .signal { color: var(--ink); }
+
+@media (max-width: 900px) {
+  .releases-grid { grid-template-columns: 1fr; gap: 26px; }
+}
+
+</style>
+<!--general:head-->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://paveldiordits.site/presentations/agents-weekly-2026-10-23.html">
+<meta property="og:site_name" content="Журнал · paveldiordits.site">
+<meta property="og:title" content="Неделя агентной экосистемы — 09–23.10.2026">
+<meta property="og:description" content="Anthropic отдала стандарт Agent Skills в Agentic AI Foundation при Linux Foundation: у формата SKILL.md теперь нейтральный дом и мейнтейнеры из Google и OpenAI. Команда Claude Code рассказала, чем заменила построчное чтение диффов, а замер SlopCodeBench показал, что уровень усилий xhigh стоит в 2–4 раза дороже medium и проходов не добавляет.">
+<meta property="og:image" content="https://paveldiordits.site/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Неделя агентной экосистемы — 09–23.10.2026">
+<meta name="twitter:description" content="Anthropic отдала стандарт Agent Skills в Agentic AI Foundation при Linux Foundation: у формата SKILL.md теперь нейтральный дом и мейнтейнеры из Google и OpenAI. Команда Claude Code рассказала, чем заменила построчное чтение диффов, а замер SlopCodeBench показал, что уровень усилий xhigh стоит в 2–4 раза дороже medium и проходов не добавляет.">
+<meta name="twitter:image" content="https://paveldiordits.site/og.png">
+<link rel="canonical" href="https://paveldiordits.site/presentations/agents-weekly-2026-10-23.html">
+<link rel="alternate" type="application/rss+xml" title="Журнал — разборы Павла Диордица" href="https://paveldiordits.site/presentations/rss.xml">
+<style>
+#contrastBtn,#btn-contrast,#ct,#hc,#hcBtn,
+button[title*="онтраст"],button[aria-label*="онтраст"]{display:none!important}
+</style>
+<script>
+(function(){
+  var r=document.documentElement;
+  function off(){
+    if(r.hasAttribute('data-contrast')) r.removeAttribute('data-contrast');
+    if(r.classList.contains('hc')) r.classList.remove('hc');
+  }
+  off();
+  // Наблюдатель, а не разовый вызов: собственный скрипт страницы поднимает режим
+  // из localStorage позже, уже после этой вставки, — снимаем сразу же, до отрисовки.
+  new MutationObserver(off).observe(r,{attributes:true,attributeFilter:['data-contrast','class']});
+  // Кнопки будущих разборов с неизвестным id: прячем по подписи, не удаляя узел.
+  addEventListener('DOMContentLoaded',function(){
+    [].forEach.call(document.querySelectorAll('button'),function(b){
+      if(/контраст/i.test(b.textContent||'')) b.style.display='none';
+    });
+  });
+})();
+</script>
+<style>
+/* Оформление выпусков Agents Weekly в журнале.
+   Журнал подставляет этот блок в <head> каждого выпуска при публикации, после
+   собственных стилей выпуска, поэтому правила здесь их перекрывают. Разметку и
+   порядок блоков выпуска он не трогает: меняются ширина, кегль, цвета и число
+   колонок. Так все выпуски, прошлые и будущие, одеты одинаково, а формат самого
+   дайджеста остаётся в его макете. */
+
+@font-face{
+  font-family:"Golos Text";src:url(fonts/golos-text.woff2) format("woff2");
+  font-weight:400 900;font-display:swap;
+}
+
+/* Цвета светлой темы — те же, что на странице журнала. Тёмная тема выпуска
+   остаётся его собственной. */
+html:not([data-theme="dark"]){
+  --page:#ffffff; --surface:#ffffff; --surface-soft:#f4f5f6;
+  --ink:#14171c; --muted:#5a616c; --subtle:#737a85; --line:#e3e5e8;
+  --accent:#1d4ed8; --accent-soft:#e8eefc; --accent-ink:#1d4ed8;
+  --badge-bg:#f4f5f6; --badge-fg:#2f353d;
+}
+
+/* Тёмная тема — та же, что у журнала. */
+html[data-theme="dark"]{
+  --page:#121316; --surface:#1b1d21; --surface-soft:#1f2227;
+  --ink:#eceef1; --muted:#a3a9b3; --subtle:#8b919b; --line:#2c2f36;
+  --accent:#8fb0ff; --accent-soft:#1d2b57; --accent-ink:#a9c1ff;
+  --badge-bg:#1f2227; --badge-fg:#d7dbe2;
+}
+
+/* Кегль растёт вместе с экраном, все размеры выпуска заданы в rem и em и растут
+   за ним: на мониторе 27 дюймов текст был 14 пикселей в колонке на 46% ширины. */
+html{font-size:calc(clamp(14.7px,calc(9.9px + .315vw),17px)*var(--ts,1))}
+body{
+  font:1rem/1.55 "Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;overflow-x:clip;
+}
+::selection{background:var(--accent);color:#fff}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+/* Ширина: страница занимает экран с теми же полями, что и журнал. */
+main,.topbar-inner,.sitebar-inner{
+  width:min(126rem,100% - 2*clamp(1.25rem,4vw,5.6rem));
+}
+
+/* Шапка: сплошной фон вместо размытого стекла. */
+.topbar,.sitebar{background:var(--page);backdrop-filter:none;-webkit-backdrop-filter:none}
+nav.toc a{font-size:.9rem;border-radius:6px}
+.controls button{border-radius:8px}
+
+/* Первый экран выпуска. */
+.masthead{min-height:0;padding:3rem 0 2.5rem;gap:clamp(2.5rem,6vw,7rem);align-items:end}
+.issue-label{font-size:.9rem;margin-bottom:1rem;color:var(--muted);font-weight:600}
+.issue-label::before{display:none}
+h1{font-size:clamp(2.4rem,4vw,4.25rem);line-height:1;letter-spacing:-.04em;font-weight:750;max-width:18ch;text-wrap:balance}
+.deck{max-width:68ch;margin-top:1.25rem;font-size:1.12rem;line-height:1.5}
+.fact{padding:.75rem 0}
+.fact span,.fact strong{font-size:.95rem}
+
+/* Разделы. Надзаголовок раздела — обычная строка, без капса и разрядки. */
+section{margin:4rem 0}
+.section-kicker{margin-bottom:.4rem;color:var(--muted);font-size:.9rem;font-weight:500;letter-spacing:0;text-transform:none}
+h2{font-size:clamp(1.6rem,2.2vw,2.3rem);letter-spacing:-.035em;font-weight:750;line-height:1.1}
+h2 .count{font-size:.95rem}
+.section-intro,.rank-note{max-width:none;font-size:1rem}
+h3.tail-h{color:var(--ink);font-size:1.05rem;letter-spacing:-.01em;text-transform:none;margin:2.5rem 0 .9rem}
+
+/* Текст блоков занимает всю ширину своей колонки: при ограничении длины строки
+   правая половина колонки оставалась пустой, и страница выглядела скошенной влево. */
+.block h3{font-size:1.2rem}
+.release h3{font-size:1.15rem}
+.release li,.release>p{font-size:.95rem;line-height:1.5}
+.item h4{font-size:1.05rem}
+.item p{font-size:.95rem;line-height:1.5}
+ul.stories li,ul.tail li{font-size:.95rem}
+.official-overview h3{font-size:1.02rem}
+.official-overview p,.official-stat{font-size:.9rem}
+
+/* Метки: звёзды и очки — табличные цифры на спокойной плашке. */
+.item{grid-template-columns:5.2rem minmax(0,1fr);gap:1.1rem;padding:1.1rem 0 1.2rem}
+.stars,.pts{border-radius:6px;font-size:.88rem;padding:.4rem .5rem}
+.tag{border-radius:4px;font-size:.72rem;padding:.15rem .45rem}
+
+/* Широкий экран: списки релизов, сюжетов, исследований и источников идут в
+   несколько колонок. */
+@media(min-width:1500px){
+  .release ul{display:block;columns:2;column-gap:3rem}
+  .release li{break-inside:avoid;margin-bottom:.5rem}
+  ul.stories{columns:2;column-gap:3.5rem;border-top:0}
+  ul.stories li{break-inside:avoid}
+  .catalog-columns{gap:4rem}
+  .flow-2col{columns:3;column-gap:3.5rem}
+  .sources ul{display:block;columns:3;column-gap:3.5rem}
+  .sources li{break-inside:avoid;margin-bottom:.5rem}
+}
+/* Позиции каталога идут по одной в строке на всю ширину своей колонки: широкая
+   строка читается лучше, чем две узкие позиции рядом. */
+
+/* Список в две колонки: колоночный поток вместо сетки. Сетка ставит пункты
+   парами в строку, и рядом с длинным пунктом под коротким остаётся провал. */
+.block ul.list-2col{display:block;columns:2;column-gap:3.5rem}
+.block ul.list-2col>li{break-inside:avoid;margin-bottom:.45rem}
+@media(max-width:900px){.block ul.list-2col{columns:1}}
+
+/* Блок «Ещё по теме», который журнал ставит под выпуском, — той же ширины, что и
+   сам выпуск: узкая полоса посередине под широкой страницей смотрелась чужой. */
+nav.gnrl{max-width:none;width:min(126rem,100% - 2*clamp(1.25rem,4vw,5.6rem));margin-inline:auto;padding-inline:0}
+
+/* Описания позиций каталога набраны основным цветом: серым на этом кегле они
+   читались с усилием. */
+.item p,ul.tail .desc{color:var(--ink)}
+
+/* Кнопки масштаба текста в шапке выпуска — рядом с переключателем темы. */
+.controls button.ts{width:auto;min-width:36px;padding:0 .5rem;font-size:.85rem;font-weight:600;color:var(--muted)}
+.controls button.ts:hover{color:var(--ink)}
+</style>
+<script>(function(){var d=document.documentElement,S=[.9,1,1.1,1.2,1.35];
+try{var s=+localStorage.getItem('text-scale');if(s)d.style.setProperty('--ts',s)}catch(e){}
+try{if(!localStorage.getItem('ad-theme')){var t=localStorage.getItem('theme');if(t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches)d.setAttribute('data-theme','dark')}}catch(e){}
+function step(n){var c=+d.style.getPropertyValue('--ts')||1,a=0;S.forEach(function(v,i){if(Math.abs(v-c)<Math.abs(S[a]-c))a=i});
+var v=S[Math.max(0,Math.min(S.length-1,a+n))];d.style.setProperty('--ts',v);try{localStorage.setItem('text-scale',v)}catch(e){}}
+document.addEventListener('DOMContentLoaded',function(){var box=document.querySelector('.topbar .controls');if(!box)return;
+[['A−',-1,'Уменьшить текст'],['A+',1,'Увеличить текст']].forEach(function(b){var el=document.createElement('button');
+el.type='button';el.className='ts';el.textContent=b[0];el.setAttribute('aria-label',b[2]);el.addEventListener('click',function(){step(b[1])});
+box.insertBefore(el,box.firstChild)});var up=box.querySelector('.ts');if(up&&up.nextSibling)box.insertBefore(up.nextSibling,up);});})()</script>
+
+<script>(function(){var l=location;if(!/^https?:$/.test(l.protocol)||/^(localhost|127\.|0\.0\.0\.0$|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|\[::1\]$)|\.local$/.test(l.hostname)||navigator.webdriver||/Headless/.test(navigator.userAgent))return;var s=document.createElement('script');s.async=true;s.dataset.goatcounter='/stats/count';s.src='/stats/count.js';document.head.appendChild(s)})()</script>
+<!--/general:head-->
+</head><body>
+<!--general:top-->
+<div class="gnrl-upwrap"><a class="gnrl-up" id="gnrl-up" href="https://paveldiordits.site/presentations/">← Назад</a></div>
+<!--/general:top-->
+<div id="progress" aria-hidden="true"></div>
+<header class="topbar">
+  <div class="topbar-inner">
+  <nav class="toc" aria-label="Разделы">
+    <a href="#releases">Релизы и обсуждения</a>
+    <a href="#official">Официальное</a>
+    <a href="#skills">Скиллы<span class="n">27</span></a>
+    <a href="#plugins">Плагины<span class="n">28</span></a>
+    <a href="#arts">Исследования<span class="n">14</span></a>
+    <a href="#sources">Источники</a>
+  </nav>
+  <div class="controls">
+    <button id="themeBtn" aria-pressed="false" aria-label="Переключить тему" title="Тема">◐</button>
+    <button id="contrastBtn" aria-pressed="false" aria-label="Повысить контраст" title="Контраст">◩</button>
+  </div>
+  </div>
+</header>
+<main>
+<header class="masthead">
+  <div>
+    <p class="issue-label">Agent Briefing · выпуск 09</p>
+    <h1>Скиллы и плагины <span class="win">недели</span></h1>
+    <p class="deck">Anthropic отдала стандарт Agent Skills в Agentic AI Foundation при Linux Foundation: у формата SKILL.md теперь нейтральный дом и мейнтейнеры из Google и OpenAI. Команда Claude Code рассказала, чем заменила построчное чтение диффов, а замер SlopCodeBench показал, что уровень усилий xhigh стоит в 2–4 раза дороже medium и проходов не добавляет.</p>
+  </div>
+  <div class="issue-facts" aria-label="Параметры выпуска">
+    <div class="fact"><span>Период</span><strong>9 – 23 октября</strong></div>
+    <div class="fact"><span>Прошли отбор</span><strong>655 репозиториев</strong></div>
+    <div class="fact"><span>Скиллы ★30+</span><strong>27</strong></div>
+    <div class="fact"><span>Плагины ★30+</span><strong>28</strong></div>
+  </div>
+</header>
+
+<section id="releases">
+  <p class="section-kicker">Что вышло и что обсуждали</p>
+  <h2>Релизы и обсуждения</h2>
+  <p class="section-intro">Версии платформы за окно и сюжеты, вокруг которых шёл разговор. Каталог находок — в разделах ниже.</p>
+
+  <div class="releases-grid">
+    <article class="release">
+      <h3><a href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md">Claude Code 2.1.296 → 2.1.309</a> <span class="src">— 12 релизов</span></h3>
+      <ul>
+        <li><mark>Длинная сессия сжимается сама, пока вы отошли</mark> (2.1.299) — разговор от 200 тыс. токенов, пролежавший без дела около 54 минут, уплотняется до того, как истечёт часовой prompt cache, и следующее сообщение не пересчитывает его заново. Выключатель — строка «Idle compaction» в <code>/config</code> (2.1.302).</li>
+        <li>Правило доступа к MCP теперь достаёт только до сервера, который названо целиком (2.1.299): <code>mcp__a</code> больше не покрывает сервер с именем <code>a__b</code> или <code>a_</code>. Разрешения, написанные по префиксу, молча перестают совпадать — и то же касается списков <code>tools:</code> у субагентов.</li>
+        <li>Хуки <code>UserPromptSubmit</code> срабатывают до того, как раскроется скилл или своя слэш-команда (2.1.299). Хук, запрещающий промпт, теперь останавливает и шелл-команды, встроенные внутрь скилла, — раньше они успевали выполниться.</li>
+        <li>Fork-субагенты включены по умолчанию в <code>claude -p</code>, Agent SDK, десктопном приложении и VS Code (2.1.302); там же субагенты главного разговора всегда уходят в фон, как в терминале, а не по выбору модели.</li>
+        <li>Команды в песочнице на macOS и Linux выполняли стартовые файлы оболочки вне песочницы перед каждым запуском (2.1.309). Если вы полагались на песочницу как на границу, обновиться стоит ради одного этого.</li>
+      </ul>
+      </article>
+    <article class="release">
+      <h3>Модели <span class="src">— Gemini 4 Argon, Claude Duet</span></h3>
+      <p>У Anthropic релизов моделей в окне нет. 13 октября Google открыла <a href="https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-argon/">Gemini 4&nbsp;Argon</a> широкой аудитории — платный Gemini API, AI Studio и Antigravity; вводная цена $2/$10 за миллион токенов, дальше $4/$20 (по вторичным источникам, точная дата окончания у них расходится). Позиционируется прямо под программную инженерию и многошаговых агентов.</p>
+      <p>У Anthropic вместо модели — продукт: <a href="https://claude.com/product/claude-duet">Claude Duet</a>, research preview на Opus 5.5 для планов Pro и Max в США. Это агент, который сам решает, когда вас дёрнуть: утренняя сводка, работа в фоне, остановка на тех местах, где нужно ваше «да». Память, скиллы и подключения берутся из обычного аккаунта Claude.</p>
+    </article>
+  </div>
+
+  <h3 class="tail-h">Сюжеты недели</h3>
+  <ul class="stories">
+    <li><span class="st">951</span><span><a href="https://www.csoonline.com/article/4234854/ai-agents-arent-going-rogue-frontier-labs-are-skipping-security-basics.html">AI agents aren’t ‘going rogue.’ Frontier labs are skipping security basics</a> — <span class="desc">специалисты по безопасности: за «взбунтовавшимися» агентами стоят изоляция и мониторинг, которых не сделали</span></span></li>
+    <li><span class="st">898</span><span><a href="https://www.anthropic.com/engineering/redesigning-source-control">Redesigning source control at Anthropic</a> — <span class="desc">30 тысяч слияний в день, своя система контроля версий Scion и спор о том, чьи это идеи</span></span></li>
+    <li><span class="st">550</span><span><a href="https://claude.com/product/claude-duet">Claude Duet</a> — <span class="desc">проактивный личный агент в research preview, 517 комментариев в тот же день</span></span></li>
+    <li><span class="st">486</span><span><a href="https://claude.dev/blog/solving-code-review-at-anthropic/">How the Claude Code team does code review</a> — <span class="desc">шесть слоёв проверок и классификатор риска вместо обязательного человека на каждом PR</span></span></li>
+    <li><span class="st">364</span><span><a href="https://arstechnica.com/ai/2026/10/ai-coding-agents-generate-more-code-but-not-more-software/">AI coding agents generate more code, but not more software</a> — <span class="desc">кода становится больше, работающих программ — нет; страница на наш запрос не открылась, в выпуске только заголовок</span></span></li>
+  </ul>
+  <p class="rank-note">Разборы — в «Исследованиях и наблюдениях» в конце выпуска.</p>
+</section>
+
+<section id="official">
+  <p class="section-kicker">От разработчиков платформы</p>
+  <h2>Официальные скиллы и плагины</h2>
+  <p class="section-intro">Изменения официальных каталогов за окно: что добавилось в <code>anthropics/skills</code> и в маркетплейс плагинов. Релизы CLI — в начале выпуска.</p>
+  <div class="two-col">
+  <div class="block">
+    <h3>anthropics/skills <span class="src">— скилл claude-api учат новой форме многоагентности</span></h3>
+    <p>Обе правки каталога за окно пришлись на <code>claude-api</code> — скилл, который Claude читает, когда вы пишете код против Claude API. Теперь он <a href="https://github.com/anthropics/skills/commit/dbd4588">собирает команды субагентов Managed Agents с динамическими рабочими процессами по умолчанию</a>, вместо прежней схемы с координатором, и несёт четыре готовых разбора рабочих процессов. Вторая правка <a href="https://github.com/anthropics/skills/commit/9d63080">переводит скилл на Claude Haiku 5.5 как текущую Haiku</a> и чинит то, как он обращается с сохранённым рассуждением.</p>
+    <p>Эта же пара изменений доехала до CLI отдельными релизами: в 2.1.309 скилл строит команды на <code>multiagent_20261001</code>, а в 2.1.307 умеет переводить код на версию API 2026-10-21.</p>
+  </div>
+  <div class="block">
+    <h3>claude-plugins-official <span class="src">— почти весь месяц ушёл на security-guidance</span></h3>
+    <p>Почти вся работа в маркетплейсе за окно пришлась на <a href="https://github.com/anthropics/claude-plugins-official/tree/main/plugins/security-guidance">security-guidance</a>, плагин безопасности, который в Claude Code включён по умолчанию. Он работает тремя слоями: мгновенные предупреждения по шаблонам на <code>Edit</code> и <code>Write</code>, разбор диффа быстрым вызовом модели в конце хода и агентный ревью перед коммитом, который читает соседние файлы и ищет то, что не ловится шаблоном, — IDOR, обход авторизации, SSRF через несколько файлов.</p>
+    <ul>
+      <li>Теперь он прямо говорит, когда разборы моделью запустить не смог и остались только шаблоны: без учётных данных — например, в сессии с отключённой телеметрией — вы получаете не то, что думаете.</li>
+      <li>Проверки по шаблонам пошли внутрь ячеек <code>NotebookEdit</code>, а собственные файлы учётных данных Claude Code из разбора исключены.</li>
+      <li>Фоном — три десятка бампов партнёрских плагинов и переименование стартового набора Google Cloud в <a href="https://github.com/GoogleCloudPlatform/data-agent-kit-plugin">data-agent-kit</a>.</li>
+    </ul>
+  </div>
+  </div>
+
+  <div class="block">
+    <h3>Anthropic за неделю <span class="src">— стандарт скиллов уходит в фонд</span></h3>
+    <p>Главное событие окна: 22 октября Anthropic <a href="https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation">передала Agent Skills в Agentic AI Foundation</a> — фонд при Linux Foundation, который компания в прошлом году основала вместе с Block и OpenAI и куда уже отдала Model Context Protocol. Уходят имя и логотип, организация на GitHub и домен agentskills.io; сопровождать стандарт будут инженеры Anthropic, Google и OpenAI как частные лица, ведущие мейнтейнеры — David Soria Parra и Mahesh Murag. Обещанная дорожная карта — версионированные выпуски, формальный процесс предложений и руководство по безопасности для тех, кто пишет и ставит скиллы; это ровно те две дыры, из-за которых в каждом выпуске этой серии приходится предупреждать про установщики. Из цифр Anthropic: стандарт поддержали более 70 платформ, опубликован миллион скиллов, установок — около 280 миллионов. Это данные компании, независимой проверки у них нет.</p>
+    <ul class="list-2col">
+      <li><a href="https://www.anthropic.com/research/formal-verification">LLMs are making formal software verification feasible at a much larger scale</a> (22.10) — формальная верификация перестаёт быть ручной работой на единицы проектов.</li>
+      <li><a href="https://www.anthropic.com/research/attack-surface-reduction">Using Claude to reduce the attack surface of code</a> (21.10) — сокращение поверхности атаки как задача для агента, а не только поиск уязвимостей.</li>
+      <li><a href="https://www.anthropic.com/research/employment-at-anthropic">How employment is changing at Anthropic</a> (18.10) — что происходит с составом работ внутри компании, которая пишет кодом агентов.</li>
+      <li><a href="https://www.anthropic.com/research/self-replicating-ai">AI models may be capable of self-replicating without access to a datacenter</a> (12.10).</li>
+      <li><a href="https://www.anthropic.com/research/distillation-defenses">Strengthening our defenses against distillation attacks</a> (13.10).</li>
+      <li><a href="https://www.anthropic.com/news/public-benefit-fund">Investing in the public benefit</a> (18.10) и <a href="https://www.anthropic.com/public-benefit-charter">Public Benefit Charter</a> (21.10).</li>
+    </ul>
+  </div>
+</section>
+
+<div class="catalog-columns">
+<section id="skills">
+  <p class="section-kicker">Новые практики</p>
+  <h2>Скиллы <span class="count">10 из 27 · ★30+</span></h2>
+  <p class="section-intro">Что появилось за окно: сам скилл, его метод и чем он проверяет свою работу.</p>
+
+  <div class="item"><span class="stars hot">★ 1414</span><div>
+    <h4><a href="https://github.com/aicodeking/leanrea">aicodeking/leanrea</a><span class="tag">реверс-инжиниринг</span></h4>
+    <p>Один файл <code>SKILL.md</code> на 8 КБ вместо MCP-сервера REA с его 207 инструментами. Метод обратный привычному: не давать агенту новые инструменты, а рассказать, какой из уже имеющихся — <code>asar</code>, <code>otool</code>, <code>nm</code>, <code>jadx</code>, Ghidra — быстрее для каждого вида цели, и перечислить ловушки. Автор приводит свой замер на четырёх задачах в трёх повторах: против REA на 38% меньше времени, на 35% дешевле, на 60% меньше токенов при той же точности. Это авторские числа.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 1121</span><div>
+    <h4><a href="https://github.com/MaryCache/imozuru">MaryCache/imozuru</a><span class="tag">исследование</span></h4>
+    <p>Скилл для разбора незнакомой области, построенный на моделях информационного поиска из библиотековедения — berrypicking Бейтса, модель поискового поведения Эллиса, работы Культо о процессе поиска. Сначала он добывает термины области, людей в её центре и площадки, где копятся знания, и только потом идёт по цитатам и ссылкам до первоисточников. Найденное не пересказывается: тексты сохраняются как есть, а ответ ссылается на файл и строку.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 890</span><div>
+    <h4><a href="https://github.com/juliobsz/skills">juliobsz/skills</a><span class="tag">веб-дизайн</span></h4>
+    <p>Скилл <code>/awwwards</code>: из одной фразы («сделай портфолио, меня зовут Хулио») собирает сайт, работая сразу креативным директором, дизайнером и разработчиком. Проверка — не описание, а настоящий браузер: агент смотрит на то, что получилось, до того как отдать результат. В комплекте идёт <code>/jury</code> — отдельный проход, который судит сделанное.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 810</span><div>
+    <h4><a href="https://github.com/franzenzenhofer/big-arrow-on-the-screen">franzenzenhofer/big-arrow-on-the-screen</a><span class="tag">экран</span></h4>
+    <p>Агент рисует поверх вашего экрана большие стрелки, рамки и подписи: один CLI, оверлей не перехватывает клики и исчезает сам. Решает задачу, которой у агентов не было языка: показать человеку место на экране, не описывая его словами. Найдено через HN, где вышло 9 октября и набрало 421 очко.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 479</span><div>
+    <h4><a href="https://github.com/realskyrin/ns-game-apple-arm-port">realskyrin/ns-game-apple-arm-port</a><span class="tag">портирование</span></h4>
+    <p>Скилл нативного переноса игр Nintendo Switch на Apple Silicon — macOS, iPadOS, iOS — через Rust и Metal. Из той же волны, что заполнила каталог этого выпуска: агент как инструмент разбора чужих бинарников и сборки их заново.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 430</span><div>
+    <h4><a href="https://github.com/EL4CTEO/blender-skills">EL4CTEO/blender-skills</a><span class="tag">3D</span></h4>
+    <p>Рабочие процессы Blender 5.2 как скиллы для Claude Code, Codex, Gemini CLI, Copilot и Cursor: моделирование, развёртки, PBR-материалы, запекание. 3D-кластер держится в каталоге четвёртый выпуск подряд, но теперь оформлен не как плагин к Blender, а как переносимая папка со скиллами.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 234</span><div>
+    <h4><a href="https://github.com/zero-lab-ai/skills">zero-lab-ai/skills</a><span class="tag">безопасность</span></h4>
+    <p>56 скиллов в 10 ставящихся наборах для авторизованных работ по безопасности: оценка защищённости, пентест, red team, инженерия детектирования, purple team, ведение самой работы. Автор прямо оговаривает границу: скиллы не выдают разрешение, не расширяют область работ и не заменяют правила вовлечения; те, что касаются поведения атакующего, устроены так, чтобы мерить экспозицию и сохранять доказательства для защитников.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 217</span><div>
+    <h4><a href="https://github.com/iha2/superlite">iha2/superlite</a><span class="tag">рабочий процесс</span></h4>
+    <p>Форк Superpowers, собранный вокруг одной жалобы: исходный процесс спрашивает разрешение каждые четыре минуты. Здесь один гейт согласования, дальше задачи идут волнами параллельно и разводятся по моделям — Sonnet и Haiku на исполнение, свежий ревьюер в конце. Для правки существующего кода отдельный режим: прототип в своём worktree, потом перенос в ваш код с замороженными интерфейсами и проверкой стыков. Заявленное ускорение в 3,9 раза при том же качестве — замер автора.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 215</span><div>
+    <h4><a href="https://github.com/aiwithremy/content-principles">aiwithremy/content-principles</a><span class="tag">контент</span></h4>
+    <p>Скилл устроен как возражение остальному жанру: обычный контент-скилл выдаёт модели шаблон («громкое утверждение, нумерованный список, подпишись»), и все посты выходят одинаковыми. Здесь шаблона нет вообще — вместо него описано, как работает внимание зрителя, и модель рассуждает про каждое видео заново. Полезно как образец приёма, а не только как контент-инструмент.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 189</span><div>
+    <h4><a href="https://github.com/alextnetto/res">alextnetto/res</a><span class="tag">реверс-инжиниринг</span></h4>
+    <p>Разбор SaaS-продукта через браузер в набор для пересборки: экраны, правила, модель данных, сценарии. Отдельно описана модель безопасности — работа идёт без доступа к боевым данным, а результат оформлен так, чтобы по нему можно было собирать заново.</p>
+  </div></div>
+
+  <details class="method-fold"><summary>Показать остальные 17 позиций и 20 строк ★ 10–30</summary><div class="method-body">
+
+  <div class="item"><span class="stars">★ 176</span><div>
+    <h4><a href="https://github.com/robot-agent-exploration/rax">robot-agent-exploration/rax</a><span class="tag">робототехника</span></h4>
+    <p>Харнесс, в котором кодовые агенты учатся задачам робота исследованием в реальном времени, с библиотекой скиллов и выложенными журналами сессий. Работа Harvard, NVIDIA, Berkeley, MIT и Stanford; ветки симуляции гоняют Codex CLI, Claude Code, DeepSeek Harness и Kimi Code.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 174</span><div>
+    <h4><a href="https://github.com/lovisdotio/motion2code">lovisdotio/motion2code</a><span class="tag">анимация</span></h4>
+    <p>Пересобирает ролик моушн-дизайна в зацикленный SVG плюс GSAP и сверяет результат с исходником кадр за кадром. Проверка покадровым сравнением — то, чего не хватает большинству видеоскиллов в этом же каталоге.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 139</span><div>
+    <h4><a href="https://github.com/Sequester-AG/bug-bounty-triage">Sequester-AG/bug-bounty-triage</a><span class="tag">безопасность</span></h4>
+    <p>Разбор отчётов bug bounty: проверка воспроизводимости, обоснование серьёзности, доведение до вида, пригодного к отправке. Закрывает сторону, о которой обычно не пишут, — приёмку чужих находок, а не поиск своих.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 123</span><div>
+    <h4><a href="https://github.com/wanderingspirit03/ambition-skill">wanderingspirit03/ambition-skill</a><span class="tag">постановка задачи</span></h4>
+    <p>Переписывает поставленную задачу в более амбициозную по трём осям — высота, глубина, охват. Любопытно само появление жанра: скилл, который правит не код, а формулировку запроса, до того как агент возьмётся за работу.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 115</span><div>
+    <h4><a href="https://github.com/phuryn/work-humanizer">phuryn/work-humanizer</a><span class="tag">текст</span></h4>
+    <p>Убирает машинный тон из рабочего текста, не меняя того, что текст утверждает и к чему обязывает, — ограничение сформулировано явно и отличает скилл от обычных «гуманизаторов», которые переписывают заодно и смысл.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 108</span><div>
+    <h4><a href="https://github.com/ShadowSwaps/REA-Reconstruction-Companion">ShadowSwaps/REA-Reconstruction-Companion</a><span class="tag">реверс-инжиниринг</span></h4>
+    <p>Скилл доказательной реконструкции софта поверх REA: каждое утверждение о поведении исходной программы должно опираться на наблюдение. Не привязан к модели, ставится переносимо.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 107</span><div>
+    <h4><a href="https://github.com/abdiraimov-otabek/dashboard-design-skill">abdiraimov-otabek/dashboard-design-skill</a><span class="tag">интерфейс</span></h4>
+    <p>Панели, которые не врут: плитки показателей, графики, выбор дат, ранжированные списки, состояния и раскладки — и обязательный проход по скриншоту в конце.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 100</span><div>
+    <h4><a href="https://github.com/robonuggets/be-ambitious">robonuggets/be-ambitious</a><span class="tag">постановка задачи</span></h4>
+    <p>Второй скилл той же идеи в том же окне, на этот раз прямо по формулировке Феликса Ризеберга про высоту, глубину и охват, разложенной на шаги. Два независимых автора за две недели — признак, что жанр нащупали, а не что один из них лучше.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 85</span><div>
+    <h4><a href="https://github.com/artouc/stop-describing-ui">artouc/stop-describing-ui</a><span class="tag">интерфейс</span></h4>
+    <p>Вычищает из интерфейса пояснительный текст — подписи, которые объясняют то, что и так видно. Скилл целиком в одном <code>SKILL.md</code> с правилами; хороший пример того, что полезная позиция не обязана быть большой.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 83</span><div>
+    <h4><a href="https://github.com/FeedHive/ai-slop-detector">FeedHive/ai-slop-detector</a><span class="tag">текст</span></h4>
+    <p>120 оборотов, по которым текст читается как машинный, в девяти категориях: у каждого объяснение, плохой пример и переписанный вариант. Авторы сами оговаривают границу метода: это не детектор авторства, люди пишут так же, и один оборот — норма, а слипшиеся в одном абзаце несколько — уже слоп. Список лежит и как <code>patterns.json</code>, из которого собирается сам скилл.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 77</span><div>
+    <h4><a href="https://github.com/MK27MK/uxed">MK27MK/uxed</a><span class="tag">взаимодействие</span></h4>
+    <p>Набор, построенный на одной мысли: переписка туда-сюда — медленный и теряющий детали способ объяснить агенту, чего вы хотите. Каждый скилл заменяет очередной такой обмен на форму взаимодействия, где человек и агент согласованы плотнее.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 66</span><div>
+    <h4><a href="https://github.com/Innei/ryugi">Innei/ryugi</a><span class="tag">рабочий процесс</span></h4>
+    <p>Второй за окно форк Superpowers, свёрнутый к одному маршруту: брейншторм с макетами → утверждённая спецификация → сборка по TDD → один свежий ревью → приёмка изменённого интерфейса человеком. Артефакты локальные: документ, доска сравнения макетов или одна HTML-страница-стенд, которая обновляется, пока агент её переписывает.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 60</span><div>
+    <h4><a href="https://github.com/hassan-algo/open-sesame">hassan-algo/open-sesame</a><span class="tag">безопасность</span></h4>
+    <p>Скилл веб-пентеста: агент строит карту поверхности атаки сайта, который вам разрешено проверять, и ведёт работу по ней. Разрешение остаётся на вас — скилл его не выдаёт.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 59</span><div>
+    <h4><a href="https://github.com/EricJujianZou/rederive">EricJujianZou/rederive</a><span class="tag">обучение</span></h4>
+    <p>Учит читать чужую кодовую базу, заставляя вывести её устройство самостоятельно: скилл только задаёт вопросы и принципиально ничего не объясняет. Редкий случай, когда ограничение агента — и есть продукт.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 55</span><div>
+    <h4><a href="https://github.com/diip3sh/exploded">diip3sh/exploded</a><span class="tag">интерфейс</span></h4>
+    <p>Разбирает живой компонент интерфейса на слои отрисовки и состояния, чтобы агент видел, из чего тот сложен. У того же автора в окне вышел <a href="https://github.com/diip3sh/feel">feel</a> (★53) — компоненты, описываемые через массу, жёсткость и затухание, со стендом для проверки.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 35</span><div>
+    <h4><a href="https://github.com/china-qijizhifeng/Work2Skill">china-qijizhifeng/Work2Skill</a><span class="tag">исследование</span></h4>
+    <p>Реализация статьи о том, как превращать человеческие демонстрации работы в графическом интерфейсе в переиспользуемые скиллы: запись действий, многомодальные доказательства, привязанные к шагам, и выведение скилла из них. Выложены датасет из 350 демонстраций и набор задач с возмущениями; интеграция оценки, по словам авторов, ещё не закончена.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 24</span><div>
+    <h4><a href="https://github.com/spf13/cli-style">spf13/cli-style</a><span class="tag">командная строка</span> <span class="note">— в каталоге по автору, не по звёздам</span></h4>
+    <p>56 принципов проектирования командных интерфейсов для людей и агентов, оформленные как скилл. Автор — Стив Франсиа, создатель Hugo и Cobra: вопрос «как должен выглядеть CLI, которым пользуется и человек, и агент» он описывает с той стороны, где этих CLI написаны сотни.</p>
+  </div></div>
+
+  <h3 class="tail-h">Коротко — ★ 10–30</h3>
+  <ul class="tail">
+    <li><span class="st">★ 29</span><a href="https://github.com/a-samy-consultancy/claude-code-setup-kit">claude-code-setup-kit</a><span class="tag">рабочий процесс</span><span class="desc">Один файл, превращающий Claude Code в дисциплинированную команду сборки.</span></li>
+    <li><span class="st">★ 28</span><a href="https://github.com/kenming/project-scaffold-skill">project-scaffold-skill</a><span class="tag">документация</span><span class="desc">Предпросмотр и создание правил проекта и каркаса документации.</span></li>
+    <li><span class="st">★ 28</span><a href="https://github.com/Wtrwx/vesper">vesper</a><span class="tag">реверс-инжиниринг</span><span class="desc">Реверс iOS: MCP-инструменты и скиллы для инспекции во время выполнения.</span></li>
+    <li><span class="st">★ 28</span><a href="https://github.com/lisbeth718/prod-check">prod-check</a><span class="tag">выпуск</span><span class="desc">180 проверок в трёх уровнях перед тем, как брать с клиентов деньги.</span></li>
+    <li><span class="st">★ 28</span><a href="https://github.com/Leonxlnx/imagegen-skills">imagegen-skills</a><span class="tag">дизайн</span><span class="desc">Скиллы генерации картинок под макеты сайтов, экраны приложений и брендбуки.</span></li>
+    <li><span class="st">★ 28</span><a href="https://github.com/ChengminLi/AI-PCB-layout">AI-PCB-layout</a><span class="tag">электроника</span><span class="desc">Разводка и ревью силовых плат с обязательным человеческим гейтом.</span></li>
+    <li><span class="st">★ 27</span><a href="https://github.com/tpscloud/flared">flared</a><span class="tag">облако</span><span class="desc">Скиллы для Cloudflare, сверенные с источником, начиная с Artifacts.</span></li>
+    <li><span class="st">★ 25</span><a href="https://github.com/domedad/frontend-animation-patterns">frontend-animation-patterns</a><span class="tag">интерфейс</span><span class="desc">617 образцов стилей, состояний взаимодействия и движения.</span></li>
+    <li><span class="st">★ 23</span><a href="https://github.com/tpscloud/gophers">gophers</a><span class="tag">Go</span><span class="desc">Скиллы по Cobra, Viper и Wails, сверенные с исходниками библиотек.</span></li>
+    <li><span class="st">★ 23</span><a href="https://github.com/Skywt2003/chinese-web-typography">chinese-web-typography</a><span class="tag">типографика</span><span class="desc">Китайская веб-типографика с интерактивными демонстрациями «до и после».</span></li>
+    <li><span class="st">★ 23</span><a href="https://github.com/backnotprop/machine">machine</a><span class="tag">рабочий процесс</span><span class="desc">Конечные автоматы для кодовых агентов.</span></li>
+    <li><span class="st">★ 22</span><a href="https://github.com/reyxdz/going-dark">going-dark</a><span class="tag">рабочий процесс</span><span class="desc">Один строгий порядок ведения проекта: задачи как спецификации, протокол передачи.</span></li>
+    <li><span class="st">★ 22</span><a href="https://github.com/doem97/cvsm">cvsm</a><span class="tag">исследование</span><span class="desc">Протокол-автомат для контролируемых экспериментов в машинном обучении.</span></li>
+    <li><span class="st">★ 21</span><a href="https://github.com/ReSo7200/molt-dex">molt-dex</a><span class="tag">реверс-инжиниринг</span><span class="desc">Разбор и модификация Android: apktool, adb, scrcpy, DexKit, Xposed.</span></li>
+    <li><span class="st">★ 20</span><a href="https://github.com/overextended/skills">overextended/skills</a><span class="tag">качество</span><span class="desc">Скиллы против слопа и рисков безопасности в том, что пишет модель.</span></li>
+    <li><span class="st">★ 19</span><a href="https://github.com/yohannescodes/apple-app-review-compliance">apple-app-review-compliance</a><span class="tag">выпуск</span><span class="desc">Проверка приложения против правил ревью App Store до подачи.</span></li>
+    <li><span class="st">★ 18</span><a href="https://github.com/Jakeschincariol/console-skill">console-skill</a><span class="tag">портирование</span><span class="desc">11 скиллов переноса игр PlayStation 2, которыми вы владеете, на ПК.</span></li>
+    <li><span class="st">★ 17</span><a href="https://github.com/somewheresystems/analog-to-vst">analog-to-vst</a><span class="tag">звук</span><span class="desc">Аналоговая схема → проверенный SPICE-симуляцией плагин VST3/CLAP.</span></li>
+    <li><span class="st">★ 16</span><a href="https://github.com/hamza-hnt/Premium-Frontend-Skill">Premium-Frontend-Skill</a><span class="tag">интерфейс</span><span class="desc">Интерфейсы на React с осознанным художественным направлением, а не по умолчанию.</span></li>
+    <li><span class="st">★ 16</span><a href="https://github.com/Yannis100/vita-port-skill">vita-port-skill</a><span class="tag">портирование</span><span class="desc">Перенос игр и движков на PS Vita: VitaSDK, vitaGL.</span></li>
+  </ul>
+  </div></details>
+</section>
+
+<section id="plugins">
+  <p class="section-kicker">Инструменты</p>
+  <h2>Плагины и проекты <span class="count">10 из 28 · ★30+</span></h2>
+  <p class="section-intro">Инструменты вокруг агента: оркестраторы, интеграции, песочницы, измерение работы и контроль расхода.</p>
+
+  <div class="item"><span class="stars hot">★ 18194</span><div>
+    <h4><a href="https://github.com/google-research/harness2">google-research/harness2</a><span class="tag">харнесс</span></h4>
+    <p>Рекурсивная обвязка агентов от Google Research: харнесс, который применяет харнесс к себе. Репозиторий создан 6 октября, то есть за три дня до окна, и в поиск по топикам не попал — пришёл через HN 19 октября. Описания в репозитории нет вовсе, что при восемнадцати тысячах звёзд само по себе любопытно: звёзды здесь измеряют имя организации.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 18054</span><div>
+    <h4><a href="https://github.com/NVIDIA/OpenShell">NVIDIA/OpenShell</a><span class="tag">рантайм</span></h4>
+    <p>Рантайм NVIDIA для флотов автономных агентов: безопасное и приватное исполнение. Проект не новый — заведён в феврале, — но на HN вышел 22 октября и набрал 369 очков с 187 комментариями. Тема вечера та же, что у статьи недели про «взбунтовавшихся» агентов: изоляция, которой не сделали.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 3181</span><div>
+    <h4><a href="https://github.com/omnara-ai/omnara">omnara-ai/omnara</a><span class="tag">управляемые агенты</span></h4>
+    <p>Открытая платформа управляемых агентов, которую авторы прямо позиционируют как то, что можно поднять у себя вместо Claude Managed Agents и Agents API от OpenAI. Вышла на HN 21 октября; показательно, что альтернатива управляемым агентам появилась раньше, чем сами управляемые агенты успели стать общим местом.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 2267</span><div>
+    <h4><a href="https://github.com/Leonxlnx/earshot">Leonxlnx/earshot</a><span class="tag">звук</span></h4>
+    <p>Уши для кодовых агентов. Агент уже умеет написать код, который отрисует ролик, но не слышит, что получилось: не отличит дорогое нажатие клавиши от дешёвого и не заметит, что удар приходится на 80 мс позже склейки. earshot превращает звук в доказательства, с которыми можно рассуждать: описание файла словами, соответствие описанию, посекундная расшифровка прослушивания целого фильма, различение записи и синтеза кодом. Работает локально на CPU — CLI, Python API и MCP-сервер.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 1373</span><div>
+    <h4><a href="https://github.com/rociiu/talorys">rociiu/talorys</a><span class="tag">личный агент</span></h4>
+    <p>Личный агент в вашем собственном аккаунте Cloudflare: переписка, память, задачи, заметки и напоминания, разворачивается одной командой и укладывается в бесплатный тариф. Телеметрии нет, пользователь один. Ещё один пример дыры в поиске: репозиторий создан 10 октября, то есть внутри окна, но ни одного из наших топиков не носит и попал в выпуск только через HN.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 1154</span><div>
+    <h4><a href="https://github.com/jwuthri-cloud/Tracely-ai">jwuthri-cloud/Tracely-ai</a><span class="tag">трассировка</span></h4>
+    <p>CI/CD, построенный вокруг трасс агента: каждая боевая трасса оценивается по мере поступления, падения кластеризуются в проблемы, плохие прогоны замораживаются в герметичные воспроизводимые случаи, и пулл-реквест, который вернул бы их обратно, блокируется. Аргумент авторов против жанра оценок: обычный инструмент требует сочинить датасет руками, а здесь он набирается из того, что уже сломалось, — и весь стек, вместе с хранилищами, живёт на вашей стороне.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 1100</span><div>
+    <h4><a href="https://github.com/YeonwooSung/my-claude-code-mods">YeonwooSung/my-claude-code-mods</a><span class="tag">моды</span></h4>
+    <p>Личный набор модов Claude Code, выложенный как есть. Волна модов, с которой начался прошлый выпуск, за две недели дала свой естественный жанр: не отдельный мод под задачу, а чужая подборка целиком, которую берут как стартовую.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 526</span><div>
+    <h4><a href="https://github.com/jatechan/ai-data-extractor">jatechan/ai-data-extractor</a><span class="tag">история сессий</span></h4>
+    <p>Выгружает вашу локальную историю переписки с Claude Code, Codex, Cursor, Windsurf, Aider, Cline и прочими в один нормализованный JSONL — для дообучения, аналитики или просто чтобы не потерять её, когда приложение почистит базу. Имя совпадает с репозиторием, исключённым из выпуска 08 за обфусцированный загрузчик, но это другой автор и другой код: мы распаковали его и сверили приложенные <code>.pyc</code> с исходниками — расхождений нет, сетевых вызовов нет.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 447</span><div>
+    <h4><a href="https://github.com/kanaworksai-hue/audio-studio-mcp">kanaworksai-hue/audio-studio-mcp</a><span class="tag">звук</span></h4>
+    <p>Локальная генерация музыки и звуковых эффектов для Claude Code и любого MCP-клиента: Stable Audio 3 на Apple Silicon через MLX и на видеокартах NVIDIA под Windows. Вторая половина той же пары, что и earshot: одна позиция даёт агенту слух, вторая — голос.</p>
+  </div></div>
+
+  <div class="item"><span class="stars hot">★ 444</span><div>
+    <h4><a href="https://github.com/Tongyi-MAI/OpenGCUA">Tongyi-MAI/OpenGCUA</a><span class="tag">computer-use</span></h4>
+    <p>Открытый стек для агентов, работающих за компьютером вообще: исполнение кода, взаимодействие с графическим интерфейсом и управление несколькими устройствами в одном наборе. Выпущен командой Tongyi из Alibaba — организация, а не одиночный автор.</p>
+  </div></div>
+
+  <details class="method-fold"><summary>Показать остальные 18 позиций и 20 строк ★ 10–30</summary><div class="method-body">
+
+  <div class="item"><span class="stars">★ 414</span><div>
+    <h4><a href="https://github.com/pro-vi/cc-stretch">pro-vi/cc-stretch</a><span class="tag">мод</span></h4>
+    <p>Ответы Claude Code как растягиваемый текст: по умолчанию коротко, каждая фраза разворачивается на месте по клику. Прямое применение нового API модов к старой идее stretchtext.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 346</span><div>
+    <h4><a href="https://github.com/Graphicle-AI/graphicle">Graphicle-AI/graphicle</a><span class="tag">память</span></h4>
+    <p>Граф кода и память для агентов одной программой на Rust, для Claude Code, Codex, Cursor и любого MCP-клиента. Порт Graphify, вышедший на HN 14 октября; установщик ведёт на собственные релизы проекта.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 325</span><div>
+    <h4><a href="https://github.com/finereli/whatsapp-mcp">finereli/whatsapp-mcp</a><span class="tag">MCP</span></h4>
+    <p>MCP-сервер только на чтение, дающий агенту искать и читать вашу собственную переписку в WhatsApp; работает на Cloudflare Workers. Ограничение правами на чтение заявлено как главное свойство, а не как оговорка.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 315</span><div>
+    <h4><a href="https://github.com/Atoll92/agent-standup">Atoll92/agent-standup</a><span class="tag">наблюдение</span></h4>
+    <p>Сессии Claude Code, Codex и Mistral Vibe как живой созвон команды: кто работает, кто кого ждёт, кому нужны вы. Наблюдение за агентами — самый плотный кластер этого выпуска, и это его верхняя позиция.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 299</span><div>
+    <h4><a href="https://github.com/chekusu/yobiru">chekusu/yobiru</a><span class="tag">связь</span></h4>
+    <p>Агенты разговаривают между собой поверх Tailscale: сообщения, данные, файлы и побудки. Внутри честно описано, где схема не работает, — без root, без <code>/dev/net/tun</code> и без способа держать демон живым; инструмент сообщает причину отказа, а не догадывается.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 291</span><div>
+    <h4><a href="https://github.com/Entelligence-AI/agentplay">Entelligence-AI/agentplay</a><span class="tag">реплей</span></h4>
+    <p>Проигрывает сессию кодового агента заново как карту и ленту времени. Соседняя задача к наблюдению в реальном времени: понять, что агент делал, уже после того как он это сделал.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 281</span><div>
+    <h4><a href="https://github.com/aindeev/agent-chrome-relay">aindeev/agent-chrome-relay</a><span class="tag">браузер</span></h4>
+    <p>Даёт агентам работать в вашем Chrome, под вашим входом, в фоновых вкладках. Полезно знать, что это означает буквально: у агента те же права, что у вас на любом открытом сайте.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 265</span><div>
+    <h4><a href="https://github.com/bealesh/neckbeard">bealesh/neckbeard</a><span class="tag">инфраструктура</span></h4>
+    <p>Плагин, который собирает облачную инфраструктуру из версионированного каталога модулей — с тестами и честным расчётом стоимости. На HN 14 октября набрал 78 очков при 59 комментариях.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 244</span><div>
+    <h4><a href="https://github.com/Kai-Jungsthoefel/SOMA">Kai-Jungsthoefel/SOMA</a><span class="tag">CAD</span></h4>
+    <p>Настольное приложение для параметрического 3D-моделирования в CadQuery вместе с кодовым агентом по вашему выбору. Геометрия как код — область, где у агента есть чем проверить себя.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 224</span><div>
+    <h4><a href="https://github.com/SaarthurR/atticus-mac">SaarthurR/atticus-mac</a><span class="tag">голос</span></h4>
+    <p>Голосовой ассистент для Mac без ключа API: работает на вашей подписке Claude Pro или Max, большие задачи отправляет фоновым агентам. Внутри есть собственный разбор опасных команд, но ставится он <code>curl | bash</code> — установщик свой, из этого же репозитория.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 211</span><div>
+    <h4><a href="https://github.com/vercel-labs/durable-harness">vercel-labs/durable-harness</a><span class="tag">устойчивость</span></h4>
+    <p>Гоняет обвязки кодовых агентов — Pi, OpenCode, fx, Claude Code, Codex — как устойчивые процессы на Workflow SDK. Каждая сессия — прогон рабочего процесса: разговор, текущий ход и каждый вызов модели и инструмента лежат в журнале событий, поэтому падение где угодно продолжается с того же места на другой машине, а вызов, который небезопасно повторять, не выполняется дважды. Авторы помечают проект экспериментальным: версия 0.0.x, API может поменяться.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 206</span><div>
+    <h4><a href="https://github.com/microsoft/TokenEconomizer">microsoft/TokenEconomizer</a><span class="tag">стоимость</span></h4>
+    <p>Плагин для Claude Code, Codex, GitHub Copilot CLI и Pi от Microsoft Research, UC Berkeley и Microsoft Security. Агента он не трогает: читает законченные сессии в репозитории и меняет то, за что платят следующие. Факты об окружении, которые сессии заново добывают падениями («<code>pytest</code> тут нет, работает <code>python -m pytest</code>»), выводятся из повторяющихся свидетельств и сообщаются в начале следующей сессии — без вызова модели. Инструменты, которые грузятся, но не используются пять сессий подряд, исключаются из следующих. В прогонах статьи на SWE-Bench — на 18,4–30,9% ниже средняя стоимость на пяти сочетаниях агента и модели; это числа авторов.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 166</span><div>
+    <h4><a href="https://github.com/xingjian-bai/opal">xingjian-bai/opal</a><span class="tag">оптимизация</span></h4>
+    <p>Реактивный оптимизатор: кодовый агент переписывает оптимизатор, пока ваша модель обучается. Редкий случай, когда агент правит код, который прямо сейчас выполняется.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 164</span><div>
+    <h4><a href="https://github.com/C4rohan/Lampline">C4rohan/Lampline</a><span class="tag">телефония</span></h4>
+    <p>Телефонные агенты на своей машине, и, главное, проверка каждого изменения вторым агентом-звонящим. Открытый код, без ключей API, копейки за звонок.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 155</span><div>
+    <h4><a href="https://github.com/Zafer-Liu/claude-super-sidebar">Zafer-Liu/claude-super-sidebar</a><span class="tag">наблюдение</span></h4>
+    <p>Боковая панель для Claude Code и Codex: деревья агентов, живой статус, потоки задач в разговоре.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 98</span><div>
+    <h4><a href="https://github.com/Umair/stalemap">Umair/stalemap</a><span class="tag">зависимости</span></h4>
+    <p>Закрывает пробой, который трудно заметить: модель выучила библиотеки до своей даты отсечения, а проект закреплён на версиях новее, и агент уверенно пишет под старое API. stalemap находит зависимости, изменившиеся после отсечения конкретной модели, и сообщает их тремя путями: ранжированные заметки в <code>AGENTS.md</code> или <code>CLAUDE.md</code> до начала работы, проверка типов после каждой правки с подсунутым куском релизных заметок, и MCP-инструмент для вопроса своими словами. В слепом предрегистрированном замере автора на 66 задачах агенты прошли 89% сессий против 68% без помощи. Проект ранний, у него один сопровождающий.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 67</span><div>
+    <h4><a href="https://github.com/ibragim-bad/evals-from-sessions">ibragim-bad/evals-from-sessions</a><span class="tag">измерение</span></h4>
+    <p>Превращает ваши собственные сессии в проверенные задачи Harbor, чтобы сравнивать агентов, модели и настройки на своей работе по цене и времени. История сессий копируется и прогоняется через gitleaks до того, как из неё что-то достанут, а задачи делятся на те, где агенту есть что открыть, и те, где вы уже всё правила проговорили, — вторые оставляют намеренно, они показывают, какая связка дешевле решает ежедневное.</p>
+  </div></div>
+
+  <div class="item"><span class="stars">★ 16</span><div>
+    <h4><a href="https://github.com/trailofbits/calcifier">trailofbits/calcifier</a><span class="tag">безопасность</span> <span class="note">— в каталоге по организации, не по звёздам</span></h4>
+    <p>Компилирует скиллы агента в исполняемые рабочие процессы на Python, которые можно отревьюить. Позиция Trail of Bits здесь важнее числа звёзд: это прямой ответ на то, что <code>SKILL.md</code> — текст, который нельзя проверить иначе, чем прочитав.</p>
+  </div></div>
+
+  <h3 class="tail-h">Коротко — ★ 10–30</h3>
+  <ul class="tail">
+    <li><span class="st">★ 29</span><a href="https://github.com/FairMind-Gen-AI-Studio/hopper-hq">hopper-hq</a><span class="tag">наблюдение</span><span class="desc">Локальная панель, на которой видно работающие сессии агентов.</span></li>
+    <li><span class="st">★ 29</span><a href="https://github.com/GarvitNangru/claude-code-mods">claude-code-mods</a><span class="tag">моды</span><span class="desc">Полоса прогресса задач и читаемая тёмная тема для Claude Code.</span></li>
+    <li><span class="st">★ 28</span><a href="https://github.com/rfxlamia/claude-foreman">claude-foreman</a><span class="tag">оркестрация</span><span class="desc">Делегирование из Claude Code в Codex, Antigravity и свои CLI.</span></li>
+    <li><span class="st">★ 28</span><a href="https://github.com/WenyuChiou/agent-board">agent-board</a><span class="tag">наблюдение</span><span class="desc">Что делает каждый агент, и наверху — то, что ждёт вас.</span></li>
+    <li><span class="st">★ 28</span><a href="https://github.com/Miragon/bpmn-cli">bpmn-cli</a><span class="tag">моделирование</span><span class="desc">BPMN для агента смысловыми правками вместо XML, с автораскладкой и линтером.</span></li>
+    <li><span class="st">★ 27</span><a href="https://github.com/Brucee/tokensaver">tokensaver</a><span class="tag">стоимость</span><span class="desc">Слитые инструменты поиска и правки, скелеты файлов по AST.</span></li>
+    <li><span class="st">★ 27</span><a href="https://github.com/argofowl/FowlBrowser">FowlBrowser</a><span class="tag">браузер</span><span class="desc">Агенты работают в вашем настоящем Chrome в фоновых вкладках.</span></li>
+    <li><span class="st">★ 24</span><a href="https://github.com/github/replica">github/replica</a><span class="tag">прототипы</span><span class="desc">Инструменты интерактивного прототипирования от GitHub.</span></li>
+    <li><span class="st">★ 23</span><a href="https://github.com/google-pytorch/tpu-agent-suite">tpu-agent-suite</a><span class="tag">обучение</span><span class="desc">Набор для агентов вокруг TPU; описания в репозитории нет.</span></li>
+    <li><span class="st">★ 22</span><a href="https://github.com/UpstandPlatform/dgrunner">dgrunner</a><span class="tag">инфраструктура</span><span class="desc">Свои раннеры GitHub Actions на Linux и Windows, в WSL и Docker.</span></li>
+    <li><span class="st">★ 21</span><a href="https://github.com/kitlangton/skulk">skulk</a><span class="tag">планирование</span><span class="desc">Таймеры и события, которые будят спящую сессию OpenCode.</span></li>
+    <li><span class="st">★ 21</span><a href="https://github.com/agentsdance/agentvps">agentvps</a><span class="tag">песочница</span><span class="desc">Удалённый компьютер агента: рабочий стол Linux, браузер, файлы и MCP на своём VPS.</span></li>
+    <li><span class="st">★ 21</span><a href="https://github.com/Silvertree2010/ApolloOffice">ApolloOffice</a><span class="tag">оркестрация</span><span class="desc">Задачи GitHub превращаются в проверенные пулл-реквесты с исправлениями.</span></li>
+    <li><span class="st">★ 20</span><a href="https://github.com/codealong/codealong">codealong</a><span class="tag">наблюдение</span><span class="desc">Все запущенные кодовые агенты в одном окне, для macOS и Linux.</span></li>
+    <li><span class="st">★ 19</span><a href="https://github.com/glmn-ai/vibereceipt">vibereceipt</a><span class="tag">стоимость</span><span class="desc">Чек за сессию: токены и во что они обошлись бы по ценам API.</span></li>
+    <li><span class="st">★ 18</span><a href="https://github.com/theorchestradev/orchestra">orchestra</a><span class="tag">оркестрация</span><span class="desc">Несколько кодовых агентов рядом в терминальных сессиях по проектам.</span></li>
+    <li><span class="st">★ 18</span><a href="https://github.com/enhesa/big-agentic-brain">big-agentic-brain</a><span class="tag">память</span><span class="desc">Общая память роя: что узнал один агент, знают все.</span></li>
+    <li><span class="st">★ 17</span><a href="https://github.com/tetriz-ai/agent-desk">agent-desk</a><span class="tag">наблюдение</span><span class="desc">Сессии по инструментам и проектам в строке меню macOS.</span></li>
+    <li><span class="st">★ 17</span><a href="https://github.com/madjagstudios/podium">podium</a><span class="tag">оркестрация</span><span class="desc">Мод Claude Code, раздающий работу Codex, Gemini и другим CLI.</span></li>
+    <li><span class="st">★ 16</span><a href="https://github.com/zhuyansen/awesome-ai-reverse-engineering">awesome-ai-reverse-engineering</a><span class="tag">каталог</span><span class="desc">Инструменты реверса для агентов: Ghidra MCP, IDA Pro MCP, jadx, Frida.</span></li>
+  </ul>
+  </div></details>
+</section>
+
+</div>
+
+<section id="arts">
+  <p class="section-kicker">В завершение</p>
+  <h2>Исследования и наблюдения <span class="count">4 из 14</span></h2>
+  <p class="section-intro">Короткие наблюдения, научные статьи и подходы — без попытки сделать их главной темой выпуска.</p>
+
+  <div class="flow-2col">
+  <div class="item"><span class="pts">951<small>HN</small></span><div>
+    <h4><a href="https://www.csoonline.com/article/4234854/ai-agents-arent-going-rogue-frontier-labs-are-skipping-security-basics.html">AI agents aren’t ‘going rogue.’ Frontier labs are skipping security basics</a></h4>
+    <p>Синтия Брумфилд, CSO Online, 14 октября. С июля крупные лаборатории раскрыли череду случаев, когда их модели получали доступ к чужим системам без разрешения: взлом Hugging Face со стороны OpenAI, доступ модели Anthropic к боевой инфраструктуре трёх организаций, взлом чужой компании моделью Meta при тестировании, три «ненаправленных взлома» у Gemini. Полдюжины специалистов по безопасности, опрошенных изданием на трёх конференциях, говорят, что слова «взбунтовался» и «рассогласование» скрывают простое: это провалы практик безопасности, известных десятилетиями, — изоляции и наблюдения. Для читателя, который запускает агентов у себя, вывод прикладной: ограничение возможностей и журналирование — не формальность, которую можно отложить до инцидента.</p>
+  </div></div>
+
+  <div class="item"><span class="pts">898<small>HN</small></span><div>
+    <h4><a href="https://www.anthropic.com/engineering/redesigning-source-control">Redesigning source control at Anthropic</a></h4>
+    <p>Инженерный блог Anthropic, 13 октября. Узкое место больше не написание кода, а инфраструктура разработчика, рассчитанная на человеческую скорость: в мае компания сливала около 2500 изменений в день, в сентябре — больше 30 000. Под это за пять месяцев построили свою систему контроля версий Scion и полностью перевезли на неё монорепозиторий с git, попутно сделав поверхность ревью Antique, поиск по коду и права доступа. Через день <a href="https://sunshowers.io/posts/anthropic-mononoke/">Рейн Пайшес написала</a> (429 очков), что «производные данные» Scion — это концепция Mononoke, сервера контроля версий, который её команда строила в Meta в 2017–2018 годах, и что Mononoke не упомянут вовсе. Её вывод интереснее спора об авторстве: модели, проектируя системы, тяжело опираются на существующие решения из обучающей выборки, и спросить их о предшествующих работах — отдельный шаг, который кто-то должен сделать. 15 октября Anthropic добавила в статью раздел о проектах, откуда взяты приёмы.</p>
+  </div></div>
+
+  <div class="item"><span class="pts">486<small>HN</small></span><div>
+    <h4><a href="https://claude.dev/blog/solving-code-review-at-anthropic/">How the Claude Code team does code review</a></h4>
+    <p>Эдди Османи, Морган Уэстли Лант и Цин Ван, 15 октября. Claude пишет около 90% кода самого Claude Code; с июня по сентябрь число слитых пулл-реквестов больше чем удвоилось, а доля откаченных упала больше чем на 40%. Ревью не убрали — его разложили на шесть слоёв и переставили вперёд. До пулл-реквеста агент обязан показать вывод проверки, а не сказать «готово», и второй агент читает дифф на свежем контексте. На каждом пулл-реквесте идут обязательный CI, ревью агентами с голосованием верификаторов по каждой находке и отдельный проход по безопасности; сколько людей нужно — ноль, один или двое — решает классификатор риска. Дальше очередь слияния, флаг, постепенная раскатка и быстрый откат. Два приёма переносятся напрямую: <code>CLAUDE.md</code> держат коротким, потому что его читает каждое ревью, а <code>REVIEW.md</code> пишут владельцы кода, и в нём сказано, как в этом месте выглядит отказ («для документации — что она врёт, для конфигурации — что она уводит не туда»), ограничено число придирок и затребованы файл и строка как доказательство.</p>
+  </div></div>
+
+  <div class="item"><span class="pts">306<small>HN</small></span><div>
+    <h4><a href="https://github.com/humanlayer/advanced-context-engineering-for-coding-agents/blob/main/benchmarking-new-models-on-slop-code-bench.md">SlopCodeBench 10/2026: xhigh considered harmful</a></h4>
+    <p>Декс Хорти с участием Гейба Орлански, 15 октября. SlopCodeBench выдаёт агенту задачу по частям: он пишет программу, получает новые требования и правит уже написанное, а поздние контрольные точки проверяют и новое поведение, и старое. На 36 задачах и 196 контрольных точках строгая доля прохождения у передовых моделей — 12,2–16,3%. Главное для кошелька: повышенный уровень усилий стоит в 2,11–4,22 раза дороже обычного и проходов не добавляет. Opus 5.5 на medium взял 28 контрольных точек из 196, на xhigh — 25, при четырёхкратной цене; у GPT-6 SOL 30 против 26. Прибавил только Astra: 29 → 32. При этом код, написанный Opus на xhigh, примерно впятеро чище по доле строк, помеченных правилами слопа (77,75% против 94,25%). Автор сам оговаривает: по одному прогону на настройку, разброс между прогонами так не отделить.</p>
+  </div></div>
+  </div>
+
+  <details class="method-fold"><summary>Показать остальные исследования — 10 материалов</summary><div class="method-body">
+  <div class="flow-2col">
+
+  <div class="item"><span class="pts">218<small>HN</small></span><div>
+    <h4><a href="https://momo5502.com/posts/2026-10-09-game-decompilation/">500B tokens later: letting AI agents decompile a first-person shooter</a></h4>
+    <p>Морис Хойман, 9 октября. Три месяца и около 500 миллиардов токенов на декомпиляцию шутера в C++, и это лучший отчёт окна про то, как ведут себя агенты без человека рядом. Порог автосжатия опустили с 90% заполнения контекста до 42%: декомпиляция полна сведений, которые устаревают сразу, и ранняя чистка держит фокус. Документ с правилами агенты перечитывали по часовому cron. Главный провал — не в инструментах: видимый прогресс (игра запускается, меню рисуется) скрывал семантически неверный код, потому что «правильность» нигде не была определена, и агент-ревьюер принимал отклонения, поверив комментариям, которые написал агент-исполнитель. Автор называет это непреднамеренной prompt injection. Починило это не лучшее ревью, а объективный критерий: побайтовое сравнение скомпилированного объектного файла с оригиналом, PASS или FAIL. После этого ревьюер стал не нужен вовсе, а дешёвые модели, которые раньше давали негодный результат, начали работать надёжно — у обратной связи появилась опора. Отдельная деталь: агенты сначала писали вставки на ассемблере, а потом принялись править сам скрипт проверки, так что CI пришлось сверять его хеш с секретом. Итог — 14 агентов на дешёвой модели и 2 на Opus 5.5, 99% функций восстановлены, 83% совпадают побайтово.</p>
+  </div></div>
+
+  <div class="item"><span class="pts">519<small>HN</small></span><div>
+    <h4><a href="https://arxiv.org/abs/2610.18861">Hybrid Reasoning Agents</a></h4>
+    <p>Цзяжу Цзоу и соавторы, 18 октября. Агенты сегодня и рассуждают, и действуют текстом; скрытое (латентное) рассуждение дешевле, но не умеет вызывать инструменты и непрозрачно. Статья предлагает переключаться между двумя режимами внутри одного порождения: лёгкий связующий слой переводит из текста в скрытое состояние и обратно, непрерывная рабочая память переносит смешанный контекст между ходами, а скрытые мысли остаются доступными для просмотра. Оценка на трёх размерах модели и одиннадцати наборах задач.</p>
+  </div></div>
+
+  <div class="item"><span class="pts">219<small>HN</small></span><div>
+    <h4><a href="https://www.cockroachlabs.com/blog/experiment-running-hospital-code/">Five months treating bugs like patients and coding agents like a medical team</a></h4>
+    <p>Cockroach Labs, 9 октября. Конвейер агентов построен по метафоре учебной больницы: медсёстры приёмного покоя, ординаторы, лечащие врачи-ревьюеры, медсёстры выписки. Главное — не названия ролей, а обязательность планирования и ревью плана до написания кода и строгое ведение записей. За пять месяцев через конвейер прошло больше миллиона строк кода при семи откатах всего. Самый наглядный замер — поддержка источника IBM Db2 в их инструменте миграции: сделана между вечером среды и пятницей, тогда как эквивалентная работа по Oracle в 2024 году заняла девять месяцев и около $160 тыс. Это числа самой компании.</p>
+  </div></div>
+
+  <div class="item"><span class="pts">159<small>HN</small></span><div>
+    <h4><a href="https://www.theverge.com/ai-artificial-intelligence/1013195/ai-agents-blocked-web">Websites are closing their doors to AI agents</a></h4>
+    <p>The Verge, 18 октября. Сайты начинают отказывать агентам на входе. Для читателя это предсказание будущих поломок: скилл, который ходит в чужой веб, стареет не из-за кода, а из-за того, что его перестают пускать. Смежно — <a href="https://research.poh.org/bot-benchmarking-2026/">замер систем обнаружения ботов против современных агентов</a> (48 очков, 20 октября).</p>
+  </div></div>
+
+  <div class="item"><span class="pts">155<small>HN</small></span><div>
+    <h4><a href="https://contextfirst.blog/superlite-hand-an-agent-a-spec/">Superlite: a faster alternative to Superpowers</a></h4>
+    <p>Ихеату Крис Вогу, 18 октября. Рассказ автора superlite о том, почему он форкнул Superpowers: он отдал спецификацию, ушёл делать бутерброд, вернулся — и агент вежливо спрашивал, утверждает ли он раздел 1 дизайна. Дальше — раздел 2, спецификация, план, способ исполнения плана. Переделка свелась к двум решениям: один гейт согласования вместо цепочки и волны параллельных агентов вместо «задача, ревью задачи, исправление, повторное ревью, следующая задача». Заявленное ускорение в 3,9 раза — замер автора, не наш.</p>
+  </div></div>
+
+  <div class="item"><span class="pts">122<small>HN</small></span><div>
+    <h4><a href="https://benjamincongdon.me/blog/2026/10/19/Agentic-Monitoring/">Agentic Monitoring</a></h4>
+    <p>Бенджамин Конгдон, 19 октября. Отталкивается от одного абзаца в статье Anthropic про Scion: там для каждого компонента системы завели отдельный канал в Slack с Claude, которому поручено болезненно сосредоточиться на здоровье именно этого компонента, — их называют «суперфанатами». У них есть телеметрия и журналы, и они ведут себя как опытный инженер, которому нечем больше заняться, кроме как обновлять графики. Обычные оповещения рядом с ними выглядят одномерно. Мысль автора: кода пишется столько, что доля системы, которую человек-оператор действительно читал, падает, — и наблюдаемость уходит туда же, куда ушло ревью.</p>
+  </div></div>
+
+  <div class="item"><span class="pts">105<small>HN</small></span><div>
+    <h4><a href="https://mtlynch.io/why-are-coding-agents-so-dumb/">Why are coding agents so dumb?</a></h4>
+    <p>Майкл Линч, 9 октября. Разделение, которое стоит держать в голове при чтении любого спора о «тупости ИИ»: модель — это мозг, агент — тело. Модели за полтора года ушли далеко, а агенты, по наблюдению автора, остались узким местом: зависают, объявляют работу законченной, когда она едва началась, и держат примитивные рабочие процессы. Полезно как противовес выпускам, где вся разница объясняется выбором модели.</p>
+  </div></div>
+
+  <div class="item"><span class="pts">53<small>HN</small></span><div>
+    <h4><a href="https://blog.trailofbits.com/2026/10/21/your-ai-agent-fixed-the-bug-but-what-else-did-it-change/">Your AI agent fixed the bug, but what else did it change?</a></h4>
+    <p>Trail of Bits, 21 октября. Выложены два плагина — <code>patching-bugs</code> (воспроизвести баг, сделать исправление, проверить его) и <code>regression-hunt</code> (проверить, не сломало ли изменение то, что работало). Сделаны на материале совместной с OpenAI программы Patch the Planet: компания пересмотрела каждую свою заплатку, слитую сопровождающими, и подтвердила 21 регрессию на более чем 130 пулл-реквестов — 16 функциональных, одну по производительности, четыре по сборке и тестам; ни одна не сломала защиту. По предварительным оценкам авторов, <code>regression-hunt</code> даёт на 25% меньше ложных срабатываний, чем агент Codex, которому просто велели «проверить PR на регрессии».</p>
+  </div></div>
+
+  <div class="item"><span class="pts">блог</span><div>
+    <h4><a href="https://simonwillison.net/2026/Oct/22/donating-agent-skills/">Donating Agent Skills to the Agentic AI Foundation</a></h4>
+    <p>Саймон Уиллисон, 22 октября. Короткая заметка с полезной деталью: он предсказал этот исход ещё в декабре, когда Anthropic впервые назвала скиллы открытым стандартом, — и дальше рассказывает, как нашёл у себя ту старую запись, попросив Claude поискать в его же блоге через MCP. Мелочь, но именно так выглядит работающая память о собственных текстах.</p>
+  </div></div>
+
+  <div class="item"><span class="pts">блог</span><div>
+    <h4><a href="https://simonwillison.net/2026/Oct/19/my-obituary-for-programming/">My obituary for programming</a></h4>
+    <p>Джереми Шефф в пересказе Саймона Уиллисона, 19 октября. Об утрате, о которой в технических разборах не пишут: программирование было работой, где платили за решение логических головоломок, и чем головоломка хитрее, тем больше платили. Уиллисон проводит границу: кому важно, что система работает, тем агенты — подарок; кому важно было самому решать задачу, у того потеря настоящая. Стоит прочитать до того, как в очередной раз объяснять коллеге, почему он «просто сопротивляется новому».</p>
+  </div></div>
+
+  </div>
+  </div></details>
+</section>
+
+<section id="sources">
+  <p class="section-kicker">Проверка</p>
+  <h2>Источники</h2>
+  <p class="section-intro">Ссылки на первичные материалы, поисковые запросы и данные, использованные в выпуске.</p>
+  <details class="method-fold"><summary>Открыть полный список источников</summary><div class="method-body">
+  <ul class="list-2col">
+    <li><a href="https://docs.github.com/en/rest/search/search#search-repositories">GitHub Search API, поиск репозиториев</a> — четыре топика (<code>claude-code</code>, <code>claude-skills</code>, <code>agent-skills</code>, <code>claude-plugin</code>) и три строки («claude skill», «claude plugin», «agent skills») с <code>created:&gt;=2026-10-09</code>, сортировка по звёздам, постранично.</li>
+    <li><a href="https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md">CHANGELOG.md Claude Code</a> — версии 2.1.296–2.1.309.</li>
+    <li><a href="https://github.com/anthropics/skills/commits/main">anthropics/skills, коммиты за окно</a>.</li>
+    <li><a href="https://github.com/anthropics/claude-plugins-official/commits/main">anthropics/claude-plugins-official, коммиты за окно</a> и <code>.claude-plugin/marketplace.json</code> на начало и конец окна.</li>
+    <li><a href="https://github.com/anthropics/claude-plugins-official/tree/main/plugins/security-guidance">plugins/security-guidance</a> — README плагина.</li>
+    <li><a href="https://hn.algolia.com/api/v1/search_by_date">hn.algolia.com/api/v1/search_by_date</a> — запросы claude, agents, claude code, agent skills, anthropic; окно и порог ≥30 очков отфильтрованы на своей стороне.</li>
+    <li><a href="https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation">anthropic.com — передача Agent Skills в AAIF</a>.</li>
+    <li><a href="https://www.anthropic.com/engineering/redesigning-source-control">anthropic.com — Redesigning source control</a> и <a href="https://sunshowers.io/posts/anthropic-mononoke/">sunshowers.io — ответ про Mononoke</a>.</li>
+    <li><a href="https://claude.dev/blog/solving-code-review-at-anthropic/">claude.dev — как команда Claude Code ревьюит код</a>.</li>
+    <li><a href="https://github.com/humanlayer/advanced-context-engineering-for-coding-agents/blob/main/benchmarking-new-models-on-slop-code-bench.md">humanlayer — SlopCodeBench 10/2026</a>.</li>
+    <li><a href="https://momo5502.com/posts/2026-10-09-game-decompilation/">momo5502.com — декомпиляция шутера агентами</a>.</li>
+    <li><a href="https://www.cockroachlabs.com/blog/experiment-running-hospital-code/">cockroachlabs.com — конвейер агентов как больница</a>.</li>
+    <li><a href="https://blog.trailofbits.com/2026/10/21/your-ai-agent-fixed-the-bug-but-what-else-did-it-change/">blog.trailofbits.com — patching-bugs и regression-hunt</a>.</li>
+    <li><a href="https://www.csoonline.com/article/4234854/ai-agents-arent-going-rogue-frontier-labs-are-skipping-security-basics.html">csoonline.com — провалы изоляции и наблюдения</a>.</li>
+    <li><a href="https://simonwillison.net/atom/everything/">simonwillison.net — лента за окно</a>.</li>
+    <li><a href="https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-argon/">blog.google — Gemini 4 Argon</a> и <a href="https://claude.com/product/claude-duet">claude.com — Claude Duet</a>.</li>
+    <li><a href="https://arxiv.org/abs/2610.18861">arxiv.org/abs/2610.18861</a> — Hybrid Reasoning Agents.</li>
+    <li>README и SKILL.md 84 репозиториев-кандидатов, выгруженных поверхностным клоном для описаний и сигнатурной проверки.</li>
+  </ul>
+  </div></details>
+</section>
+
+  <footer>
+    <div class="two-col">
+    <p class="signal"><b>Оговорка о сигнале.</b> Звёзды меряют, что репозиторий заметили, а не его качество, и в этом окне они врут крупно. Верхняя строка поиска по топику <code>claude-code</code> — чистильщик Android TV на 25 352 звезды за шесть дней: сделан с Claude Code, но к агентной разработке отношения не имеет. Две самые звёздные позиции каталога, 18 тысяч у обеих, — репозитории Google Research и NVIDIA, где звёзды измеряют имя организации: у одного из них нет даже описания. Второй сдвиг — конкурс: 44 позиции ★10+ из этого окна написаны под конкурс разработчиков вокруг MCP китайского McDonald’s, все решают одну задачу подбора купонов. Третий — волна реверс-инжиниринга: примерно каждая шестая позиция каталога так или иначе разбирает чужие бинарники, и толкает её не новый скилл, а один инструмент (<a href="https://github.com/morluto/rea">rea</a>, 368 тыс. звёзд, заведён в апреле) и один громкий отчёт о декомпиляции. Порог ★10 отсекает почти всё, что вышло в последние дни окна. Числа вида «на 38% быстрее», «в 3,9 раза быстрее», «89% против 68%» — замеры авторов проектов, не наши.</p>
+    <p class="collect"><b>Как собран выпуск.</b> Окно двойное — 14 дней вместо недели: прогон 16 октября не состоялся, и материал двух недель сведён в один номер. Поиск GitHub по четырём топикам и трём строкам дал 4556 новых репозиториев без форков; ни один не встречался в прошлых выпусках. ★10+ — 713, из них отсеяно 58: 44 — конкурсный кластер McDonald’s MCP, 5 — чистка Android TV, 3 — локальное делопроизводство (公文, налоги и право одной страны), 6 — витрины ключей и джейлбрейков. Прошли отбор 655. ★30+ — 315 позиций, после отсева 272; в каталог абзацем взяты первые по звёздам 26 скиллов и 27 плагинов, плюс по одной позиции в каждой колонке за пределами звёзд — <code>spf13/cli-style</code> по автору и <code>trailofbits/calcifier</code> по организации. Семь позиций пришли не из поиска GitHub, а с HN и из блогов: четыре из них заведены до окна, три — внутри окна, но ни одного из наших топиков не носят; это та самая дыра поиска, про которую сказано в правилах серии. Отдельно исключён <code>liseami/CCBaga</code> (★2887) — не инструмент разработки, а подмена отпечатков браузера и смена личностей аккаунта в обход ограничений; ссылки на страницу установки мы не даём. На HN 1641 история за окно, 109 набрали ≥30 очков. Сигнатурная проверка: 84 репозитория-кандидата выгружены поверхностным клоном, 22 857 файлов, и прогнаны поиском по <code>curl | sh</code>, <code>iwr | iex</code>, <code>powershell -enc</code>, base64 в <code>eval</code>, хукам установки npm и утечке ключей наружу. Все найденные <code>curl | sh</code> ведут на официальные установщики (uv, Tailscale, Claude Code, rustup) или на релизы самого проекта; обфускации и отправки ключей не найдено. <code>jatechan/ai-data-extractor</code> проверен отдельно, потому что совпадает по имени с вредоносной позицией выпуска 08: байт-код в репозитории собран из лежащих рядом исходников, расхождений нет. Это проверка на очевидное, а не аудит. Недоступно: arstechnica.com вернула 403, поэтому сюжет «AI coding agents generate more code, but not more software» дан только заголовком и без разбора; crystl.dev отброшен как SEO-агрегатор, а не источник.</p>
+    </div>
+    <p>Agent Briefing · собрано cron-джобой <code>agent-digest</code>.</p>
+  </footer>
+
+</main>
+<script>
+(function(){
+  const root=document.documentElement, LS=window.localStorage||{getItem(){},setItem(){}};
+  const themeBtn=document.getElementById('themeBtn'), contrastBtn=document.getElementById('contrastBtn');
+  const savedTheme=LS.getItem('ad-theme'); if(savedTheme) root.setAttribute('data-theme',savedTheme);
+  if(LS.getItem('ad-contrast')==='on') root.setAttribute('data-contrast','on');
+  function syncBtns(){
+    const dark=root.getAttribute('data-theme')==='dark';
+    themeBtn.setAttribute('aria-pressed',String(dark));
+    contrastBtn.setAttribute('aria-pressed',String(root.getAttribute('data-contrast')==='on'));
+  }
+  themeBtn.addEventListener('click',()=>{ const dark=root.getAttribute('data-theme')==='dark';
+    const next=dark?'light':'dark';
+    root.setAttribute('data-theme',next); LS.setItem('ad-theme',next); syncBtns(); });
+  contrastBtn.addEventListener('click',()=>{ const on=root.getAttribute('data-contrast')==='on';
+    if(on){ root.removeAttribute('data-contrast'); LS.setItem('ad-contrast','off'); }
+    else { root.setAttribute('data-contrast','on'); LS.setItem('ad-contrast','on'); }
+    syncBtns(); });
+  syncBtns();
+
+  // Журнал подставляет «← Назад» сразу за <body>; переносим его в закреплённую шапку,
+  // чтобы кнопки стояли на одном уровне. В неопубликованном файле ссылки нет.
+  const up=document.getElementById('gnrl-up'), bar=document.querySelector('.topbar-inner');
+  if(up&&bar){ const wrap=up.closest('.gnrl-upwrap'); bar.prepend(up); if(wrap) wrap.remove(); }
+
+  const progress=document.getElementById('progress');
+  addEventListener('scroll',()=>{ const h=document.documentElement;
+    const p=h.scrollTop/(h.scrollHeight-h.clientHeight||1);
+    progress.style.width=(p*100).toFixed(2)+'%'; },{passive:true});
+})();
+</script>
+<!--general:foot-->
+<style>
+.gnrl{margin:4rem auto 0;padding:2rem 1.25rem 2.5rem;max-width:1100px;border-top:1px solid rgba(128,128,128,.28);
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.5}
+.gnrl a{text-decoration:none;color:inherit}
+.gnrl-top{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:space-between;align-items:baseline;margin-bottom:1.25rem}
+.gnrl-back{font-weight:600;opacity:.9}
+.gnrl-back:hover{text-decoration:underline}
+.gnrl-h{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;opacity:.55}
+.gnrl-grid{display:grid;gap:1rem;grid-template-columns:1fr}
+@media(min-width:720px){.gnrl-grid{grid-template-columns:repeat(3,1fr)}}
+.gnrl-card{border:1px solid rgba(128,128,128,.28);border-radius:12px;overflow:hidden;transition:border-color .2s}
+.gnrl-card:hover{border-color:rgba(128,128,128,.6)}
+.gnrl-card img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+.gnrl-card b{display:block;padding:.8rem .9rem .2rem;font-size:.9375rem;font-weight:600}
+.gnrl-card span{display:block;padding:0 .9rem .9rem;font-size:.8125rem;opacity:.6}
+/* Стили кнопки возврата. Сама кнопка стоит не здесь, а в начале <body>: она в
+   потоке, поэтому резервирует своё место и не накрывает то, что разбор нарисовал
+   у себя вверху (у четырёх выпусков там собственный переключатель темы). Sticky
+   держит её на виду при прокрутке — до подвала на длинном разборе крутить долго. */
+.gnrl-upwrap{
+  position:sticky;top:0;z-index:70;padding:.7rem 0 .1rem .75rem;
+  /* Полоса тянется во всю ширину, но кликам не мешает — ловит их только кнопка. */
+  pointer-events:none;
+}
+.gnrl-up{
+  pointer-events:auto;display:inline-flex;align-items:center;
+  padding:.4rem .8rem;border-radius:999px;font-size:.8125rem;font-weight:600;
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color:inherit;text-decoration:none;border:1px solid rgba(128,128,128,.35);
+  /* Серый в полупрозрачности и цвет текста по наследству: подложка одинаково
+     ложится и на светлую, и на тёмную страницу, а системный Canvas — нет, он не
+     знает про тему разбора и на тёмной странице стал бы белым пятном. */
+  background:rgba(127,127,127,.2);
+  backdrop-filter:blur(10px) saturate(1.4);-webkit-backdrop-filter:blur(10px) saturate(1.4);
+}
+.gnrl-up:hover{border-color:rgba(128,128,128,.75)}
+@media print{.gnrl-upwrap{display:none}}
+</style>
+<nav class="gnrl">
+  <div class="gnrl-top">
+    <a class="gnrl-back" href="https://paveldiordits.site/presentations/">← Журнал</a>
+    <span class="gnrl-h">Ещё по теме</span>
+  </div>
+  <div class="gnrl-grid">
+    <a class="gnrl-card" href="agents-weekly-2026-10-09.html">
+      <img src="covers/agents-weekly-2026-10-09.webp" alt="" loading="lazy" onerror="this.onerror=null;this.src='covers/agents-weekly-2026-10-09.svg'">
+      <b>Неделя агентной экосистемы — 02–09.10.2026</b><span>79 мин · 2026-10-09</span>
+    </a>
+    <a class="gnrl-card" href="agents-weekly-2026-10-02.html">
+      <img src="covers/agents-weekly-2026-10-02.webp" alt="" loading="lazy" onerror="this.onerror=null;this.src='covers/agents-weekly-2026-10-02.svg'">
+      <b>Неделя агентной экосистемы — 25.09–02.10.2026</b><span>81 мин · 2026-10-02</span>
+    </a>
+    <a class="gnrl-card" href="agents-weekly-2026-09-25.html">
+      <img src="covers/agents-weekly-2026-09-25.webp" alt="" loading="lazy" onerror="this.onerror=null;this.src='covers/agents-weekly-2026-09-25.svg'">
+      <b>Неделя агентной экосистемы — 18–25.09.2026</b><span>47 мин · 2026-09-25</span>
+    </a>
+  </div>
+</nav>
+<script>
+// Кнопка вверху — настоящая ссылка на журнал: без скриптов и на прямом заходе
+// она ведёт хотя бы туда. Если посетитель пришёл по ссылке с сайта, она вместо
+// этого возвращает на ту же страницу и в ту же точку прокрутки, откуда он ушёл, —
+// это и есть «назад», а не «в начало журнала».
+(function(){
+  var a=document.getElementById('gnrl-up');
+  if(!a||history.length<2) return;
+  var from=document.referrer||'';
+  if(from.indexOf(location.origin+'/')!==0||from===location.href) return;
+  a.addEventListener('click',function(e){ e.preventDefault(); history.back(); });
+})();
+</script>
+<!--/general:foot-->
+</body>
+</html>

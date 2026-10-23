@@ -1,6 +1,39 @@
 {
   "presentations": [
     {
+      "slug": "agents-weekly-2026-10-23",
+      "title": "Неделя агентной экосистемы — 09–23.10.2026",
+      "topic": "ai",
+      "series": "Agents Weekly",
+      "date": "2026-10-23",
+      "lang": "ru",
+      "desc": "Anthropic отдала стандарт Agent Skills в Agentic AI Foundation при Linux Foundation: у формата SKILL.md теперь нейтральный дом и мейнтейнеры из Google и OpenAI. Команда Claude Code рассказала, чем заменила построчное чтение диффов, а замер SlopCodeBench показал, что уровень усилий xhigh стоит в 2–4 раза дороже medium и проходов не добавляет.",
+      "descEn": null,
+      "tags": [],
+      "minutes": 40,
+      "keywords": [
+        "Релизы и обсуждения",
+        "Claude Code 2.1.296 → 2.1.309 — 12 релизов",
+        "Модели — Gemini 4 Argon, Claude Duet",
+        "Сюжеты недели",
+        "Официальные скиллы и плагины",
+        "anthropics/skills — скилл claude-api учат новой форме многоагентности",
+        "claude-plugins-official — почти весь месяц ушёл на security-guidance",
+        "Anthropic за неделю — стандарт скиллов уходит в фонд",
+        "Скиллы 10 из 27 · ★30+",
+        "Коротко — ★ 10–30",
+        "Плагины и проекты 10 из 28 · ★30+",
+        "Коротко — ★ 10–30",
+        "Исследования и наблюдения 4 из 14",
+        "Источники"
+      ],
+      "feature": false,
+      "pick": false,
+      "status": "public",
+      "source": "~/dev/docs/lichnoe/research/agent-digest/2026-10-23.html",
+      "bytes": 118874
+    },
+    {
       "slug": "agents-weekly-2026-10-09",
       "title": "Неделя агентной экосистемы — 02–09.10.2026",
       "topic": "ai",
